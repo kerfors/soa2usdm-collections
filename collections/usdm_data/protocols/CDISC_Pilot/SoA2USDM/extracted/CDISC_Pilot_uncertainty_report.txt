@@ -1,0 +1,92 @@
+CDISC_Pilot (H2Q-MC-LZZT) — SoA Extraction Uncertainty Report
+==============================================================
+Extraction: single-pass PDF -> JSON, prompt v3.0.2, schema soa-table-extraction v1.0
+Source: CDISC_Pilot_soa.pdf (full-protocol document pages 53-54)
+Extracted: 2026-07-06 by Claude Fable 5 (Cowork)
+Files: CDISC_Pilot_Table_01_extraction.json, CDISC_Pilot_Table_02_extraction.json
+Review outcome: reviewed against consolidated HTML 2026-07-06 (KF) — no issues to handle.
+
+Per table
+---------
+Table 1 (page 53): main_soa. "Schedule of Events for Protocol H2Q-MC-LZZT(c)"
+  (Protocol Attachment LZZT.1). 8 data columns (Visits 1,2,3,4,5,<blank>,7,8 /
+  Weeks -2,-.3,0,2,4,<blank>,6,8), 28 activities, 71 non-empty schedule cells.
+Table 2 (page 54): continuation, continuation_of=1. "Schedule of Events ...
+  (concluded)". 7 data columns (Visits 9,10,11,12,13,ET,RT / Weeks
+  12,16,20,24,26,<blank>,<blank>), same 28 activity rows, 68 non-empty cells.
+  NOTE: this is a COLUMN-WISE continuation — same activity rows, timeline
+  continues across the page break. The taxonomy describes row-wise
+  continuation; the consolidator appends continuation columns to the main
+  segment, which is the correct behaviour for this case.
+
+Structural decisions
+--------------------
+1. Second label sub-column. Physical column 2 contains only the header row
+   labels "VISIT" and "WEEK". Treated as part of the label area
+   (property_name_source, column_position 2) and excluded from schedule_grid.
+   Data columns are physical columns 3+.
+2. Empty column between Visit 5 and Visit 7 (Table 1, physical column 8).
+   Transcribed literally: empty header cells, no marks. No Visit 6 exists
+   anywhere in the grid. Appears as a blank column in the consolidated view,
+   matching the source.
+3. "Study drug record / Medications dispensed / Medications returned":
+   one physical row containing three text lines with a single set of marks.
+   Kept as ONE activity (row 24); cell_text preserves the line breaks.
+   Modelling as parent + children would require a corrections pass, since the
+   marks belong to the merged row.
+4. WEEK value "-.3" for Visit 2: transcribed literally.
+5. "Hemoglobin A1C" (p.53) vs "Hemoglobin A1c" (p.54): subscript rendering
+   difference; transcribed per page. Consolidation fuzzy-matched them into one
+   unified activity (the single fuzzy match; recorded in name_variations).
+6. Trailing colon on "Laboratory (Chem/Hemat):": kept in cell_text, dropped
+   from the clean activity_name (both tables handled identically).
+7. Multi-line labels "CT Scan (if not within last year and patient passes all
+   other screens)" and "Plasma Specimen (Xanomeline)": joined with single
+   spaces in activity_name; line breaks preserved in cell_text.
+8. All activities are at indentation_level 0 — the grid is flat, no section
+   headers or visual hierarchy.
+
+Merged-mark decisions
+---------------------
+None. No marks or text distributed across column spans; no source_range set
+anywhere.
+
+Synthesised content
+-------------------
+None. No synthesised property_name values; no synthesised annotation markers.
+
+Annotations
+-----------
+- Footnote "a" (insulin-dependent diabetic): schedule_cell Hemoglobin A1C x
+  Visit 1 (Table 1 row 23, col 3).
+- Footnote "b" (telephone interview 2 weeks after visit): schedule_cell NPI-X
+  x Visit 8 (Table 1 row 29, col 10) and x Visits 9, 10, 11 (Table 2 row 29,
+  cols 3, 4, 5).
+- Legends "X" and "P": cell_value stays in the grid per prompt section 5
+  ("P = Practice only" on ADAS-Cog, CIBIC+, DAD, NPI-X at Visit 1);
+  marker_locations list every occurrence.
+- Abbreviations CT, ECG: linked to the activity rows containing the terms.
+- Abbreviations ET, RT (Table 2): these define header COLUMN VALUES, not
+  footnote markers. marker_locations point at schedule_property row 1 (the
+  location_type enum has no header-cell option). In consolidation they resolve
+  to table scope and are reported as orphaned annotations
+  (validation_status: consolidated_with_warnings, xannot-007/008) — expected,
+  not a data problem.
+
+Low-confidence calls / orphan risk
+----------------------------------
+- Table 2 classification (continuation vs second main_soa): continuation
+  chosen because title says "(concluded)" and rows are identical. Verified
+  correct consolidation behaviour (columns appended, 27 exact + 1 fuzzy
+  activity matches, no review queue).
+- ET/RT abbreviation locations, as above — the only annotations whose
+  locations could not be placed precisely.
+- No PDF/markdown disagreements checked cell-by-cell: extraction used the PDF
+  only (structure and text); the protocol markdown was not consulted.
+
+Pipeline result (for context)
+-----------------------------
+resolve -> consolidate -> visualize completed with no errors.
+28 unified activities from 56 source rows; 15 main-timeline columns;
+139 schedule cells; 8 unified annotations (4 deduplicated across tables).
+Consolidated HTML: ../consolidated/CDISC_Pilot_consolidated.html

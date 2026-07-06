@@ -1,0 +1,98 @@
+NCT03637764 (ACT15377 isatuximab) — SoA Extraction Uncertainty Report
+=====================================================================
+Path: PDF -> Excel (v2.8) -> JSON (v2.4), large/multi-table branch.
+Source: NCT03637764_soa.pdf (document pages 18-24). Sanofi Amended Clinical
+Trial Protocol 05, 23-Nov-2020, Version 1.
+Extracted: 2026-07-06 by Claude Fable 5 (Cowork).
+Scope decision (KF): extract the main SoA only; the PK/Immunogenicity flow chart
+(pp.22-23) and Biomarker flow chart (p.24) are DOCUMENTED via the main SoA's
+"See ... Flow Chart" reference rows, not extracted as grids.
+Files: NCT03637764_SoA_Table_01_draft.xlsx (verification intermediate),
+       NCT03637764_Table_01_extraction.json.
+Review surface: NCT03637764_consolidated.html vs pp.18-21.
+
+Confirmed at Stage 1/2 (KF)
+---------------------------
+- One main_soa table spanning pp.18-21 (header repeated per page; modeled as one
+  logical table, not four continuation files).
+- 10 schedule columns + label column + right-hand Notes column.
+- Level-2 header row property_type = period (mixes cycles + follow-up divisions).
+- Level-3 header row property_type = study_day (mixes study days + relative
+  post-dose timings).
+- Row hierarchy: 2 section headers (Laboratory Assessments, Disease Assessment)
+  with level-1 children; all other rows flat at level 0; Isatuximab/Atezolizumab
+  Administration flat at level 0 (no printed parent section).
+
+Structural decisions
+--------------------
+1. Columns. Physical col 1 = Evaluation labels; physical col 12 = Notes
+   (excluded from grid, captured as annotations). Data = physical cols 2-11.
+2. Grey shading = Not Applicable. Grey cells transcribed as empty (no grid mark);
+   grey is visual metadata only.
+3. Header property names synthesized (label cells for the 3 header rows are
+   blank in the source); property_name_source.synthesized = true. Names used:
+   Phase / Sub-phase / Timing.
+4. Footnote 'a' (a cycle is 21 days) scoped to the Treatment Phase columns
+   (grid header cols 4-7), not the whole epoch row.
+
+Merged-mark / spanning-cell decisions (distributed with source_range)
+--------------------------------------------------------------------
+- Screening marks MERGED across both screening sub-columns (cols 2-3):
+  Informed consent, Demography, Height/Weight/ECOG, Vital Signs, Resting O2,
+  Serology HBV/HCV, CT/MRI, AE/SAE ("X"), Prior/Concom ("X (within 14 days
+  prior to first dose)"). Lab rows place the X in D-14 to D-1 only (col 3):
+  Blood Chemistry, Hematology, Coagulation(GBM), Pregnancy test, Brain MRI,
+  Blood Typing, Urinalysis, Coagulation(HCC/SCCHN/EOC).
+- "Continuously throughout period" = cols 4-8 (D1 through EOT): AE/SAE,
+  Prior/Concomitant Medication.
+- "X (ongoing related AEs...)" / "X (related to AE/SAEs listed above)" = cols
+  9-10 (At 60 + At 90); Survival empty.
+- "As clinically indicated": Coagulation(HCC/SCCHN/EOC) cols 4-7; Urinalysis
+  cols 5-7.
+- "X (until PD is confirmed...)" = cols 10-11 (At 90 + Survival); At 60 (col 9)
+  grey/empty. Rows: CT/MRI, Brain MRI, AFP/CA125.
+- "X (Weeks ...)" imaging rows sit in the single Cycle 2 and Beyond column
+  (col 7); D8/D15 grey.
+
+Notes-column annotations (SYNTHESIZED markers n1..n10; not in source)
+--------------------------------------------------------------------
+n1 Section 8.2.1            -> Physical examination, Height/Weight/ECOG
+n2 See Section 8.2.2        -> Vital Signs, Resting O2 saturation
+n3 See Section 8.2.3        -> 12-Lead ECG
+n4 See Section 10.3 Table 12-> Blood Chemistry
+n5 Section 10.3             -> Hematology, Coagulation(GBM), Coagulation(HCC/
+                              SCCHN/EOC), Serology HBV/HCV, Urinalysis
+n6 Section 10.3  Before each transfusion. -> Blood Typing Interference Test
+n7 Section 8.1              -> CT/MRI, Brain MRI, AFP/CA125
+n8 Informed consent may be signed prior to D -28. (footnote) -> Informed consent
+n9 See Pharmacokinetics and immunogenicity Flow Chart -> PK, ADA
+n10 See Biomarker Flow Chart -> Tumor Biopsy/Archival Tumor Tissue/Biomarker
+                               Blood Draw
+Real source footnotes: a, b, c (see below).
+
+PK / ADA / Tumor-biopsy modeling
+--------------------------------
+These rows carry only a "See ... Flow Chart" reference spanning all columns. Per
+the scope decision they are modeled as source_note annotations on the activity;
+the schedule grid for these rows is intentionally EMPTY (they appear as
+activities with a reference and no marks). This is how the two flow-chart tables
+are documented without extracting them.
+
+Low-confidence / verify against PDF
+-----------------------------------
+- Atezolizumab Administration: X at Cycle 1 D1 and Cycle 2 and Beyond D1 only;
+  D8/D15/EOT/follow-up left empty. Grey-vs-white on the far-right columns not
+  fully confirmed. LOW CONFIDENCE.
+- Screening merge-vs-single calls (F1 above) are the main class to spot-check.
+- "X (until PD...)" spanning At 90 + Survival while At 60 is grey is the literal
+  read; unusual but taken from the shading. Verify.
+- Abbreviations used but not defined within pp.18-21 (WOCBP, ECOG, PS, HCC,
+  SCCHN, EOC, GBM, IMP, EOT, PD, AFP, CA125, ADA, PK): not fabricated.
+
+Pipeline result
+----------------
+resolve -> consolidate -> visualize completed with no errors.
+validation_status = "consolidated" (no warnings, no orphaned annotations).
+29 unified activities, 10 main-timeline columns, 128 schedule cells,
+13 annotations (4 footnote, 9 source_note).
+Consolidated HTML: ../consolidated/NCT03637764_consolidated.html

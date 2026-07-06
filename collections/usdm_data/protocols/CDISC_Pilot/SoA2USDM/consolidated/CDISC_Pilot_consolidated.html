@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDISC_Pilot - Consolidated Schedule</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1800px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-tables-label {
+            font-size: 11px;
+            color: #666;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 22px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 14px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 12px 15px; color: #444; font-size: 11px; border-bottom: 1px solid #eee; background: #f9f9f9; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top; word-wrap: break-word;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .prop-comparison th.table-col { text-align: center; min-width: 320px; }
+        .prop-comparison .track-small { font-size: 9px; font-weight: normal; color: #666; }
+        .prop-comparison .level-cell { font-weight: bold; text-align: center; width: 60px; font-size: 11px; }
+        .prop-comparison .prop-data { text-align: left; vertical-align: top; padding: 10px 12px !important; }
+        .prop-comparison .prop-empty { text-align: center; color: #ccc; background: #fafafa; font-size: 11px; }
+        .prop-cell-content { }
+        .prop-cell-content .prop-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; }
+        .prop-cell-content .prop-type { font-size: 10px; opacity: 0.85; margin-bottom: 6px; }
+        .prop-cell-content .prop-comment { font-size: 10px; opacity: 0.9; font-style: normal; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 6px; margin-top: 4px; }
+        
+        .title-full { max-width: 600px; }
+        .purpose-text { font-size: 9px; color: #666; font-style: italic; }
+        
+        .conclusion-col { min-width: 120px; text-align: center; }
+        .conclusion-cell { text-align: center; font-size: 11px; background: #fafafa; padding: 10px !important; }
+        .conc-match { color: #28a745; font-weight: bold; }
+        .conc-similar { color: #17a2b8; font-weight: bold; }
+        .conc-differ { color: #dc3545; font-weight: bold; }
+        .conc-partial { color: #fd7e14; font-weight: bold; }
+        .conc-empty { color: #ccc; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .bool { font-size: 10px; }
+        .text-full { max-width: 400px; }
+        .variations { font-size: 9px; color: #666; font-style: italic; }
+        .track-label { padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .scope-acts { color: #C65911; }
+        .scope-cols { color: #17a2b8; font-style: italic; }
+        .scope-cells { color: #538135; }
+        .scope-table { color: #999; font-style: italic; }
+        
+        .section {
+            background: white; border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .section-title {
+            color: white; padding: 12px 20px; font-size: 13px; font-weight: bold;
+            cursor: pointer; user-select: none;
+        }
+        .section-title:hover { filter: brightness(1.1); }
+        .section-title .toggle-icon { 
+            display: inline-block; transition: transform 0.2s; margin-right: 8px; 
+        }
+        .collapsible-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .collapsible-section.collapsed .grid-container { display: none; }
+        .grid-container { overflow-x: auto; padding: 10px; }
+        
+        .table-border { border-left: 3px solid #333 !important; }
+        
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        .grid-table th { background: #f0f0f0; font-weight: bold; font-size: 9px; }
+        .grid-table th.activity-header { text-align: left; }
+        
+        .frozen-col1 {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            min-width: 340px;
+            max-width: 340px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+        }
+        .frozen-col2 {
+            position: sticky;
+            left: 340px;
+            z-index: 2;
+            min-width: 60px;
+            max-width: 60px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+            text-align: center;
+        }
+        .grid-table th.frozen-col1,
+        .grid-table th.frozen-col2 {
+            z-index: 3;
+        }
+        .frozen-col2::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -6px;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+            pointer-events: none;
+        }
+        
+        .activity-name { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .activity-name.section-header { font-weight: bold; }
+        .activity-name.child { padding-left: 15px; }
+        
+        .legend {
+            background: white; border-radius: 8px; padding: 12px 20px;
+            margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-color { width: 16px; height: 12px; border-radius: 2px; border: 1px solid #ddd; }
+        .legend-section { font-weight: bold; color: #666; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">CDISC_Pilot</span><span class="nav-sep">›</span><span class="nav-current">Consolidated</span></div>
+        
+        <div class="nav-tables">
+            <span class="nav-tables-label">Tables:</span>
+            <span class="nav-table-list"><a href="../resolved/CDISC_Pilot_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="../resolved/CDISC_Pilot_Table_02_resolved.html" class="nav-table-btn">T2</a></span>
+        </div>
+    </nav>
+    <div class="header">
+        <h1>CDISC_Pilot - Consolidated Schedule of Activities</h1>
+        <div class="sub">study-schedule-consolidated v1.0 | Layer 3</div>
+        <div class="meta">2 tables | 28 activities (50% compression) | 15 columns</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+    </div>
+    
+    <div class="legend">
+        <span class="legend-section">Activities:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#d4edda;"></div>Multi-table exact</div>
+        <div class="legend-item"><div class="legend-color" style="background:#cce5ff;"></div>Multi-table fuzzy</div>
+        <div class="legend-item"><div class="legend-color" style="background:#e1bee7;"></div>Cross-parent</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f0f0f0;"></div>Single table</div>
+        <span class="legend-section">|</span>
+        <span class="legend-section">Cells:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#BDD7EE;"></div>Common</div>
+        
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
+            <span class="comp-desc">Process information</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-07-06T17:20:01.469751+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">56</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">28</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">50</span></td></tr><tr><td class="field">match_stats</td><td>exact: 27, fuzzy_auto: 1, new: 28</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Source Tables</span>
+            <span class="comp-desc">2 tables</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>table</th><th>type</th><th>track</th><th>title / purpose</th><th>acts</th><th>cols</th><th>props</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">T1</td>
+            <td class="type">main_soa</td>
+            <td></td>
+            <td class="title-full">Schedule of Events for Protocol H2Q-MC-LZZT(c)<br/><span class='purpose-text'>Main schedule: screening (Visits 1-2) and first treatment-period visits (Visits 3-8, Weeks -2 to 8)</span></td>
+            <td class="trace">28</td>
+            <td class="trace">8</td>
+            <td class="trace">2</td>
+        </tr><tr>
+            <td class="id">T2</td>
+            <td class="type">continuation</td>
+            <td></td>
+            <td class="title-full">Schedule of Events for Protocol H2Q-MC-LZZT(c) (concluded)<br/><span class='purpose-text'>Continuation of the main schedule: Visits 9-13 (Weeks 12-26) plus Early Termination and Retrieval columns</span></td>
+            <td class="trace">28</td>
+            <td class="trace">7</td>
+            <td class="trace">2</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy Comparison</span>
+            <span class="comp-desc">2 main timeline tables, 2 levels max</span>
+        </div>
+        <div class="comp-body">
+            <p class="comp-note">Compares main timeline tables only (main_soa, continuation, subsidiary). Track, domain, and reference tables excluded — different structure by design.</p>
+            <table class="comp-table prop-comparison">
+                <thead><tr><th>Level</th><th class="table-col" title="main_soa">T1</th><th class="table-col" title="continuation">T2</th><th class="conclusion-col">Conclusion</th></tr></thead>
+                <tbody><tr><td class="level-cell" style="background: #375623; color: white;">L1</td><td class="prop-data" style="background: #375623; color: white;" title="Visit numbers (1, 2, 3, 4, 5, blank, 7, 8); one physical column between Visit 5 and Visit 7 has an empty header (no Visit 6 column value printed) - transcribed literally as an empty column. Classified as &#x27;visit&#x27;: row of visit identifiers."><div class="prop-cell-content">
+                    <div class="prop-name">VISIT</div>
+                    <div class="prop-type">[visit]</div>
+                    <div class="prop-comment">Visit numbers (1, 2, 3, 4, 5, blank, 7, 8); one physical column between Visit 5 and Visit 7 has an empty header (no Visit 6 column value printed) - transcribed literally as an empty column. Classified as &#x27;visit&#x27;: row of visit identifiers.</div>
+                </div></td><td class="prop-data" style="background: #375623; color: white;" title="Visit numbers and end-of-study columns (9, 10, 11, 12, 13, ET, RT); ET = Early Termination, RT = Retrieval per abbreviation note. Classified as &#x27;visit&#x27;: row of visit identifiers."><div class="prop-cell-content">
+                    <div class="prop-name">VISIT</div>
+                    <div class="prop-type">[visit]</div>
+                    <div class="prop-comment">Visit numbers and end-of-study columns (9, 10, 11, 12, 13, ET, RT); ET = Early Termination, RT = Retrieval per abbreviation note. Classified as &#x27;visit&#x27;: row of visit identifiers.</div>
+                </div></td><td class="conclusion-cell"><span class="conc-match">✓ Identical</span></td></tr><tr><td class="level-cell" style="background: #548235; color: white;">L2</td><td class="prop-data" style="background: #548235; color: white;" title="Study week numbers (-2, -.3, 0, 2, 4, 6, 8). Classified as &#x27;week&#x27;: numeric week values aligned to visits."><div class="prop-cell-content">
+                    <div class="prop-name">WEEK</div>
+                    <div class="prop-type">[week]</div>
+                    <div class="prop-comment">Study week numbers (-2, -.3, 0, 2, 4, 6, 8). Classified as &#x27;week&#x27;: numeric week values aligned to visits.</div>
+                </div></td><td class="prop-data" style="background: #548235; color: white;" title="Study week numbers (12, 16, 20, 24, 26; empty under ET and RT). Classified as &#x27;week&#x27;: numeric week values aligned to visits."><div class="prop-cell-content">
+                    <div class="prop-name">WEEK</div>
+                    <div class="prop-type">[week]</div>
+                    <div class="prop-comment">Study week numbers (12, 16, 20, 24, 26; empty under ET and RT). Classified as &#x27;week&#x27;: numeric week values aligned to visits.</div>
+                </div></td><td class="conclusion-cell"><span class="conc-match">✓ Identical</span></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Activities</span>
+            <span class="comp-desc">28 activities</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>header</th>
+                </tr></thead>
+                <tbody><tr style="background: #d4edda;">
+            <td class="id">xact-001</td>
+            <td class="text-full">Informed consent</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-002</td>
+            <td class="text-full">Patient number assigned</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-003</td>
+            <td class="text-full">Hachinski ≤4</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-004</td>
+            <td class="text-full">MMSE 10-23</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-005</td>
+            <td class="text-full">Physical examination</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-006</td>
+            <td class="text-full">Medical History</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-007</td>
+            <td class="text-full">Habits</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-008</td>
+            <td class="text-full">Chest x-ray</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-009</td>
+            <td class="text-full">Apo E genotyping</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-010</td>
+            <td class="text-full">Patient randomized</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-011</td>
+            <td class="text-full">Vital signs/Temperature</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-012</td>
+            <td class="text-full">Ambulatory ECG placed</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-013</td>
+            <td class="text-full">Ambulatory ECG removed</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-014</td>
+            <td class="text-full">ECG</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-015</td>
+            <td class="text-full">Placebo TTS test</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-016</td>
+            <td class="text-full">CT Scan (if not within last year and patient passes all other screens)</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-017</td>
+            <td class="text-full">Concomitant Medications</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-018</td>
+            <td class="text-full">Laboratory (Chem/Hemat)</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-019</td>
+            <td class="text-full">Laboratory (Urinalysis)</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-020</td>
+            <td class="text-full">Plasma Specimen (Xanomeline)</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #cce5ff;">
+            <td class="id">xact-021</td>
+            <td class="text-full"><strong>Hemoglobin A1C</strong><br/><span class='variations'>≈ Hemoglobin A1c</span></td>
+            <td class="trace"></td>
+            <td class="type">fuzzy_auto</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-022</td>
+            <td class="text-full">Study drug record Medications dispensed Medications returned</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-023</td>
+            <td class="text-full">TTS Acceptability Survey</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-024</td>
+            <td class="text-full">ADAS-Cog</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-025</td>
+            <td class="text-full">CIBIC+</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-026</td>
+            <td class="text-full">DAD</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-027</td>
+            <td class="text-full">NPI-X</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-028</td>
+            <td class="text-full">Adverse events</td>
+            <td class="trace"></td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Annotations</span>
+            <span class="comp-desc">8 annotations (33% dedup from 12)</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (2)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #fff;">
+                <td class="id">xannot-002</td>
+                <td class="trace">T1:a</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Xa = Performed at this visit if patient is an insulin-dependent diabetic.">Xa = Performed at this visit if patient is an insulin-dependent diabetic.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Hemoglobin A1C</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
+            </tr><tr style="background: #e8f4e8;">
+                <td class="id">xannot-003</td>
+                <td class="trace">T1-2:b</td>
+                <td class="trace">2</td>
+                <td class="text-full" title="Xb = Performed at this visit and via telephone interview 2 weeks following this visit.">Xb = Performed at this visit and via telephone interview 2 weeks following this visit.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">NPI-X</span> <span class="scope-cells" title="Specific cells">4 cells</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #2E75B6;">Abbreviation (4)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #e8f4e8;">
+                <td class="id">xannot-005</td>
+                <td class="trace">T1-2:CT</td>
+                <td class="trace">2</td>
+                <td class="text-full" title="CT = computed tomography">CT = computed tomography</td>
+                <td class="trace"><span class="scope-acts" title="Activities">CT Scan (if not within last year and patient passes all other screens)</span></td>
+            </tr><tr style="background: #e8f4e8;">
+                <td class="id">xannot-006</td>
+                <td class="trace">T1-2:ECG</td>
+                <td class="trace">2</td>
+                <td class="text-full" title="ECG = electrocardiogram">ECG = electrocardiogram</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Ambulatory ECG placed | Ambulatory ECG removed | ECG</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-007</td>
+                <td class="trace">T2:ET</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="ET = Early Termination">ET = Early Termination</td>
+                <td class="trace"><span class="scope-table" title="Table-level">table</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-008</td>
+                <td class="trace">T2:RT</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="RT = Retrieval">RT = Retrieval</td>
+                <td class="trace"><span class="scope-table" title="Table-level">table</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #538135;">Legend (2)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #e8f4e8;">
+                <td class="id">xannot-001</td>
+                <td class="trace">T1-2:X</td>
+                <td class="trace">2</td>
+                <td class="text-full" title="X = Performed at this visit.">X = Performed at this visit.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Informed consent | Patient number assigned | Hachinski ≤4 (+25)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-004</td>
+                <td class="trace">T1:P</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="P = Practice only - It is recommended that a sampling of the CIBIC+, ADAS-Cog, DAD, and NPI-X be administered at Visit 1. Data from this sampling would not be considered as study data and would not be collected.">P = Practice only - It is recommended that a sampling of the CIBIC+, ADAS-Cog, DAD, and NPI-X be administered at Visi...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">ADAS-Cog | CIBIC+ | DAD (+1)</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="section collapsible-section">
+        <div class="section-title" style="background: #1F4788;" onclick="toggleGrid(this)">
+            <span class="toggle-icon">▼</span> Main Schedule (15 columns)
+        </div>
+        <div class="grid-container">
+            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="table-border" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th></tr><tr><th class="frozen-col1" style="background: #375623; color: white; text-align: left; font-size: 9px;">VISIT<br/><span style="font-size: 8px; opacity: 0.8;">[visit] L1</span></th><th class="frozen-col2" style="background: #375623;"></th><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">3</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">4</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">5</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">7</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">8</td><td class="table-border" style="background: #375623; color: white; text-align: center; font-size: 9px;">9</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">10</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">11</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">12</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">13</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">ET</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">RT</td></tr><tr><th class="frozen-col1" style="background: #548235; color: white; text-align: left; font-size: 9px;">WEEK<br/><span style="font-size: 8px; opacity: 0.8;">[week] L2</span></th><th class="frozen-col2" style="background: #548235;"></th><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-2</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-.3</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">0</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">2</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">4</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">6</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">8</td><td class="table-border" style="background: #548235; color: white; text-align: center; font-size: 9px;">12</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">16</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">20</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">24</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">26</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Informed consent">Informed consent</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Patient number assigned">Patient number assigned</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Hachinski ≤4">Hachinski ≤4</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::MMSE 10-23">MMSE 10-23</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Physical examination">Physical examination</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Medical History">Medical History</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Habits">Habits</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Chest x-ray">Chest x-ray</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Apo E genotyping">Apo E genotyping</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Patient randomized">Patient randomized</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Vital signs/Temperature">Vital signs/Temperature</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Ambulatory ECG placed">Ambulatory ECG placed</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Ambulatory ECG removed">Ambulatory ECG removed</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::ECG">ECG</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Placebo TTS test">Placebo TTS test</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::CT Scan (if not within last year and patient passes all other screens)">CT Scan (if not within last year and patient passes all other screens)</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Concomitant Medications">Concomitant Medications</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Laboratory (Chem/Hemat)">Laboratory (Chem/Hemat)</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Laboratory (Urinalysis)">Laboratory (Urinalysis)</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Plasma Specimen (Xanomeline)">Plasma Specimen (Xanomeline)</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #cce5ff;" title="::Hemoglobin A1C">Hemoglobin A1C</td><td class="frozen-col2" style="background: #cce5ff; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Study drug record Medications dispensed Medications returned">Study drug record Medications dispensed Medications returned</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::TTS Acceptability Survey">TTS Acceptability Survey</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="table-border"></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::ADAS-Cog">ADAS-Cog</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">P</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border"></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::CIBIC+">CIBIC+</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">P</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border"></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::DAD">DAD</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">P</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border"></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::NPI-X">NPI-X</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">P</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #d4edda;" title="::Adverse events">Adverse events</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="table-border" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr></table>
+        </div>
+    </div>
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function toggleGrid(title) {
+            const section = title.closest('.collapsible-section');
+            section.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with component sections collapsed, grids expanded
+        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+    </script>
+</body>
+</html>

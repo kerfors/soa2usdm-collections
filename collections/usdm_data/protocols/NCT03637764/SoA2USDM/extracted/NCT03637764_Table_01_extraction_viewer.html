@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT03637764 — T01 Extraction</title>
+<style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           margin: 0; padding: 20px; background: #f8f9fa; color: #333; }
+    .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .back a { color: #1F4788; text-decoration: none; font-size: 12px; }
+    .back a:hover { text-decoration: underline; }
+    .title { font-size: 16px; font-weight: 600; color: #1F4788; }
+    .raw-link { font-size: 11px; }
+    .raw-link a { color: #888; text-decoration: none; font-family: monospace; }
+    .raw-link a:hover { color: #555; text-decoration: underline; }
+    #search { padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;
+               width: 240px; margin-left: auto; }
+    #search:focus { outline: none; border-color: #2E75B6; box-shadow: 0 0 0 2px rgba(46,117,182,0.15); }
+    .stats { font-size: 11px; color: #888; }
+    
+    #json-container { background: white; border: 1px solid #e0e0e0; border-radius: 8px;
+                       padding: 20px; overflow: auto; max-height: calc(100vh - 120px);
+                       font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+                       font-size: 12px; line-height: 1.6; }
+    
+    /* Syntax highlighting */
+    .json-key { color: #881391; font-weight: 500; }
+    .json-string { color: #1a6b2c; }
+    .json-number { color: #1750eb; }
+    .json-boolean { color: #d32f2f; font-weight: 500; }
+    .json-null { color: #888; font-style: italic; }
+    .json-bracket { color: #555; }
+    
+    /* Collapsible */
+    .json-toggle { cursor: pointer; user-select: none; position: relative; }
+    .json-toggle::before { content: "▼"; display: inline-block; width: 14px; font-size: 9px;
+                            color: #aaa; transition: transform 0.15s; }
+    .json-toggle.collapsed::before { transform: rotate(-90deg); }
+    .json-toggle:hover::before { color: #1F4788; }
+    .json-content { margin-left: 20px; }
+    .json-content.hidden { display: none; }
+    .json-ellipsis { display: none; color: #aaa; font-style: italic; font-size: 11px; }
+    .json-toggle.collapsed + .json-content + .json-ellipsis { display: inline; }
+    .json-comma { color: #555; }
+    
+    /* Search highlight */
+    .highlight { background: #fff3b0; border-radius: 2px; padding: 0 1px; }
+    .search-no-match { opacity: 0.2; }
+</style>
+</head>
+<body>
+    <div class="toolbar">
+        <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+        <div class="title">NCT03637764 — T01 Extraction</div>
+        <div class="raw-link"><a href="NCT03637764_Table_01_extraction.json" download>raw json</a></div>
+        <div class="stats" id="stats"></div>
+        <input type="text" id="search" placeholder="Search keys and values…">
+    </div>
+    <div id="json-container"></div>
+    
+    <script>
+    const jsonData = {
+  "schema_name": "soa-table-extraction",
+  "schema_version": "1.0",
+  "extraction_metadata": {
+    "extracted_at": "2026-07-06T18:29:56+00:00",
+    "extractor": "Claude Fable 5 (Cowork, PDF->Excel->JSON v2.8/v2.4 path)",
+    "source_document": {
+      "filename": "NCT03637764_soa.pdf",
+      "document_type": "protocol",
+      "document_version": "Amended Clinical Trial Protocol 05 (ACT15377), 23-Nov-2020, Version 1"
+    },
+    "verification": {
+      "excel_file": "NCT03637764_SoA_Table_01_draft.xlsx",
+      "excel_verified": false
+    },
+    "extraction_status": "ready_for_resolution",
+    "extraction_notes": "Main SoA, document pages 18-21. Synthesized markers n1..n10 for Notes-column references (not present as markers in the source). PK/ADA/Tumor-biopsy rows carry a source_note referencing the separate flow-chart tables (pp.22-24) instead of grid marks. Merged marks/text distributed with source_range; grey (N/A) cells omitted."
+  },
+  "table_metadata": {
+    "table_number": 1,
+    "table_type": "main_soa",
+    "table_title": "Schedule of Activities (SOA)",
+    "table_purpose": "Main schedule across Screening, Treatment Phase (21-day cycles), End of Treatment, and Post-Treatment Follow-up (safety + survival).",
+    "page_start": 18,
+    "page_end": 21,
+    "notes": "Section 1.3. Single logical table with header repeated on each of pages 18-21; modeled as one main_soa table. Notes column (source physical col 12) excluded from grid and captured as annotations."
+  },
+  "schedule_properties": [
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "property_name": "Phase",
+      "property_name_source": {
+        "row_position": 1,
+        "column_position": 1,
+        "cell_value": "",
+        "synthesized": true
+      },
+      "property_type": "epoch",
+      "hierarchical_level": 1,
+      "property_comment": "Level-1 study phases: Screening, Treatment Phase, End of Treatment (EOT), Post Treatment Follow-up Phase. Classified 'epoch'. Label cell empty; name synthesized. Footnote 'a' (a cycle is 21 days) sits on the Treatment Phase value."
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "property_name": "Sub-phase",
+      "property_name_source": {
+        "row_position": 2,
+        "column_position": 1,
+        "cell_value": "",
+        "synthesized": true
+      },
+      "property_type": "period",
+      "hierarchical_level": 2,
+      "property_comment": "Level-2 sub-phases: Cycle 1 / Cycle 2 and Beyond (treatment cycles) and Safety follow-up Period / Survival follow-up. Row mixes cycle and follow-up divisions; classified 'period' per reviewer ruling (two values are treatment cycles)."
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "property_name": "Timing",
+      "property_name_source": {
+        "row_position": 3,
+        "column_position": 1,
+        "cell_value": "",
+        "synthesized": true
+      },
+      "property_type": "study_day",
+      "hierarchical_level": 3,
+      "property_comment": "Level-3 per-column timing: study-day ranges/days (D-28 to D-15, D-14 to D-1, D1, D8, D15) and relative post-dose timings (30/60/90 days after last IMP admin; every 90 days). Row mixes study_day and relative timepoints; classified 'study_day' per reviewer ruling; follow-up columns are relative-to-last-dose."
+    }
+  ],
+  "schedule_grid": [
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 2,
+      "cell_value": "Screening (up to 28 days before Day 1)",
+      "is_merged_cell": true,
+      "merged_cell_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 3,
+      "cell_value": "Screening (up to 28 days before Day 1)",
+      "is_merged_cell": true,
+      "merged_cell_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 4,
+      "cell_value": "Treatment Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:7",
+      "annotation_markers": "a"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 5,
+      "cell_value": "Treatment Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:7",
+      "annotation_markers": "a"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 6,
+      "cell_value": "Treatment Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:7",
+      "annotation_markers": "a"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 7,
+      "cell_value": "Treatment Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:7",
+      "annotation_markers": "a"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 8,
+      "cell_value": "End of Treatment (EOT)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 9,
+      "cell_value": "Post Treatment Follow-up Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "9:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 10,
+      "cell_value": "Post Treatment Follow-up Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "9:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 11,
+      "cell_value": "Post Treatment Follow-up Phase",
+      "is_merged_cell": true,
+      "merged_cell_range": "9:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 2,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 3,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 4,
+      "cell_value": "Cycle 1",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 5,
+      "cell_value": "Cycle 1",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 6,
+      "cell_value": "Cycle 1",
+      "is_merged_cell": true,
+      "merged_cell_range": "4:6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 7,
+      "cell_value": "Cycle 2 and Beyond"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 8,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 9,
+      "cell_value": "Safety follow-up Period",
+      "is_merged_cell": true,
+      "merged_cell_range": "9:10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 10,
+      "cell_value": "Safety follow-up Period",
+      "is_merged_cell": true,
+      "merged_cell_range": "9:10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 11,
+      "cell_value": "Survival follow-up"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 2,
+      "cell_value": "D-28 to D-15"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 3,
+      "cell_value": "D-14 to D-1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 4,
+      "cell_value": "D1 (±1)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 5,
+      "cell_value": "D8 (±1)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 6,
+      "cell_value": "D15 (±1)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 7,
+      "cell_value": "D1 (±2)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 8,
+      "cell_value": "30 (±7) days after last IMPs admin"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 9,
+      "cell_value": "At 60 (±7) days after last IMPs admin"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 10,
+      "cell_value": "At 90 (±7) days after last IMPs admin"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 11,
+      "cell_value": "Every 90 days (±7) after last safety follow-up"
+    }
+  ],
+  "activities": [
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "activity_name": "Informed consent/ Inclusion and exclusion criteria",
+      "activity_name_source": {
+        "cell_text": "Informed consent/ Inclusion and exclusion criteria",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "activity_name": "Demography, Medical/Surgical and Disease History",
+      "activity_name_source": {
+        "cell_text": "Demography, Medical/Surgical and Disease History",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "activity_name": "Physical examination",
+      "activity_name_source": {
+        "cell_text": "Physical examination",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "activity_name": "Height (at baseline only) /Weight/ ECOG (HCC,SCCHN,EOC) or Karnofsky PS (GBM)",
+      "activity_name_source": {
+        "cell_text": "Height (at baseline only) /Weight/ ECOG (HCC,SCCHN,EOC) or Karnofsky PS (GBM)",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "activity_name": "Vital Signs",
+      "activity_name_source": {
+        "cell_text": "Vital Signs",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "activity_name": "Resting O2 saturation for SCCHN",
+      "activity_name_source": {
+        "cell_text": "Resting O2 saturation for SCCHN",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 7,
+      "activity_name": "12-Lead ECG",
+      "activity_name_source": {
+        "cell_text": "12-Lead ECG",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 8,
+      "activity_name": "Laboratory Assessments",
+      "activity_name_source": {
+        "cell_text": "Laboratory Assessments",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "activity_name": "Pregnancy test (WOCBP only)",
+      "activity_name_source": {
+        "cell_text": "Pregnancy test (WOCBP only)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "b"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "activity_name": "Blood Chemistry",
+      "activity_name_source": {
+        "cell_text": "Blood Chemistry",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n4"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "activity_name": "Hematology",
+      "activity_name_source": {
+        "cell_text": "Hematology",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "activity_name": "Coagulation(GBM)",
+      "activity_name_source": {
+        "cell_text": "Coagulation(GBM)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "activity_name": "Coagulation (for HCC, SCCHN, and EOC)",
+      "activity_name_source": {
+        "cell_text": "Coagulation (for HCC, SCCHN, and EOC)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "activity_name": "Blood Typing Interference Test",
+      "activity_name_source": {
+        "cell_text": "Blood Typing Interference Test",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 15,
+      "activity_name": "Serology HBV and HCV (for HCC only)",
+      "activity_name_source": {
+        "cell_text": "Serology HBV and HCV (for HCC only)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "activity_name": "Urinalysis (at baseline and if required) /urine dipstick",
+      "activity_name_source": {
+        "cell_text": "Urinalysis (at baseline and if required) /urine dipstick",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "activity_name": "Disease Assessment",
+      "activity_name_source": {
+        "cell_text": "Disease Assessment",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "activity_name": "CT/MRI (for HCC, SCCHN, and EOC)",
+      "activity_name_source": {
+        "cell_text": "CT/MRI (for HCC, SCCHN, and EOC)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "activity_name": "Brain MRI (for GBM only)",
+      "activity_name_source": {
+        "cell_text": "Brain MRI (for GBM only)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "activity_name": "AFP (for HCC) / CA125 (for EOC)",
+      "activity_name_source": {
+        "cell_text": "AFP (for HCC) / CA125 (for EOC)",
+        "indentation_level": 1
+      },
+      "annotation_markers": "n7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "activity_name": "Isatuximab Administration",
+      "activity_name_source": {
+        "cell_text": "Isatuximab Administration",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "activity_name": "Atezolizumab Administration",
+      "activity_name_source": {
+        "cell_text": "Atezolizumab Administration",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "activity_name": "AE/SAE Assessment",
+      "activity_name_source": {
+        "cell_text": "AE/SAE Assessment",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "activity_name": "Prior/Concomitant Medication",
+      "activity_name_source": {
+        "cell_text": "Prior/Concomitant Medication",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 25,
+      "activity_name": "PK",
+      "activity_name_source": {
+        "cell_text": "PK",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n9"
+    },
+    {
+      "table_number": 1,
+      "row_position": 26,
+      "activity_name": "ADA",
+      "activity_name_source": {
+        "cell_text": "ADA",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n9"
+    },
+    {
+      "table_number": 1,
+      "row_position": 27,
+      "activity_name": "Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood Draw",
+      "activity_name_source": {
+        "cell_text": "Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood Draw",
+        "indentation_level": 0
+      },
+      "annotation_markers": "n10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "activity_name": "Subsequent Anticancer Therapy Status",
+      "activity_name_source": {
+        "cell_text": "Subsequent Anticancer Therapy Status",
+        "indentation_level": 0
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "activity_name": "Survival Status",
+      "activity_name_source": {
+        "cell_text": "Survival Status",
+        "indentation_level": 0
+      }
+    }
+  ],
+  "activity_schedule": [
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 3,
+      "cell_value": "X (<7 days prior to first dose)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 7,
+      "column_position": 7,
+      "cell_value": "As clinically indicated"
+    },
+    {
+      "table_number": 1,
+      "row_position": 7,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 7,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 3,
+      "cell_value": "X (within 7 days prior to first dose)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 10,
+      "cell_value": "X (every 30±7 days until 5 months after last dose of study treatment)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "column_position": 4,
+      "cell_value": "As clinically indicated",
+      "source_range": "4:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "column_position": 5,
+      "cell_value": "As clinically indicated",
+      "source_range": "4:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "column_position": 6,
+      "cell_value": "As clinically indicated",
+      "source_range": "4:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "column_position": 7,
+      "cell_value": "As clinically indicated",
+      "source_range": "4:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 7,
+      "cell_value": "Cycle 2 Day 1 only"
+    },
+    {
+      "table_number": 1,
+      "row_position": 15,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 15,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 5,
+      "cell_value": "As clinically indicated",
+      "source_range": "5:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 6,
+      "cell_value": "As clinically indicated",
+      "source_range": "5:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 7,
+      "cell_value": "As clinically indicated",
+      "source_range": "5:7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 7,
+      "cell_value": "X (Weeks 9, 18, 27, and then every 12 weeks)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 8,
+      "cell_value": "X (if necessary)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 10,
+      "cell_value": "X (until PD is confirmed if no PD documented & confirmed)",
+      "source_range": "10:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 11,
+      "cell_value": "X (until PD is confirmed if no PD documented & confirmed)",
+      "source_range": "10:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 3,
+      "cell_value": "X (within 14 days prior to first dose)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 7,
+      "cell_value": "X (Weeks 6, 12, 18, 24, and then every 9 weeks)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 8,
+      "cell_value": "X (if necessary)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 10,
+      "cell_value": "X (until PD is confirmed if no PD documented & confirmed)",
+      "source_range": "10:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 11,
+      "cell_value": "X (until PD is confirmed if no PD documented & confirmed)",
+      "source_range": "10:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "column_position": 7,
+      "cell_value": "X (Weeks 9, 18, 27, and then every 12 weeks)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "column_position": 8,
+      "cell_value": "X (if necessary)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "column_position": 10,
+      "cell_value": "X (until PD is confirmed if no PD documented & confirmed)",
+      "source_range": "10:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "column_position": 11,
+      "cell_value": "X (until PD is confirmed if no PD documented & confirmed)",
+      "source_range": "10:11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 5,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 6,
+      "cell_value": "X",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 2,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 3,
+      "cell_value": "X",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 4,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 5,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 6,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 7,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 8,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 9,
+      "cell_value": "X (ongoing related AEs, ongoing SAEs at EOT and new related AE/SAEs)",
+      "source_range": "9:10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 10,
+      "cell_value": "X (ongoing related AEs, ongoing SAEs at EOT and new related AE/SAEs)",
+      "source_range": "9:10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 2,
+      "cell_value": "X (within 14 days prior to first dose)",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 3,
+      "cell_value": "X (within 14 days prior to first dose)",
+      "source_range": "2:3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 4,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 5,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 6,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 7,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 8,
+      "cell_value": "Continuously throughout period",
+      "source_range": "4:8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 9,
+      "cell_value": "X (related to AE/SAEs listed above)",
+      "source_range": "9:10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 10,
+      "cell_value": "X (related to AE/SAEs listed above)",
+      "source_range": "9:10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "column_position": 11,
+      "cell_value": "X"
+    }
+  ],
+  "annotations": [
+    {
+      "annotation_marker": "a",
+      "annotation_type": "footnote",
+      "annotation_text": "A cycle is 21 days",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "column_position": 4
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "column_position": 7
+        }
+      ]
+    },
+    {
+      "annotation_marker": "b",
+      "annotation_type": "footnote",
+      "annotation_text": "Women of child bearing potential must have a negative serum pregnancy test result within 7 days prior to first IMP administration.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 9
+        }
+      ]
+    },
+    {
+      "annotation_marker": "c",
+      "annotation_type": "footnote",
+      "annotation_text": "evaluation not applicable for Cohort E",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 3,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 3,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 4,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 4,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 5,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 5,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 6,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 6,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 10,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 10,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 11,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 11,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 12,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 12,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 21,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 21,
+          "column_position": 6
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n1",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 8.2.1",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 3
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 4
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n2",
+      "annotation_type": "source_note",
+      "annotation_text": "See Section 8.2.2",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 6
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n3",
+      "annotation_type": "source_note",
+      "annotation_text": "See Section 8.2.3",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 7
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n4",
+      "annotation_type": "source_note",
+      "annotation_text": "See Section 10.3 Table 12",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 10
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n5",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 10.3",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 16
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n6",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 10.3  Before each transfusion.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 14
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n7",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 8.1",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 18
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 19
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 20
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n8",
+      "annotation_type": "footnote",
+      "annotation_text": "Informed consent may be signed prior to D -28.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 1
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n9",
+      "annotation_type": "source_note",
+      "annotation_text": "See Pharmacokinetics and immunogenicity Flow Chart",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 25
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 26
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n10",
+      "annotation_type": "source_note",
+      "annotation_text": "See Biomarker Flow Chart",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 27
+        }
+      ]
+    }
+  ]
+};
+    
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    
+    function renderJson(data, indent, isLast) {
+        const comma = isLast ? '' : '<span class="json-comma">,</span>';
+        if (data === null) return `<span class="json-null">null</span>${comma}`;
+        if (typeof data === 'boolean') return `<span class="json-boolean">${data}</span>${comma}`;
+        if (typeof data === 'number') return `<span class="json-number">${data}</span>${comma}`;
+        if (typeof data === 'string') return `<span class="json-string">"${escHtml(data)}"</span>${comma}`;
+        
+        const isArray = Array.isArray(data);
+        const entries = isArray ? data.map((v, i) => [i, v]) : Object.entries(data);
+        const open = isArray ? '[' : '{';
+        const close = isArray ? ']' : '}';
+        
+        if (entries.length === 0) {
+            return `<span class="json-bracket">${open}${close}</span>${comma}`;
+        }
+        
+        const id = 'n' + Math.random().toString(36).substr(2, 8);
+        let html = `<span class="json-toggle" data-target="${id}" onclick="toggleNode(this)">`;
+        html += `<span class="json-bracket">${open}</span></span>`;
+        html += `<div class="json-content" id="${id}">`;
+        
+        entries.forEach(([key, val], i) => {
+            const last = i === entries.length - 1;
+            const keyHtml = isArray ? '' : `<span class="json-key">"${escHtml(key)}"</span>: `;
+            html += `<div class="json-line">${keyHtml}${renderJson(val, indent + 1, last)}</div>`;
+        });
+        
+        html += `</div><span class="json-ellipsis"> ${entries.length} items… </span>`;
+        html += `<span class="json-bracket">${close}</span>${comma}`;
+        return html;
+    }
+    
+    function toggleNode(el) {
+        el.classList.toggle('collapsed');
+        const target = document.getElementById(el.dataset.target);
+        target.classList.toggle('hidden');
+    }
+    
+    // Render
+    const container = document.getElementById('json-container');
+    container.innerHTML = renderJson(jsonData, 0, true);
+    
+    // Stats
+    const jsonStr = JSON.stringify(jsonData);
+    const kb = (jsonStr.length / 1024).toFixed(1);
+    document.getElementById('stats').textContent = `${kb} KB`;
+    
+    // Auto-collapse large arrays/objects at depth > 1
+    document.querySelectorAll('.json-toggle').forEach(el => {
+        const content = document.getElementById(el.dataset.target);
+        if (content && content.children.length > 20) {
+            el.classList.add('collapsed');
+            content.classList.add('hidden');
+        }
+    });
+    
+    // Search
+    const searchInput = document.getElementById('search');
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(doSearch, 200);
+    });
+    
+    function doSearch() {
+        const term = searchInput.value.trim().toLowerCase();
+        const lines = container.querySelectorAll('.json-line');
+        
+        // Clear previous highlights
+        container.querySelectorAll('.highlight').forEach(el => {
+            el.outerHTML = el.textContent;
+        });
+        lines.forEach(l => l.classList.remove('search-no-match'));
+        
+        if (!term) return;
+        
+        // Expand all first
+        container.querySelectorAll('.json-toggle.collapsed').forEach(el => {
+            el.classList.remove('collapsed');
+            document.getElementById(el.dataset.target).classList.remove('hidden');
+        });
+        
+        lines.forEach(line => {
+            const text = line.textContent.toLowerCase();
+            if (text.includes(term)) {
+                // Highlight matches in text nodes
+                const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+                const textNodes = [];
+                while (walker.nextNode()) textNodes.push(walker.currentNode);
+                textNodes.forEach(node => {
+                    const idx = node.textContent.toLowerCase().indexOf(term);
+                    if (idx >= 0) {
+                        const span = document.createElement('span');
+                        span.className = 'highlight';
+                        const range = document.createRange();
+                        range.setStart(node, idx);
+                        range.setEnd(node, idx + term.length);
+                        range.surroundContents(span);
+                    }
+                });
+            } else {
+                line.classList.add('search-no-match');
+            }
+        });
+    }
+    </script>
+</body>
+</html>
