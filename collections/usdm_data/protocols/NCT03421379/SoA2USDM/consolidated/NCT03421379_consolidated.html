@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCT03421379 - Consolidated Schedule</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1800px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-tables-label {
+            font-size: 11px;
+            color: #666;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 22px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 14px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 12px 15px; color: #444; font-size: 11px; border-bottom: 1px solid #eee; background: #f9f9f9; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top; word-wrap: break-word;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .prop-comparison th.table-col { text-align: center; min-width: 320px; }
+        .prop-comparison .track-small { font-size: 9px; font-weight: normal; color: #666; }
+        .prop-comparison .level-cell { font-weight: bold; text-align: center; width: 60px; font-size: 11px; }
+        .prop-comparison .prop-data { text-align: left; vertical-align: top; padding: 10px 12px !important; }
+        .prop-comparison .prop-empty { text-align: center; color: #ccc; background: #fafafa; font-size: 11px; }
+        .prop-cell-content { }
+        .prop-cell-content .prop-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; }
+        .prop-cell-content .prop-type { font-size: 10px; opacity: 0.85; margin-bottom: 6px; }
+        .prop-cell-content .prop-comment { font-size: 10px; opacity: 0.9; font-style: normal; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 6px; margin-top: 4px; }
+        
+        .title-full { max-width: 600px; }
+        .purpose-text { font-size: 9px; color: #666; font-style: italic; }
+        
+        .conclusion-col { min-width: 120px; text-align: center; }
+        .conclusion-cell { text-align: center; font-size: 11px; background: #fafafa; padding: 10px !important; }
+        .conc-match { color: #28a745; font-weight: bold; }
+        .conc-similar { color: #17a2b8; font-weight: bold; }
+        .conc-differ { color: #dc3545; font-weight: bold; }
+        .conc-partial { color: #fd7e14; font-weight: bold; }
+        .conc-empty { color: #ccc; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .bool { font-size: 10px; }
+        .text-full { max-width: 400px; }
+        .variations { font-size: 9px; color: #666; font-style: italic; }
+        .track-label { padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .scope-acts { color: #C65911; }
+        .scope-cols { color: #17a2b8; font-style: italic; }
+        .scope-cells { color: #538135; }
+        .scope-table { color: #999; font-style: italic; }
+        
+        .section {
+            background: white; border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .section-title {
+            color: white; padding: 12px 20px; font-size: 13px; font-weight: bold;
+            cursor: pointer; user-select: none;
+        }
+        .section-title:hover { filter: brightness(1.1); }
+        .section-title .toggle-icon { 
+            display: inline-block; transition: transform 0.2s; margin-right: 8px; 
+        }
+        .collapsible-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .collapsible-section.collapsed .grid-container { display: none; }
+        .grid-container { overflow-x: auto; padding: 10px; }
+        
+        .table-border { border-left: 3px solid #333 !important; }
+        
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        .grid-table th { background: #f0f0f0; font-weight: bold; font-size: 9px; }
+        .grid-table th.activity-header { text-align: left; }
+        
+        .frozen-col1 {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            min-width: 340px;
+            max-width: 340px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+        }
+        .frozen-col2 {
+            position: sticky;
+            left: 340px;
+            z-index: 2;
+            min-width: 60px;
+            max-width: 60px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+            text-align: center;
+        }
+        .grid-table th.frozen-col1,
+        .grid-table th.frozen-col2 {
+            z-index: 3;
+        }
+        .frozen-col2::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -6px;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+            pointer-events: none;
+        }
+        
+        .activity-name { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .activity-name.section-header { font-weight: bold; }
+        .activity-name.child { padding-left: 15px; }
+        
+        .legend {
+            background: white; border-radius: 8px; padding: 12px 20px;
+            margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-color { width: 16px; height: 12px; border-radius: 2px; border: 1px solid #ddd; }
+        .legend-section { font-weight: bold; color: #666; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT03421379</span><span class="nav-sep">›</span><span class="nav-current">Consolidated</span></div>
+        
+        <div class="nav-tables">
+            <span class="nav-tables-label">Tables:</span>
+            <span class="nav-table-list"><a href="../resolved/NCT03421379_Table_01_resolved.html" class="nav-table-btn">T1</a></span>
+        </div>
+    </nav>
+    <div class="header">
+        <h1>NCT03421379 - Consolidated Schedule of Activities</h1>
+        <div class="sub">study-schedule-consolidated v1.0 | Layer 3</div>
+        <div class="meta">1 tables | 36 activities (0% compression) | 8 columns</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+    </div>
+    
+    <div class="legend">
+        <span class="legend-section">Activities:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#d4edda;"></div>Multi-table exact</div>
+        <div class="legend-item"><div class="legend-color" style="background:#cce5ff;"></div>Multi-table fuzzy</div>
+        <div class="legend-item"><div class="legend-color" style="background:#e1bee7;"></div>Cross-parent</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f0f0f0;"></div>Single table</div>
+        <span class="legend-section">|</span>
+        <span class="legend-section">Cells:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#BDD7EE;"></div>Common</div>
+        
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
+            <span class="comp-desc">Process information</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-07-12T17:19:37.167511+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">36</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">36</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 36</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Source Tables</span>
+            <span class="comp-desc">1 tables</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>table</th><th>type</th><th>track</th><th>title / purpose</th><th>acts</th><th>cols</th><th>props</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">T1</td>
+            <td class="type">main_soa</td>
+            <td></td>
+            <td class="title-full">Study Schedule Protocol I8R-JE-IGBJ<br/><span class='purpose-text'>Main schedule of activities for a two-period crossover clin-pharm study: Screening, Period 1 (Day -1 / Day 1), Wash out, Period 2 (Day -1 / Day 1), Follow-up/ED, and Additional Follow-up for TE ADA.</span></td>
+            <td class="trace">36</td>
+            <td class="trace">8</td>
+            <td class="trace">2</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Activities</span>
+            <span class="comp-desc">36 activities</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>header</th>
+                </tr></thead>
+                <tbody><tr style="background: #f0f0f0;">
+            <td class="id">xact-001</td>
+            <td class="text-full">Clinical Assessments</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-002</td>
+            <td class="text-full">Informed Consent</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-003</td>
+            <td class="text-full">Randomization</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-004</td>
+            <td class="text-full">Admission to CRU</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-005</td>
+            <td class="text-full">Discharge from CRU</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-006</td>
+            <td class="text-full">Medical History</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-007</td>
+            <td class="text-full">Collect Pre-existing Conditions and Adverse Events</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-008</td>
+            <td class="text-full">Physical Exam</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-009</td>
+            <td class="text-full">Height and Weight</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-010</td>
+            <td class="text-full">Collect Hypoglycemic Events</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-011</td>
+            <td class="text-full">Collect Concomitant Medications</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-012</td>
+            <td class="text-full">Meal</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-013</td>
+            <td class="text-full">Insulin infusion to Induce Hypoglycemia</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-014</td>
+            <td class="text-full">Bedside PG Monitoring for Safety</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-015</td>
+            <td class="text-full">Study Treatment Administration</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-016</td>
+            <td class="text-full">Injection-Site Assessment</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-017</td>
+            <td class="text-full">Nasal Inspection</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-018</td>
+            <td class="text-full">Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-019</td>
+            <td class="text-full">Single 12-lead ECG (Local)</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-020</td>
+            <td class="text-full">Triplicate 12-lead ECG (Central)</td>
+            <td class="trace">Clinical Assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-021</td>
+            <td class="text-full">Laboratory Tests</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-022</td>
+            <td class="text-full">Clinical Serology Tests</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-023</td>
+            <td class="text-full">Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-024</td>
+            <td class="text-full">HbA1c</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-025</td>
+            <td class="text-full">Pregnancy Test (Female patients of childbearing potential only)</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-026</td>
+            <td class="text-full">FSH (Female patients only)</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-027</td>
+            <td class="text-full">Ethanol Testing</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-028</td>
+            <td class="text-full">Urine Drug Screen</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-029</td>
+            <td class="text-full">PK (Glucagon)</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-030</td>
+            <td class="text-full">Plasma Glucose for PD</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-031</td>
+            <td class="text-full">Genetic Sample (Stored)</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-032</td>
+            <td class="text-full">Anti-glucagon Antibodies</td>
+            <td class="trace">Laboratory Tests</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-033</td>
+            <td class="text-full">Health Outcome Instruments</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-034</td>
+            <td class="text-full">Clarke Hypoglycemia Awareness Survey</td>
+            <td class="trace">Health Outcome Instruments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-035</td>
+            <td class="text-full">Nasal and Non-nasal Score Questionnaire</td>
+            <td class="trace">Health Outcome Instruments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-036</td>
+            <td class="text-full">Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia</td>
+            <td class="trace">Health Outcome Instruments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Annotations</span>
+            <span class="comp-desc">27 annotations (0% dedup from 27)</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (25)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #fff;">
+                <td class="id">xannot-001</td>
+                <td class="trace">T1:c1</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Admission can be rescheduled if PG level is not 90 to 250 mg/dL on Day 1.">Admission can be rescheduled if PG level is not 90 to 250 mg/dL on Day 1.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Admission to CRU</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-002</td>
+                <td class="trace">T1:c2</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Patient may be discharged 6 hours after glucagon administration. A patient may remain inpatient at the CRU at the discretion of the investigator.">Patient may be discharged 6 hours after glucagon administration. A patient may remain inpatient at the CRU at the dis...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Discharge from CRU</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-003</td>
+                <td class="trace">T1:c3</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="After screening, medical assessment only performed to include medical review and targeted examination, as appropriate.">After screening, medical assessment only performed to include medical review and targeted examination, as appropriate.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Physical Exam</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-004</td>
+                <td class="trace">T1:c4</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Height is at screening only. Weight on Day 1 will be collected before the start of the procedure to induce hypoglycemia.">Height is at screening only. Weight on Day 1 will be collected before the start of the procedure to induce hypoglycemia.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Height and Weight</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-006</td>
+                <td class="trace">T1:c6</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Review patients&#x27; insulin regimens to confirm acceptability to undergo the procedure to induce hypoglycemia.">Review patients&#x27; insulin regimens to confirm acceptability to undergo the procedure to induce hypoglycemia.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Collect Concomitant Medications</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-007</td>
+                <td class="trace">T1:c7</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="After completion of all PK sampling, patients will be provided a carbohydrate-rich meal. The investigator will ensure the patient&#x27;s PG is stable. A prandial insulin dose will be administered if needed.">After completion of all PK sampling, patients will be provided a carbohydrate-rich meal. The investigator will ensure...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Meal</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-008</td>
+                <td class="trace">T1:c8</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Procedures in Period 2 will occur at approximately the same time as those in Period 1. Insulin infusion is stopped once bedside PG is &lt;60 mg/dL.">Procedures in Period 2 will occur at approximately the same time as those in Period 1. Insulin infusion is stopped on...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Insulin infusion to Induce Hypoglycemia</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-009</td>
+                <td class="trace">T1:c9</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Samples will be collected during the hypoglycemia induction procedure and post study treatment (up to 120 mins). Bedside PG monitoring will be conducted no more than 10 minutes apart while bedside PG is ≥90 mg/dL and no more than 5 minutes apart when bedside PG is &lt;90 mg/dL.">Samples will be collected during the hypoglycemia induction procedure and post study treatment (up to 120 mins). Beds...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Bedside PG Monitoring for Safety</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-010</td>
+                <td class="trace">T1:c10</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Once bedside PG reaches &lt;60 mg/dL, the insulin infusion is stopped and approximately 5 minutes later study drug is administered. Indicates Time = 0 min.">Once bedside PG reaches &lt;60 mg/dL, the insulin infusion is stopped and approximately 5 minutes later study drug is ad...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Study Treatment Administration</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-011</td>
+                <td class="trace">T1:c11</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Injection-site assessment for IMG only.">Injection-site assessment for IMG only.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Injection-Site Assessment</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-012</td>
+                <td class="trace">T1:c12</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Nasal inspection both for IMG and LY900018.">Nasal inspection both for IMG and LY900018.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Nasal Inspection</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-013</td>
+                <td class="trace">T1:c13</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Time points may be added for each period if warranted and agreed upon between Lilly and the investigator. Predose time point will be between insulin infusion stop and study treatment.">Time points may be added for each period if warranted and agreed upon between Lilly and the investigator. Predose tim...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-014</td>
+                <td class="trace">T1:c14</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Time points may be added for Period 1 and Period 2 if warranted and agreed upon between Lilly and the investigator. Predose time point will be between insulin infusion stop and study treatment.">Time points may be added for Period 1 and Period 2 if warranted and agreed upon between Lilly and the investigator. P...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Triplicate 12-lead ECG (Central)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-016</td>
+                <td class="trace">T1:c16</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="See Appendix 2, Clinical Laboratory Tests, for details. Patients do not need to fast for samples at screening or follow-up. At Periods 1 and 2, samples should be collected from patients who have fasted at least 8 hours before any study procedures.">See Appendix 2, Clinical Laboratory Tests, for details. Patients do not need to fast for samples at screening or foll...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-017</td>
+                <td class="trace">T1:c17</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Serum pregnancy test will be performed at screening. Urine pregnancy test will be performed at every admission period and follow-up visit if applicable.">Serum pregnancy test will be performed at screening. Urine pregnancy test will be performed at every admission period...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Pregnancy Test (Female patients of childbearing potential only)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-018</td>
+                <td class="trace">T1:c18</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="When needed to confirm postmenopausal status.">When needed to confirm postmenopausal status.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">FSH (Female patients only)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-019</td>
+                <td class="trace">T1:c19</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Additional tests can be done at the discretion of the investigator.">Additional tests can be done at the discretion of the investigator.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Ethanol Testing | Urine Drug Screen</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-020</td>
+                <td class="trace">T1:c20</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Sampling times are relative to the time of study treatment administration (0 min). Predose time point will be between insulin infusion stop and study treatment.">Sampling times are relative to the time of study treatment administration (0 min). Predose time point will be between...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">PK (Glucagon)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-021</td>
+                <td class="trace">T1:c21</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="-5 mins = stop insulin infusion. Sampling times are relative to the time of study treatment administration (0 min). Predose time point will be between insulin infusion stop and study treatment.">-5 mins = stop insulin infusion. Sampling times are relative to the time of study treatment administration (0 min). P...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Plasma Glucose for PD</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-022</td>
+                <td class="trace">T1:c22</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Single sample for pharmacogenetic analysis taken prior to/on Period 1 Day -1.">Single sample for pharmacogenetic analysis taken prior to/on Period 1 Day -1.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Genetic Sample (Stored)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-023</td>
+                <td class="trace">T1:c23</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="In the event of drug hypersensitivity reactions (immediate or non-immediate), samples will be collected as close to event onset as possible, at event resolution, and 30 days following the event. Patients with TE ADA at follow-up/ED will undergo additional follow-up. Refer to Section 9.7.1 for details.">In the event of drug hypersensitivity reactions (immediate or non-immediate), samples will be collected as close to e...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Anti-glucagon Antibodies</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-024</td>
+                <td class="trace">T1:c24</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Sampling times are relative to the time of study treatment administration (0 min). Questionnaire will be collected in both LY900018 and IMG treatment groups in both periods.">Sampling times are relative to the time of study treatment administration (0 min). Questionnaire will be collected in...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Nasal and Non-nasal Score Questionnaire</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-025</td>
+                <td class="trace">T1:c25</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Sampling times are relative to the time of study treatment administration (0 min). During hypoglycemia induction will be when PG ≤75 mg/dL. Predose time point will be between insulin infusion stop and study treatment.">Sampling times are relative to the time of study treatment administration (0 min). During hypoglycemia induction will...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-026</td>
+                <td class="trace">T1:a</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Samples for immunogenicity, should be collected every 12 weeks (84±7 days) until the titer returns to baseline (ie, returns to within a single 2-fold dilution of the baseline titer) or until 1 year after the last dose of study treatment. A time-matched PK (glucagon) sample may be collected at the follow-up immunogenicity assessment(s) if warranted and agreed upon between both the investigator and sponsor.">Samples for immunogenicity, should be collected every 12 weeks (84±7 days) until the titer returns to baseline (ie, r...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Clinical Assessments</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-027</td>
+                <td class="trace">T1:note1</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="If multiple procedures take place at the same time point, the following order of the procedure should be used: ECG, vital signs, and venipuncture. Plasma glucose sample should be collected as close as possible of protocol-specified time point.">If multiple procedures take place at the same time point, the following order of the procedure should be used: ECG, v...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Informed Consent</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #BF8F00;">Source Note (2)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #fff;">
+                <td class="id">xannot-005</td>
+                <td class="trace">T1:c5</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Refer to Section 9.5.5.1.">Refer to Section 9.5.5.1.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Collect Hypoglycemic Events</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-015</td>
+                <td class="trace">T1:c15</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="See Appendix 2, Clinical Laboratory Tests, for details.">See Appendix 2, Clinical Laboratory Tests, for details.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Clinical Serology Tests | HbA1c</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="section collapsible-section">
+        <div class="section-title" style="background: #1F4788;" onclick="toggleGrid(this)">
+            <span class="toggle-icon">▼</span> Main Schedule (8 columns)
+        </div>
+        <div class="grid-container">
+            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th></tr><tr><th class="frozen-col1" style="background: #375623; color: white; text-align: left; font-size: 9px;">Period<br/><span style="font-size: 8px; opacity: 0.8;">[epoch] L1</span></th><th class="frozen-col2" style="background: #375623;"></th><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Screening</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Wash out</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Follow-up/ED</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Additional Follow-up for TE ADA</td></tr><tr><th class="frozen-col1" style="background: #548235; color: white; text-align: left; font-size: 9px;">Study Day<br/><span style="font-size: 8px; opacity: 0.8;">[study_day] L2</span></th><th class="frozen-col2" style="background: #548235;"></th><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Days -28 to -2</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Day -1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Day 1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">3 to 14 days</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Day -1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Day 1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Within 28±2 days after last study treatment</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Clinical Assessments">Clinical Assessments</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Informed Consent">Informed Consent</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Randomization">Randomization</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Admission to CRU">Admission to CRU</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Discharge from CRU">Discharge from CRU</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Medical History">Medical History</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Collect Pre-existing Conditions and Adverse Events">Collect Pre-existing Conditions and Adverse Events</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Physical Exam">Physical Exam</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">240 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">240 min</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Height and Weight">Height and Weight</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Collect Hypoglycemic Events">Collect Hypoglycemic Events</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Collect Concomitant Medications">Collect Concomitant Medications</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Meal">Meal</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Insulin infusion to Induce Hypoglycemia">Insulin infusion to Induce Hypoglycemia</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Bedside PG Monitoring for Safety">Bedside PG Monitoring for Safety</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Study Treatment Administration">Study Treatment Administration</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Injection-Site Assessment">Injection-Site Assessment</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, 90 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, 90 min</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Nasal Inspection">Nasal Inspection</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, 90 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, 90 min</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)">Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Single 12-lead ECG (Local)">Single 12-lead ECG (Local)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Clinical Assessments::Triplicate 12-lead ECG (Central)">Triplicate 12-lead ECG (Central)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction (30 and 15 min prior to insulin infusion), Predose, 15, 30, 60, 120, 240 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction (30 and 15 min prior to insulin infusion), Predose, 15, 30, 60, 120, 240 min</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Laboratory Tests">Laboratory Tests</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Clinical Serology Tests">Clinical Serology Tests</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)">Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::HbA1c">HbA1c</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Pregnancy Test (Female patients of childbearing potential only)">Pregnancy Test (Female patients of childbearing potential only)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::FSH (Female patients only)">FSH (Female patients only)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Ethanol Testing">Ethanol Testing</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Urine Drug Screen">Urine Drug Screen</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::PK (Glucagon)">PK (Glucagon)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Plasma Glucose for PD">Plasma Glucose for PD</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, -5, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, -5, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Genetic Sample (Stored)">Genetic Sample (Stored)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Laboratory Tests::Anti-glucagon Antibodies">Anti-glucagon Antibodies</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Health Outcome Instruments">Health Outcome Instruments</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Health Outcome Instruments::Clarke Hypoglycemia Awareness Survey">Clarke Hypoglycemia Awareness Survey</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Health Outcome Instruments::Nasal and Non-nasal Score Questionnaire">Nasal and Non-nasal Score Questionnaire</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, 15, 30, 60, 120 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, 15, 30, 60, 120 min</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Health Outcome Instruments::Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia">Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, During hypoglycemia induction, Predose, 15, 30, 60, 120 min</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">Pre-hypoglycemia induction, During hypoglycemia induction, Predose, 15, 30, 60, 120 min</td><td class=""></td><td class=""></td></tr></table>
+        </div>
+    </div>
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function toggleGrid(title) {
+            const section = title.closest('.collapsible-section');
+            section.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with component sections collapsed, grids expanded
+        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+    </script>
+</body>
+</html>

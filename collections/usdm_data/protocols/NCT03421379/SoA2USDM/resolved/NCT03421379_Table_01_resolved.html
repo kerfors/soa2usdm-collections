@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-001 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT03421379</span><span class="nav-sep">›</span><span class="nav-current">Table 1</span></div>
+        
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 1: Study Schedule Protocol I8R-JE-IGBJ</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | main_soa</div>
+        <div class="meta">2 properties | 36 activities | 8 columns | 27 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT03421379_Table_01_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T17:16:25+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;JSON v3.0.2 single-pass)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT03421379_soa.pdf [protocol] vI8R-JE-IGBJ(a) Clinical Pharmacology Protocol (LY900018), Amendment (a), Approval Date 05-Dec-2017</td></tr><tr><td class="field">extraction_notes</td><td>Main SoA (Section 2, &#x27;Study Schedule Protocol I8R-JE-IGBJ&#x27;), document pages 11-18. Single logical table with the two-row header repeated on each page; modeled as one main_soa table, header encoded once. Comments column (source physical col 10) excluded from the schedule grid and captured as synthesized annotations c1-c25 (footnotes; c5 and c15 are cross-reference source_notes). Dedup-by-text: c15 (See Appendix 2 ... for details.) links rows 22+24; c19 (Additional tests ... investigator.) links rows 27+28. Header footnote &#x27;a&#x27; sits on the &#x27;Additional Follow-up for TE ADA&#x27; epoch cell (row 1 col 9). Table-wide procedural Note captured as synthesized marker note1 linked table-scoped to the timing property row. Crossover design: many cells carry post-dose timepoint lists (relative to study-treatment administration, 0 min) rather than X. Abbreviations block (CRU, ECG, ED, FSH, HbA1c, IMG, min, PD, PG, PK, TE ADA) NOT captured as annotations (no in-grid markers; would be orphans) - consistent with prior extractions; flagged for review.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #fd7e14; padding: 2px 8px; border-radius: 3px;">resolved_with_warnings</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T17:19:37.157251+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT03421379_Table_01_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">warnings</td><td class="status-warn">⚠ Resolved annotation annot-027 (&#x27;note1&#x27;) has no referenced elements — orphan: If multiple procedures take place at the same time...<br/>⚠ Annotation summary: 1 of 27 annotations have no referenced elements (will be orphans in consolidation)</td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved_with_warnings</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Study Schedule Protocol I8R-JE-IGBJ</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-001</td></tr><tr><td class="field">table_number</td><td>1</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #1F4788;">main_soa</span></td></tr><tr><td class="field">table_title</td><td>Study Schedule Protocol I8R-JE-IGBJ</td></tr><tr><td class="field">table_purpose</td><td>Main schedule of activities for a two-period crossover clin-pharm study: Screening, Period 1 (Day -1 / Day 1), Wash out, Period 2 (Day -1 / Day 1), Follow-up/ED, and Additional Follow-up for TE ADA.</td></tr><tr><td class="field">pages</td><td>11 – 18</td></tr><tr><td class="field">dimensions</td><td class="trace">8 cols | 36 rows | 2 header | 36 activity</td></tr><tr><td class="field">notes</td><td>Section 2. Single logical table with the two-row header repeated on each of document pages 11-18; modeled as one main_soa table. Comments column (source physical col 10) excluded from grid and captured as annotations. Data columns are positions 2-9.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">2 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Period <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">epoch</td>
+            <td class="comment">Level-1 top phase/period row: Screening, Period 1, Wash out, Period 2, Follow-up/ED, Additional Follow-up for TE ADA. Classified &#x27;epoch&#x27; as the topmost column-distinguishing row; note it mixes true epochs (Screening, Wash out, Follow-up) with the two crossover treatment periods (Period 1, Period 2). Label cell empty; name synthesized. Marker &#x27;a&#x27; rides the &#x27;Additional Follow-up for TE ADA&#x27; cell (col 9).</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Study Day <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">study_day</td>
+            <td class="comment">Level-2 per-column timing: Days -28 to -2 (screening), Day -1 / Day 1 (each period), 3 to 14 days (washout duration), Within 28+/-2 days after last study treatment (follow-up window). Row mixes study-day ranges and relative windows; classified &#x27;study_day&#x27;. Col-1 label cell literally reads &#x27;Procedure&#x27; (the activity-column header spanning both header rows), so the timing-row name is synthesized.</td>
+            <td class="trace">↑prop-001</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">36 total (3 headers, 33 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FBE5D6;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Clinical Assessments</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Informed Consent</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Randomization</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Admission to CRU</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c1</span> → annot-001</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Discharge from CRU</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c2</span> → annot-002</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Medical History</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Collect Pre-existing Conditions and Adverse Events</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Physical Exam</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c3</span> → annot-003</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Height and Weight</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c4</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Collect Hypoglycemic Events</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c5</span> → annot-005</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Collect Concomitant Medications</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c6</span> → annot-006</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Meal</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c7</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Insulin infusion to Induce Hypoglycemia</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c8</span> → annot-008</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Bedside PG Monitoring for Safety</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c9</span> → annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Study Treatment Administration</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c10</span> → annot-010</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Injection-Site Assessment</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c11</span> → annot-011</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-017</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Nasal Inspection</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c12</span> → annot-012</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-018</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c13</span> → annot-013</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-019</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Single 12-lead ECG (Local)</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-020</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Triplicate 12-lead ECG (Central)</td>
+            <td><span class="trace">Clinical Assessments</span></td>
+            <td class="trace"><span class="marker">c14</span> → annot-014</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-021</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Laboratory Tests</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-022</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Clinical Serology Tests</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c15</span> → annot-015</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-023</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c16</span> → annot-016</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-024</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;HbA1c</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c15</span> → annot-015</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-025</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Pregnancy Test (Female patients of childbearing potential only)</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c17</span> → annot-017</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-026</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;FSH (Female patients only)</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c18</span> → annot-018</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-027</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Ethanol Testing</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c19</span> → annot-019</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-028</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Urine Drug Screen</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c19</span> → annot-019</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-029</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;PK (Glucagon)</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c20</span> → annot-020</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-030</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Plasma Glucose for PD</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c21</span> → annot-021</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-031</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Genetic Sample (Stored)</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c22</span> → annot-022</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-032</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Anti-glucagon Antibodies</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">c23</span> → annot-023</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-033</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Health Outcome Instruments</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-034</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Clarke Hypoglycemia Awareness Survey</td>
+            <td><span class="trace">Health Outcome Instruments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-035</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Nasal and Non-nasal Score Questionnaire</td>
+            <td><span class="trace">Health Outcome Instruments</span></td>
+            <td class="trace"><span class="marker">c24</span> → annot-024</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-036</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia</td>
+            <td><span class="trace">Health Outcome Instruments</span></td>
+            <td class="trace"><span class="marker">c25</span> → annot-025</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">27 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (25)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">c1</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Admission can be rescheduled if PG level is not 90 to 250 mg/dL on Day 1.">Admission can be rescheduled if PG level is not 90 to 250 mg/dL on Day 1.</td>
+                <td class="trace">acts: act-004</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">c2</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Patient may be discharged 6 hours after glucagon administration. A patient may remain inpatient at the CRU at the discretion of the investigator.">Patient may be discharged 6 hours after glucagon administration. A patient may remain inpatient a...</td>
+                <td class="trace">acts: act-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c3</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="After screening, medical assessment only performed to include medical review and targeted examination, as appropriate.">After screening, medical assessment only performed to include medical review and targeted examina...</td>
+                <td class="trace">acts: act-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">c4</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Height is at screening only. Weight on Day 1 will be collected before the start of the procedure to induce hypoglycemia.">Height is at screening only. Weight on Day 1 will be collected before the start of the procedure ...</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">c6</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Review patients&#x27; insulin regimens to confirm acceptability to undergo the procedure to induce hypoglycemia.">Review patients&#x27; insulin regimens to confirm acceptability to undergo the procedure to induce hyp...</td>
+                <td class="trace">acts: act-011</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">c7</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="After completion of all PK sampling, patients will be provided a carbohydrate-rich meal. The investigator will ensure the patient&#x27;s PG is stable. A prandial insulin dose will be administered if needed.">After completion of all PK sampling, patients will be provided a carbohydrate-rich meal. The inve...</td>
+                <td class="trace">acts: act-012</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">c8</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Procedures in Period 2 will occur at approximately the same time as those in Period 1. Insulin infusion is stopped once bedside PG is &lt;60 mg/dL.">Procedures in Period 2 will occur at approximately the same time as those in Period 1. Insulin in...</td>
+                <td class="trace">acts: act-013</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">c9</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Samples will be collected during the hypoglycemia induction procedure and post study treatment (up to 120 mins). Bedside PG monitoring will be conducted no more than 10 minutes apart while bedside PG is ≥90 mg/dL and no more than 5 minutes apart when bedside PG is &lt;90 mg/dL.">Samples will be collected during the hypoglycemia induction procedure and post study treatment (u...</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">c10</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Once bedside PG reaches &lt;60 mg/dL, the insulin infusion is stopped and approximately 5 minutes later study drug is administered. Indicates Time = 0 min.">Once bedside PG reaches &lt;60 mg/dL, the insulin infusion is stopped and approximately 5 minutes la...</td>
+                <td class="trace">acts: act-015</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-011</td>
+                <td class="marker-cell"><span class="marker">c11</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Injection-site assessment for IMG only.">Injection-site assessment for IMG only.</td>
+                <td class="trace">acts: act-016</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-012</td>
+                <td class="marker-cell"><span class="marker">c12</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Nasal inspection both for IMG and LY900018.">Nasal inspection both for IMG and LY900018.</td>
+                <td class="trace">acts: act-017</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-013</td>
+                <td class="marker-cell"><span class="marker">c13</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Time points may be added for each period if warranted and agreed upon between Lilly and the investigator. Predose time point will be between insulin infusion stop and study treatment.">Time points may be added for each period if warranted and agreed upon between Lilly and the inves...</td>
+                <td class="trace">acts: act-018</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-014</td>
+                <td class="marker-cell"><span class="marker">c14</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Time points may be added for Period 1 and Period 2 if warranted and agreed upon between Lilly and the investigator. Predose time point will be between insulin infusion stop and study treatment.">Time points may be added for Period 1 and Period 2 if warranted and agreed upon between Lilly and...</td>
+                <td class="trace">acts: act-020</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-016</td>
+                <td class="marker-cell"><span class="marker">c16</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2, Clinical Laboratory Tests, for details. Patients do not need to fast for samples at screening or follow-up. At Periods 1 and 2, samples should be collected from patients who have fasted at least 8 hours before any study procedures.">See Appendix 2, Clinical Laboratory Tests, for details. Patients do not need to fast for samples ...</td>
+                <td class="trace">acts: act-023</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-017</td>
+                <td class="marker-cell"><span class="marker">c17</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Serum pregnancy test will be performed at screening. Urine pregnancy test will be performed at every admission period and follow-up visit if applicable.">Serum pregnancy test will be performed at screening. Urine pregnancy test will be performed at ev...</td>
+                <td class="trace">acts: act-025</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-018</td>
+                <td class="marker-cell"><span class="marker">c18</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="When needed to confirm postmenopausal status.">When needed to confirm postmenopausal status.</td>
+                <td class="trace">acts: act-026</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-019</td>
+                <td class="marker-cell"><span class="marker">c19</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Additional tests can be done at the discretion of the investigator.">Additional tests can be done at the discretion of the investigator.</td>
+                <td class="trace">acts: act-027, act-028</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-020</td>
+                <td class="marker-cell"><span class="marker">c20</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Sampling times are relative to the time of study treatment administration (0 min). Predose time point will be between insulin infusion stop and study treatment.">Sampling times are relative to the time of study treatment administration (0 min). Predose time p...</td>
+                <td class="trace">acts: act-029</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-021</td>
+                <td class="marker-cell"><span class="marker">c21</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="-5 mins = stop insulin infusion. Sampling times are relative to the time of study treatment administration (0 min). Predose time point will be between insulin infusion stop and study treatment.">-5 mins = stop insulin infusion. Sampling times are relative to the time of study treatment admin...</td>
+                <td class="trace">acts: act-030</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-022</td>
+                <td class="marker-cell"><span class="marker">c22</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Single sample for pharmacogenetic analysis taken prior to/on Period 1 Day -1.">Single sample for pharmacogenetic analysis taken prior to/on Period 1 Day -1.</td>
+                <td class="trace">acts: act-031</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-023</td>
+                <td class="marker-cell"><span class="marker">c23</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="In the event of drug hypersensitivity reactions (immediate or non-immediate), samples will be collected as close to event onset as possible, at event resolution, and 30 days following the event. Patients with TE ADA at follow-up/ED will undergo additional follow-up. Refer to Section 9.7.1 for details.">In the event of drug hypersensitivity reactions (immediate or non-immediate), samples will be col...</td>
+                <td class="trace">acts: act-032</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-024</td>
+                <td class="marker-cell"><span class="marker">c24</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Sampling times are relative to the time of study treatment administration (0 min). Questionnaire will be collected in both LY900018 and IMG treatment groups in both periods.">Sampling times are relative to the time of study treatment administration (0 min). Questionnaire ...</td>
+                <td class="trace">acts: act-035</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-025</td>
+                <td class="marker-cell"><span class="marker">c25</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Sampling times are relative to the time of study treatment administration (0 min). During hypoglycemia induction will be when PG ≤75 mg/dL. Predose time point will be between insulin infusion stop and study treatment.">Sampling times are relative to the time of study treatment administration (0 min). During hypogly...</td>
+                <td class="trace">acts: act-036</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-026</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Samples for immunogenicity, should be collected every 12 weeks (84±7 days) until the titer returns to baseline (ie, returns to within a single 2-fold dilution of the baseline titer) or until 1 year after the last dose of study treatment. A time-matched PK (glucagon) sample may be collected at the follow-up immunogenicity assessment(s) if warranted and agreed upon between both the investigator and sponsor.">Samples for immunogenicity, should be collected every 12 weeks (84±7 days) until the titer return...</td>
+                <td class="trace">cols: col-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-027</td>
+                <td class="marker-cell"><span class="marker">note1</span></td>
+                <td class="type">table</td>
+                <td class="text-full" title="If multiple procedures take place at the same time point, the following order of the procedure should be used: ECG, vital signs, and venipuncture. Plasma glucose sample should be collected as close as possible of protocol-specified time point.">If multiple procedures take place at the same time point, the following order of the procedure sh...</td>
+                <td class="trace">—</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #BF8F00;">Source Note (2)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">c5</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Refer to Section 9.5.5.1.">Refer to Section 9.5.5.1.</td>
+                <td class="trace">acts: act-010</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-015</td>
+                <td class="marker-cell"><span class="marker">c15</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2, Clinical Laboratory Tests, for details.">See Appendix 2, Clinical Laboratory Tests, for details.</td>
+                <td class="trace">acts: act-022, act-024</td>
+                <td class="trace">2 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">36 activities × 8 columns (80 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Screening / Days -28 to -2">col-002</th><th class="col-header" title="Period 1 / Day -1">col-003</th><th class="col-header" title="Period 1 / Day 1">col-004</th><th class="col-header" title="Wash out / 3 to 14 days">col-005</th><th class="col-header" title="Period 2 / Day -1">col-006</th><th class="col-header" title="Period 2 / Day 1">col-007</th><th class="col-header" title="Follow-up/ED / Within 28±2 days after last study treatment">col-008</th><th class="col-header" title="Additional Follow-up for TE ADA">col-009</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Period<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Screening</td><td class="prop-cell" style="background: #375623; color: white;">Period 1</td><td class="prop-cell" style="background: #375623; color: white;">Period 1</td><td class="prop-cell" style="background: #375623; color: white;">Wash out</td><td class="prop-cell" style="background: #375623; color: white;">Period 2</td><td class="prop-cell" style="background: #375623; color: white;">Period 2</td><td class="prop-cell" style="background: #375623; color: white;">Follow-up/ED</td><td class="prop-cell" style="background: #375623; color: white;">Additional Follow-up for TE ADA</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Study Day<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">Days -28 to -2</td><td class="prop-cell" style="background: #548235; color: white;">Day -1</td><td class="prop-cell" style="background: #548235; color: white;">Day 1</td><td class="prop-cell" style="background: #548235; color: white;">3 to 14 days</td><td class="prop-cell" style="background: #548235; color: white;">Day -1</td><td class="prop-cell" style="background: #548235; color: white;">Day 1</td><td class="prop-cell" style="background: #548235; color: white;">Within 28±2 days after last study treatment</td><td class="prop-cell" style="background: #548235; color: white;"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Clinical Assessments<br/><span class="act-id">act-001</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Informed Consent<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Randomization<br/><span class="act-id">act-003</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Admission to CRU<br/><span class="act-id">act-004</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Discharge from CRU<br/><span class="act-id">act-005</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Medical History<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Collect Pre-existing Conditions and Adverse Events<br/><span class="act-id">act-007</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Physical Exam<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">240 min</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Height and Weight<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Collect Hypoglycemic Events<br/><span class="act-id">act-010</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Collect Concomitant Medications<br/><span class="act-id">act-011</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Meal<br/><span class="act-id">act-012</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Insulin infusion to Induce Hypoglycemia<br/><span class="act-id">act-013</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Bedside PG Monitoring for Safety<br/><span class="act-id">act-014</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Study Treatment Administration<br/><span class="act-id">act-015</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Injection-Site Assessment<br/><span class="act-id">act-016</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, 90 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, 90 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Nasal Inspection<br/><span class="act-id">act-017</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, 90 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, 90 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)<br/><span class="act-id">act-018</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Single 12-lead ECG (Local)<br/><span class="act-id">act-019</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Triplicate 12-lead ECG (Central)<br/><span class="act-id">act-020</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction (30 and 15 min prior to insulin infusion), Predose, 15, 30, 60, 120, 240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction (30 and 15 min prior to insulin infusion), Predose, 15, 30, 60, 120, 240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Laboratory Tests<br/><span class="act-id">act-021</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Clinical Serology Tests<br/><span class="act-id">act-022</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)<br/><span class="act-id">act-023</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;HbA1c<br/><span class="act-id">act-024</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Pregnancy Test (Female patients of childbearing potential only)<br/><span class="act-id">act-025</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;FSH (Female patients only)<br/><span class="act-id">act-026</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Ethanol Testing<br/><span class="act-id">act-027</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Urine Drug Screen<br/><span class="act-id">act-028</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;PK (Glucagon)<br/><span class="act-id">act-029</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Plasma Glucose for PD<br/><span class="act-id">act-030</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, -5, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, -5, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Genetic Sample (Stored)<br/><span class="act-id">act-031</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Anti-glucagon Antibodies<br/><span class="act-id">act-032</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Health Outcome Instruments<br/><span class="act-id">act-033</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Clarke Hypoglycemia Awareness Survey<br/><span class="act-id">act-034</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Nasal and Non-nasal Score Questionnaire<br/><span class="act-id">act-035</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, 15, 30, 60, 120 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, 15, 30, 60, 120 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia<br/><span class="act-id">act-036</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, During hypoglycemia induction, Predose, 15, 30, 60, 120 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Pre-hypoglycemia induction, During hypoglycemia induction, Predose, 15, 30, 60, 120 min</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
