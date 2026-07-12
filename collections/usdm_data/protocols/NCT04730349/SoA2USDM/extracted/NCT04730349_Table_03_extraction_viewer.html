@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT04730349 — T03 Extraction</title>
+<style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           margin: 0; padding: 20px; background: #f8f9fa; color: #333; }
+    .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .back a { color: #1F4788; text-decoration: none; font-size: 12px; }
+    .back a:hover { text-decoration: underline; }
+    .title { font-size: 16px; font-weight: 600; color: #1F4788; }
+    .raw-link { font-size: 11px; }
+    .raw-link a { color: #888; text-decoration: none; font-family: monospace; }
+    .raw-link a:hover { color: #555; text-decoration: underline; }
+    #search { padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;
+               width: 240px; margin-left: auto; }
+    #search:focus { outline: none; border-color: #2E75B6; box-shadow: 0 0 0 2px rgba(46,117,182,0.15); }
+    .stats { font-size: 11px; color: #888; }
+    
+    #json-container { background: white; border: 1px solid #e0e0e0; border-radius: 8px;
+                       padding: 20px; overflow: auto; max-height: calc(100vh - 120px);
+                       font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+                       font-size: 12px; line-height: 1.6; }
+    
+    /* Syntax highlighting */
+    .json-key { color: #881391; font-weight: 500; }
+    .json-string { color: #1a6b2c; }
+    .json-number { color: #1750eb; }
+    .json-boolean { color: #d32f2f; font-weight: 500; }
+    .json-null { color: #888; font-style: italic; }
+    .json-bracket { color: #555; }
+    
+    /* Collapsible */
+    .json-toggle { cursor: pointer; user-select: none; position: relative; }
+    .json-toggle::before { content: "▼"; display: inline-block; width: 14px; font-size: 9px;
+                            color: #aaa; transition: transform 0.15s; }
+    .json-toggle.collapsed::before { transform: rotate(-90deg); }
+    .json-toggle:hover::before { color: #1F4788; }
+    .json-content { margin-left: 20px; }
+    .json-content.hidden { display: none; }
+    .json-ellipsis { display: none; color: #aaa; font-style: italic; font-size: 11px; }
+    .json-toggle.collapsed + .json-content + .json-ellipsis { display: inline; }
+    .json-comma { color: #555; }
+    
+    /* Search highlight */
+    .highlight { background: #fff3b0; border-radius: 2px; padding: 0 1px; }
+    .search-no-match { opacity: 0.2; }
+</style>
+</head>
+<body>
+    <div class="toolbar">
+        <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+        <div class="title">NCT04730349 — T03 Extraction</div>
+        <div class="raw-link"><a href="NCT04730349_Table_03_extraction.json" download>raw json</a></div>
+        <div class="stats" id="stats"></div>
+        <input type="text" id="search" placeholder="Search keys and values…">
+    </div>
+    <div id="json-container"></div>
+    
+    <script>
+    const jsonData = {
+ "schema_name": "soa-table-extraction",
+ "schema_version": "1.0",
+ "extraction_metadata": {
+  "extracted_at": "2026-07-12T20:10:26+00:00",
+  "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.3 single-pass)",
+  "source_document": {
+   "filename": "NCT04730349_soa.pdf",
+   "document_type": "protocol",
+   "document_version": "BMS-986321 / CA045020 (19-214-27), Protocol Amendment 01, 28-Nov"
+  },
+  "extraction_status": "ready_for_resolution",
+  "extraction_notes": "Table 2-3 (Long-term Follow-up Period). main_soa; landscape. One visit header row (synthesised 'Follow-up Visit'): Safety Follow-up Visits 1-3 + Survival Follow-up. Marks from PDF coordinates. Merged text cells (As clinically indicated / See Section 9.5.1) span cols 2-5 (source_range 2:5); Lab Tests Visit-2/Visit-3 cells carry conditional text 'If toxicities are present.' as individual cell values; AE Survival cell = 'See Notes'. Footnote c is printed on the Notes-column header (Notes^c); since the Notes column is not a modelled schedule element, c is treated as table-scope (one schedule_property marker_location for traceability; marker not placed on any element). NOTE: the 'Pregnancy Test' row (X at Visits 1-3) is present in the PDF but was dropped by the markdown extraction - taken from the PDF. Notes column -> footnotes/source_notes (synthesised markers). Abbreviation list not captured."
+ },
+ "table_metadata": {
+  "table_number": 3,
+  "table_type": "main_soa",
+  "table_title": "Table 2-3: Long-term Follow-up Period (CA045020)",
+  "table_purpose": "Long-term follow-up: Safety Follow-up Visits 1-3 and Survival Follow-up (every 3 months).",
+  "page_start": 39,
+  "page_end": 42,
+  "notes": "Section 2, Table 2-3. Landscape grid, header repeated across document pages 39-42 (merged into one file). 4 schedule columns (2-5): Safety Follow-up Visits 1/2/3 and Survival Follow-up Every 3 Months; col 6 (Notes) not modelled. Merged text cells span all 4 schedule columns (source_range 2:5). Footnotes a (Visits 1-3), b (Survival), and c on the Notes-column header - modelled table-scoped since the Notes column is not a schedule element. A redaction box (CCI) sits below Pregnancy Test (doc page 40) - possible additional redacted rows."
+ },
+ "schedule_properties": [
+  {
+   "table_number": 3,
+   "row_position": 1,
+   "property_name": "Follow-up Visit",
+   "property_name_source": {
+    "row_position": 1,
+    "column_position": 1,
+    "cell_value": "",
+    "synthesized": true
+   },
+   "property_type": "visit",
+   "hierarchical_level": 1,
+   "property_comment": "Single header row of follow-up columns: Safety Follow-up Visit 1/2/3 (cols 2-4) and Survival Follow-up Every 3 Months (± 14 Days) (col 5, the survival phase). property_type=visit. Label cell (col 1) holds the activity header 'Procedure', so name synthesised. Marker a rides Visits 1/2/3; marker b rides the Survival Follow-up column."
+  }
+ ],
+ "schedule_grid": [
+  {
+   "table_number": 3,
+   "row_position": 1,
+   "column_position": 2,
+   "cell_value": "Safety Follow-up Visit 1",
+   "annotation_markers": "a"
+  },
+  {
+   "table_number": 3,
+   "row_position": 1,
+   "column_position": 3,
+   "cell_value": "Safety Follow-up Visit 2",
+   "annotation_markers": "a"
+  },
+  {
+   "table_number": 3,
+   "row_position": 1,
+   "column_position": 4,
+   "cell_value": "Safety Follow-up Visit 3",
+   "annotation_markers": "a"
+  },
+  {
+   "table_number": 3,
+   "row_position": 1,
+   "column_position": 5,
+   "cell_value": "Survival Follow-up Every 3 Months (± 14 Days)",
+   "annotation_markers": "b"
+  }
+ ],
+ "activities": [
+  {
+   "table_number": 3,
+   "row_position": 1,
+   "activity_name": "Safety Assessments",
+   "activity_name_source": {
+    "cell_text": "Safety Assessments",
+    "indentation_level": 0,
+    "text_formatting": [
+     "bold"
+    ]
+   }
+  },
+  {
+   "table_number": 3,
+   "row_position": 2,
+   "activity_name": "Vital Signs",
+   "activity_name_source": {
+    "cell_text": "Vital Signs",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n1"
+  },
+  {
+   "table_number": 3,
+   "row_position": 3,
+   "activity_name": "Performance Status",
+   "activity_name_source": {
+    "cell_text": "Performance Status",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n2"
+  },
+  {
+   "table_number": 3,
+   "row_position": 4,
+   "activity_name": "12-lead ECG",
+   "activity_name_source": {
+    "cell_text": "12-lead ECG",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n3"
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "activity_name": "Adverse Events and Serious Adverse Events (SAE) Assessment",
+   "activity_name_source": {
+    "cell_text": "Adverse Events and Serious Adverse Events (SAE) Assessment",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n4"
+  },
+  {
+   "table_number": 3,
+   "row_position": 6,
+   "activity_name": "Subsequent Medications",
+   "activity_name_source": {
+    "cell_text": "Subsequent Medications",
+    "indentation_level": 1
+   }
+  },
+  {
+   "table_number": 3,
+   "row_position": 7,
+   "activity_name": "Review of Subsequent Anti-cancer Therapy",
+   "activity_name_source": {
+    "cell_text": "Review of Subsequent Anti-cancer Therapy",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 8,
+   "activity_name": "Laboratory Tests",
+   "activity_name_source": {
+    "cell_text": "Laboratory Tests",
+    "indentation_level": 0,
+    "text_formatting": [
+     "bold"
+    ]
+   }
+  },
+  {
+   "table_number": 3,
+   "row_position": 9,
+   "activity_name": "Laboratory Tests (includes blood and urine samples)",
+   "activity_name_source": {
+    "cell_text": "Laboratory Tests (includes blood and urine samples)",
+    "indentation_level": 1
+   },
+   "annotation_markers": "s6"
+  },
+  {
+   "table_number": 3,
+   "row_position": 10,
+   "activity_name": "Pregnancy Test",
+   "activity_name_source": {
+    "cell_text": "Pregnancy Test",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n7"
+  },
+  {
+   "table_number": 3,
+   "row_position": 11,
+   "activity_name": "Efficacy Assessments",
+   "activity_name_source": {
+    "cell_text": "Efficacy Assessments",
+    "indentation_level": 0,
+    "text_formatting": [
+     "bold"
+    ]
+   }
+  },
+  {
+   "table_number": 3,
+   "row_position": 12,
+   "activity_name": "Body Imaging",
+   "activity_name_source": {
+    "cell_text": "Body Imaging",
+    "indentation_level": 1
+   },
+   "annotation_markers": "s8"
+  },
+  {
+   "table_number": 3,
+   "row_position": 13,
+   "activity_name": "Brain Imaging",
+   "activity_name_source": {
+    "cell_text": "Brain Imaging",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n9"
+  },
+  {
+   "table_number": 3,
+   "row_position": 14,
+   "activity_name": "CSF - solid tumors and leukemia",
+   "activity_name_source": {
+    "cell_text": "CSF - solid tumors and leukemia",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n10"
+  },
+  {
+   "table_number": 3,
+   "row_position": 15,
+   "activity_name": "Bone marrow aspirate - solid tumors and leukemia",
+   "activity_name_source": {
+    "cell_text": "Bone marrow aspirate - solid tumors and leukemia",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n11"
+  },
+  {
+   "table_number": 3,
+   "row_position": 16,
+   "activity_name": "Survival Status",
+   "activity_name_source": {
+    "cell_text": "Survival Status",
+    "indentation_level": 1
+   },
+   "annotation_markers": "n12"
+  },
+  {
+   "table_number": 3,
+   "row_position": 17,
+   "activity_name": "Pharmacokinetics (PK)/Immunogenicity Assessment",
+   "activity_name_source": {
+    "cell_text": "Pharmacokinetics (PK)/Immunogenicity Assessment",
+    "indentation_level": 0,
+    "text_formatting": [
+     "bold"
+    ]
+   }
+  },
+  {
+   "table_number": 3,
+   "row_position": 18,
+   "activity_name": "PK Samples",
+   "activity_name_source": {
+    "cell_text": "PK Samples",
+    "indentation_level": 1
+   }
+  },
+  {
+   "table_number": 3,
+   "row_position": 19,
+   "activity_name": "Immunogenicity Samples",
+   "activity_name_source": {
+    "cell_text": "Immunogenicity Samples",
+    "indentation_level": 1
+   }
+  }
+ ],
+ "activity_schedule": [
+  {
+   "table_number": 3,
+   "row_position": 2,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 2,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 2,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 3,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 3,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 4,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 5,
+   "cell_value": "See Notes",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 6,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 6,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 6,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 7,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 7,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 7,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 7,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 9,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 9,
+   "column_position": 3,
+   "cell_value": "If toxicities are present.",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 9,
+   "column_position": 4,
+   "cell_value": "If toxicities are present",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 10,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 10,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 10,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 12,
+   "column_position": 2,
+   "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 12,
+   "column_position": 3,
+   "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 12,
+   "column_position": 4,
+   "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 12,
+   "column_position": 5,
+   "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 13,
+   "column_position": 2,
+   "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 13,
+   "column_position": 3,
+   "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 13,
+   "column_position": 4,
+   "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 13,
+   "column_position": 5,
+   "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 14,
+   "column_position": 2,
+   "cell_value": "As clinically indicated.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 14,
+   "column_position": 3,
+   "cell_value": "As clinically indicated.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 14,
+   "column_position": 4,
+   "cell_value": "As clinically indicated.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 14,
+   "column_position": 5,
+   "cell_value": "As clinically indicated.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 15,
+   "column_position": 2,
+   "cell_value": "As clinically indicated",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 15,
+   "column_position": 3,
+   "cell_value": "As clinically indicated",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 15,
+   "column_position": 4,
+   "cell_value": "As clinically indicated",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 15,
+   "column_position": 5,
+   "cell_value": "As clinically indicated",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 16,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 16,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 16,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 16,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 18,
+   "column_position": 2,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 18,
+   "column_position": 3,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 18,
+   "column_position": 4,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 18,
+   "column_position": 5,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 19,
+   "column_position": 2,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 19,
+   "column_position": 3,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 19,
+   "column_position": 4,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  },
+  {
+   "table_number": 3,
+   "row_position": 19,
+   "column_position": 5,
+   "cell_value": "See Section 9.5.1 for further details.",
+   "source_range": "2:5"
+  }
+ ],
+ "annotations": [
+  {
+   "annotation_marker": "a",
+   "annotation_type": "footnote",
+   "annotation_text": "Participants must be followed for at least 150 days after last dose of study treatment. Follow-up Visit 1 should occur 30 days from the last dose (± 7) days or can be performed on the date of discontinuation if that date is greater than 42 days from last dose. Follow-up Visit 2 occurs approximately 100 days (± 7 days) from last dose of study drug. Follow-up Visit 3 occurs approximately 150 days (± 7 days) from last dose of study drug. All 3 follow-up visits should be conducted in person.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "column_position": 2
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "column_position": 3
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "column_position": 4
+    }
+   ]
+  },
+  {
+   "annotation_marker": "b",
+   "annotation_type": "footnote",
+   "annotation_text": "Survival follow-up visits to occur every 3 months subsequent to Follow-up Visit 3. Survival visits may be conducted in person or by telephone. Bristol-Myers Squibb may request that survival data be collected on all treated participants outside of the 3 month specified window. At the time of this request, each participant will be contacted to determine their survival status unless the participant has withdrawn consent for all contact.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "column_position": 5
+    }
+   ]
+  },
+  {
+   "annotation_marker": "c",
+   "annotation_type": "footnote",
+   "annotation_text": "Some of the assessments referred to in this section may not be captured as data in the electronic case report form. They are intended to be used as safety monitoring by the treating physician. Additional testing or assessments may be performed as clinically necessary or where required by institutional or local regulations.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n1",
+   "annotation_type": "footnote",
+   "annotation_text": "Blood pressure, heart rate, temperature.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 2
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n2",
+   "annotation_type": "footnote",
+   "annotation_text": "Lansky play score for ≤ 16 years or Karnofsky performance score for > 16 years of age (Appendix 7).",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 3
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n3",
+   "annotation_type": "footnote",
+   "annotation_text": "Participant should rest for 5 minutes prior to each ECG.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 4
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n4",
+   "annotation_type": "footnote",
+   "annotation_text": "All SAEs and non-serious AEs should be collected continuously during the treatment period and for a minimum of 150 days following discontinuation of study treatment. Participants will be followed for all SAEs, non-serious AEs of special interest (as defined in Section 9.2.8) and all AEs (SAEs and non-serious AEs) associated with confirmed or suspected SARS-CoV-2 infection until resolution, the condition stabilizes, the event is otherwise explained, the event is deemed irreversible, the participant is lost to follow-up (as defined in Section 8.3), or for suspected cases, until SARS-CoV-2 infection is ruled-out.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 5
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n5",
+   "annotation_type": "footnote",
+   "annotation_text": "Additional subsequent cancer therapy details such as regimen, setting of the regimen, line of therapy, start and end date of each regimen, best response to the regimen, and date of progression to subsequent anti-cancer therapies will be collected.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 7
+    }
+   ]
+  },
+  {
+   "annotation_marker": "s6",
+   "annotation_type": "source_note",
+   "annotation_text": "See Section 9.4.6 for the list of laboratory tests.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 9
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n7",
+   "annotation_type": "footnote",
+   "annotation_text": "Women of childbearing potential only. Serum or urine pregnancy test (minimum sensitivity equivalent units 25 IU/L or equivalent units of human chorionic gonadotropin) is required.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 10
+    }
+   ]
+  },
+  {
+   "annotation_marker": "s8",
+   "annotation_type": "source_note",
+   "annotation_text": "See Section 9.1.1 for further details.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 12
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n9",
+   "annotation_type": "footnote",
+   "annotation_text": "Except for glioma, medulloblastoma, ependymoma, and other central nervous system tumors in which an MRI is required, CT of the brain without and with contrast can be performed if MRI is contraindicated. See Section 9.1.1 for further details.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 13
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n10",
+   "annotation_type": "footnote",
+   "annotation_text": "CSF cytopathology should be obtained in any participant with a previously positive CSF as part of response assessment. See Section 9.1",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 14
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n11",
+   "annotation_type": "footnote",
+   "annotation_text": "Bone marrow aspirate should be obtained in any participant with a previously positive bone marrow aspirate as part of response assessment. See Section 9.1.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 15
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n12",
+   "annotation_type": "footnote",
+   "annotation_text": "During safety follow-up and every 3 months (clinic visit or by telephone) thereafter and during survival phase. Include documentation of subsequent chemotherapy. See Section 5.1.4.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 16
+    }
+   ]
+  }
+ ]
+};
+    
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    
+    function renderJson(data, indent, isLast) {
+        const comma = isLast ? '' : '<span class="json-comma">,</span>';
+        if (data === null) return `<span class="json-null">null</span>${comma}`;
+        if (typeof data === 'boolean') return `<span class="json-boolean">${data}</span>${comma}`;
+        if (typeof data === 'number') return `<span class="json-number">${data}</span>${comma}`;
+        if (typeof data === 'string') return `<span class="json-string">"${escHtml(data)}"</span>${comma}`;
+        
+        const isArray = Array.isArray(data);
+        const entries = isArray ? data.map((v, i) => [i, v]) : Object.entries(data);
+        const open = isArray ? '[' : '{';
+        const close = isArray ? ']' : '}';
+        
+        if (entries.length === 0) {
+            return `<span class="json-bracket">${open}${close}</span>${comma}`;
+        }
+        
+        const id = 'n' + Math.random().toString(36).substr(2, 8);
+        let html = `<span class="json-toggle" data-target="${id}" onclick="toggleNode(this)">`;
+        html += `<span class="json-bracket">${open}</span></span>`;
+        html += `<div class="json-content" id="${id}">`;
+        
+        entries.forEach(([key, val], i) => {
+            const last = i === entries.length - 1;
+            const keyHtml = isArray ? '' : `<span class="json-key">"${escHtml(key)}"</span>: `;
+            html += `<div class="json-line">${keyHtml}${renderJson(val, indent + 1, last)}</div>`;
+        });
+        
+        html += `</div><span class="json-ellipsis"> ${entries.length} items… </span>`;
+        html += `<span class="json-bracket">${close}</span>${comma}`;
+        return html;
+    }
+    
+    function toggleNode(el) {
+        el.classList.toggle('collapsed');
+        const target = document.getElementById(el.dataset.target);
+        target.classList.toggle('hidden');
+    }
+    
+    // Render
+    const container = document.getElementById('json-container');
+    container.innerHTML = renderJson(jsonData, 0, true);
+    
+    // Stats
+    const jsonStr = JSON.stringify(jsonData);
+    const kb = (jsonStr.length / 1024).toFixed(1);
+    document.getElementById('stats').textContent = `${kb} KB`;
+    
+    // Auto-collapse large arrays/objects at depth > 1
+    document.querySelectorAll('.json-toggle').forEach(el => {
+        const content = document.getElementById(el.dataset.target);
+        if (content && content.children.length > 20) {
+            el.classList.add('collapsed');
+            content.classList.add('hidden');
+        }
+    });
+    
+    // Search
+    const searchInput = document.getElementById('search');
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(doSearch, 200);
+    });
+    
+    function doSearch() {
+        const term = searchInput.value.trim().toLowerCase();
+        const lines = container.querySelectorAll('.json-line');
+        
+        // Clear previous highlights
+        container.querySelectorAll('.highlight').forEach(el => {
+            el.outerHTML = el.textContent;
+        });
+        lines.forEach(l => l.classList.remove('search-no-match'));
+        
+        if (!term) return;
+        
+        // Expand all first
+        container.querySelectorAll('.json-toggle.collapsed').forEach(el => {
+            el.classList.remove('collapsed');
+            document.getElementById(el.dataset.target).classList.remove('hidden');
+        });
+        
+        lines.forEach(line => {
+            const text = line.textContent.toLowerCase();
+            if (text.includes(term)) {
+                // Highlight matches in text nodes
+                const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+                const textNodes = [];
+                while (walker.nextNode()) textNodes.push(walker.currentNode);
+                textNodes.forEach(node => {
+                    const idx = node.textContent.toLowerCase().indexOf(term);
+                    if (idx >= 0) {
+                        const span = document.createElement('span');
+                        span.className = 'highlight';
+                        const range = document.createRange();
+                        range.setStart(node, idx);
+                        range.setEnd(node, idx + term.length);
+                        range.surroundContents(span);
+                    }
+                });
+            } else {
+                line.classList.add('search-no-match');
+            }
+        });
+    }
+    </script>
+</body>
+</html>

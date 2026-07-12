@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-003 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT04730349</span><span class="nav-sep">›</span><span class="nav-current">Table 3</span></div>
+        
+        <div class="nav-tables">
+            <a href="NCT04730349_Table_02_resolved.html" class="nav-btn">◀ T2</a>
+            <span class="nav-table-list"><a href="NCT04730349_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="NCT04730349_Table_02_resolved.html" class="nav-table-btn">T2</a> <a href="NCT04730349_Table_03_resolved.html" class="nav-table-btn current">T3</a></span>
+            <span class="nav-btn disabled">▶</span>
+        </div>
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 3: Table 2-3: Long-term Follow-up Period (CA045020)</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | main_soa</div>
+        <div class="meta">1 properties | 19 activities | 4 columns | 15 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT04730349_Table_03_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T20:10:26+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;JSON v3.0.3 single-pass)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT04730349_soa.pdf [protocol] vBMS-986321 / CA045020 (19-214-27), Protocol Amendment 01, 28-Nov</td></tr><tr><td class="field">extraction_notes</td><td>Table 2-3 (Long-term Follow-up Period). main_soa; landscape. One visit header row (synthesised &#x27;Follow-up Visit&#x27;): Safety Follow-up Visits 1-3 + Survival Follow-up. Marks from PDF coordinates. Merged text cells (As clinically indicated / See Section 9.5.1) span cols 2-5 (source_range 2:5); Lab Tests Visit-2/Visit-3 cells carry conditional text &#x27;If toxicities are present.&#x27; as individual cell values; AE Survival cell = &#x27;See Notes&#x27;. Footnote c is printed on the Notes-column header (Notes^c); since the Notes column is not a modelled schedule element, c is treated as table-scope (one schedule_property marker_location for traceability; marker not placed on any element). NOTE: the &#x27;Pregnancy Test&#x27; row (X at Visits 1-3) is present in the PDF but was dropped by the markdown extraction - taken from the PDF. Notes column -&gt; footnotes/source_notes (synthesised markers). Abbreviation list not captured.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #fd7e14; padding: 2px 8px; border-radius: 3px;">resolved_with_warnings</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T21:33:11.063726+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT04730349_Table_03_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">warnings</td><td class="status-warn">⚠ Resolved annotation annot-003 (&#x27;c&#x27;) has no referenced elements — orphan: Some of the assessments referred to in this sectio...<br/>⚠ Annotation summary: 1 of 15 annotations have no referenced elements (will be orphans in consolidation)</td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved_with_warnings</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Table 2-3: Long-term Follow-up Period (CA045020)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-003</td></tr><tr><td class="field">table_number</td><td>3</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #1F4788;">main_soa</span></td></tr><tr><td class="field">table_title</td><td>Table 2-3: Long-term Follow-up Period (CA045020)</td></tr><tr><td class="field">table_purpose</td><td>Long-term follow-up: Safety Follow-up Visits 1-3 and Survival Follow-up (every 3 months).</td></tr><tr><td class="field">pages</td><td>39 – 42</td></tr><tr><td class="field">dimensions</td><td class="trace">4 cols | 19 rows | 1 header | 19 activity</td></tr><tr><td class="field">notes</td><td>Section 2, Table 2-3. Landscape grid, header repeated across document pages 39-42 (merged into one file). 4 schedule columns (2-5): Safety Follow-up Visits 1/2/3 and Survival Follow-up Every 3 Months; col 6 (Notes) not modelled. Merged text cells span all 4 schedule columns (source_range 2:5). Footnotes a (Visits 1-3), b (Survival), and c on the Notes-column header - modelled table-scoped since the Notes column is not a schedule element. A redaction box (CCI) sits below Pregnancy Test (doc page 40) - possible additional redacted rows.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">1 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Follow-up Visit <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">visit</td>
+            <td class="comment">Single header row of follow-up columns: Safety Follow-up Visit 1/2/3 (cols 2-4) and Survival Follow-up Every 3 Months (± 14 Days) (col 5, the survival phase). property_type=visit. Label cell (col 1) holds the activity header &#x27;Procedure&#x27;, so name synthesised. Marker a rides Visits 1/2/3; marker b rides the Survival Follow-up column.</td>
+            <td class="trace">—</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">19 total (4 headers, 15 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FBE5D6;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Safety Assessments</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Vital Signs</td>
+            <td><span class="trace">Safety Assessments</span></td>
+            <td class="trace"><span class="marker">n1</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Performance Status</td>
+            <td><span class="trace">Safety Assessments</span></td>
+            <td class="trace"><span class="marker">n2</span> → annot-005</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;12-lead ECG</td>
+            <td><span class="trace">Safety Assessments</span></td>
+            <td class="trace"><span class="marker">n3</span> → annot-006</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Adverse Events and Serious Adverse Events (SAE) Assessment</td>
+            <td><span class="trace">Safety Assessments</span></td>
+            <td class="trace"><span class="marker">n4</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Subsequent Medications</td>
+            <td><span class="trace">Safety Assessments</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Review of Subsequent Anti-cancer Therapy</td>
+            <td><span class="trace">Safety Assessments</span></td>
+            <td class="trace"><span class="marker">n5</span> → annot-008</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-008</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Laboratory Tests</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Laboratory Tests (includes blood and urine samples)</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">s6</span> → annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Pregnancy Test</td>
+            <td><span class="trace">Laboratory Tests</span></td>
+            <td class="trace"><span class="marker">n7</span> → annot-010</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-011</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Efficacy Assessments</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Body Imaging</td>
+            <td><span class="trace">Efficacy Assessments</span></td>
+            <td class="trace"><span class="marker">s8</span> → annot-011</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Brain Imaging</td>
+            <td><span class="trace">Efficacy Assessments</span></td>
+            <td class="trace"><span class="marker">n9</span> → annot-012</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;CSF - solid tumors and leukemia</td>
+            <td><span class="trace">Efficacy Assessments</span></td>
+            <td class="trace"><span class="marker">n10</span> → annot-013</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Bone marrow aspirate - solid tumors and leukemia</td>
+            <td><span class="trace">Efficacy Assessments</span></td>
+            <td class="trace"><span class="marker">n11</span> → annot-014</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Survival Status</td>
+            <td><span class="trace">Efficacy Assessments</span></td>
+            <td class="trace"><span class="marker">n12</span> → annot-015</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-017</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Pharmacokinetics (PK)/Immunogenicity Assessment</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-018</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;PK Samples</td>
+            <td><span class="trace">Pharmacokinetics (PK)/Immunoge</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-019</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Immunogenicity Samples</td>
+            <td><span class="trace">Pharmacokinetics (PK)/Immunoge</span></td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">15 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (13)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Participants must be followed for at least 150 days after last dose of study treatment. Follow-up Visit 1 should occur 30 days from the last dose (± 7) days or can be performed on the date of discontinuation if that date is greater than 42 days from last dose. Follow-up Visit 2 occurs approximately 100 days (± 7 days) from last dose of study drug. Follow-up Visit 3 occurs approximately 150 days (± 7 days) from last dose of study drug. All 3 follow-up visits should be conducted in person.">Participants must be followed for at least 150 days after last dose of study treatment. Follow-up...</td>
+                <td class="trace">cols: col-002, col-003, col-004</td>
+                <td class="trace">3 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">b</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Survival follow-up visits to occur every 3 months subsequent to Follow-up Visit 3. Survival visits may be conducted in person or by telephone. Bristol-Myers Squibb may request that survival data be collected on all treated participants outside of the 3 month specified window. At the time of this request, each participant will be contacted to determine their survival status unless the participant has withdrawn consent for all contact.">Survival follow-up visits to occur every 3 months subsequent to Follow-up Visit 3. Survival visit...</td>
+                <td class="trace">cols: col-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c</span></td>
+                <td class="type">table</td>
+                <td class="text-full" title="Some of the assessments referred to in this section may not be captured as data in the electronic case report form. They are intended to be used as safety monitoring by the treating physician. Additional testing or assessments may be performed as clinically necessary or where required by institutional or local regulations.">Some of the assessments referred to in this section may not be captured as data in the electronic...</td>
+                <td class="trace">—</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">n1</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Blood pressure, heart rate, temperature.">Blood pressure, heart rate, temperature.</td>
+                <td class="trace">acts: act-002</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">n2</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Lansky play score for ≤ 16 years or Karnofsky performance score for &gt; 16 years of age (Appendix 7).">Lansky play score for ≤ 16 years or Karnofsky performance score for &gt; 16 years of age (Appendix 7).</td>
+                <td class="trace">acts: act-003</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">n3</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Participant should rest for 5 minutes prior to each ECG.">Participant should rest for 5 minutes prior to each ECG.</td>
+                <td class="trace">acts: act-004</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">n4</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="All SAEs and non-serious AEs should be collected continuously during the treatment period and for a minimum of 150 days following discontinuation of study treatment. Participants will be followed for all SAEs, non-serious AEs of special interest (as defined in Section 9.2.8) and all AEs (SAEs and non-serious AEs) associated with confirmed or suspected SARS-CoV-2 infection until resolution, the condition stabilizes, the event is otherwise explained, the event is deemed irreversible, the participant is lost to follow-up (as defined in Section 8.3), or for suspected cases, until SARS-CoV-2 infection is ruled-out.">All SAEs and non-serious AEs should be collected continuously during the treatment period and for...</td>
+                <td class="trace">acts: act-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">n5</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Additional subsequent cancer therapy details such as regimen, setting of the regimen, line of therapy, start and end date of each regimen, best response to the regimen, and date of progression to subsequent anti-cancer therapies will be collected.">Additional subsequent cancer therapy details such as regimen, setting of the regimen, line of the...</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">n7</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Women of childbearing potential only. Serum or urine pregnancy test (minimum sensitivity equivalent units 25 IU/L or equivalent units of human chorionic gonadotropin) is required.">Women of childbearing potential only. Serum or urine pregnancy test (minimum sensitivity equivale...</td>
+                <td class="trace">acts: act-010</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-012</td>
+                <td class="marker-cell"><span class="marker">n9</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Except for glioma, medulloblastoma, ependymoma, and other central nervous system tumors in which an MRI is required, CT of the brain without and with contrast can be performed if MRI is contraindicated. See Section 9.1.1 for further details.">Except for glioma, medulloblastoma, ependymoma, and other central nervous system tumors in which ...</td>
+                <td class="trace">acts: act-013</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-013</td>
+                <td class="marker-cell"><span class="marker">n10</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="CSF cytopathology should be obtained in any participant with a previously positive CSF as part of response assessment. See Section 9.1">CSF cytopathology should be obtained in any participant with a previously positive CSF as part of...</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-014</td>
+                <td class="marker-cell"><span class="marker">n11</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Bone marrow aspirate should be obtained in any participant with a previously positive bone marrow aspirate as part of response assessment. See Section 9.1.">Bone marrow aspirate should be obtained in any participant with a previously positive bone marrow...</td>
+                <td class="trace">acts: act-015</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-015</td>
+                <td class="marker-cell"><span class="marker">n12</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="During safety follow-up and every 3 months (clinic visit or by telephone) thereafter and during survival phase. Include documentation of subsequent chemotherapy. See Section 5.1.4.">During safety follow-up and every 3 months (clinic visit or by telephone) thereafter and during s...</td>
+                <td class="trace">acts: act-016</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #BF8F00;">Source Note (2)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">s6</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Section 9.4.6 for the list of laboratory tests.">See Section 9.4.6 for the list of laboratory tests.</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-011</td>
+                <td class="marker-cell"><span class="marker">s8</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Section 9.1.1 for further details.">See Section 9.1.1 for further details.</td>
+                <td class="trace">acts: act-012</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">19 activities × 4 columns (51 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Safety Follow-up Visit 1">col-002</th><th class="col-header" title="Safety Follow-up Visit 2">col-003</th><th class="col-header" title="Safety Follow-up Visit 3">col-004</th><th class="col-header" title="Survival Follow-up Every 3 Months (± 14 Days)">col-005</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Follow-up Visit<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Safety Follow-up Visit 1</td><td class="prop-cell" style="background: #375623; color: white;">Safety Follow-up Visit 2</td><td class="prop-cell" style="background: #375623; color: white;">Safety Follow-up Visit 3</td><td class="prop-cell" style="background: #375623; color: white;">Survival Follow-up Every 3 Months (± 14 Days)</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Safety Assessments<br/><span class="act-id">act-001</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Vital Signs<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Performance Status<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;12-lead ECG<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Adverse Events and Serious Adverse Events (SAE) Assessment<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Notes</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Subsequent Medications<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Review of Subsequent Anti-cancer Therapy<br/><span class="act-id">act-007</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Laboratory Tests<br/><span class="act-id">act-008</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Laboratory Tests (includes blood and urine samples)<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #E1BEE7;" title="conditional">If toxicities are present.</td><td class="schedule-cell" style="background: #E1BEE7;" title="conditional">If toxicities are present</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Pregnancy Test<br/><span class="act-id">act-010</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Efficacy Assessments<br/><span class="act-id">act-011</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Body Imaging<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.</td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.</td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.</td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Brain Imaging<br/><span class="act-id">act-013</span></td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.</td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.</td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.</td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;CSF - solid tumors and leukemia<br/><span class="act-id">act-014</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated.</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Bone marrow aspirate - solid tumors and leukemia<br/><span class="act-id">act-015</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">As clinically indicated</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Survival Status<br/><span class="act-id">act-016</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Pharmacokinetics (PK)/Immunogenicity Assessment<br/><span class="act-id">act-017</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;PK Samples<br/><span class="act-id">act-018</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Immunogenicity Samples<br/><span class="act-id">act-019</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 9.5.1 for further details.</td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
