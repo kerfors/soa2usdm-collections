@@ -1,34 +1,56 @@
-# NCT04557384 (I4T-MC-JVDU(e)) — Layer 1 Extraction Uncertainty Report
+# NCT04557384 — single-pass v3.1.0 re-extraction — uncertainty report
 
-Oncology, SC ramucirumab. Source: `NCT04557384_soa.pdf` (9 pages = doc pages 16–24).
-Extractor: Claude Opus 4.8. Status: `ready_for_resolution`.
+**Checkpoint. Pipeline not run / nothing committed.** Preview raws in scratch.
 
-## Table classification
+Protocol: Lilly I4T-MC-JVDU(e) (SC ramucirumab). **Image-only SoA** (no text layer on any of the 9 pages).
+Supersedes the prior PDF→Excel→JSON raws (which you had Excel-verified — "KL").
 
-- **Table 01 — `main_soa`.** "Screening, On-Study, and Post-Treatment Schedule of Activities", doc pp.16–22. Cycle-based grid, 15 schedule columns, 5-level stacked header (Phase → Cycle-length → Cycle → Window → Day).
-- **Table 02 — `track`, track_label = "Continued Access".** "Continued Access Schedule of Activities", doc p.23. Distinct visit structure (501-5XX, 901) → track per the repo's Continued-Access definition.
-- **Table 03 — `reference`.** "Pharmacokinetic Sampling Schedule" (§1.3.1), doc p.24. Classification confirmed with reviewer (rows are sample-collection specifications, not procedures). Excluded from the consolidated timeline; retained as a source table and referenced by the main-SoA PK/IG rows.
+## Method (§1a image-based)
+No text layer, so marks were read from the rendered images (170 dpi). Two independent passes:
+1. **Visual re-read** of all 9 pages, comparing every activity's marks against the prior raw.
+2. **Rule-line + dark-pixel detector** (vertical/horizontal grid lines → cell boundaries; near-black pixel
+   count per cell → mark present/absent), **validated cell-for-cell against the visual read on page 1**
+   (e.g. Physical examination c2,c4,c5,c6,c7,c12,c16 — exact match) before trusting it.
 
-## Method — important difference from NCT04184622
+## Result — all 3 tables confirmed, 0 corrections
+- **Table 01** `main_soa` (§1.3, pp.16–22, 7 pages): 25 activities × 15 visit columns (Screening ≤28/≤7,
+  Cycle 1–3 D1/D8/D15/D22, DX, V801). Every mark and every merged "See instructions" / "See Section 1.3.1"
+  span matched the prior raw. Grey shading = Not Applicable → empty (confirmed). Instruction-only overflow
+  rows (injection-site timepoint detail on p.20; other wrapped instruction cells) correctly **not** modelled
+  as activities.
+- **Table 02** `track`, `track_label` = "Continued Access" (p.23): 3 activities × 2 columns (Study Treatment
+  501-5XX, Follow-Up 901). Matched exactly.
+- **Table 03** `reference` (p.24): PK Sampling Schedule — 15 rows (Sample 1–14 + End of treatment) × 2
+  collection columns (Ramucirumab PK, Immunogenicity). Rows are samples, not subject activities → correctly
+  typed `reference`. All PK/IG X marks matched exactly.
 
-This SoA has **no text layer** (image-only pages) and the protocol markdown does **not** contain the grid. So, unlike the coordinate-based extraction used for NCT04184622, all marks here were **read visually** from 300-dpi page renders (the wide Instructions column was cropped away to read the 15-column grid cleanly). The two merged rows on page 1 (Concomitant medication, Physical examination) were re-cropped and double-checked. Grey shading = Not Applicable → empty, read directly.
+No content changed. This re-extraction updates provenance to single-pass v3.1.0 and records the independent
+image re-read. The prior extraction was Excel-verified by you; my check corroborates it.
 
-Because placement is visual rather than coordinate-derived, cell-level confidence is a notch lower than for NCT04184622 — the draft Excel was reviewed against the PDF before JSON.
+## Merged marks / text (Table 01, carried over — all confirmed)
+- Merged single "X" distributed across On-Treatment span [4:15]: Concomitant medication, AE collection.
+- "See instructions" spans: Vital signs [4:6]; ECG / Pregnancy test / Thyroid panel / Radiologic imaging /
+  Injection-spontaneous / Participant diary / Administer ramucirumab [4:15]; Injection-solicited [4:6];
+  Administer combination medications split **[4:10] + [12:15]** (DX/col11 grey between).
+- "See Section 1.3.1" [4:16]: PK, IG.
 
-## Modelling decisions (documented)
+## Inline references (v3.1.0 §6)
+**None to rework.** Parentheticals in activity/sample labels ("(solicited)", "(spontaneous)", "(Cohorts B
+and C only)", "Sample n (Cycle x, Day y, …)") are qualifiers/descriptors, not section/appendix/attachment
+references. Section/appendix cross-references (Appendix 2, Section 10.3, 8.2.5, 1.3.1, 6.1) live in the
+right-hand **Instructions column** and are modelled as `source_note`/`footnote` annotations (i1–i23),
+per §6 — not inline in activity names.
 
-- **Instructions column** (rightmost) is a per-row notes column, not a schedule column → captured as per-row `source_note` annotations (markers `i1…iN`), per convention.
-- **Merged marks/text distributed with `source_range`:** Concomitant medication and AE collection each show a single X spanning the whole On-Treatment block (cols c3–c14); "See instructions" spans cycles (Vital signs & Injection-site-solicited over Cycle 1 only; combination-meds split Cycle 1–2 / Cycle 3-n around the grey DX column). Each was distributed across every covered column with `source_range`.
-- **"See Section 1.3.1"** in the PK and IG rows is transcribed literally and carries a `source_note` pointing to Table 03.
-- **Synthesized markers:** the above-table DX note (`dx`) attached to the Cycle 2-n column; "D22 for 28-day cycles only." (`d22`) attached to the two D22 day-cells; footnote `a` = Short-term follow-up definition (Table 01) / Continued-access follow-up definition (Table 02). No printed symbol existed for the DX / D22 notes, so markers were synthesized and documented.
-- **Reference table (Table 03):** each sample's Study Cycle / Day within Cycle / Collection Time Point was folded into the `activity_name` (e.g. "Sample 3 (Cycle 1, Day 4 ± 1, 48-96 hrs postdose window)") since the extraction schema has no per-row descriptor field; PK/IG collection modelled as two X columns.
+## Annotations
+- Table 01: 26 (footnote `a` = Short-term follow-up definition; i1–i23 Instructions-column notes; +others).
+- Table 02: 4 (footnote `a` continued-access follow-up; i1–i3 Instructions notes).
+- Table 03: 0 (no markers; sample attributes fold into row identity).
+All markers defined and resolve; no orphan annotations.
 
-## Points worth a glance vs the PDF
+## Low-confidence / for review
+None from the mark matrix — full agreement between the visual re-read, the pixel detector, and the prior
+user-verified raw across all 9 pages. Annotation text carried over unchanged from the prior raw.
 
-1. Sparse cycle-D1 rows (ECOG PS at c1/c3/c6/c11/c15; Physical examination adds c4/c5) — visually read, so confirm the exact D-columns.
-2. Hematology / Clinical chemistry pattern (c2–c8, c10, c11, c15 with the Cycle-2 D22 column grey) — identical pattern for both; confirm.
-3. Combination-medications split around the grey DX column (c10) on page 22.
-
-## Consolidation result
-
-3 tables → 26 unified activities (main + Continued-Access track; reference excluded from timeline), review_queue empty. Both timelines render in the consolidated HTML.
+## Validation
+All 3 tables: schema OK. `track_label`="Continued Access" on Table 02 only. soa_pages unchanged
+(16-22 / 23 / 24).
