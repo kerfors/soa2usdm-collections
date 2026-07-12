@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-001 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT04557384</span><span class="nav-sep">›</span><span class="nav-current">Table 1</span></div>
+        
+        <div class="nav-tables">
+            <span class="nav-btn disabled">◀</span>
+            <span class="nav-table-list"><a href="NCT04557384_Table_01_resolved.html" class="nav-table-btn current">T1</a> <a href="NCT04557384_Table_02_resolved.html" class="nav-table-btn">T2</a> <a href="NCT04557384_Table_03_resolved.html" class="nav-table-btn">T3</a></span>
+            <a href="NCT04557384_Table_02_resolved.html" class="nav-btn">T2 ▶</a>
+        </div>
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 1: Screening, On-Study, and Post-Treatment Schedule of Activities</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | main_soa</div>
+        <div class="meta">5 properties | 25 activities | 15 columns | 26 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT04557384_Table_01_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-06T20:05:43+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;Excel-&gt;JSON; image-only SoA read visually from 300-dpi renders)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT04557384_soa.pdf [protocol] vI4T-MC-JVDU(e)</td></tr><tr><td class="field">verification</td><td><span class="status-ok">✓ Verified by KL</span></td></tr><tr><td class="field">excel_file</td><td class="trace">NCT04557384_SoA_draft.xlsx</td></tr><tr><td class="field">extraction_notes</td><td>Image-only SoA (no PDF text layer; markdown lacks the grid) read visually from 300-dpi page renders. Grey shading = Not Applicable -&gt; empty. Right-hand Instructions column captured as per-row source_note annotations (markers i1..iN), not a schedule column. Merged marks/text (Concomitant medication, AE collection single X across On-Treatment; &quot;See instructions&quot; spanning cycles) distributed across covered columns with source_range. &quot;See Section 1.3.1&quot; in PK/IG rows points to Table 3 (Pharmacokinetic Sampling Schedule, reference). Above-table DX note and &quot;D22 for 28-day cycles only.&quot; captured as source_notes (synthesized markers dx, d22). Footnote a = Short-term follow-up definition.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">resolved</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-06T20:06:06.706286+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT04557384_Table_01_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Screening, On-Study, and Post-Treatment Schedul...</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-001</td></tr><tr><td class="field">table_number</td><td>1</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #1F4788;">main_soa</span></td></tr><tr><td class="field">table_title</td><td>Screening, On-Study, and Post-Treatment Schedule of Activities</td></tr><tr><td class="field">table_purpose</td><td>Main oncology cycle-based schedule: Screening, On-Treatment (Cycles 1..3-n incl. DX), Post-Treatment short-term follow-up (V801).</td></tr><tr><td class="field">pages</td><td>16 – 22</td></tr><tr><td class="field">dimensions</td><td class="trace">15 cols | 30 rows | 5 header | 25 activity</td></tr><tr><td class="field">notes</td><td>Page numbers are printed Document Page numbers of the full protocol PDF.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">5 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Phase <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">epoch</td>
+            <td class="comment">Study phase spanning columns: Screening, On-Treatment, Post-Treatment.</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Cycle length <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">period</td>
+            <td class="comment">Cycle-length grouping under On-Treatment (21 days, or 28 days for Cohorts B &amp; C).</td>
+            <td class="trace">↑prop-001 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-003</td>
+            <td class="level-cell" style="background: #70AD47; color: #333;">L3</td>
+            <td>Cycle <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">cycle</td>
+            <td class="comment">Cycle grouping incl. screening day window, Cycle 1, Cycle 2, Cycle 2-n (combo held/ramucirumab given), Cycle 3-n, Short-term follow-up.</td>
+            <td class="trace">↑prop-002 ↓1</td>
+            <td class="trace"><span class="marker">a</span> → annot-001</td>
+        </tr><tr>
+            <td class="id">prop-004</td>
+            <td class="level-cell" style="background: #A9D08E; color: #333;">L4</td>
+            <td>Visit window <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">window</td>
+            <td class="comment">Allowable visit window (+/-3 days).</td>
+            <td class="trace">↑prop-003 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-005</td>
+            <td class="level-cell" style="background: #C6E0B4; color: #333;">L5</td>
+            <td>Day <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">study_day</td>
+            <td class="comment">Day relative to cycle/C1D1; DX = additional ramucirumab dose day; V801 = follow-up visit.</td>
+            <td class="trace">↑prop-004</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">25 total (1 headers, 24 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FFFFFF;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Informed consent</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i1</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Inclusion/Exclusion criteria</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Medical history</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i2</span> → annot-005</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Cancer treatment history</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i3</span> → annot-006</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Concomitant medication</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i4</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Physical examination</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Vital signs</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i5</span> → annot-008</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">AE collection</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i6</span> → annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">ECOG PS</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i7</span> → annot-010</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">ECG</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i8</span> → annot-011</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Hematology</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i9</span> → annot-012</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Coagulation</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i10</span> → annot-013</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Clinical chemistry</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i11</span> → annot-014</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Urinalysis</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i12</span> → annot-015</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Pregnancy test</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i13</span> → annot-016</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Thyroid panel</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i14</span> → annot-017</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-017</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Radiologic imaging and measurement of palpable or visible lesions</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i15</span> → annot-018</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-018</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Injection site assessments (solicited)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i16</span> → annot-019</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-019</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Injection site assessments (spontaneous)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i17</span> → annot-020</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-020</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Participant diary</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i18</span> → annot-021</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-021</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Sample collection</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i19</span> → annot-022</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-022</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;PK</td>
+            <td><span class="trace">Sample collection</span></td>
+            <td class="trace"><span class="marker">i20</span> → annot-023</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-023</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;IG</td>
+            <td><span class="trace">Sample collection</span></td>
+            <td class="trace"><span class="marker">i21</span> → annot-024</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-024</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Administer ramucirumab</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i22</span> → annot-025</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-025</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Administer combination medications, if applicable (Cohorts B and C only)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i23</span> → annot-026</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">26 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (1)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">multiple</td>
+                <td class="text-full" title="Short-term follow-up begins when the participant and investigator agree that the participant will no longer continue study treatment and lasts a minimum of 30 days following the last dose of study drug.">Short-term follow-up begins when the participant and investigator agree that the participant will...</td>
+                <td class="trace">props: prop-003 | cols: col-016</td>
+                <td class="trace">2 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #BF8F00;">Source Note (25)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">dx</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="For applicable participants who have their combination therapy held while SC weekly ramucirumab is continued, procedures noted in column DX are to be performed at the time of the additional ramucirumab doses.">For applicable participants who have their combination therapy held while SC weekly ramucirumab i...</td>
+                <td class="trace">cols: col-011</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">d22</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="D22 for 28-day cycles only.">D22 for 28-day cycles only.</td>
+                <td class="trace">cols: col-010, col-015</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">i1</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="ICF must be signed before any protocol-specific procedures are performed">ICF must be signed before any protocol-specific procedures are performed</td>
+                <td class="trace">acts: act-001</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">i2</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Including assessment of preexisting conditions, historical illnesses, and habits (such as tobacco and alcohol use).">Including assessment of preexisting conditions, historical illnesses, and habits (such as tobacco...</td>
+                <td class="trace">acts: act-003</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">i3</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Record prior anti-cancer therapy">Record prior anti-cancer therapy</td>
+                <td class="trace">acts: act-004</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">i4</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="At baseline, record prior and concurrent medications. Record all premedication, supportive care, and concomitant medication continuously at every visit and throughout the study.">At baseline, record prior and concurrent medications. Record all premedication, supportive care, ...</td>
+                <td class="trace">acts: act-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">i5</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Measure vital signs (height [at baseline], weight, temperature, blood pressure, pulse rate, and respiration rate). On days with concurrent ECGs, vital signs, and/or PK sampling, these measurements should occur at approximately the same time. Vital sign measurements will be obtained: Day 1 at predose (prior to SC ramucirumab dose, but within 90 minutes prior to predose blood draw); C1D2 (24 hours postdose); C1D8; C1D15; Any time for other specified visits, but prior to SC ramucirumab dose at same visit.">Measure vital signs (height [at baseline], weight, temperature, blood pressure, pulse rate, and r...</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">i6</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Collect continuously at every visit and throughout the study. CTCAE Version 5.0. See Section 10.3 for AE grading for lab investigations.">Collect continuously at every visit and throughout the study. CTCAE Version 5.0. See Section 10.3...</td>
+                <td class="trace">acts: act-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">i7</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="During study treatment, perform &lt;=3 days prior to treatment.">During study treatment, perform &lt;=3 days prior to treatment.</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-011</td>
+                <td class="marker-cell"><span class="marker">i8</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Single, local. On days with concurrent measurements, see vital sign row for more details. Times are referenced to the end of dosing. ECGs will be obtained: C1D1 at predose. Every 6 weeks thereafter, predose. Any other time as clinically indicated.">Single, local. On days with concurrent measurements, see vital sign row for more details. Times a...</td>
+                <td class="trace">acts: act-010</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-012</td>
+                <td class="marker-cell"><span class="marker">i9</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2.">See Appendix 2.</td>
+                <td class="trace">acts: act-011</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-013</td>
+                <td class="marker-cell"><span class="marker">i10</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2. Perform at baseline, C2D1, D1 of every other cycle afterwards (C4D1, C6D1, etc.), and as clinically indicated.">See Appendix 2. Perform at baseline, C2D1, D1 of every other cycle afterwards (C4D1, C6D1, etc.),...</td>
+                <td class="trace">acts: act-012</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-014</td>
+                <td class="marker-cell"><span class="marker">i11</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2.">See Appendix 2.</td>
+                <td class="trace">acts: act-013</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-015</td>
+                <td class="marker-cell"><span class="marker">i12</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2. In addition, perform as clinically indicated.">See Appendix 2. In addition, perform as clinically indicated.</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-016</td>
+                <td class="marker-cell"><span class="marker">i13</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Applies only to women of childbearing potential. Note: During study treatment, perform monthly or as required per local regulations and/or institutional guidelines. See Appendix 2.">Applies only to women of childbearing potential. Note: During study treatment, perform monthly or...</td>
+                <td class="trace">acts: act-015</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-017</td>
+                <td class="marker-cell"><span class="marker">i14</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 2. Starting C1D1, then every 3 months thereafter.">See Appendix 2. Starting C1D1, then every 3 months thereafter.</td>
+                <td class="trace">acts: act-016</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-018</td>
+                <td class="marker-cell"><span class="marker">i15</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Perform according to RECIST 1.1, by the same method used at baseline, every 8 weeks (+/-7 days) for the first 6 months after C1D1 and every 12 weeks (+/-7 days) thereafter until radiographic disease progression, death, or study completion, whichever occurs first. Perform as scheduled, even if study treatment is delayed or omitted.">Perform according to RECIST 1.1, by the same method used at baseline, every 8 weeks (+/-7 days) f...</td>
+                <td class="trace">acts: act-017</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-019</td>
+                <td class="marker-cell"><span class="marker">i16</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Prior to each injection and at the designated timepoints, the investigator/investigator designee will ask the participant if they have any injection site concerns and record the participant’s response. 1. Cycle 1 collection: a. C1D1: 5-15 min after injection is complete and 60 min after injection is complete; b. C1D2 (approximately 24 hr after injection); c. C1D4 (+/-1 day); d. C1D8: 5-15 min after injection and 60 min after injection; e. C1D15: 5-15 min after injection and 60 min after injection. 2. Cycle 2-n collection: a. 5-15 min after injection and 60 min after injection. The findings from the assessment are recorded on the ISR questionnaire. All positive responses of pain require an additional assessment using the participant-completed Pain VAS. If there are &gt;=2 injections, the ISR questionnaire will be filled out separately for each site, after all injections have been administered. See Section 8.2.5 for details.">Prior to each injection and at the designated timepoints, the investigator/investigator designee ...</td>
+                <td class="trace">acts: act-018</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-020</td>
+                <td class="marker-cell"><span class="marker">i17</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="1. ISR questionnaire completed outside of solicited assessment schedule. 2. May be triggered by participant anytime during the cycle based on diary. 3. If the participant indicates presence of pain during spontaneous ISR reporting, no VAS assessment is required.">1. ISR questionnaire completed outside of solicited assessment schedule. 2. May be triggered by p...</td>
+                <td class="trace">acts: act-019</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-021</td>
+                <td class="marker-cell"><span class="marker">i18</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Participant will assess injection site(s) daily. If any ISR symptoms present, the participant should contact the investigator. Diary should be returned to the investigator at each weekly visit.">Participant will assess injection site(s) daily. If any ISR symptoms present, the participant sho...</td>
+                <td class="trace">acts: act-020</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-022</td>
+                <td class="marker-cell"><span class="marker">i19</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Section 1.3.1 for PK and IG.">See Section 1.3.1 for PK and IG.</td>
+                <td class="trace">acts: act-021</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-023</td>
+                <td class="marker-cell"><span class="marker">i20</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Section 1.3.1 (Pharmacokinetic Sampling Schedule) for PK sample collection timepoints.">See Section 1.3.1 (Pharmacokinetic Sampling Schedule) for PK sample collection timepoints.</td>
+                <td class="trace">acts: act-022</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-024</td>
+                <td class="marker-cell"><span class="marker">i21</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Section 1.3.1 (Pharmacokinetic Sampling Schedule) for immunogenicity sample collection timepoints.">See Section 1.3.1 (Pharmacokinetic Sampling Schedule) for immunogenicity sample collection timepo...</td>
+                <td class="trace">acts: act-023</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-025</td>
+                <td class="marker-cell"><span class="marker">i22</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Section 6.1. Participants must be closely monitored for a 1-hour observation period following the administration of SC ramucirumab (see Section 6.1).">See Section 6.1. Participants must be closely monitored for a 1-hour observation period following...</td>
+                <td class="trace">acts: act-024</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-026</td>
+                <td class="marker-cell"><span class="marker">i23</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Begin Combination anti-cancer therapies along with weekly SC ramucirumab at Cycle-2. See details in Section 6.1. Erlotinib (1L EGFR+ NSCLC), docetaxel (2L NSCLC), paclitaxel (2L gastric), FOLFIRI (2L CRC).">Begin Combination anti-cancer therapies along with weekly SC ramucirumab at Cycle-2. See details ...</td>
+                <td class="trace">acts: act-025</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">25 activities × 15 columns (234 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Screening / (Day Relative to C1D1) / ≤28">col-002</th><th class="col-header" title="Screening / (Day Relative to C1D1) / ≤7">col-003</th><th class="col-header" title="On-Treatment / Cycle = 21 days / Cycle 1 / ±3 days / D1">col-004</th><th class="col-header" title="On-Treatment / Cycle = 21 days / Cycle 1 / ±3 days / D8">col-005</th><th class="col-header" title="On-Treatment / Cycle = 21 days / Cycle 1 / ±3 days / D15">col-006</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 2 / ±3 days / D1">col-007</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 2 / ±3 days / D8">col-008</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 2 / ±3 days / D15">col-009</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 2 / ±3 days / D22">col-010</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 2-n (If combo therapy is held and ramucirumab is given) / ±3 days / DX">col-011</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 3-n / ±3 days / D1">col-012</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 3-n / ±3 days / D8">col-013</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 3-n / ±3 days / D15">col-014</th><th class="col-header" title="On-Treatment / Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen) / Cycle 3-n / ±3 days / D22">col-015</th><th class="col-header" title="Post-Treatment / Short-term follow-up / ±3 days / V801">col-016</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Phase<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Screening</td><td class="prop-cell" style="background: #375623; color: white;">Screening</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">On-Treatment</td><td class="prop-cell" style="background: #375623; color: white;">Post-Treatment</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Cycle length<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;">Cycle = 21 days (or 28 days for Cohorts B &amp; C per combination regimen)</td><td class="prop-cell" style="background: #548235; color: white;"></td></tr><tr><td class="frozen-col prop-row" style="background: #70AD47; color: #333;">Cycle<br/><span class="prop-id">prop-003</span></td><td class="prop-cell" style="background: #70AD47; color: #333;">(Day Relative to C1D1)</td><td class="prop-cell" style="background: #70AD47; color: #333;">(Day Relative to C1D1)</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 1</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 1</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 1</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 2</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 2</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 2</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 2</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 2-n (If combo therapy is held and ramucirumab is given)</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 3-n</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 3-n</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 3-n</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle 3-n</td><td class="prop-cell" style="background: #70AD47; color: #333;">Short-term follow-up</td></tr><tr><td class="frozen-col prop-row" style="background: #A9D08E; color: #333;">Visit window<br/><span class="prop-id">prop-004</span></td><td class="prop-cell" style="background: #A9D08E; color: #333;"></td><td class="prop-cell" style="background: #A9D08E; color: #333;"></td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3 days</td></tr><tr><td class="frozen-col prop-row" style="background: #C6E0B4; color: #333;">Day<br/><span class="prop-id">prop-005</span></td><td class="prop-cell" style="background: #C6E0B4; color: #333;">≤28</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">≤7</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D1</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D8</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D15</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D1</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D8</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D15</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D22</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">DX</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D1</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D8</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D15</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">D22</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">V801</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Informed consent<br/><span class="act-id">act-001</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Inclusion/Exclusion criteria<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Medical history<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Cancer treatment history<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Concomitant medication<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Physical examination<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Vital signs<br/><span class="act-id">act-007</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">AE collection<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">ECOG PS<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">ECG<br/><span class="act-id">act-010</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Hematology<br/><span class="act-id">act-011</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Coagulation<br/><span class="act-id">act-012</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Clinical chemistry<br/><span class="act-id">act-013</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Urinalysis<br/><span class="act-id">act-014</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Pregnancy test<br/><span class="act-id">act-015</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Thyroid panel<br/><span class="act-id">act-016</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Radiologic imaging and measurement of palpable or visible lesions<br/><span class="act-id">act-017</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Injection site assessments (solicited)<br/><span class="act-id">act-018</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Injection site assessments (spontaneous)<br/><span class="act-id">act-019</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Participant diary<br/><span class="act-id">act-020</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Sample collection<br/><span class="act-id">act-021</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;PK<br/><span class="act-id">act-022</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;IG<br/><span class="act-id">act-023</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See Section 1.3.1</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Administer ramucirumab<br/><span class="act-id">act-024</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Administer combination medications, if applicable (Cohorts B and C only)<br/><span class="act-id">act-025</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">See instructions</td><td class="schedule-cell empty"></td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
