@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT05259917 — T01 Extraction</title>
+<style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           margin: 0; padding: 20px; background: #f8f9fa; color: #333; }
+    .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .back a { color: #1F4788; text-decoration: none; font-size: 12px; }
+    .back a:hover { text-decoration: underline; }
+    .title { font-size: 16px; font-weight: 600; color: #1F4788; }
+    .raw-link { font-size: 11px; }
+    .raw-link a { color: #888; text-decoration: none; font-family: monospace; }
+    .raw-link a:hover { color: #555; text-decoration: underline; }
+    #search { padding: 6px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px;
+               width: 240px; margin-left: auto; }
+    #search:focus { outline: none; border-color: #2E75B6; box-shadow: 0 0 0 2px rgba(46,117,182,0.15); }
+    .stats { font-size: 11px; color: #888; }
+    
+    #json-container { background: white; border: 1px solid #e0e0e0; border-radius: 8px;
+                       padding: 20px; overflow: auto; max-height: calc(100vh - 120px);
+                       font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+                       font-size: 12px; line-height: 1.6; }
+    
+    /* Syntax highlighting */
+    .json-key { color: #881391; font-weight: 500; }
+    .json-string { color: #1a6b2c; }
+    .json-number { color: #1750eb; }
+    .json-boolean { color: #d32f2f; font-weight: 500; }
+    .json-null { color: #888; font-style: italic; }
+    .json-bracket { color: #555; }
+    
+    /* Collapsible */
+    .json-toggle { cursor: pointer; user-select: none; position: relative; }
+    .json-toggle::before { content: "▼"; display: inline-block; width: 14px; font-size: 9px;
+                            color: #aaa; transition: transform 0.15s; }
+    .json-toggle.collapsed::before { transform: rotate(-90deg); }
+    .json-toggle:hover::before { color: #1F4788; }
+    .json-content { margin-left: 20px; }
+    .json-content.hidden { display: none; }
+    .json-ellipsis { display: none; color: #aaa; font-style: italic; font-size: 11px; }
+    .json-toggle.collapsed + .json-content + .json-ellipsis { display: inline; }
+    .json-comma { color: #555; }
+    
+    /* Search highlight */
+    .highlight { background: #fff3b0; border-radius: 2px; padding: 0 1px; }
+    .search-no-match { opacity: 0.2; }
+</style>
+</head>
+<body>
+    <div class="toolbar">
+        <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+        <div class="title">NCT05259917 — T01 Extraction</div>
+        <div class="raw-link"><a href="NCT05259917_Table_01_extraction.json" download>raw json</a></div>
+        <div class="stats" id="stats"></div>
+        <input type="text" id="search" placeholder="Search keys and values…">
+    </div>
+    <div id="json-container"></div>
+    
+    <script>
+    const jsonData = {
+ "schema_name": "soa-table-extraction",
+ "schema_version": "1.0",
+ "extraction_metadata": {
+  "extracted_at": "2026-07-12T20:10:26+00:00",
+  "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.3 single-pass)",
+  "source_document": {
+   "filename": "NCT05259917_soa.pdf",
+   "document_type": "protocol",
+   "document_version": "KVD900-301 (KONFIDENT), Version 4.1 (US Only), 04 May 2023"
+  },
+  "extraction_status": "ready_for_resolution",
+  "extraction_notes": "Table 1 (Schedule of Events), KVD900-301 KONFIDENT (sebetralstat/KVD900 for HAE). main_soa; flat table (no organizational sub-headers - every row is a level-0 activity with marks). Header repeated across doc pages 17-18 (merged into one file). Text-layer table (only a small logo image); marks reconstructed from PDF text-layer coordinates and confirmed visually. Columns 2-7: Screening, Randomization, Treatment Period (1st/2nd/3rd eligible HAE attack), Final Visit/ET. Two-level header: row 1 epoch/phase (Treatment Period band merged 4:6), row 2 the three attack visits. Randomization column has ONE X vertically merged across the In-clinic and TeleVisit rows (footnote a: the visit may be a televisit or in-clinic) - transcribed as X on both rows. Three rows use a horizontal double-headed arrow instead of X (continuous activities): Conventional on-demand treatment washout (cols 4-6), Concomitant Medication Review (cols 2-7), Adverse Event Review (cols 2-7) - captured as cell_value '↔' distributed with source_range. Footnote r deduplicated over PGI-S/PGI-C/VAS/GA-NRS (4 activities) and references Table S1 (finer-timing patient-assessment frequency table, out of scope per user decision - not in the SoA excerpt). Abbreviation list not captured (no in-grid markers)."
+ },
+ "table_metadata": {
+  "table_number": 1,
+  "table_type": "main_soa",
+  "table_title": "Table 1: Schedule of Events",
+  "table_purpose": "Anchor schedule across Screening, Randomization, Treatment Period (3 eligible HAE attacks), and Final Visit/ET.",
+  "page_start": 17,
+  "page_end": 18,
+  "notes": "Section synopsis-level Schedule of Events. Single logical table, header repeated across doc pp 17-18 (encoded once). Flat activity list; three continuous-activity rows drawn as horizontal arrows. Footnotes a-s on doc page 18."
+ },
+ "schedule_properties": [
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "property_name": "Visit",
+   "property_name_source": {
+    "row_position": 1,
+    "column_position": 1,
+    "cell_value": "Visit"
+   },
+   "property_type": "epoch",
+   "hierarchical_level": 1,
+   "property_comment": "Top header row: study phase / primary visit identifiers - Screening (col 2), Randomization (col 3), Treatment Period (epoch band, merged over cols 4-6), Final Visit/ET (col 7). Mixed epoch/visit; typed epoch as the dominant phase framing (Treatment Period is the spanning band). Col-1 label 'Visit' spans both header rows. Markers a on Randomization, c on Final Visit/ET."
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "property_name": "Treatment Period Visit",
+   "property_name_source": {
+    "row_position": 2,
+    "column_position": 1,
+    "cell_value": "",
+    "synthesized": true
+   },
+   "property_type": "visit",
+   "hierarchical_level": 2,
+   "property_comment": "Second header row: the three treatment visits (eligible HAE attacks) within the Treatment Period - 1st/2nd/3rd eligible HAE attack (cols 4-6). Cols 2,3,7 have no second-row label. Marker b rides each attack column. property_name synthesised (col-1 'Visit' label already used by row 1)."
+  }
+ ],
+ "schedule_grid": [
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 2,
+   "cell_value": "Screening"
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 3,
+   "cell_value": "Randomization",
+   "annotation_markers": "a"
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 4,
+   "cell_value": "Treatment Period",
+   "is_merged_cell": true,
+   "merged_cell_range": "4:6"
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 5,
+   "cell_value": "Treatment Period",
+   "is_merged_cell": true,
+   "merged_cell_range": "4:6"
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 6,
+   "cell_value": "Treatment Period",
+   "is_merged_cell": true,
+   "merged_cell_range": "4:6"
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 7,
+   "cell_value": "Final Visit/ET",
+   "annotation_markers": "c"
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 4,
+   "cell_value": "1st eligible HAE attack",
+   "annotation_markers": "b"
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 5,
+   "cell_value": "2nd eligible HAE attack",
+   "annotation_markers": "b"
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 6,
+   "cell_value": "3rd eligible HAE attack",
+   "annotation_markers": "b"
+  }
+ ],
+ "activities": [
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "activity_name": "In-clinic",
+   "activity_name_source": {
+    "cell_text": "In-clinic",
+    "indentation_level": 0
+   },
+   "annotation_markers": "d"
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "activity_name": "TeleVisit",
+   "activity_name_source": {
+    "cell_text": "TeleVisit",
+    "indentation_level": 0
+   },
+   "annotation_markers": "e"
+  },
+  {
+   "table_number": 1,
+   "row_position": 3,
+   "activity_name": "Informed Consent/Assent",
+   "activity_name_source": {
+    "cell_text": "Informed Consent/Assent",
+    "indentation_level": 0
+   },
+   "annotation_markers": "f"
+  },
+  {
+   "table_number": 1,
+   "row_position": 4,
+   "activity_name": "Eligibility Assessment",
+   "activity_name_source": {
+    "cell_text": "Eligibility Assessment",
+    "indentation_level": 0
+   }
+  },
+  {
+   "table_number": 1,
+   "row_position": 5,
+   "activity_name": "HAE Diagnostic Lab Test",
+   "activity_name_source": {
+    "cell_text": "HAE Diagnostic Lab Test",
+    "indentation_level": 0
+   },
+   "annotation_markers": "g"
+  },
+  {
+   "table_number": 1,
+   "row_position": 6,
+   "activity_name": "Medical History",
+   "activity_name_source": {
+    "cell_text": "Medical History",
+    "indentation_level": 0
+   },
+   "annotation_markers": "h"
+  },
+  {
+   "table_number": 1,
+   "row_position": 7,
+   "activity_name": "12-lead ECG",
+   "activity_name_source": {
+    "cell_text": "12-lead ECG",
+    "indentation_level": 0
+   },
+   "annotation_markers": "i"
+  },
+  {
+   "table_number": 1,
+   "row_position": 8,
+   "activity_name": "Demographics",
+   "activity_name_source": {
+    "cell_text": "Demographics",
+    "indentation_level": 0
+   },
+   "annotation_markers": "j"
+  },
+  {
+   "table_number": 1,
+   "row_position": 9,
+   "activity_name": "Physical Examination",
+   "activity_name_source": {
+    "cell_text": "Physical Examination",
+    "indentation_level": 0
+   },
+   "annotation_markers": "k"
+  },
+  {
+   "table_number": 1,
+   "row_position": 10,
+   "activity_name": "Vital Signs",
+   "activity_name_source": {
+    "cell_text": "Vital Signs",
+    "indentation_level": 0
+   },
+   "annotation_markers": "l"
+  },
+  {
+   "table_number": 1,
+   "row_position": 11,
+   "activity_name": "Safety Laboratory",
+   "activity_name_source": {
+    "cell_text": "Safety Laboratory",
+    "indentation_level": 0
+   },
+   "annotation_markers": "m"
+  },
+  {
+   "table_number": 1,
+   "row_position": 12,
+   "activity_name": "Pregnancy Test",
+   "activity_name_source": {
+    "cell_text": "Pregnancy Test",
+    "indentation_level": 0
+   },
+   "annotation_markers": "n"
+  },
+  {
+   "table_number": 1,
+   "row_position": 13,
+   "activity_name": "Randomize patient in RTSM",
+   "activity_name_source": {
+    "cell_text": "Randomize patient in RTSM",
+    "indentation_level": 0
+   }
+  },
+  {
+   "table_number": 1,
+   "row_position": 14,
+   "activity_name": "Patient diary training",
+   "activity_name_source": {
+    "cell_text": "Patient diary training",
+    "indentation_level": 0
+   }
+  },
+  {
+   "table_number": 1,
+   "row_position": 15,
+   "activity_name": "Patient diary retraining",
+   "activity_name_source": {
+    "cell_text": "Patient diary retraining",
+    "indentation_level": 0
+   }
+  },
+  {
+   "table_number": 1,
+   "row_position": 16,
+   "activity_name": "Conventional on-demand treatment washout",
+   "activity_name_source": {
+    "cell_text": "Conventional on-demand treatment washout",
+    "indentation_level": 0
+   },
+   "annotation_markers": "o"
+  },
+  {
+   "table_number": 1,
+   "row_position": 17,
+   "activity_name": "Dose",
+   "activity_name_source": {
+    "cell_text": "Dose",
+    "indentation_level": 0
+   },
+   "annotation_markers": "p"
+  },
+  {
+   "table_number": 1,
+   "row_position": 18,
+   "activity_name": "IMP dispensing/return/accountability",
+   "activity_name_source": {
+    "cell_text": "IMP dispensing/return/accountability",
+    "indentation_level": 0
+   },
+   "annotation_markers": "q"
+  },
+  {
+   "table_number": 1,
+   "row_position": 19,
+   "activity_name": "PGI-S",
+   "activity_name_source": {
+    "cell_text": "PGI-S",
+    "indentation_level": 0
+   },
+   "annotation_markers": "r"
+  },
+  {
+   "table_number": 1,
+   "row_position": 20,
+   "activity_name": "PGI-C",
+   "activity_name_source": {
+    "cell_text": "PGI-C",
+    "indentation_level": 0
+   },
+   "annotation_markers": "r"
+  },
+  {
+   "table_number": 1,
+   "row_position": 21,
+   "activity_name": "VAS",
+   "activity_name_source": {
+    "cell_text": "VAS",
+    "indentation_level": 0
+   },
+   "annotation_markers": "r"
+  },
+  {
+   "table_number": 1,
+   "row_position": 22,
+   "activity_name": "GA-NRS",
+   "activity_name_source": {
+    "cell_text": "GA-NRS",
+    "indentation_level": 0
+   },
+   "annotation_markers": "r"
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "activity_name": "Concomitant Medication Review",
+   "activity_name_source": {
+    "cell_text": "Concomitant Medication Review",
+    "indentation_level": 0
+   }
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "activity_name": "Adverse Event Review",
+   "activity_name_source": {
+    "cell_text": "Adverse Event Review",
+    "indentation_level": 0
+   },
+   "annotation_markers": "s"
+  }
+ ],
+ "activity_schedule": [
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 1,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 2,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 3,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 4,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 4,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 5,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 6,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 7,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 7,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 8,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 9,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 9,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 10,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 10,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 11,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 11,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 12,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 12,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 13,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 14,
+   "column_position": 2,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 14,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 15,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 15,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 15,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 16,
+   "column_position": 4,
+   "cell_value": "↔",
+   "source_range": "4:6"
+  },
+  {
+   "table_number": 1,
+   "row_position": 16,
+   "column_position": 5,
+   "cell_value": "↔",
+   "source_range": "4:6"
+  },
+  {
+   "table_number": 1,
+   "row_position": 16,
+   "column_position": 6,
+   "cell_value": "↔",
+   "source_range": "4:6"
+  },
+  {
+   "table_number": 1,
+   "row_position": 17,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 17,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 17,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 18,
+   "column_position": 3,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 18,
+   "column_position": 7,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 19,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 19,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 19,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 20,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 20,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 20,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 21,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 21,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 21,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 22,
+   "column_position": 4,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 22,
+   "column_position": 5,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 22,
+   "column_position": 6,
+   "cell_value": "X",
+   "source_range": ""
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "column_position": 2,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "column_position": 3,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "column_position": 4,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "column_position": 5,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "column_position": 6,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 23,
+   "column_position": 7,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "column_position": 2,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "column_position": 3,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "column_position": 4,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "column_position": 5,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "column_position": 6,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  },
+  {
+   "table_number": 1,
+   "row_position": 24,
+   "column_position": 7,
+   "cell_value": "↔",
+   "source_range": "2:7"
+  }
+ ],
+ "annotations": [
+  {
+   "annotation_marker": "a",
+   "annotation_type": "footnote",
+   "annotation_text": "Randomization to occur within 4 weeks of the Screening Visit. The Randomization Visit may be a televisit or an in-clinic visit.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "column_position": 3
+    }
+   ]
+  },
+  {
+   "annotation_marker": "b",
+   "annotation_type": "footnote",
+   "annotation_text": "For each of the 3 eligible HAE attacks, a televisit will occur by the next working day after the completion of the patient diary (visit window: +1 week). A televisit must occur before treating the next eligible attack.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "schedule_property",
+     "row_position": 2,
+     "column_position": 4
+    },
+    {
+     "table_number": 1,
+     "location_type": "schedule_property",
+     "row_position": 2,
+     "column_position": 5
+    },
+    {
+     "table_number": 1,
+     "location_type": "schedule_property",
+     "row_position": 2,
+     "column_position": 6
+    }
+   ]
+  },
+  {
+   "annotation_marker": "c",
+   "annotation_type": "footnote",
+   "annotation_text": "Once 3 HAE attacks have been treated with IMP, or upon patient ET, the patient should return to the clinic for the final visit as soon as possible within 1 week of completing all patient diary assessments. Whenever possible this visit should be completed prior to starting any new medication or treatment.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "column_position": 7
+    }
+   ]
+  },
+  {
+   "annotation_marker": "d",
+   "annotation_type": "footnote",
+   "annotation_text": "If an in-clinic visit cannot be conducted (e.g. in the event of a pandemic or other reason that prevents the patient from attending in-clinic visits), home health visits will be used to perform these visits. Information captured during a home health visit will mirror that captured during an in-clinic visit.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 1
+    }
+   ]
+  },
+  {
+   "annotation_marker": "e",
+   "annotation_type": "footnote",
+   "annotation_text": "A televisit can be conducted via a telephone call or via an interactive audio/video system.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 2
+    }
+   ]
+  },
+  {
+   "annotation_marker": "f",
+   "annotation_type": "footnote",
+   "annotation_text": "Consent and assent may be collected through e-consent if allowed through country and site regulations.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 3
+    }
+   ]
+  },
+  {
+   "annotation_marker": "g",
+   "annotation_type": "footnote",
+   "annotation_text": "Diagnostic testing must be available for patients without genetic confirmation of HAE type I or II.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 5
+    }
+   ]
+  },
+  {
+   "annotation_marker": "h",
+   "annotation_type": "footnote",
+   "annotation_text": "Medical history includes any relevant previous and concurrent diseases, HAE disease history including the attack history and corresponding treatment for the past 3 months; therapies and supplements taken within the past 4 weeks; and previous participation in interventional clinical trials in the past 4 weeks.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 6
+    }
+   ]
+  },
+  {
+   "annotation_marker": "i",
+   "annotation_type": "footnote",
+   "annotation_text": "ECG to be recorded after patient has rested supine for at least 5 minutes.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 7
+    }
+   ]
+  },
+  {
+   "annotation_marker": "j",
+   "annotation_type": "footnote",
+   "annotation_text": "Demographics: Year of birth; height (meters [m]; without shoes); weight (kilograms [kg]); race and ethnicity (if allowed); and sex.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 8
+    }
+   ]
+  },
+  {
+   "annotation_marker": "k",
+   "annotation_type": "footnote",
+   "annotation_text": "Complete physical examination at Screening only, all others will be symptom directed. In the case of a home health visit, the home healthcare nurse will conduct an abbreviated physical examination, and the Investigator will conduct the symptom-directed physical examination via televisit.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 9
+    }
+   ]
+  },
+  {
+   "annotation_marker": "l",
+   "annotation_type": "footnote",
+   "annotation_text": "Vital signs include pulse rate, respiratory rate, and systolic and diastolic blood pressure after patient has been resting at least 5 minutes.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 10
+    }
+   ]
+  },
+  {
+   "annotation_marker": "m",
+   "annotation_type": "footnote",
+   "annotation_text": "Laboratory assessments, including C1-INH functional level, performed by a central laboratory; repeat laboratory assessments may be performed.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 11
+    }
+   ]
+  },
+  {
+   "annotation_marker": "n",
+   "annotation_type": "footnote",
+   "annotation_text": "Serum pregnancy test will be performed on females of childbearing potential at Screening and at the Final/ET visit.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 12
+    }
+   ]
+  },
+  {
+   "annotation_marker": "o",
+   "annotation_type": "footnote",
+   "annotation_text": "If a patient takes conventional on-demand treatment during the trial, a 48-hour washout period is required prior to the subsequent dosing with IMP.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 16
+    }
+   ]
+  },
+  {
+   "annotation_marker": "p",
+   "annotation_type": "footnote",
+   "annotation_text": "Eligible attacks should be treated with IMP as soon as possible after recognition of the start of the attack. A minimum 48-hour washout period is required between each eligible attack and last dose of IMP or conventional on-demand treatment. After the first dose of IMP and prior to the second dose or conventional on-demand treatment, patients will be required to call a designated Study Call Center to be reminded of the repeat dosing criteria. The Call Center staff will remind patients of the rules for re-dosing and the eDiary assessment requirements.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 17
+    }
+   ]
+  },
+  {
+   "annotation_marker": "q",
+   "annotation_type": "footnote",
+   "annotation_text": "Arrangements will be made to dispense the assigned IMP. The IMP will be shipped to the patient via a courier service or will be dispensed at the trial clinic as required by local regulations or per the site’s local practice, as described in the Pharmacy Manual. Confirmation of dosing compliance will be performed at each of the HAE attack televisits. All unused IMP and packaging will be returned at the in-clinic Final Visit/ET Visit. If the Final Visit/ET Visit is performed by Home Health, arrangements will be made to return any unused IMP and packaging via courier.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 18
+    }
+   ]
+  },
+  {
+   "annotation_marker": "r",
+   "annotation_type": "footnote",
+   "annotation_text": "Patients will complete timed assessments of HAE attack symptoms through 48 hours following first dose of IMP. Patient assessments will be performed as outlined in Table S1.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 19
+    },
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 20
+    },
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 21
+    },
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 22
+    }
+   ]
+  },
+  {
+   "annotation_marker": "s",
+   "annotation_type": "footnote",
+   "annotation_text": "Adverse events recorded from the first dose of KVD900 or placebo up to and including to Final Visit/ET. Serious AEs recorded from the time of signing the informed consent up to and including the Final Visit/ET.",
+   "marker_locations": [
+    {
+     "table_number": 1,
+     "location_type": "activity_name",
+     "row_position": 24
+    }
+   ]
+  }
+ ]
+};
+    
+    function escHtml(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    
+    function renderJson(data, indent, isLast) {
+        const comma = isLast ? '' : '<span class="json-comma">,</span>';
+        if (data === null) return `<span class="json-null">null</span>${comma}`;
+        if (typeof data === 'boolean') return `<span class="json-boolean">${data}</span>${comma}`;
+        if (typeof data === 'number') return `<span class="json-number">${data}</span>${comma}`;
+        if (typeof data === 'string') return `<span class="json-string">"${escHtml(data)}"</span>${comma}`;
+        
+        const isArray = Array.isArray(data);
+        const entries = isArray ? data.map((v, i) => [i, v]) : Object.entries(data);
+        const open = isArray ? '[' : '{';
+        const close = isArray ? ']' : '}';
+        
+        if (entries.length === 0) {
+            return `<span class="json-bracket">${open}${close}</span>${comma}`;
+        }
+        
+        const id = 'n' + Math.random().toString(36).substr(2, 8);
+        let html = `<span class="json-toggle" data-target="${id}" onclick="toggleNode(this)">`;
+        html += `<span class="json-bracket">${open}</span></span>`;
+        html += `<div class="json-content" id="${id}">`;
+        
+        entries.forEach(([key, val], i) => {
+            const last = i === entries.length - 1;
+            const keyHtml = isArray ? '' : `<span class="json-key">"${escHtml(key)}"</span>: `;
+            html += `<div class="json-line">${keyHtml}${renderJson(val, indent + 1, last)}</div>`;
+        });
+        
+        html += `</div><span class="json-ellipsis"> ${entries.length} items… </span>`;
+        html += `<span class="json-bracket">${close}</span>${comma}`;
+        return html;
+    }
+    
+    function toggleNode(el) {
+        el.classList.toggle('collapsed');
+        const target = document.getElementById(el.dataset.target);
+        target.classList.toggle('hidden');
+    }
+    
+    // Render
+    const container = document.getElementById('json-container');
+    container.innerHTML = renderJson(jsonData, 0, true);
+    
+    // Stats
+    const jsonStr = JSON.stringify(jsonData);
+    const kb = (jsonStr.length / 1024).toFixed(1);
+    document.getElementById('stats').textContent = `${kb} KB`;
+    
+    // Auto-collapse large arrays/objects at depth > 1
+    document.querySelectorAll('.json-toggle').forEach(el => {
+        const content = document.getElementById(el.dataset.target);
+        if (content && content.children.length > 20) {
+            el.classList.add('collapsed');
+            content.classList.add('hidden');
+        }
+    });
+    
+    // Search
+    const searchInput = document.getElementById('search');
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(doSearch, 200);
+    });
+    
+    function doSearch() {
+        const term = searchInput.value.trim().toLowerCase();
+        const lines = container.querySelectorAll('.json-line');
+        
+        // Clear previous highlights
+        container.querySelectorAll('.highlight').forEach(el => {
+            el.outerHTML = el.textContent;
+        });
+        lines.forEach(l => l.classList.remove('search-no-match'));
+        
+        if (!term) return;
+        
+        // Expand all first
+        container.querySelectorAll('.json-toggle.collapsed').forEach(el => {
+            el.classList.remove('collapsed');
+            document.getElementById(el.dataset.target).classList.remove('hidden');
+        });
+        
+        lines.forEach(line => {
+            const text = line.textContent.toLowerCase();
+            if (text.includes(term)) {
+                // Highlight matches in text nodes
+                const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+                const textNodes = [];
+                while (walker.nextNode()) textNodes.push(walker.currentNode);
+                textNodes.forEach(node => {
+                    const idx = node.textContent.toLowerCase().indexOf(term);
+                    if (idx >= 0) {
+                        const span = document.createElement('span');
+                        span.className = 'highlight';
+                        const range = document.createRange();
+                        range.setStart(node, idx);
+                        range.setEnd(node, idx + term.length);
+                        range.surroundContents(span);
+                    }
+                });
+            } else {
+                line.classList.add('search-no-match');
+            }
+        });
+    }
+    </script>
+</body>
+</html>
