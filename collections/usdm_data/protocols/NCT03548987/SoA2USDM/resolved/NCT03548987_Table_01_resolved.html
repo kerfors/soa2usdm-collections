@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-001 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT03548987</span><span class="nav-sep">›</span><span class="nav-current">Table 1</span></div>
+        
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 1: Flowchart</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | main_soa</div>
+        <div class="meta">4 properties | 69 activities | 25 columns | 4 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT03548987_Table_01_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T15:40:00+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork; single-pass, PDF text-layer bbox coordinate reconstruction of a landscape/rotated flowchart, marks PDF-authoritative)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT03548987_soa.pdf [protocol] vNN9536-4376 v2.0 (21 December 2017)</td></tr><tr><td class="field">extraction_notes</td><td>Novo Nordisk flowchart (Section 2), one logical main_soa table spanning printed Document pages 8-11; header (phase / Visit / Weeks / Window) repeats at each page break and is encoded once. The flowchart is printed LANDSCAPE (rotated 90 deg CCW): visits are columns, activities are rows. Marks reconstructed from PDF text-layer word coordinates (poppler pdftotext -bbox): activity rows share a constant page-x strip, visit columns are page-y bands defined by the 25 week-number positions; each &#x27;X&#x27; assigned to the nearest visit y-centre. Method validated against 220 dpi renders of all four pages (e.g. confirmed ECG at V2 not Screening, and &#x27;First date on trial product&#x27; at P3). 25 visit columns V1..V25 (weeks -1..75); grid col = visit index + 1. Epoch bands merged: Run-in cols 3-12, Maintenance period cols 14-24. Five grey section headers (indent 0); sub-headers Body measurements / Vital Signs (x2) / Clinical Outcome Assessments (x2) / Administration of trial product at indent 1 with their leaf rows at indent 2. Footnotes a-d captured; the markdown flowchart is transposed and was not used for marks.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">resolved</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T15:33:12.994612+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT03548987_Table_01_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Flowchart</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-001</td></tr><tr><td class="field">table_number</td><td>1</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #1F4788;">main_soa</span></td></tr><tr><td class="field">table_title</td><td>Flowchart</td></tr><tr><td class="field">table_purpose</td><td>Semaglutide 2.4 mg once-weekly overweight/obesity trial (NN9536-4376): Screening, 20-week Run-in, Randomisation (V12/week 20), Maintenance period, End of treatment (V24/week 68), and End of trial (V25/week 75) follow-up.</td></tr><tr><td class="field">pages</td><td>8 – 11</td></tr><tr><td class="field">dimensions</td><td class="trace">25 cols | 73 rows | 4 header | 69 activity</td></tr><tr><td class="field">notes</td><td>Printed Document page numbers (8-11 of 94). Single logical flowchart; landscape/rotated presentation.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">4 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Study Phase <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">epoch</td>
+            <td class="comment">Top header band: study phases Screening (V1), Run-in (V2-P11, merged), Randomisation (V12), Maintenance period (V13-P23, merged), End of treatment (V24), End of trial (V25). Landscape/rotated flowchart; visits run as columns. Row-label cell (col 1) blank so property_name synthesized.</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Visit(V), Phone (P) </td>
+            <td class="type">visit</td>
+            <td class="comment">Visit identifiers V1..V25; &#x27;V&#x27;=clinic visit, &#x27;P&#x27;=phone contact. Label from source col-1 cell.</td>
+            <td class="trace">↑prop-001 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-003</td>
+            <td class="level-cell" style="background: #70AD47; color: #333;">L3</td>
+            <td>Timing of Visit (Weeks) </td>
+            <td class="type">week</td>
+            <td class="comment">Nominal visit weeks: -1 (screening) through 75 (end of trial). Label from source.</td>
+            <td class="trace">↑prop-002 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-004</td>
+            <td class="level-cell" style="background: #A9D08E; color: #333;">L4</td>
+            <td>Visit Window (Days) </td>
+            <td class="type">window</td>
+            <td class="comment">Permitted visit windows in days: &#x27;-7 to 0&#x27; (screening), &#x27;0&#x27; (V2), &#x27;±3&#x27; most visits, &#x27;0 to +5&#x27; (end of trial). Label from source.</td>
+            <td class="trace">↑prop-003</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">69 total (5 headers, 58 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FBE5D6;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">SUBJECT RELATED INFORMATION AND ASSESSMENTS</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Informed consent and Demography (Appendix 3)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace"><span class="marker">a</span> → annot-001</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Childbearing potential (Appendix 5)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace"><span class="marker">b</span> → annot-002</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Inclusion criteria (6.1)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Exclusion criteria (6.2)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Run-in criteria (6.3.1)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Randomisation criteria and randomisation (6.3.2)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace"><span class="marker">c</span> → annot-003</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Medical history/Concomitant illness (9.4)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Weight History (9)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;History of Gallbladder Disease (9.4)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;History of Breast Neoplasm (9.4)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace"><span class="marker">b</span> → annot-002</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;History of Colon Neoplasm (9.4)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;History of Skin Cancer (9.4)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;History of Psychiatric Disorder (9.4)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Tobacco Use</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace"><span class="marker">d</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Concomitant medication (7.7)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-017</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Trial product compliance (7.1, 7.6)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-018</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Evaluation of lipid-lowering treatment (9)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-019</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Evaluation of antihypertensive treatment (9)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-020</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Evaluation of glycaemic status (9)</td>
+            <td><span class="trace">SUBJECT RELATED INFORMATION AN</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-021</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">EFFICACY</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #E8F4E8;">
+            <td class="id">act-022</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Body measurements (9.1.1)</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-023</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Height</td>
+            <td><span class="trace">Body measurements (9.1.1)</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-024</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Body Weight</td>
+            <td><span class="trace">Body measurements (9.1.1)</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-025</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Waist Circumference</td>
+            <td><span class="trace">Body measurements (9.1.1)</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-026</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;HbA1c</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-027</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Fasting plasma glucose</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-028</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Fasting serum insulin</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-029</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Lipids (Appendix 2)</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #E8F4E8;">
+            <td class="id">act-030</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Vital Signs (6.4.2, 9.4.3)</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-031</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Systolic Blood Pressure</td>
+            <td><span class="trace">Vital Signs (6.4.2, 9.4.3)</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-032</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Diastolic Blood Pressure</td>
+            <td><span class="trace">Vital Signs (6.4.2, 9.4.3)</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #E8F4E8;">
+            <td class="id">act-033</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Clinical Outcome Assessments (9.1.2)</td>
+            <td><span class="trace">EFFICACY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-034</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Short Form-36 (SF-36)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-035</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Weight Related Sign and Symptom Measure (WRSSM)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-036</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Patient Global Impression of Severity (PGI-S)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-037</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Patient Global Impression of Change (PGI-C)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-038</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Stanford Presenteeism Scale (SPS-6)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-039</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">SAFETY</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-040</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Physical examination (9.4.2)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-041</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Pregnancy test (9.4.5, Appendix 5)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-042</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;ECG (9.4.4)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-043</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Adverse event (9.2, Appendix 4)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-044</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Technical complaint (9.2.9, Appendix 6)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-045</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Breast neoplasms follow-up (9.4)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace"><span class="marker">b</span> → annot-002</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-046</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Colon neoplasms follow-up (9.4)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-047</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Haematology (Appendix 2)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-048</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Biochemistry (Appendix 2)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #E8F4E8;">
+            <td class="id">act-049</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Vital Signs (6.4.2, 9.4.3)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-050</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Pulse</td>
+            <td><span class="trace">Vital Signs (6.4.2, 9.4.3)</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #E8F4E8;">
+            <td class="id">act-051</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Clinical Outcome Assessments (9.4.1)</td>
+            <td><span class="trace">SAFETY</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-052</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Patient Health Questionnaire – 9 (PHQ-9)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-053</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Columbia Suicide Severity Rating Scale (C-SSRS)</td>
+            <td><span class="trace">Clinical Outcome Assessments (</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-054</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">TRIAL MATERIAL</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-055</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;First date on trial product</td>
+            <td><span class="trace">TRIAL MATERIAL</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-056</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;IWRS session</td>
+            <td><span class="trace">TRIAL MATERIAL</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #E8F4E8;">
+            <td class="id">act-057</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Administration of trial product (7.1, 7.5)</td>
+            <td><span class="trace">TRIAL MATERIAL</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-058</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Dispensing visit</td>
+            <td><span class="trace">Administration of trial produc</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-059</td>
+            <td class="level-num">2</td>
+            <td class="activity-name ">&nbsp;&nbsp;&nbsp;&nbsp;Drug accountability</td>
+            <td><span class="trace">Administration of trial produc</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-060</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">REMINDERS</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-061</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Criteria for discontinuation (8.1)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-062</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Barriers and motivation interview (9)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-063</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Diet and physical activity counselling (7.1.2)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-064</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Training in trial product, pen-handling (7.1.1)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-065</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Hand out direction for use (7.1.1)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-066</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Hand out dose reminder card (7.1)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-067</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Hand out and instruct in food diary (9)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-068</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Hand out ID card</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-069</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Attend visit fasting (6.4.1)</td>
+            <td><span class="trace">REMINDERS</span></td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">4 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (4)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Demography consists of date of birth, sex, ethnicity, and race (according to local regulation)">Demography consists of date of birth, sex, ethnicity, and race (according to local regulation)</td>
+                <td class="trace">acts: act-002</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">b</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="For all female subjects">For all female subjects</td>
+                <td class="trace">acts: act-003, act-011, act-045</td>
+                <td class="trace">3 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="If subjects not fulfil randomisation criteria see Section 6.3.2">If subjects not fulfil randomisation criteria see Section 6.3.2</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">d</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Smoking is defined as smoking at least one cigarette or equivalent daily">Smoking is defined as smoking at least one cigarette or equivalent daily</td>
+                <td class="trace">acts: act-015</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">69 activities × 25 columns (378 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Screening / V1 / -1 / -7 to 0">col-002</th><th class="col-header" title="Run-in / V2 / 0 / 0">col-003</th><th class="col-header" title="Run-in / P3 / 2 / ±3">col-004</th><th class="col-header" title="Run-in / V4 / 4 / ±3">col-005</th><th class="col-header" title="Run-in / P5 / 6 / ±3">col-006</th><th class="col-header" title="Run-in / V6 / 8 / ±3">col-007</th><th class="col-header" title="Run-in / P7 / 10 / ±3">col-008</th><th class="col-header" title="Run-in / V8 / 12 / ±3">col-009</th><th class="col-header" title="Run-in / P9 / 14 / ±3">col-010</th><th class="col-header" title="Run-in / V10 / 16 / ±3">col-011</th><th class="col-header" title="Run-in / P11 / 18 / ±3">col-012</th><th class="col-header" title="Randomisation / V12 / 20 / ±3">col-013</th><th class="col-header" title="Maintenance period / V13 / 24 / ±3">col-014</th><th class="col-header" title="Maintenance period / V14 / 28 / ±3">col-015</th><th class="col-header" title="Maintenance period / P15 / 32 / ±3">col-016</th><th class="col-header" title="Maintenance period / V16 / 36 / ±3">col-017</th><th class="col-header" title="Maintenance period / P17 / 40 / ±3">col-018</th><th class="col-header" title="Maintenance period / V18 / 44 / ±3">col-019</th><th class="col-header" title="Maintenance period / P19 / 48 / ±3">col-020</th><th class="col-header" title="Maintenance period / V20 / 52 / ±3">col-021</th><th class="col-header" title="Maintenance period / P21 / 56 / ±3">col-022</th><th class="col-header" title="Maintenance period / V22 / 60 / ±3">col-023</th><th class="col-header" title="Maintenance period / P23 / 64 / ±3">col-024</th><th class="col-header" title="End of treatment / V24 / 68 / ±3">col-025</th><th class="col-header" title="End of trial / V25 / 75 / 0 to +5">col-026</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Study Phase<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Screening</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Run-in</td><td class="prop-cell" style="background: #375623; color: white;">Randomisation</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance period</td><td class="prop-cell" style="background: #375623; color: white;">End of treatment</td><td class="prop-cell" style="background: #375623; color: white;">End of trial</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Visit(V), Phone (P)<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">V1</td><td class="prop-cell" style="background: #548235; color: white;">V2</td><td class="prop-cell" style="background: #548235; color: white;">P3</td><td class="prop-cell" style="background: #548235; color: white;">V4</td><td class="prop-cell" style="background: #548235; color: white;">P5</td><td class="prop-cell" style="background: #548235; color: white;">V6</td><td class="prop-cell" style="background: #548235; color: white;">P7</td><td class="prop-cell" style="background: #548235; color: white;">V8</td><td class="prop-cell" style="background: #548235; color: white;">P9</td><td class="prop-cell" style="background: #548235; color: white;">V10</td><td class="prop-cell" style="background: #548235; color: white;">P11</td><td class="prop-cell" style="background: #548235; color: white;">V12</td><td class="prop-cell" style="background: #548235; color: white;">V13</td><td class="prop-cell" style="background: #548235; color: white;">V14</td><td class="prop-cell" style="background: #548235; color: white;">P15</td><td class="prop-cell" style="background: #548235; color: white;">V16</td><td class="prop-cell" style="background: #548235; color: white;">P17</td><td class="prop-cell" style="background: #548235; color: white;">V18</td><td class="prop-cell" style="background: #548235; color: white;">P19</td><td class="prop-cell" style="background: #548235; color: white;">V20</td><td class="prop-cell" style="background: #548235; color: white;">P21</td><td class="prop-cell" style="background: #548235; color: white;">V22</td><td class="prop-cell" style="background: #548235; color: white;">P23</td><td class="prop-cell" style="background: #548235; color: white;">V24</td><td class="prop-cell" style="background: #548235; color: white;">V25</td></tr><tr><td class="frozen-col prop-row" style="background: #70AD47; color: #333;">Timing of Visit (Weeks)<br/><span class="prop-id">prop-003</span></td><td class="prop-cell" style="background: #70AD47; color: #333;">-1</td><td class="prop-cell" style="background: #70AD47; color: #333;">0</td><td class="prop-cell" style="background: #70AD47; color: #333;">2</td><td class="prop-cell" style="background: #70AD47; color: #333;">4</td><td class="prop-cell" style="background: #70AD47; color: #333;">6</td><td class="prop-cell" style="background: #70AD47; color: #333;">8</td><td class="prop-cell" style="background: #70AD47; color: #333;">10</td><td class="prop-cell" style="background: #70AD47; color: #333;">12</td><td class="prop-cell" style="background: #70AD47; color: #333;">14</td><td class="prop-cell" style="background: #70AD47; color: #333;">16</td><td class="prop-cell" style="background: #70AD47; color: #333;">18</td><td class="prop-cell" style="background: #70AD47; color: #333;">20</td><td class="prop-cell" style="background: #70AD47; color: #333;">24</td><td class="prop-cell" style="background: #70AD47; color: #333;">28</td><td class="prop-cell" style="background: #70AD47; color: #333;">32</td><td class="prop-cell" style="background: #70AD47; color: #333;">36</td><td class="prop-cell" style="background: #70AD47; color: #333;">40</td><td class="prop-cell" style="background: #70AD47; color: #333;">44</td><td class="prop-cell" style="background: #70AD47; color: #333;">48</td><td class="prop-cell" style="background: #70AD47; color: #333;">52</td><td class="prop-cell" style="background: #70AD47; color: #333;">56</td><td class="prop-cell" style="background: #70AD47; color: #333;">60</td><td class="prop-cell" style="background: #70AD47; color: #333;">64</td><td class="prop-cell" style="background: #70AD47; color: #333;">68</td><td class="prop-cell" style="background: #70AD47; color: #333;">75</td></tr><tr><td class="frozen-col prop-row" style="background: #A9D08E; color: #333;">Visit Window (Days)<br/><span class="prop-id">prop-004</span></td><td class="prop-cell" style="background: #A9D08E; color: #333;">-7 to 0</td><td class="prop-cell" style="background: #A9D08E; color: #333;">0</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">±3</td><td class="prop-cell" style="background: #A9D08E; color: #333;">0 to +5</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">SUBJECT RELATED INFORMATION AND ASSESSMENTS<br/><span class="act-id">act-001</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Informed consent and Demography (Appendix 3)<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Childbearing potential (Appendix 5)<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Inclusion criteria (6.1)<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Exclusion criteria (6.2)<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Run-in criteria (6.3.1)<br/><span class="act-id">act-006</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Randomisation criteria and randomisation (6.3.2)<br/><span class="act-id">act-007</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Medical history/Concomitant illness (9.4)<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Weight History (9)<br/><span class="act-id">act-009</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;History of Gallbladder Disease (9.4)<br/><span class="act-id">act-010</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;History of Breast Neoplasm (9.4)<br/><span class="act-id">act-011</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;History of Colon Neoplasm (9.4)<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;History of Skin Cancer (9.4)<br/><span class="act-id">act-013</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;History of Psychiatric Disorder (9.4)<br/><span class="act-id">act-014</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Tobacco Use<br/><span class="act-id">act-015</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Concomitant medication (7.7)<br/><span class="act-id">act-016</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Trial product compliance (7.1, 7.6)<br/><span class="act-id">act-017</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Evaluation of lipid-lowering treatment (9)<br/><span class="act-id">act-018</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Evaluation of antihypertensive treatment (9)<br/><span class="act-id">act-019</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Evaluation of glycaemic status (9)<br/><span class="act-id">act-020</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">EFFICACY<br/><span class="act-id">act-021</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Body measurements (9.1.1)<br/><span class="act-id">act-022</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Height<br/><span class="act-id">act-023</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Body Weight<br/><span class="act-id">act-024</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Waist Circumference<br/><span class="act-id">act-025</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;HbA1c<br/><span class="act-id">act-026</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Fasting plasma glucose<br/><span class="act-id">act-027</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Fasting serum insulin<br/><span class="act-id">act-028</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Lipids (Appendix 2)<br/><span class="act-id">act-029</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Vital Signs (6.4.2, 9.4.3)<br/><span class="act-id">act-030</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Systolic Blood Pressure<br/><span class="act-id">act-031</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Diastolic Blood Pressure<br/><span class="act-id">act-032</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Clinical Outcome Assessments (9.1.2)<br/><span class="act-id">act-033</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Short Form-36 (SF-36)<br/><span class="act-id">act-034</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Weight Related Sign and Symptom Measure (WRSSM)<br/><span class="act-id">act-035</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Patient Global Impression of Severity (PGI-S)<br/><span class="act-id">act-036</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Patient Global Impression of Change (PGI-C)<br/><span class="act-id">act-037</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Stanford Presenteeism Scale (SPS-6)<br/><span class="act-id">act-038</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">SAFETY<br/><span class="act-id">act-039</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Physical examination (9.4.2)<br/><span class="act-id">act-040</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Pregnancy test (9.4.5, Appendix 5)<br/><span class="act-id">act-041</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;ECG (9.4.4)<br/><span class="act-id">act-042</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Adverse event (9.2, Appendix 4)<br/><span class="act-id">act-043</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Technical complaint (9.2.9, Appendix 6)<br/><span class="act-id">act-044</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Breast neoplasms follow-up (9.4)<br/><span class="act-id">act-045</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Colon neoplasms follow-up (9.4)<br/><span class="act-id">act-046</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Haematology (Appendix 2)<br/><span class="act-id">act-047</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Biochemistry (Appendix 2)<br/><span class="act-id">act-048</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Vital Signs (6.4.2, 9.4.3)<br/><span class="act-id">act-049</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Pulse<br/><span class="act-id">act-050</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Clinical Outcome Assessments (9.4.1)<br/><span class="act-id">act-051</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Patient Health Questionnaire – 9 (PHQ-9)<br/><span class="act-id">act-052</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Columbia Suicide Severity Rating Scale (C-SSRS)<br/><span class="act-id">act-053</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">TRIAL MATERIAL<br/><span class="act-id">act-054</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;First date on trial product<br/><span class="act-id">act-055</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;IWRS session<br/><span class="act-id">act-056</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Administration of trial product (7.1, 7.5)<br/><span class="act-id">act-057</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Dispensing visit<br/><span class="act-id">act-058</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;&nbsp;&nbsp;Drug accountability<br/><span class="act-id">act-059</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">REMINDERS<br/><span class="act-id">act-060</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Criteria for discontinuation (8.1)<br/><span class="act-id">act-061</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Barriers and motivation interview (9)<br/><span class="act-id">act-062</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Diet and physical activity counselling (7.1.2)<br/><span class="act-id">act-063</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Training in trial product, pen-handling (7.1.1)<br/><span class="act-id">act-064</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Hand out direction for use (7.1.1)<br/><span class="act-id">act-065</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Hand out dose reminder card (7.1)<br/><span class="act-id">act-066</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Hand out and instruct in food diary (9)<br/><span class="act-id">act-067</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Hand out ID card<br/><span class="act-id">act-068</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Attend visit fasting (6.4.1)<br/><span class="act-id">act-069</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
