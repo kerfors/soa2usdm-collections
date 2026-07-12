@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-003 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT04320615</span><span class="nav-sep">›</span><span class="nav-current">Table 3</span></div>
+        
+        <div class="nav-tables">
+            <a href="NCT04320615_Table_02_resolved.html" class="nav-btn">◀ T2</a>
+            <span class="nav-table-list"><a href="NCT04320615_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="NCT04320615_Table_02_resolved.html" class="nav-table-btn">T2</a> <a href="NCT04320615_Table_03_resolved.html" class="nav-table-btn current">T3</a></span>
+            <span class="nav-btn disabled">▶</span>
+        </div>
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 3: Appendix 3: Schedule of Activities: After Day 28</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | main_soa</div>
+        <div class="meta">2 properties | 14 activities | 3 columns | 8 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT04320615_Table_03_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T18:00:14+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;JSON v3.0.2 single-pass)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT04320615_soa.pdf [protocol] vTocilizumab WA42380, Version 3 (COVID-19)</td></tr><tr><td class="field">extraction_notes</td><td>Appendix 3 (After Day 28) of the tocilizumab COVID-19 SoA. Sequential main_soa phase table. Landscape; table p 84, footnotes pp 84-85. Days 35/45 carry marker a (grid day cells col 2-3); col 4 = Day 60 Study Completion. Footnote c dedup across Vital signs + SpO2. Hematology/Chemistry footnotes here add the &#x27;not performed if follow-up by telephone&#x27; clause (distinct from Appendices 1/2). Abbreviation list not captured.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">resolved</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T18:02:25.247557+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT04320615_Table_03_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Appendix 3: Schedule of Activities: After Day 28</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-003</td></tr><tr><td class="field">table_number</td><td>3</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #1F4788;">main_soa</span></td></tr><tr><td class="field">table_title</td><td>Appendix 3: Schedule of Activities: After Day 28</td></tr><tr><td class="field">table_purpose</td><td>Post-Day-28 follow-up schedule: Day 35, Day 45, and Day 60 (Study Completion).</td></tr><tr><td class="field">pages</td><td>84 – 85</td></tr><tr><td class="field">dimensions</td><td class="trace">3 cols | 14 rows | 2 header | 14 activity</td></tr><tr><td class="field">notes</td><td>Appendix 3 (document pages 84-85). One of three sequential phase schedules; table page 84, footnotes pages 84-85. 3 data columns (2-4): Day 35, Day 45, Day 60 (Study Completion).</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">2 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Epoch <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">epoch</td>
+            <td class="comment">Top band: &#x27;Study Completion&#x27; over col 4 (Day 60). Cols 2-3 (Days 35, 45) have no epoch label. Label cell empty; name synthesized.</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Study Day (Assessment Window) </td>
+            <td class="type">study_day</td>
+            <td class="comment">Study days with assessment windows: Day 35 (±3 days, col 2, marker a), Day 45 (±3 days, col 3, marker a), Day 60 (±3 days, col 4, Study Completion).</td>
+            <td class="trace">↑prop-001</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">14 total (1 headers, 13 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FFFFFF;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Chest X-ray/CT scan</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">SARS-CoV-2 viral load</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">b</span> → annot-002</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Vital signs</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">c</span> → annot-003</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">SpO2</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">c</span> → annot-003</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Ordinal scoring</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">d</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Adverse events</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">e</span> → annot-005</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Concomitant medications</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">f</span> → annot-006</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Hematology</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">g</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Chemistry</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">h</span> → annot-008</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-010</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Central Labs</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Serum PD (CRP, IL-6, sIL-6R)</td>
+            <td><span class="trace">Central Labs</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Serum PK</td>
+            <td><span class="trace">Central Labs</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Serum sample for exploratory biomarkers</td>
+            <td><span class="trace">Central Labs</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Serum SARS-Cov-2 antibody titer</td>
+            <td><span class="trace">Central Labs</span></td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">8 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (8)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="If patients are unable to return for onsite visits at Day 35 and/or Day 45, these may be conducted by telephone or home visits. Patients should return to the site for a Day 60 Study Completion visit.">If patients are unable to return for onsite visits at Day 35 and/or Day 45, these may be conducte...</td>
+                <td class="trace">cols: col-002, col-003</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">b</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Patients who remain in hospital will have viral load assessed by nasopharyngeal swabs; these will be done if there is evidence of on-going infection.">Patients who remain in hospital will have viral load assessed by nasopharyngeal swabs; these will...</td>
+                <td class="trace">acts: act-002</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="For patients who remain in hospital, vital sign measurements and NEWS2-specific assessments should be conducted twice daily. Following hospital discharge, these parameters should be recorded once at each return visit to the clinic. Vital signs and oxygen saturation will not be recorded if follow-up visits are conducted by telephone.">For patients who remain in hospital, vital sign measurements and NEWS2-specific assessments shoul...</td>
+                <td class="trace">acts: act-003, act-004</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">d</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Assessment of clinical status using the ordinal scale should be recorded at baseline on Day 1/Visit 1 then again daily every morning (between 8 am and 12 pm) for patients who remain hospitalized.">Assessment of clinical status using the ordinal scale should be recorded at baseline on Day 1/Vis...</td>
+                <td class="trace">acts: act-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">e</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 60 days after the final dose of study drug. After this period, the Sponsor should be notified if the investigator becomes aware of any serious adverse event that is believed to be related to prior study drug treatment (see Section 5.6).">After informed consent has been obtained but prior to initiation of study drug, only serious adve...</td>
+                <td class="trace">acts: act-006</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">f</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to initiation of study drug to the study completion/discontinuation visit.">Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic rem...</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">g</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, differential count (neutrophils, eosinophils, basophils, monocytes, lymphocytes), and lymphocyte subsets (T cells, B cells, and NK cells). Hematology labs will not be performed if follow-up visits are conducted by telephone.">Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, differential co...</td>
+                <td class="trace">acts: act-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">h</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered standard of care for the region), sodium, potassium, chloride, glucose, BUN or urea, creatinine, total protein, albumin, phosphorus, calcium, total bilirubin, ALP, ALT, and/or AST, uric acid, LDH, ferritin, and D-dimer. Chemistry labs will not be performed if follow-up visits are conducted by telephone.">Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered sta...</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">14 activities × 3 columns (32 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="35 (±3 days)">col-002</th><th class="col-header" title="45 (±3 days)">col-003</th><th class="col-header" title="Study Completion / 60 (±3 days)">col-004</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Epoch<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;"></td><td class="prop-cell" style="background: #375623; color: white;"></td><td class="prop-cell" style="background: #375623; color: white;">Study Completion</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Study Day (Assessment Window)<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">35 (±3 days)</td><td class="prop-cell" style="background: #548235; color: white;">45 (±3 days)</td><td class="prop-cell" style="background: #548235; color: white;">60 (±3 days)</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Chest X-ray/CT scan<br/><span class="act-id">act-001</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">SARS-CoV-2 viral load<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Vital signs<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">SpO2<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Ordinal scoring<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Adverse events<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Concomitant medications<br/><span class="act-id">act-007</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Hematology<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Chemistry<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Central Labs<br/><span class="act-id">act-010</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Serum PD (CRP, IL-6, sIL-6R)<br/><span class="act-id">act-011</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Serum PK<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Serum sample for exploratory biomarkers<br/><span class="act-id">act-013</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Serum SARS-Cov-2 antibody titer<br/><span class="act-id">act-014</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
