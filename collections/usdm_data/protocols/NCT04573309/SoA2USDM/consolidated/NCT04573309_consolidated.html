@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCT04573309 - Consolidated Schedule</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1800px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-tables-label {
+            font-size: 11px;
+            color: #666;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 22px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 14px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 12px 15px; color: #444; font-size: 11px; border-bottom: 1px solid #eee; background: #f9f9f9; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top; word-wrap: break-word;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .prop-comparison th.table-col { text-align: center; min-width: 320px; }
+        .prop-comparison .track-small { font-size: 9px; font-weight: normal; color: #666; }
+        .prop-comparison .level-cell { font-weight: bold; text-align: center; width: 60px; font-size: 11px; }
+        .prop-comparison .prop-data { text-align: left; vertical-align: top; padding: 10px 12px !important; }
+        .prop-comparison .prop-empty { text-align: center; color: #ccc; background: #fafafa; font-size: 11px; }
+        .prop-cell-content { }
+        .prop-cell-content .prop-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; }
+        .prop-cell-content .prop-type { font-size: 10px; opacity: 0.85; margin-bottom: 6px; }
+        .prop-cell-content .prop-comment { font-size: 10px; opacity: 0.9; font-style: normal; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 6px; margin-top: 4px; }
+        
+        .title-full { max-width: 600px; }
+        .purpose-text { font-size: 9px; color: #666; font-style: italic; }
+        
+        .conclusion-col { min-width: 120px; text-align: center; }
+        .conclusion-cell { text-align: center; font-size: 11px; background: #fafafa; padding: 10px !important; }
+        .conc-match { color: #28a745; font-weight: bold; }
+        .conc-similar { color: #17a2b8; font-weight: bold; }
+        .conc-differ { color: #dc3545; font-weight: bold; }
+        .conc-partial { color: #fd7e14; font-weight: bold; }
+        .conc-empty { color: #ccc; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .bool { font-size: 10px; }
+        .text-full { max-width: 400px; }
+        .variations { font-size: 9px; color: #666; font-style: italic; }
+        .track-label { padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .scope-acts { color: #C65911; }
+        .scope-cols { color: #17a2b8; font-style: italic; }
+        .scope-cells { color: #538135; }
+        .scope-table { color: #999; font-style: italic; }
+        
+        .section {
+            background: white; border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .section-title {
+            color: white; padding: 12px 20px; font-size: 13px; font-weight: bold;
+            cursor: pointer; user-select: none;
+        }
+        .section-title:hover { filter: brightness(1.1); }
+        .section-title .toggle-icon { 
+            display: inline-block; transition: transform 0.2s; margin-right: 8px; 
+        }
+        .collapsible-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .collapsible-section.collapsed .grid-container { display: none; }
+        .grid-container { overflow-x: auto; padding: 10px; }
+        
+        .table-border { border-left: 3px solid #333 !important; }
+        
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        .grid-table th { background: #f0f0f0; font-weight: bold; font-size: 9px; }
+        .grid-table th.activity-header { text-align: left; }
+        
+        .frozen-col1 {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            min-width: 340px;
+            max-width: 340px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+        }
+        .frozen-col2 {
+            position: sticky;
+            left: 340px;
+            z-index: 2;
+            min-width: 60px;
+            max-width: 60px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+            text-align: center;
+        }
+        .grid-table th.frozen-col1,
+        .grid-table th.frozen-col2 {
+            z-index: 3;
+        }
+        .frozen-col2::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -6px;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+            pointer-events: none;
+        }
+        
+        .activity-name { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .activity-name.section-header { font-weight: bold; }
+        .activity-name.child { padding-left: 15px; }
+        
+        .legend {
+            background: white; border-radius: 8px; padding: 12px 20px;
+            margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-color { width: 16px; height: 12px; border-radius: 2px; border: 1px solid #ddd; }
+        .legend-section { font-weight: bold; color: #666; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT04573309</span><span class="nav-sep">›</span><span class="nav-current">Consolidated</span></div>
+        
+        <div class="nav-tables">
+            <span class="nav-tables-label">Tables:</span>
+            <span class="nav-table-list"><a href="../resolved/NCT04573309_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="../resolved/NCT04573309_Table_02_resolved.html" class="nav-table-btn">T2</a></span>
+        </div>
+    </nav>
+    <div class="header">
+        <h1>NCT04573309 - Consolidated Schedule of Activities</h1>
+        <div class="sub">study-schedule-consolidated v1.0 | Layer 3</div>
+        <div class="meta">2 tables | 43 activities (2% compression) | 35 columns</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+    </div>
+    
+    <div class="legend">
+        <span class="legend-section">Activities:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#d4edda;"></div>Multi-table exact</div>
+        <div class="legend-item"><div class="legend-color" style="background:#cce5ff;"></div>Multi-table fuzzy</div>
+        <div class="legend-item"><div class="legend-color" style="background:#e1bee7;"></div>Cross-parent</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f0f0f0;"></div>Single table</div>
+        <span class="legend-section">|</span>
+        <span class="legend-section">Cells:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#BDD7EE;"></div>Common</div>
+        
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
+            <span class="comp-desc">Process information</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-07-12T17:50:54.302905+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">44</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">43</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">2</span></td></tr><tr><td class="field">match_stats</td><td>exact: 1, new: 43</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Source Tables</span>
+            <span class="comp-desc">2 tables</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>table</th><th>type</th><th>track</th><th>title / purpose</th><th>acts</th><th>cols</th><th>props</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">T1</td>
+            <td class="type">main_soa</td>
+            <td></td>
+            <td class="title-full">Table 1: Schedule of Activities<br/><span class='purpose-text'>Anchor schedule of activities across Screening, Check-in, Inpatient Period 1, Outpatient, Inpatient Period 2, Unscheduled, and EOS/ET.</span></td>
+            <td class="trace">43</td>
+            <td class="trace">24</td>
+            <td class="trace">2</td>
+        </tr><tr>
+            <td class="id">T2</td>
+            <td class="type">subsidiary</td>
+            <td></td>
+            <td class="title-full">Table 2: Schedule of Pharmacokinetic and Pharmacodynamic Assessments on Days 1, 25, 29, and 39<br/><span class='purpose-text'>Finer within-visit PK/PD sampling timepoints (hours relative to dosing) for the PK/PD blood sampling activity on Days 1, 25, 29, and 39 of Table 1.</span></td>
+            <td class="trace">1</td>
+            <td class="trace">11</td>
+            <td class="trace">1</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy Comparison</span>
+            <span class="comp-desc">2 main timeline tables, 2 levels max</span>
+        </div>
+        <div class="comp-body">
+            <p class="comp-note">Compares main timeline tables only (main_soa, continuation, subsidiary). Track, domain, and reference tables excluded — different structure by design.</p>
+            <table class="comp-table prop-comparison">
+                <thead><tr><th>Level</th><th class="table-col" title="main_soa">T1</th><th class="table-col" title="subsidiary">T2</th><th class="conclusion-col">Conclusion</th></tr></thead>
+                <tbody><tr><td class="level-cell" style="background: #375623; color: white;">L1</td><td class="prop-data" style="background: #375623; color: white;" title="Study phases/periods, collapsed from the two stacked epoch header bands: Screening (cols 2-3), C-I (check-in, col 4), Inpatient Period 1 (cols 5-12), OP (outpatient, col 13), Inpatient Period 2 (cols 15-23), UNS (unscheduled, col 24), EOS or ET (col 25). Col 14 (Day 23, readmission/transition) has no epoch label. Markers a/b/c/d/e ride Screening/C-I/OP/UNS/EOS respectively."><div class="prop-cell-content">
+                    <div class="prop-name">Epoch</div>
+                    <div class="prop-type">[epoch]</div>
+                    <div class="prop-comment">Study phases/periods, collapsed from the two stacked epoch header bands: Screening (cols 2-3), C-I (check-in, col 4), Inpatient Period 1 (cols 5-12), OP (outpatient, col 13), Inpatient Period 2 (cols 15-23), UNS (unscheduled, col 24), EOS or ET (col 25). Col 14 (Day 23, readmission/transition) has no epoch label. Markers a/b/c/d/e ride Screening/C-I/OP/UNS/EOS respectively.</div>
+                </div></td><td class="prop-data" style="background: #375623; color: white;" title="Within-visit PK/PD sampling timepoints in hours relative to dosing (0 h): -0.5, 0, 1, 2, 3, 4, 5, 6, 8, 12, 24. Applies to Days 1, 25, 29, and 39 of Table 1. Header carries footnote marker a."><div class="prop-cell-content">
+                    <div class="prop-name">Time point (hours)</div>
+                    <div class="prop-type">[timepoint]</div>
+                    <div class="prop-comment">Within-visit PK/PD sampling timepoints in hours relative to dosing (0 h): -0.5, 0, 1, 2, 3, 4, 5, 6, 8, 12, 24. Applies to Days 1, 25, 29, and 39 of Table 1. Header carries footnote marker a.</div>
+                </div></td><td class="conclusion-cell"><span class="conc-differ">≠ Differs</span></td></tr><tr><td class="level-cell" style="background: #548235; color: white;">L2</td><td class="prop-data" style="background: #548235; color: white;" title="Study days / day ranges per column (relative to Day 1 dosing): -42 to -9, -21, -8, -7, -6 through -5, -4 through -1, 1, 2-3, 4-7, 8, 9, 10-22, 23, 24, 25, 26-28, 29, 30-35, 36, 37-38, 39, 40; UNS has no day; EOS Day 54+/-2. Label cell reads &#x27;Days&#x27;."><div class="prop-cell-content">
+                    <div class="prop-name">Days</div>
+                    <div class="prop-type">[study_day]</div>
+                    <div class="prop-comment">Study days / day ranges per column (relative to Day 1 dosing): -42 to -9, -21, -8, -7, -6 through -5, -4 through -1, 1, 2-3, 4-7, 8, 9, 10-22, 23, 24, 25, 26-28, 29, 30-35, 36, 37-38, 39, 40; UNS has no day; EOS Day 54+/-2. Label cell reads &#x27;Days&#x27;.</div>
+                </div></td><td class="prop-empty">—</td><td class="conclusion-cell"><span class="conc-partial">1/2 tables</span></td></tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Activities</span>
+            <span class="comp-desc">43 activities</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>header</th>
+                </tr></thead>
+                <tbody><tr style="background: #f0f0f0;">
+            <td class="id">xact-001</td>
+            <td class="text-full">Eligibility</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-002</td>
+            <td class="text-full">Informed consent</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-003</td>
+            <td class="text-full">Admit to unit</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-004</td>
+            <td class="text-full">Discharge from unit</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-005</td>
+            <td class="text-full">Outpatient visit or phone call</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-006</td>
+            <td class="text-full">Inclusion/exclusion</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-007</td>
+            <td class="text-full">Discuss/document contraception</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-008</td>
+            <td class="text-full">Follicle-stimulating hormone (post-menopausal females only)</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-009</td>
+            <td class="text-full">Alcohol test</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-010</td>
+            <td class="text-full">Urine drug screen</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-011</td>
+            <td class="text-full">HIV, hepatitis B and C screen</td>
+            <td class="trace">Eligibility</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-012</td>
+            <td class="text-full">Study Administration</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-013</td>
+            <td class="text-full">Medical history/demographics</td>
+            <td class="trace">Study Administration</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-014</td>
+            <td class="text-full">WD history</td>
+            <td class="trace">Study Administration</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-015</td>
+            <td class="text-full">Prior WD treatment</td>
+            <td class="trace">Study Administration</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-016</td>
+            <td class="text-full">Physical examination</td>
+            <td class="trace">Study Administration</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-017</td>
+            <td class="text-full">Height, weight, and BMI</td>
+            <td class="trace">Study Administration</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-018</td>
+            <td class="text-full">Enrollment</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-019</td>
+            <td class="text-full">Enrollment/inclusion</td>
+            <td class="trace">Enrollment</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-020</td>
+            <td class="text-full">Discontinue chelation therapy</td>
+            <td class="trace">Enrollment</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-021</td>
+            <td class="text-full">Discontinue zinc therapy</td>
+            <td class="trace">Enrollment</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-022</td>
+            <td class="text-full">Administration of Study Intervention</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-023</td>
+            <td class="text-full">ALXN1840 15 mg/day</td>
+            <td class="trace">Administration of Study Intervention</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-024</td>
+            <td class="text-full">ALXN1840 30 mg/day</td>
+            <td class="trace">Administration of Study Intervention</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-025</td>
+            <td class="text-full">Study intervention compliance</td>
+            <td class="trace">Administration of Study Intervention</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-026</td>
+            <td class="text-full">PK/PD Analyses</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #d4edda;">
+            <td class="id">xact-027</td>
+            <td class="text-full">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</td>
+            <td class="trace">PK/PD Analyses</td>
+            <td class="type">exact</td>
+            <td class="trace">2</td>
+            <td class="trace">T1, T2</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-028</td>
+            <td class="text-full">Safety Assessments / Laboratory Analyses</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-029</td>
+            <td class="text-full">Chemistry, hematology, Coagulation</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-030</td>
+            <td class="text-full">Urinalysis</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-031</td>
+            <td class="text-full">Urine/serum pregnancy test</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-032</td>
+            <td class="text-full">Retained serum sample (safety)</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-033</td>
+            <td class="text-full">Vitals sign measurements</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-034</td>
+            <td class="text-full">12-lead ECG (triplicate)</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-035</td>
+            <td class="text-full">Adverse events</td>
+            <td class="trace">Safety Assessments / Laboratory Analyses</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-036</td>
+            <td class="text-full">Balance assessments</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-037</td>
+            <td class="text-full">Cu/Mo-controlled meals</td>
+            <td class="trace">Balance assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-038</td>
+            <td class="text-full">Light exercise regimen</td>
+            <td class="trace">Balance assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-039</td>
+            <td class="text-full">Urination and bowel movement monitoring, menstruation check</td>
+            <td class="trace">Balance assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-040</td>
+            <td class="text-full">24-hour urine for Cu and Mo</td>
+            <td class="trace">Balance assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-041</td>
+            <td class="text-full">Feces for Cu and Mo</td>
+            <td class="trace">Balance assessments</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-042</td>
+            <td class="text-full">Other</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">true</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-043</td>
+            <td class="text-full">Concomitant medication and non-pharmacologic therapy/procedure</td>
+            <td class="trace">Other</td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Annotations</span>
+            <span class="comp-desc">27 annotations (0% dedup from 27)</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (27)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #fff;">
+                <td class="id">xannot-001</td>
+                <td class="trace">T1:a</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Within 42 days of ALXN1840 administration. Details of procedures that may be performed by sites designated as “screening sites” (only in the US) are detailed in Section 8.">Within 42 days of ALXN1840 administration. Details of procedures that may be performed by sites designated as “screen...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Eligibility</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-002</td>
+                <td class="trace">T1:b</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Participants will be admitted to the clinical research unit (CRU) at least 10 hours prior to enrollment and initiation of copper- and molybdenum-controlled diet.">Participants will be admitted to the clinical research unit (CRU) at least 10 hours prior to enrollment and initiatio...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Eligibility</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-003</td>
+                <td class="trace">T1:c</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="At the CRU’s discretion, participants may remain in the CRU or be readmitted on Day 22 with all procedures starting on Day 23.">At the CRU’s discretion, participants may remain in the CRU or be readmitted on Day 22 with all procedures starting o...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Eligibility</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-004</td>
+                <td class="trace">T1:d</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Unscheduled study visits may occur at any time during the study and may include any study procedure as deemed necessary by the Investigator.">Unscheduled study visits may occur at any time during the study and may include any study procedure as deemed necessa...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Eligibility</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-005</td>
+                <td class="trace">T1:e</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Participants are required to return to the CRU Day 54+/-2; participants will be discontinued from ALXN1840 medication by their physician at the latest by the Day 54 follow-up.">Participants are required to return to the CRU Day 54+/-2; participants will be discontinued from ALXN1840 medication...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Eligibility</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-006</td>
+                <td class="trace">T1:f</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Discharge from the unit may occur after completion of all procedures on Day 9 and on Day 40 and after the Investigator has reviewed all safety assessment (including safety laboratory tests) and confirmed that the participant is appropriate for discharge.">Discharge from the unit may occur after completion of all procedures on Day 9 and on Day 40 and after the Investigato...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Discharge from unit</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-007</td>
+                <td class="trace">T1:g</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="A single outpatient visit or phone call and safety laboratory assessment should occur between Day 14 and Day 18. A phone call may take place on a different day than the blood draw within the Day 14 through Day 18 period.">A single outpatient visit or phone call and safety laboratory assessment should occur between Day 14 and Day 18. A ph...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Outpatient visit or phone call | Chemistry, hematology, Coagulation | Urinalysis</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-008</td>
+                <td class="trace">T1:h</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="If needed to confirm menopause.">If needed to confirm menopause.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Follicle-stimulating hormone (post-menopausal females only)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-009</td>
+                <td class="trace">T1:i</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Parameters include age and sex. Race and ethnicity will be collected where permitted by local regulations.">Parameters include age and sex. Race and ethnicity will be collected where permitted by local regulations.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Medical history/demographics</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-010</td>
+                <td class="trace">T1:j</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Wilson disease history will include diagnosis date, method of diagnosis, history of cirrhosis, details of any previous liver biopsies performed, and treatment received.">Wilson disease history will include diagnosis date, method of diagnosis, history of cirrhosis, details of any previou...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">WD history | Prior WD treatment</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-011</td>
+                <td class="trace">T1:k</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="A full physical examination will be performed at Screening, at check-in for the study, and at the End of the study/Early Termination Visit. A physical examination should also be performed on any participants with ongoing adverse events prior to discharge from the unit. Otherwise, a symptom-driven physical examination may be performed at other times, at the Principal Investigator’s discretion.">A full physical examination will be performed at Screening, at check-in for the study, and at the End of the study/Ea...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Physical examination</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-012</td>
+                <td class="trace">T1:l</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Height at screening only.">Height at screening only.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Height, weight, and BMI</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-013</td>
+                <td class="trace">T1:m</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="While in the CRU, study intervention will be administered after an overnight fast (ie, at least 10 hours) at the same time every morning; drug is to be administered with 240 mL of water and meals should be delayed a minimum of 2 hours after dosing. As an outpatient, participants are expected to take ALXN1840 at approximately the same time daily (+/-1 hour). Participants should take the medication with a glass of water on an empty stomach; meals should be delayed a minimum of 2 hours after dosing.">While in the CRU, study intervention will be administered after an overnight fast (ie, at least 10 hours) at the same...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Administration of Study Intervention</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-014</td>
+                <td class="trace">T1:n</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="During the outpatient period, participants will use SMS text messaging to confirm study intervention administration.">During the outpatient period, participants will use SMS text messaging to confirm study intervention administration.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Study intervention compliance</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-015</td>
+                <td class="trace">T1:o</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Blood sampling for PK/PD will occur before ALXN1840 administration and represents a predose trough. See Table 2 for PK/PD sampling on Days 1, 25, 29, and 39.">Blood sampling for PK/PD will occur before ALXN1840 administration and represents a predose trough. See Table 2 for P...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">PK/PD Analyses</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-016</td>
+                <td class="trace">T1:p</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="PK/PD collection will include timepoints described in the schedule of PK/PD assessment for Days 1, 25, 29, and 39 (Table 2).">PK/PD collection will include timepoints described in the schedule of PK/PD assessment for Days 1, 25, 29, and 39 (Ta...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</span> <span class="scope-cells" title="Specific cells">4 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-017</td>
+                <td class="trace">T1:q</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Samples for serum chemistry will be obtained following a fast of at least 8 hours at the Screening Visit and at check-in. In case of rechecks, and postdose serum chemistry, participants may not have fasted for 6 or 8 hours before the serum chemistry sample is taken.">Samples for serum chemistry will be obtained following a fast of at least 8 hours at the Screening Visit and at check...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Chemistry, hematology, Coagulation</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-018</td>
+                <td class="trace">T1:r</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Laboratory assessment including chemistry, hematology, and coagulation parameters should be performed on Days -8, -1, 8, 23, and 28 only.">Laboratory assessment including chemistry, hematology, and coagulation parameters should be performed on Days -8, -1,...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Chemistry, hematology, Coagulation</span> <span class="scope-cells" title="Specific cells">2 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-019</td>
+                <td class="trace">T1:s</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Menstruation check is for women only; women of childbearing potential should only be enrolled after a negative serum pregnancy test result at Screening. Additional urine pregnancy testing will be standard for the protocol unless serum testing is required by site policies, local regulation, or Institutional Review Boards (IRBs)/Independent Ethics Committees (IECs) (Section 10.2). In addition to pregnancy tests detailed at the visits in the SoA, females of childbearing potential will be required to perform urine pregnancy tests at least every 4 weeks at their home or the study site throughout their time in the study.">Menstruation check is for women only; women of childbearing potential should only be enrolled after a negative serum ...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Urine/serum pregnancy test | Urination and bowel movement monitoring, menstruation check</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-020</td>
+                <td class="trace">T1:t</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="A single 15 mL serum sample will be retained for evaluation in the event of an unexpected safety finding; retained samples may be destroyed after completion of the clinical study report.">A single 15 mL serum sample will be retained for evaluation in the event of an unexpected safety finding; retained sa...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Retained serum sample (safety)</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-021</td>
+                <td class="trace">T1:u</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Vital signs measurements and ECGs should be performed predose, unless otherwise specified. Vitals signs include body temperature, heart rate, respiratory rate, and systolic and diastolic blood pressure.">Vital signs measurements and ECGs should be performed predose, unless otherwise specified. Vitals signs include body ...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Vitals sign measurements</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-022</td>
+                <td class="trace">T1:v</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Copper- and molybdenum-controlled diet will be initiated after registration/inclusion. Participants will remain on a copper/molybdenum controlled diet throughout both the inpatient Period 1 (Day -8 to Day 9) and inpatient Period 2 (Day 23 to Day 40); during this time participants will be strongly encouraged to complete all meals. While not in the CRU, participants will be encouraged to adhere to their usual copper-controlled diet.">Copper- and molybdenum-controlled diet will be initiated after registration/inclusion. Participants will remain on a ...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Cu/Mo-controlled meals</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-023</td>
+                <td class="trace">T1:w</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="For each input/output balance period, 24-hour urine samples are to be collected for measurement of copper and molybdenum.">For each input/output balance period, 24-hour urine samples are to be collected for measurement of copper and molybde...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">24-hour urine for Cu and Mo</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-024</td>
+                <td class="trace">T1:x</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="For fecal samples, each individual sample will be independently collected with record of date, time, and weight of the sample.">For fecal samples, each individual sample will be independently collected with record of date, time, and weight of th...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Feces for Cu and Mo</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-025</td>
+                <td class="trace">T2:a</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Time points are relative to dosing (0 hours).">Time points are relative to dosing (0 hours).</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-026</td>
+                <td class="trace">T2:b</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Hour 24 PK/PD sampling is to occur just prior to the next-day dose of ALXN1840.">Hour 24 PK/PD sampling is to occur just prior to the next-day dose of ALXN1840.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-027</td>
+                <td class="trace">T2:note1</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Windows for PK/PD time points will be defined as ±10% of the nominal time point. On Days 1 and 39, triplicate 12-lead ECG will be collected at 4 hours postdose. When multiple procedures are scheduled to occur at the same time, the following order of events should be strictly adhered to whenever possible: ECG, vital signs, blood sampling (eg, for PK/PD), study intervention administration, and meal.">Windows for PK/PD time points will be defined as ±10% of the nominal time point. On Days 1 and 39, triplicate 12-lead...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="section collapsible-section">
+        <div class="section-title" style="background: #1F4788;" onclick="toggleGrid(this)">
+            <span class="toggle-icon">▼</span> Main Schedule (24 columns)
+        </div>
+        <div class="grid-container">
+            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th></tr><tr><th class="frozen-col1" style="background: #375623; color: white; text-align: left; font-size: 9px;">Epoch<br/><span style="font-size: 8px; opacity: 0.8;">[epoch] L1</span></th><th class="frozen-col2" style="background: #375623;"></th><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Screening</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Screening</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">C-I</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">OP</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Inpatient Period 2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">UNS</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">EOS or ET</td></tr><tr><th class="frozen-col1" style="background: #548235; color: white; text-align: left; font-size: 9px;">Days<br/><span style="font-size: 8px; opacity: 0.8;">[study_day] L2</span></th><th class="frozen-col2" style="background: #548235;"></th><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-42 to -9</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-21</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-8</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-7</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-6 through -5</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">-4 through -1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">2-3</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">4-7</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">8</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">9</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">10-22</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">23</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">24</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">25</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">26-28</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">29</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">30-35</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">36</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">37-38</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">39</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">40</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">EOS Day 54+/-2</td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Eligibility">Eligibility</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Informed consent">Informed consent</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Admit to unit">Admit to unit</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Discharge from unit">Discharge from unit</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Outpatient visit or phone call">Outpatient visit or phone call</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Inclusion/exclusion">Inclusion/exclusion</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Discuss/document contraception">Discuss/document contraception</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Follicle-stimulating hormone (post-menopausal females only)">Follicle-stimulating hormone (post-menopausal females only)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Alcohol test">Alcohol test</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::Urine drug screen">Urine drug screen</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Eligibility::HIV, hepatitis B and C screen">HIV, hepatitis B and C screen</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Study Administration">Study Administration</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study Administration::Medical history/demographics">Medical history/demographics</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study Administration::WD history">WD history</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study Administration::Prior WD treatment">Prior WD treatment</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study Administration::Physical examination">Physical examination</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study Administration::Height, weight, and BMI">Height, weight, and BMI</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Enrollment">Enrollment</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Enrollment::Enrollment/inclusion">Enrollment/inclusion</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Enrollment::Discontinue chelation therapy">Discontinue chelation therapy</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Enrollment::Discontinue zinc therapy">Discontinue zinc therapy</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Administration of Study Intervention">Administration of Study Intervention</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Administration of Study Intervention::ALXN1840 15 mg/day">ALXN1840 15 mg/day</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Administration of Study Intervention::ALXN1840 30 mg/day">ALXN1840 30 mg/day</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Administration of Study Intervention::Study intervention compliance">Study intervention compliance</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::PK/PD Analyses">PK/PD Analyses</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #d4edda;" title="PK/PD Analyses::Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Safety Assessments / Laboratory Analyses">Safety Assessments / Laboratory Analyses</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::Chemistry, hematology, Coagulation">Chemistry, hematology, Coagulation</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::Urinalysis">Urinalysis</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::Urine/serum pregnancy test">Urine/serum pregnancy test</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::Retained serum sample (safety)">Retained serum sample (safety)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::Vitals sign measurements">Vitals sign measurements</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::12-lead ECG (triplicate)">12-lead ECG (triplicate)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Safety Assessments / Laboratory Analyses::Adverse events">Adverse events</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Balance assessments">Balance assessments</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Balance assessments::Cu/Mo-controlled meals">Cu/Mo-controlled meals</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Balance assessments::Light exercise regimen">Light exercise regimen</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Balance assessments::Urination and bowel movement monitoring, menstruation check">Urination and bowel movement monitoring, menstruation check</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Balance assessments::24-hour urine for Cu and Mo">24-hour urine for Cu and Mo</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Balance assessments::Feces for Cu and Mo">Feces for Cu and Mo</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Other">Other</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Other::Concomitant medication and non-pharmacologic therapy/procedure">Concomitant medication and non-pharmacologic therapy/procedure</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr></table>
+        </div>
+    </div>
+    <div class="section collapsible-section">
+        <div class="section-title" style="background: #17a2b8;" onclick="toggleGrid(this)">
+            <span class="toggle-icon">▼</span> Subsidiary Schedule (11 columns)
+        </div>
+        <div class="grid-container">
+            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T2</th></tr><tr><th class="frozen-col1" style="background: #375623; color: white; text-align: left; font-size: 9px;">Time point (hours)<br/><span style="font-size: 8px; opacity: 0.8;">[timepoint] L1</span></th><th class="frozen-col2" style="background: #375623;"></th><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">−0.5</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">0</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">1</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">2</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">3</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">4</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">5</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">6</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">8</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">12</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">24</td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Eligibility">Eligibility</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Study Administration">Study Administration</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Enrollment">Enrollment</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Administration of Study Intervention">Administration of Study Intervention</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::PK/PD Analyses">PK/PD Analyses</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #d4edda;" title="PK/PD Analyses::Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu">Blood sampling for PK: Plasma total Mo and PUF-Mo; PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu</td><td class="frozen-col2" style="background: #d4edda; font-size: 8px;">T1,T2</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Safety Assessments / Laboratory Analyses">Safety Assessments / Laboratory Analyses</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Balance assessments">Balance assessments</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Other">Other</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr></table>
+        </div>
+    </div>
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function toggleGrid(title) {
+            const section = title.closest('.collapsible-section');
+            section.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with component sections collapsed, grids expanded
+        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+    </script>
+</body>
+</html>
