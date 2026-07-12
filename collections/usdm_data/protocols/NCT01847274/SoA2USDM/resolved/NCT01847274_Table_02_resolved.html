@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-002 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT01847274</span><span class="nav-sep">›</span><span class="nav-current">Table 2</span></div>
+        
+        <div class="nav-tables">
+            <a href="NCT01847274_Table_01_resolved.html" class="nav-btn">◀ T1</a>
+            <span class="nav-table-list"><a href="NCT01847274_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="NCT01847274_Table_02_resolved.html" class="nav-table-btn current">T2</a> <a href="NCT01847274_Table_03_resolved.html" class="nav-table-btn">T3</a></span>
+            <a href="NCT01847274_Table_03_resolved.html" class="nav-btn">T3 ▶</a>
+        </div>
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 2: Table 8 Schedule of Events – Open-Label Food Effect Sub-Study (Study Completed)</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | track</div>
+        <div class="meta">3 properties | 17 activities | 8 columns | 13 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT01847274_Table_02_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T19:24:24+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;JSON v3.0.2 single-pass)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT01847274_soa.pdf [protocol] vNiraparib PR-30-5011-C Version 8</td></tr><tr><td class="field">extraction_notes</td><td>Table 8 (Open-Label Food Effect Sub-Study) of the niraparib protocol. track table (separate sub-study population). Landscape; body + footnotes 1-11 on doc p72, continued rows + footnotes 14,15 on doc p73. &#x27;Cycle&#x27; group (cols 5-7, marker 1) over C1 (Cycle 1, cols 5-6) and C2 (Cycle 2, col 7). Cell-level markers: 3 (pregnancy cols 2 &amp; 5), 4 (randomization col 2), 5 (study treatment FE cols 3-4), 6 (study treatment discontinuation col 9), 10 (12-lead ECG FE cols 3-4), 14 (AE monitoring discontinuation col 9). Bone marrow aspirate/biopsy is a single X merged across the on-study columns (3-9, source_range 3:9, marker 15). Continuation page re-numbers header footnotes 12,13 (= 1,2) - not emitted; noted. Abbreviations block not captured.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">resolved</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T19:24:57.763777+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT01847274_Table_02_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Table 8 Schedule of Events – Open-Label Food Ef...</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-002</td></tr><tr><td class="field">table_number</td><td>2</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #7030A0;">track</span></td></tr><tr><td class="field">track_label</td><td><span class="track-label">Food Effect Sub-Study</span></td></tr><tr><td class="field">table_title</td><td>Table 8 Schedule of Events – Open-Label Food Effect Sub-Study (Study Completed)</td></tr><tr><td class="field">table_purpose</td><td>Separate schedule for the open-label 14-day Food Effect sub-study population (FE Days 1/8, then Cycle 1/2 and subsequent cycles).</td></tr><tr><td class="field">pages</td><td>72 – 73</td></tr><tr><td class="field">dimensions</td><td class="trace">8 cols | 17 rows | 3 header | 17 activity</td></tr><tr><td class="field">notes</td><td>Section 7.1, Table 8. Header (Period/Cycle/Day) repeated across document pages 72-73 (page 73 is &#x27;Continued&#x27;); modeled as one track table (Food Effect Sub-Study). 8 data columns (2-9). Footnotes 1-11 on page 72; 14-15 on page 73. Page 73 re-labels the header footnotes 12,13 (identical text to 1,2) - the header is encoded once with markers 1,2, so 12,13 are not emitted.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">3 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Period <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">period</td>
+            <td class="comment">Top band: Screening (col 2), 14-Day Food Effect (cols 3-4), Cycle (cols 5-7, marker 1), Subsequent Cycles (col 8, marker 2), Treatment Discontinuation within 7 days of last dose (col 9). Label cell empty; name synthesized. &#x27;Cycle&#x27; at cols 5-7 groups the C1/C2 sub-columns.</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Cycle <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">cycle</td>
+            <td class="comment">Cycle sub-columns under the &#x27;Cycle&#x27; group: C1 = Cycle 1 (cols 5-6, Days 1 and 15), C2 = Cycle 2 (col 7, Day 1). Blank for the non-cycle columns.</td>
+            <td class="trace">↑prop-001 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-003</td>
+            <td class="level-cell" style="background: #70AD47; color: #333;">L3</td>
+            <td>Day </td>
+            <td class="type">study_day</td>
+            <td class="comment">Day: -28 to -1 (Screening); FE 1, FE 8 (14-Day Food Effect single doses); 1, 15 (Cycle 1); 1 (Cycle 2); Cycle n, Day 1 (Subsequent). Discontinuation column has no day.</td>
+            <td class="trace">↑prop-002</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">17 total (0 headers, 17 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FFFFFF;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Informed Consent</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Demographics</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Medical, cancer, surgical, medication history</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Pregnancy test</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Randomization</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Study treatment dispensed/collected</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Consumption of high fat meal, as applicable</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Physical examination</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Vital signs, height, weight</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">7</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">ECOG performance status</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Hematology/serum chemistry</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Urinalysis</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">8</span> → annot-008</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">12-lead ECG</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">9</span> → annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Blood sample for PK</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">11</span> → annot-011</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Adverse event monitoring</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Concomitant medications</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-017</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Bone marrow aspirate and biopsy</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">13 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (13)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">1</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Treatment cycles are 28 days long, visits on Day 1 of each cycle unless otherwise specified.">Treatment cycles are 28 days long, visits on Day 1 of each cycle unless otherwise specified.</td>
+                <td class="trace">cols: col-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">2</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Visits continue every 4 weeks until study treatment discontinuation.">Visits continue every 4 weeks until study treatment discontinuation.</td>
+                <td class="trace">cols: col-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">3</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Negative serum pregnancy test required within 72 hours prior to study treatment for females of childbearing potential; repeated every 3 months for duration of study (ie, Cycle 4, Cycle 7, etc).">Negative serum pregnancy test required within 72 hours prior to study treatment for females of ch...</td>
+                <td class="trace">cells: 2</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">4</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Patients will be randomized in a crossover design within 72 hours prior to FE Day 1 (first single dose).">Patients will be randomized in a crossover design within 72 hours prior to FE Day 1 (first single...</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">5</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Patients receive a single oral dose of niraparib 300 mg on FE Days 1 and 8.">Patients receive a single oral dose of niraparib 300 mg on FE Days 1 and 8.</td>
+                <td class="trace">cells: 2</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">6</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="No new capsules dispensed.">No new capsules dispensed.</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">7</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Height obtained at screening only.">Height obtained at screening only.</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">8</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Urinalysis parameters must include: specific gravity, leukocyte esterase, nitrite, blood, protein, glucose, ketones, urobilinogen and bilirubin.">Urinalysis parameters must include: specific gravity, leukocyte esterase, nitrite, blood, protein...</td>
+                <td class="trace">acts: act-012</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">9</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="12-lead ECG at Screening, Cycle 1/Day 1 (predose and 2 hours postdose), Cycle 2/Day 1 (predose and 2 hours postdose), and at treatment discontinuation. ECG monitoring is to be performed prior to PK blood draws.">12-lead ECG at Screening, Cycle 1/Day 1 (predose and 2 hours postdose), Cycle 2/Day 1 (predose an...</td>
+                <td class="trace">acts: act-013</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">10</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Triplicate ECG monitoring to coincide with PK on FE Days 1 and 8 at baseline (predose) and at 1, 1.5, 2, 3, 4, 6, and 8 hours post-dose. Triplicate ECGs should be performed between 2-5 minutes apart and should be performed prior to blood draws for PK.">Triplicate ECG monitoring to coincide with PK on FE Days 1 and 8 at baseline (predose) and at 1, ...</td>
+                <td class="trace">cells: 2</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-011</td>
+                <td class="marker-cell"><span class="marker">11</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Blood samples for PK will be taken on FE Days 1 and 8 at baseline (within 30 minutes prior to dosing) and at 1, 1.5, 2, 3, 4, 6, 8, 12, 24, 48, 72, 96, and 120 hours postdose. Additional blood samples will be collected predose and 2 hours postdose on Day 1 of Cycles 1 and 2 and predose only on Day 1 of Cycles 4 and 8. The exact time of the PK blood draw will be recorded and PK blood draws are to be completed after ECG monitoring.">Blood samples for PK will be taken on FE Days 1 and 8 at baseline (within 30 minutes prior to dos...</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-012</td>
+                <td class="marker-cell"><span class="marker">14</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="SAEs recorded up to 30 days after study treatment discontinuation.">SAEs recorded up to 30 days after study treatment discontinuation.</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-013</td>
+                <td class="marker-cell"><span class="marker">15</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="For any suspected MDS/AML case reported while a patient is receiving treatment or being followed for post-treatment assessments, bone marrow aspirate and biopsy testing must be completed by a local hematologist. Testing completed as part of standard of care is sufficient as long as the methods are acceptable to the Sponsor’s Medical Monitor. The study site must receive a copy of the hematologist&#x27;s report of aspirate/biopsy findings (which must include a classification according to WHO criteria) and other sample testing results related to MDS/AML.">For any suspected MDS/AML case reported while a patient is receiving treatment or being followed ...</td>
+                <td class="trace">cells: 7</td>
+                <td class="trace">7 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">17 activities × 8 columns (79 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Screening / -28 to -1">col-002</th><th class="col-header" title="14-Day Food Effect / FE 1">col-003</th><th class="col-header" title="14-Day Food Effect / FE 8">col-004</th><th class="col-header" title="Cycle / C1 / 1">col-005</th><th class="col-header" title="Cycle / C1 / 15">col-006</th><th class="col-header" title="Cycle / C2 / 1">col-007</th><th class="col-header" title="Subsequent Cycles / Cycle n, Day 1">col-008</th><th class="col-header" title="Treatment Discontinuation (within 7 days of last dose)">col-009</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Period<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Screening</td><td class="prop-cell" style="background: #375623; color: white;">14-Day Food Effect</td><td class="prop-cell" style="background: #375623; color: white;">14-Day Food Effect</td><td class="prop-cell" style="background: #375623; color: white;">Cycle</td><td class="prop-cell" style="background: #375623; color: white;">Cycle</td><td class="prop-cell" style="background: #375623; color: white;">Cycle</td><td class="prop-cell" style="background: #375623; color: white;">Subsequent Cycles</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Discontinuation (within 7 days of last dose)</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Cycle<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;">C1</td><td class="prop-cell" style="background: #548235; color: white;">C1</td><td class="prop-cell" style="background: #548235; color: white;">C2</td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;"></td></tr><tr><td class="frozen-col prop-row" style="background: #70AD47; color: #333;">Day<br/><span class="prop-id">prop-003</span></td><td class="prop-cell" style="background: #70AD47; color: #333;">-28 to -1</td><td class="prop-cell" style="background: #70AD47; color: #333;">FE 1</td><td class="prop-cell" style="background: #70AD47; color: #333;">FE 8</td><td class="prop-cell" style="background: #70AD47; color: #333;">1</td><td class="prop-cell" style="background: #70AD47; color: #333;">15</td><td class="prop-cell" style="background: #70AD47; color: #333;">1</td><td class="prop-cell" style="background: #70AD47; color: #333;">Cycle n, Day 1</td><td class="prop-cell" style="background: #70AD47; color: #333;"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Informed Consent<br/><span class="act-id">act-001</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Demographics<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Medical, cancer, surgical, medication history<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Pregnancy test<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">3</sup></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">3</sup></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Randomization<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">4</sup></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Study treatment dispensed/collected<br/><span class="act-id">act-006</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">5</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">5</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">6</sup></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Consumption of high fat meal, as applicable<br/><span class="act-id">act-007</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Physical examination<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Vital signs, height, weight<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">ECOG performance status<br/><span class="act-id">act-010</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Hematology/serum chemistry<br/><span class="act-id">act-011</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Urinalysis<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">12-lead ECG<br/><span class="act-id">act-013</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">10</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">10</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Blood sample for PK<br/><span class="act-id">act-014</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Adverse event monitoring<br/><span class="act-id">act-015</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">14</sup></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Concomitant medications<br/><span class="act-id">act-016</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Bone marrow aspirate and biopsy<br/><span class="act-id">act-017</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>

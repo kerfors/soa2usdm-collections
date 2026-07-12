@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-003 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT01847274</span><span class="nav-sep">›</span><span class="nav-current">Table 3</span></div>
+        
+        <div class="nav-tables">
+            <a href="NCT01847274_Table_02_resolved.html" class="nav-btn">◀ T2</a>
+            <span class="nav-table-list"><a href="NCT01847274_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="NCT01847274_Table_02_resolved.html" class="nav-table-btn">T2</a> <a href="NCT01847274_Table_03_resolved.html" class="nav-table-btn current">T3</a></span>
+            <span class="nav-btn disabled">▶</span>
+        </div>
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 3: Table 9 Schedule of Events – Main Study – Extended Visit Cycle</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | track</div>
+        <div class="meta">3 properties | 15 activities | 5 columns | 15 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT01847274_Table_03_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T19:24:24+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;JSON v3.0.2 single-pass)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT01847274_soa.pdf [protocol] vNiraparib PR-30-5011-C Version 8</td></tr><tr><td class="field">extraction_notes</td><td>Table 9 (Main Study - Extended Visit Cycle) of the niraparib protocol. track table. Landscape, single doc page 78. SOURCE DEFECT: Table 9 has its own footnote numbering (its printed footnotes 1-3 are new, unrelated to Table 7&#x27;s 1-3), but the body references markers 4-15 and only 1-3 are printed on the page. Markers 4-15 are transcribed as they appear on the cells/names; their annotation_text HONESTLY records that the definition is not printed in the source and gives the probable Table 7 (Main Study) cross-reference as a labelled hypothesis (5~T7 fn10 SAEs; 6~T7 fn12 CBC; 7,8~T7 fn13,14 CA-125; 9~T7 fn16 ECG; 10~T7 fn22 RECIST; 11~T7 fn24 PROs; 12~T7 fn25 no-new-capsules; 13~T7 fn26 every-90-days; 14~T7 fn27 survival; 15~T7 fn28 bone-marrow). Marker 4 (Vital signs cell in the local-clinic-or-in-home column) is kept but has no confident Table 7 equivalent. No footnote text is asserted as printed-source content. Bone marrow aspirate/biopsy is a single X merged across all columns (2-6, source_range 2:6, marker 15). Flagged for human verification.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">resolved</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T19:24:57.767691+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT01847274_Table_03_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Table 9 Schedule of Events – Main Study – Exten...</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-003</td></tr><tr><td class="field">table_number</td><td>3</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #7030A0;">track</span></td></tr><tr><td class="field">track_label</td><td><span class="track-label">Extended Visit Cycle</span></td></tr><tr><td class="field">table_title</td><td>Table 9 Schedule of Events – Main Study – Extended Visit Cycle</td></tr><tr><td class="field">table_purpose</td><td>Extended visit-cycle schedule for main-study patients (in-clinic extended cycle, telephone contact, and local-clinic/in-home nursing visits).</td></tr><tr><td class="field">pages</td><td>78 – 78</td></tr><tr><td class="field">dimensions</td><td class="trace">5 cols | 15 rows | 3 header | 15 activity</td></tr><tr><td class="field">notes</td><td>Section 7.1, Table 9. Single page (document page 78). 5 data columns (2-6): three &#x27;Subsequent Cycles&#x27; columns distinguished by Location (in-clinic / telephone / local-clinic-or-in-home), plus Study Treatment Discontinuation and Post-Treatment Assessments. Only footnotes 1-3 are printed on the page; footnotes 5-15 (used in the body) are NOT defined here - see extraction/uncertainty notes.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">3 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Cycle </td>
+            <td class="type">cycle</td>
+            <td class="comment">Top band (label &#x27;Cycle&#x27;): Subsequent Cycles (col 2, marker 1), Subsequent Cycles (col 3, marker 2), Subsequent Cycles (col 4, marker 3), Study Treatment Discontinuation visit within 7 days of last dose (col 5), Post-Treatment Assessments (col 6). The three &#x27;Subsequent Cycles&#x27; columns are distinguished by the Location row (in-clinic vs telephone vs local/home).</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Day </td>
+            <td class="type">study_day</td>
+            <td class="comment">Day: Extended Cycle, Day 1 (col 2); Cycle n, Day 1 (cols 3-4). Discontinuation/Post-Treatment columns have no day.</td>
+            <td class="trace">↑prop-001 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-003</td>
+            <td class="level-cell" style="background: #70AD47; color: #333;">L3</td>
+            <td>Location </td>
+            <td class="type">modality</td>
+            <td class="comment">Visit modality/location: In Clinic (col 2); Site Staff Telephone Contact to Patient (col 3); Patient Visit to Local Clinic or In-Home Nursing (col 4); In Clinic (col 5). Post-Treatment column has no location.</td>
+            <td class="trace">↑prop-002</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">15 total (0 headers, 15 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FFFFFF;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Physical examination</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Vital signs, weight</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">ECOG performance status</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Adverse event monitoring</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Concomitant medications</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Serum chemistry</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">CBC</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">6</span> → annot-006</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Serum CA-125</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">7,8</span> → annot-007, annot-008</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">12-lead ECG</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">9</span> → annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Tumor Assessment (RECIST)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">10</span> → annot-010</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">FOSI, EQ-5D-5L, neuropathy questionnaire</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">11</span> → annot-011</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Study treatment dispensed/collected</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Anticancer therapies assessment</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Survival assessment</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">14</span> → annot-014</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Bone marrow aspirate and biopsy</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">15 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (15)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">1</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="During the in-clinic visit extended cycle, all study procedures and assessments required will be performed.">During the in-clinic visit extended cycle, all study procedures and assessments required will be ...</td>
+                <td class="trace">cols: col-002</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">2</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="The study coordinator will contact the patient by telephone to obtain information for the ECOG performance status, adverse event monitoring, and concomitant medications when the study assessments are not performed in clinic.">The study coordinator will contact the patient by telephone to obtain information for the ECOG pe...</td>
+                <td class="trace">cols: col-003</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">3</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="The collection of blood samples for CBC and chemistry analysis, vital signs and weight may be collected during visit to local clinic or at in-home nursing visit when the study assessments are not performed in clinic.">The collection of blood samples for CBC and chemistry analysis, vital signs and weight may be col...</td>
+                <td class="trace">cols: col-004</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">4</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3); no confident Table 7 (Main Study) equivalent for this Vital signs cell in the &#x27;Patient Visit to Local Clinic or In-Home Nursing&#x27; column.">Footnote not printed in the source (Table 9 prints only footnotes 1-3); no confident Table 7 (Mai...</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">5</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 10: &quot;SAEs recorded up to 30 days after study treatment discontinuation.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">6</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 12: &quot;If dose interruption or modification is required at any point on study because of hematologic toxicity, weekly blood draws for CBC will be monitored until the adverse event resolves, and to ensure safety of the new dose, weekly blood draws for CBC will be also be required for an additional 4 weeks after the adverse event has been resolved to the specified levels, after which monitoring every 4 weeks may resume.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">7</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 13: &quot;CA-125 levels must be normal at screening or &gt; 90% decrease as compared with baseline prior to last platinum-based chemotherapy course. Abnormal CA-125 levels during study do not represent disease progression; however, they may prompt imaging if clinically indicated. CA-125 sample within 72 hours of dose on Cycle 1/Day 1.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">8</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 14: &quot;For determination of CA-125 progression, at least 2 CA-125 values at least 1 week apart are required for confirmation (Section 6.1).&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">9</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 16: &quot;Patients will have a 12-lead ECG at Screening, Baseline (predose, within 30 minutes), 2 hours postdose on Day 1(within 30 minutes), Cycle 2/Day 1, (predose, 2 hours postdose, within 30 minutes) and upon study treatment discontinuation. Note that the ECG is to be completed prior to the PK blood draw.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">10</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 22: &quot;RECIST tumor assessment via CT or MRI scan of abdomen/pelvis and clinically indicated areas required at baseline, then after every 2 cycles (ie, 8 weeks with a window of ± 7 days from date of visit) through Cycle 14 (56 weeks), then after every 6 cycles (24 weeks with a window of ± 7 days) until study treatment discontinuation; at this point, a final follow-up set of imaging is required. PET/CT may be used according to RECIST guidelines. Cycle timing will not be delayed for treatment interruptions, and tumor assessment should occur according to this schedule regardless of whether study treatment is interrupted. If a patient discontinues treatment for clinical progression and does not meet the criteria specified in the protocol, scans and CA-125 testing should continue at the specified intervals until progression is confirmed or until the start of subsequent anticancer treatment.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-010</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-011</td>
+                <td class="marker-cell"><span class="marker">11</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 24: &quot;PROs (FOSI, EQ-5D-5L, neuropathy questionnaire) will be collected while on study treatment every 8 weeks through the first year, then every 12 weeks thereafter. If the patient discontinues study treatment, assessment will occur at that time and then 8 weeks (± 2 weeks) later, regardless of status of subsequent treatment. PROs should be administered before conducting any other procedures.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-011</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-012</td>
+                <td class="marker-cell"><span class="marker">12</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 25: &quot;No new capsules dispensed&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-013</td>
+                <td class="marker-cell"><span class="marker">13</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 26: &quot;Every 90 days following study treatment discontinuation.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-014</td>
+                <td class="marker-cell"><span class="marker">14</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 27: &quot;In addition to survival, this assessment includes outcomes for subsequent anticancer therapies including any new malignancy information.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-015</td>
+                <td class="marker-cell"><span class="marker">15</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-Visit-Cycle variant of the Main Study, so this most likely corresponds to Table 7 (Main Study) footnote 28: &quot;For any suspected MDS/AML case reported while a patient is receiving treatment or being followed for post-treatment assessments, bone marrow aspirate and biopsy testing must be completed by a local hematologist. Testing completed as part of standard of care is sufficient as long as the methods are acceptable to the Sponsor’s Medical Monitor. The study site must receive a copy of the hematologist&#x27;s report of aspirate/biopsy findings (which must include a classification according to WHO criteria) and other sample testing results related to MDS/AML.&quot;">Footnote not printed in the source (Table 9 prints only footnotes 1-3). Table 9 is the Extended-V...</td>
+                <td class="trace">cells: 5</td>
+                <td class="trace">5 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">15 activities × 5 columns (40 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Subsequent Cycles / Extended Cycle, Day 1 / In Clinic">col-002</th><th class="col-header" title="Subsequent Cycles / Cycle n, Day 1 / Site Staff Telephone Contact to Patient">col-003</th><th class="col-header" title="Subsequent Cycles / Cycle n, Day 1 / Patient Visit to Local Clinic or In-Home Nursing">col-004</th><th class="col-header" title="Study Treatment Discontinuation (visit within 7 days of last dose) / In Clinic">col-005</th><th class="col-header" title="Post-Treatment Assessments">col-006</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Cycle<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Subsequent Cycles</td><td class="prop-cell" style="background: #375623; color: white;">Subsequent Cycles</td><td class="prop-cell" style="background: #375623; color: white;">Subsequent Cycles</td><td class="prop-cell" style="background: #375623; color: white;">Study Treatment Discontinuation (visit within 7 days of last dose)</td><td class="prop-cell" style="background: #375623; color: white;">Post-Treatment Assessments</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Day<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">Extended Cycle, Day 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle n, Day 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle n, Day 1</td><td class="prop-cell" style="background: #548235; color: white;"></td><td class="prop-cell" style="background: #548235; color: white;"></td></tr><tr><td class="frozen-col prop-row" style="background: #70AD47; color: #333;">Location<br/><span class="prop-id">prop-003</span></td><td class="prop-cell" style="background: #70AD47; color: #333;">In Clinic</td><td class="prop-cell" style="background: #70AD47; color: #333;">Site Staff Telephone Contact to Patient</td><td class="prop-cell" style="background: #70AD47; color: #333;">Patient Visit to Local Clinic or In-Home Nursing</td><td class="prop-cell" style="background: #70AD47; color: #333;">In Clinic</td><td class="prop-cell" style="background: #70AD47; color: #333;"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Physical examination<br/><span class="act-id">act-001</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Vital signs, weight<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">4</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">ECOG performance status<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Adverse event monitoring<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">5</sup></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Concomitant medications<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Serum chemistry<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">CBC<br/><span class="act-id">act-007</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Serum CA-125<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">12-lead ECG<br/><span class="act-id">act-009</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Tumor Assessment (RECIST)<br/><span class="act-id">act-010</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">FOSI, EQ-5D-5L, neuropathy questionnaire<br/><span class="act-id">act-011</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Study treatment dispensed/collected<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">12</sup></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Anticancer therapies assessment<br/><span class="act-id">act-013</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">13</sup></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Survival assessment<br/><span class="act-id">act-014</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Bone marrow aspirate and biopsy<br/><span class="act-id">act-015</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X<sup class="cell-marker">15</sup></td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
