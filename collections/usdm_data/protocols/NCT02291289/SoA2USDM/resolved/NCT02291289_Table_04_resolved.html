@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-004 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT02291289</span><span class="nav-sep">›</span><span class="nav-current">Table 4</span></div>
+        
+        <div class="nav-tables">
+            <a href="NCT02291289_Table_03_resolved.html" class="nav-btn">◀ T3</a>
+            <span class="nav-table-list"><a href="NCT02291289_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="NCT02291289_Table_02_resolved.html" class="nav-table-btn">T2</a> <a href="NCT02291289_Table_03_resolved.html" class="nav-table-btn">T3</a> <a href="NCT02291289_Table_04_resolved.html" class="nav-table-btn current">T4</a> <a href="NCT02291289_Table_05_resolved.html" class="nav-table-btn">T5</a></span>
+            <a href="NCT02291289_Table_05_resolved.html" class="nav-btn">T5 ▶</a>
+        </div>
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 4: Appendix 4 Schedule of Assessments During Maintenance Phase (Cohort 3)</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | track</div>
+        <div class="meta">2 properties | 22 activities | 4 columns | 21 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT02291289_Table_04_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-13T00:00:00+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork, PDF-&gt;JSON v3.0.3 single-pass, image-based)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT02291289_soa.pdf [protocol] vBevacizumab MO29112 (mCRC), Version 9</td></tr><tr><td class="field">extraction_notes</td><td>Appendix 4 (Maintenance, Cohort 3 = HER2+, trastuzumab/pertuzumab). track; image-based scanned, marks read visually, lowercase &#x27;x&#x27;. Cohort-3 specific: LVEF cardiac monitoring; arm-specific maintenance timing and pregnancy-test schedule. Text cells verbatim. Header footnotes a,b,c printed on the text pages (not the grid).</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">resolved</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T22:28:00.814234+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT02291289_Table_04_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">Appendix 4 Schedule of Assessments During Maint...</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-004</td></tr><tr><td class="field">table_number</td><td>4</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #7030A0;">track</span></td></tr><tr><td class="field">track_label</td><td><span class="track-label">Cohort 3</span></td></tr><tr><td class="field">table_title</td><td>Appendix 4 Schedule of Assessments During Maintenance Phase (Cohort 3)</td></tr><tr><td class="field">table_purpose</td><td>Maintenance Phase schedule for Cohort 3 (HER2+, trastuzumab/pertuzumab; experimental + control arms).</td></tr><tr><td class="field">pages</td><td>184 – 185</td></tr><tr><td class="field">dimensions</td><td class="trace">4 cols | 22 rows | 2 header | 22 activity</td></tr><tr><td class="field">notes</td><td>Appendix 11.4. Scanned image table, header repeated across doc pp184-185 (encoded once). 4 data columns (2-5). Maintenance timing differs by arm (control every 2 two-week cycles; experimental every 3-week cycle). All footnotes a-u on text pages (doc pp186-188). track_label &#x27;Cohort 3&#x27;.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">2 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Study Phase <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">epoch</td>
+            <td class="comment">Study phases for Cohort 3 Maintenance: Prior to randomization (col 2), Maintenance Treatment Phase [a] (col 3), Study Treatment Discontinuation Visit [b] (col 4), Post-Treatment Follow-Up Phase [c] (col 5). Label cell empty (synthesised).</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Timing <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">timepoint</td>
+            <td class="comment">Timing per column: Within 3 weeks of completing Induction Treatment Phase; Maintenance = Control arm every 2 two-week cycles / Experimental arm every 3-week cycle; ≤ 30 days after last dose; Every 3 months until May 31, 2019.</td>
+            <td class="trace">↑prop-001</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">22 total (0 headers, 22 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FFFFFF;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Assignment of cohort</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">d</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Cohort-specific informed consent</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Confirmation of cohort-specific eligibility</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">e</span> → annot-005</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Randomisation</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">f</span> → annot-006</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Vital signs and weight</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">g</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Physical examination</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">h</span> → annot-008</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">ECOG performance status</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">i</span> → annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Concomitant medications</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">j</span> → annot-010</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Haematology and blood chemistry</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">k</span> → annot-011</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">INR, aPTT (select patients)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">l</span> → annot-012</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Urinalysis (dipstick)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">m</span> → annot-013</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Pregnancy test</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">n</span> → annot-014</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">HIV, HBV, HCV serology</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">o</span> → annot-015</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">LVEF</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">p</span> → annot-016</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Tumour assessments</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">q</span> → annot-017</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Metastatic tumour tissue for exploratory biomarker assessment</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">r</span> → annot-018</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-017</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Plasma samples</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">s</span> → annot-019</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-018</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Stool sample</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-019</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Adverse events (including SAEs)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">t</span> → annot-020</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-020</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Study medication administration</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">u</span> → annot-021</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-021</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Subsequent anti-cancer therapies</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">c</span> → annot-003</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-022</td>
+            <td class="level-num">0</td>
+            <td class="activity-name ">Patient survival</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">c</span> → annot-003</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">21 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (21)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="With the exception of Cycle 1, all other study visits and assessments should be performed within ± 7 days of the scheduled date. If a control arm patient receives capecitabine administered according to a 3- week cycle, timing of all study procedures and assessments scheduled according to 2-week control arm treatment cycles (e.g. ECOG performance status) will be defined by the treatment cycles of concurrently administered bevacizumab.">With the exception of Cycle 1, all other study visits and assessments should be performed within ...</td>
+                <td class="trace">cols: col-003</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">b</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Patients who experience PD at any time during the Maintenance Treatment Phase, or who need to permanently discontinue study medication for any reason, will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study medication. These patients will then enter the Post-Treatment Follow-up.">Patients who experience PD at any time during the Maintenance Treatment Phase, or who need to per...</td>
+                <td class="trace">cols: col-004</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c</span></td>
+                <td class="type">multiple</td>
+                <td class="text-full" title="After discontinuation of study treatment and the Study Treatment Discontinuation Visit, patients will enter the Post-Treatment Follow-up Phase. Beginning after the Study Treatment Discontinuation Visit, patients will be followed up every 3 months. Up to and including May 31, 2019, follow-up will include recording subsequent anti-cancer therapies, disease status (until progression as applicable), survival and safety evaluations. Patients who have completed the adverse event reporting period and, if applicable, 7 month post-treatment pregnancy test will be discontinued from the study at the post- treatment follow-up visit within the 3 months prior to and including May 31, 2019 (i.e. at the visit on/after March 1, 2019). After May 31, 2019, patients who have not yet completed the adverse event reporting period (and 7 month pregnancy test as applicable) will be discontinued from the study after completion of the adverse event reporting period (and 7 month pregnancy test as applicable). Refer to Appendix 19 for the management of patients based on their study status as of May 31, 2019. Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion. Patients who discontinue study treatment prior to disease progression will be followed for PFS, with disease status followed every 8 weeks until progression or May 31, 2019, whichever comes first.">After discontinuation of study treatment and the Study Treatment Discontinuation Visit, patients ...</td>
+                <td class="trace">cols: col-005 | acts: act-021, act-022</td>
+                <td class="trace">3 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">d</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Patients completing the Induction Treatment Phase, and who have not experienced PD can then proceed to the Maintenance Treatment Phase. Depending on the patient’s biomarker status (based on the archival sample from initial diagnosis), these patients will be assigned to a maintenance treatment cohort. Cohorts 2 and 4 are closed to further accrual. Patients with an adequate tumour sample but with unknown biomarker status due to lack of determinant result (e.g. due to technical issues) may still be included in the study depending on the addition of future cohorts.">Patients completing the Induction Treatment Phase, and who have not experienced PD can then proce...</td>
+                <td class="trace">acts: act-001</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">e</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="The cohort-specific exclusion criteria must be assessed prior to randomization to study maintenance treatment but assessment of cohort-specific eligibility can only be completed after the biomarker analysis results from the patient’s archival tumour tissue from initial diagnosis are known. Patients found ineligible for any cohort will undergo a Study Treatment Discontinuation Visit and enter the Post-Treatment Follow-up Phase.">The cohort-specific exclusion criteria must be assessed prior to randomization to study maintenan...</td>
+                <td class="trace">acts: act-003</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">f</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Each cohort will consist of an experimental treatment arm and a control arm. Randomised on a 2:1 (experimental:control) basis to either the experimental treatment arm or the control arm of that cohort. See Section 4.2.">Each cohort will consist of an experimental treatment arm and a control arm. Randomised on a 2:1 ...</td>
+                <td class="trace">acts: act-004</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">g</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Vital signs include measurements of systolic and diastolic blood pressure while the patient is in a seated position, and temperature. For the control arm only, vitals conducted every second treatment cycle only will be recorded in the eCRF.">Vital signs include measurements of systolic and diastolic blood pressure while the patient is in...</td>
+                <td class="trace">acts: act-005</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">h</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Physical examinations will be symptom-directed, and will include changes from Baseline (pre-Induction) with new or worsened clinically significant abnormalities being reported as AEs if appropriate.">Physical examinations will be symptom-directed, and will include changes from Baseline (pre-Induc...</td>
+                <td class="trace">acts: act-006</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">i</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="See Appendix 8.">See Appendix 8.</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">j</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Concomitant medication includes any prescription medications or over-the-counter preparations used by a patient between the 7 days prior to the date of informed consent up until the Study Treatment Discontinuation visit. Only concomitant medications used for supportive care, to alleviate symptoms of mCRC, or to treat adverse drug reactions should be recorded on the Concomitant Medications eCRF. At subsequent visits, only changes to current medications or medications used since the last documentation of medications will be recorded. Concomitant medications for treatment of AEs related to study medication will continue to be recorded while the AE is being followed. For permitted and prohibited concomitant medications, see Section 4.4.">Concomitant medication includes any prescription medications or over-the-counter preparations use...</td>
+                <td class="trace">acts: act-008</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-011</td>
+                <td class="marker-cell"><span class="marker">k</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Haematology includes haemoglobin, haematocrit, platelet count, red blood cell count, white blood cell count, and differential. Blood chemistry includes ALT, AST, alkaline phosphatase, total bilirubin, total protein, albumin, blood urea nitrogen or urea, LDH, creatinine, glucose, calcium, phosphorus, sodium, potassium, chloride, and bicarbonate. Haematology and blood chemistry tests must be conducted prior to each treatment cycle, with the results available for review prior to start of treatment according to local standards for treatment management. For the control arm only, tests conducted every second treatment cycle only will be recorded in the eCRF. Clinical laboratory results constituting a clinically significant AE should be recorded as such.">Haematology includes haemoglobin, haematocrit, platelet count, red blood cell count, white blood ...</td>
+                <td class="trace">acts: act-009</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-012</td>
+                <td class="marker-cell"><span class="marker">l</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="INR and aPTT only for patients receiving anticoagulants while on protocol-specified treatment.">INR and aPTT only for patients receiving anticoagulants while on protocol-specified treatment.</td>
+                <td class="trace">acts: act-010</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-013</td>
+                <td class="marker-cell"><span class="marker">m</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Urinalysis must be performed by dipstick within 48 hours prior to every cycle. A 24-hour urine collection is needed in the event of proteinuria ≥ ± 2 by dipstick test. For the control arm only, tests conducted every second treatment cycle only will be recorded in the eCRF.">Urinalysis must be performed by dipstick within 48 hours prior to every cycle. A 24-hour urine co...</td>
+                <td class="trace">acts: act-011</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-014</td>
+                <td class="marker-cell"><span class="marker">n</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Urine or blood pregnancy test, only for women of childbearing potential (i.e. not post-menopausal as indicated by &lt; 12 months of non-therapy-induced amenorrhea, nor surgically sterile [absence of ovaries and/or uterus]), including those who have had a tubal ligation. If a urine pregnancy test is positive, it must be confirmed by a serum pregnancy test. In the experimental arm, a serum pregnancy test must be done ≤ 7 days from maintenance treatment start. Urine pregnancy tests must also be done every 3 cycles during treatment (with result available prior to Day 1 dose of the next cycle), and every 3 months until 7 months after the last doses of trastuzumab and pertuzumab.">Urine or blood pregnancy test, only for women of childbearing potential (i.e. not post-menopausal...</td>
+                <td class="trace">acts: act-012</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-015</td>
+                <td class="marker-cell"><span class="marker">o</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="HIV testing performed in accordance with national and/or institutional guidelines. HBV serology includes HBsAg and anti-HBc. HCV serology includes anti-HCV. Results required to determine eligibility for Cohort 3.">HIV testing performed in accordance with national and/or institutional guidelines. HBV serology i...</td>
+                <td class="trace">acts: act-013</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-016</td>
+                <td class="marker-cell"><span class="marker">p</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="LVEF must be assessed in all Cohort 3 patients prior to randomization. Only experimental arm patients require subsequent LVEF monitoring. Subsequent LVEF measurements (using the same method as at baseline) will be conducted every third cycle until Cycle 6 and then every fourth cycle until termination of study treatment (i.e., during Cycles 3, 6, 10, 14, etc.), with the results made available prior to administration of the subsequent treatment cycle (i.e., prior to Cycles 4, 7, 11, 15, etc.). For patients who stop study drug(s) because of a decrease in LVEF, LVEF should be assessed at least every 6 weeks to determine recovery/stabilization (until LVEF recovers to ≥ 50% or 2 years, whichever occurs first). In patients who required a repeat LVEF assessment to ensure an acceptable LVEF before continuing trastuzumab/pertuzumab treatment, an additional LVEF assessment is to be performed at the next treatment cycle. Note: approval of the Medical Monitor must be obtained before continuation of study treatment after delays &gt; 21 days.">LVEF must be assessed in all Cohort 3 patients prior to randomization. Only experimental arm pati...</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-017</td>
+                <td class="marker-cell"><span class="marker">q</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Up to and including May 31, 2019, tumour assessments will be conducted according to RECIST1.1 and will include radiology, chest and abdominal CT or MRI, and other scans to document all sites of disease. A CT or MRI scan of the brain is required if there is a clinical suspicion of CNS metastases. Disease status during maintenance treatment will be determined based on comparison with the tumour assessment done at the end of induction treatment. Up to and including May 31, 2019, tumour assessments will be conducted every 8 weeks from the start of maintenance treatment regardless of treatment delays. After May 31, 2019, disease status will not be collected for the study and tumour assessments may be conducting per local practice. Patients who discontinue study treatment during the Maintenance Treatment Phase prior to disease progression will also continue to be followed for progressive disease, with disease assessments per RECIST 1.1 conducted every 8 weeks until progression or May 31, 2019, whichever comes first.">Up to and including May 31, 2019, tumour assessments will be conducted according to RECIST1.1 and...</td>
+                <td class="trace">acts: act-015</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-018</td>
+                <td class="marker-cell"><span class="marker">r</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued (see Appendix 18).">Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discon...</td>
+                <td class="trace">acts: act-016</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-019</td>
+                <td class="marker-cell"><span class="marker">s</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Plasma samples will be collected from all patients for exploratory biomarker analyses. These samples will be sent to a designated laboratory. Samples during treatment should be taken within 48 hours prior to study treatment Day 1 of each cycle indicated, unless otherwise specified (see Appendix 17 and the Laboratory Manual).">Plasma samples will be collected from all patients for exploratory biomarker analyses. These samp...</td>
+                <td class="trace">acts: act-017</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-020</td>
+                <td class="marker-cell"><span class="marker">t</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Adverse events will be documented at every cycle during treatment. Patients in the experimental arm of Cohort 3 will be followed for new AEs for 90 days following the discontinuation of study treatment. Patients in the control arm will be followed for new AEs for 28 days following the discontinuation of study treatment. At the time of treatment discontinuation, any ongoing AE/SAE will be followed until the event resolves, the Investigator assesses the event as stable, the patient is lost to follow-up, dies or withdraws consent. Death related to disease progression is not considered to be an SAE. The Sponsor should be notified if the Investigator becomes aware of any SAE or AEs of special interest occurring after the end of the adverse event reporting period if the event is believed to be related to prior study treatment.">Adverse events will be documented at every cycle during treatment. Patients in the experimental a...</td>
+                <td class="trace">acts: act-019</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-021</td>
+                <td class="marker-cell"><span class="marker">u</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Patients in the experimental arm will receive capecitabine 1000 mg/m2 b.i.d. Days 1-14 followed by a one-week treatment break for every 3-week treatment cycle. Capecitabine dose calculations by body surface area with corresponding tablet counts are provided in Appendix 7. Trastuzumab will be administered by IV infusion on Day 1 of every 3-week treatment cycle at an initial loading dose of 8 mg/kg followed by 6 mg/kg for subsequent doses. Pertuzumab will be administered by IV infusion on Day 1 of each 3-week treatment cycle at an initial fixed loading dose of 840 mg followed by 420 mg for subsequent doses. Patients in the control arm will receive: 5-FU or capecitabine, dose and schedule will be according to local label, where applicable, or otherwise will be determined per the Investigator’s discretion, with bevacizumab 5 mg/kg via 15 – 30 minute IV infusion on Day 1 of every 2-week cycle. If a control arm patient receives capecitabine administered according to a 3- week cycle, timing of all study procedures and assessments scheduled according to 2-week control arm treatment cycles (e.g. ECOG performance status) will be defined by the treatment cycles of concurrently administered bevacizumab.">Patients in the experimental arm will receive capecitabine 1000 mg/m2 b.i.d. Days 1-14 followed b...</td>
+                <td class="trace">acts: act-020</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">22 activities × 4 columns (40 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Prior to randomization / Within 3 weeks of completing Induction Treatment Phase">col-002</th><th class="col-header" title="Maintenance Treatment Phase / Control arm: every 2 two-week cycles Experimental arm: every 3-week cycle">col-003</th><th class="col-header" title="Study Treatment Discontinuation Visit / ≤ 30 days after last dose of study treatment">col-004</th><th class="col-header" title="Post-Treatment Follow-Up Phase / Every 3 months until May 31, 2019 (see Appendix 19)">col-005</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Study Phase<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Prior to randomization</td><td class="prop-cell" style="background: #375623; color: white;">Maintenance Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Study Treatment Discontinuation Visit</td><td class="prop-cell" style="background: #375623; color: white;">Post-Treatment Follow-Up Phase</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Timing<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">Within 3 weeks of completing Induction Treatment Phase</td><td class="prop-cell" style="background: #548235; color: white;">Control arm: every 2 two-week cycles Experimental arm: every 3-week cycle</td><td class="prop-cell" style="background: #548235; color: white;">≤ 30 days after last dose of study treatment</td><td class="prop-cell" style="background: #548235; color: white;">Every 3 months until May 31, 2019 (see Appendix 19)</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Assignment of cohort<br/><span class="act-id">act-001</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Cohort-specific informed consent<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">x (sites using 2 consent forms only)</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Confirmation of cohort-specific eligibility<br/><span class="act-id">act-003</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Randomisation<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Vital signs and weight<br/><span class="act-id">act-005</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Physical examination<br/><span class="act-id">act-006</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">ECOG performance status<br/><span class="act-id">act-007</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Concomitant medications<br/><span class="act-id">act-008</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Every cycle</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Haematology and blood chemistry<br/><span class="act-id">act-009</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Every cycle</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">INR, aPTT (select patients)<br/><span class="act-id">act-010</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">According to local standard of care</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Urinalysis (dipstick)<br/><span class="act-id">act-011</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Every cycle</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Pregnancy test<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Experimental arm only</td><td class="schedule-cell" style="background: #E1BEE7;" title="conditional">Experimental arm: Cycles 4, 7, 10, 13, 16, 19, 22, 25 and every third cycle thereafter Control arm: If clinically indicated</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Experimental arm only</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Experimental arm only: until 7 months from last trastuzumab/pertuzumab</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">HIV, HBV, HCV serology<br/><span class="act-id">act-013</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">LVEF<br/><span class="act-id">act-014</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Experimental arm only: Cycle 3, 6, 10, 14, 18, 22, 26 and every 4 cycles thereafter</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Experimental arm only</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Tumour assessments<br/><span class="act-id">act-015</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Up to and including May 31, 2019: Every 8 weeks regardless of treatment delays After May 31, 2019: per local practice</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #E2EFDA;" title="timing_text">Up to and including May 31, 2019: Every 8 weeks until disease progression After May 31, 2019: per local practice</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Metastatic tumour tissue for exploratory biomarker assessment<br/><span class="act-id">act-016</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">No sample collection Supplemental Biomarker Program CLOSED</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">No sample collection Supplemental Biomarker Program CLOSED</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Plasma samples<br/><span class="act-id">act-017</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Cycles 1, 2, 4, 6, 8, 10, 12, 14 and every 2 cycles thereafter And at time of PD</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #E1BEE7;" title="conditional">At time of progression (if patient has not yet progressed)</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Stool sample<br/><span class="act-id">act-018</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">No sample collection Supplemental Biomarker Program CLOSED</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">No sample collection Supplemental Biomarker Program CLOSED</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Adverse events (including SAEs)<br/><span class="act-id">act-019</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Every cycle</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">x (as applicable)</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Study medication administration<br/><span class="act-id">act-020</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">Every cycle</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Subsequent anti-cancer therapies<br/><span class="act-id">act-021</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">Patient survival<br/><span class="act-id">act-022</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">x</td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
