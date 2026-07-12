@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>table-001 - Resolved Table</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .nav-link {
+            color: #1F4788;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .nav-sep {
+            color: #999;
+        }
+        .nav-current {
+            font-weight: 600;
+            color: #333;
+        }
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-action {
+            padding: 6px 12px;
+            background: #C65911;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .nav-action:hover {
+            background: #a84a0e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    
+    <nav class="navigation">
+        <div class="nav-breadcrumb"><a href="../../../index.html" class="nav-link">usdm_data</a><span class="nav-sep">›</span><span class="nav-current">NCT05176314</span><span class="nav-sep">›</span><span class="nav-current">Table 1</span></div>
+        
+        <div class="nav-actions"></div>
+    </nav>
+    <div class="header">
+        <h1>Table 1: 1.3. Schedule of Activities (SoA)</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | main_soa</div>
+        <div class="meta">2 properties | 24 activities | 21 columns | 8 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT05176314_Table_01_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-07-12T14:44:51+00:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude Opus 4.8 (Cowork; single-pass, PDF text-layer bbox coordinate reconstruction, marks PDF-authoritative)</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT05176314_soa.pdf [protocol] vJ2N-MC-JZNW (a)</td></tr><tr><td class="field">extraction_notes</td><td>Pirtobrutinib/rosuvastatin DDI study J2N-MC-JZNW, Section 1.3 SoA. Single main_soa table spanning soa-PDF pages 1-2 (protocol pp.10-11) with a page-break header repeat (encoded once); footnotes/abbreviations on page 3 (p.12). 21 timepoint columns (2-22): Screening (D-42 to -2), Day -1, Days 1-18, FU/ED (Day 24 ±2). Marks and cell values from PDF word coordinates. Legend value &#x27;P&#x27; (=predose) kept as an in-grid cell_value, not an annotation (per legend). CCI = confidential-commercial-information redactions in source: two activity rows print only as &#x27;CCI&#x27; (rows 22, 24 - likely pirtobrutinib PK sampling, marks not recoverable) and footnotes d, f, g are redacted (text = CCI).</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #fd7e14; padding: 2px 8px; border-radius: 3px;">resolved_with_warnings</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-07-12T14:45:33.095983+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT05176314_Table_01_extraction.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">warnings</td><td class="status-warn">⚠ Resolved annotation annot-008 (&#x27;abbr&#x27;) has no referenced elements — orphan: BP = blood pressure; CRU = clinical research unit;...<br/>⚠ Annotation summary: 1 of 8 annotations have no referenced elements (will be orphans in consolidation)</td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved_with_warnings</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">1.3. Schedule of Activities (SoA)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-001</td></tr><tr><td class="field">table_number</td><td>1</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #1F4788;">main_soa</span></td></tr><tr><td class="field">table_title</td><td>1.3. Schedule of Activities (SoA)</td></tr><tr><td class="field">table_purpose</td><td>Single SoA for the rosuvastatin/pirtobrutinib drug-drug interaction study (screening, 18-day treatment, follow-up/ED).</td></tr><tr><td class="field">pages</td><td>10 – 11</td></tr><tr><td class="field">dimensions</td><td class="trace">21 cols | 26 rows | 2 header | 24 activity</td></tr><tr><td class="field">notes</td><td>Protocol printed page numbers; grid on pp.10-11, footnotes/abbreviations on p.12.</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">2 hierarchical</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Study Phase <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">epoch</td>
+            <td class="comment">Top header level: Screening (col 2), &#x27;Treatment Period (Study Days)&#x27; merged over cols 3-21 (Day -1 to Day 18), and FU/ED (col 22). Label cell holds the activity-column header &#x27;Study Procedure&#x27;, so name synthesized.</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Study Day <span class="synth-badge" title="Synthesized: name inferred from row data (source label cell was empty)">S</span></td>
+            <td class="type">study_day</td>
+            <td class="comment">Study days: Screening range D-42 to -2, Day -1, Days 1-18, and FU/ED at Day 24 (± 2 days).</td>
+            <td class="trace">↑prop-001</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">24 total (0 headers, 24 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FFFFFF;">
+            <td class="id">act-001</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Informed consent</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Admission to CRU</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Discharge from CRU</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-004</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Outpatient visit</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Medical history and demographics</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Participant eligibility</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-007</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Rosuvastatin administration</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Pirtobrutinib administration</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Height</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-010</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Weight</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-011</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Pregnancy test</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">c</span> → annot-003</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-012</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Urine drug screen (including cotinine)</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-013</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Ethanol test</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-014</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Supine vital signs (PR and BP)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">d</span> → annot-004</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-015</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Oral body temperature</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-016</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;12-lead ECG</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-017</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Clinical laboratory tests</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-018</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Physical examination</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">e</span> → annot-005</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-019</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Genetic blood sample for screening</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-020</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;CCI</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-021</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Rosuvastatin PK samples</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">g</span> → annot-007</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-022</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;CCI</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-023</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Adverse event review</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-024</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Concomitant medication review</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">8 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (7)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Participants will be discharged from the CRU on Day 18 once all study procedures are completed.">Participants will be discharged from the CRU on Day 18 once all study procedures are completed.</td>
+                <td class="trace">cols: col-021</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">b</span></td>
+                <td class="type">column</td>
+                <td class="text-full" title="Participants will attend an outpatient follow-up visit 7 (± 2) days after the final dose of study intervention. If participants are not able to attend the CRU for this visit, the CRU should contact the participant via phone call to conduct adverse event and concomitant medication review. If applicable, ED assessments should be performed on the day of discontinuation (or as close to it as possible).">Participants will attend an outpatient follow-up visit 7 (± 2) days after the final dose of study...</td>
+                <td class="trace">cols: col-022</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Female participants only. Serum pregnancy test at screening and urine pregnancy test at all other times.">Female participants only. Serum pregnancy test at screening and urine pregnancy test at all other...</td>
+                <td class="trace">acts: act-011</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">d</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Redacted in source (CCI — confidential commercial information).">Redacted in source (CCI — confidential commercial information).</td>
+                <td class="trace">acts: act-014</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">e</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Complete physical examination at check-in, discharge from CRU, and follow-up. Additional symptom-driven physical examinations may be performed at the discretion of the investigator.">Complete physical examination at check-in, discharge from CRU, and follow-up. Additional symptom-...</td>
+                <td class="trace">acts: act-018</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">f</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Redacted in source (CCI — confidential commercial information).">Redacted in source (CCI — confidential commercial information).</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">g</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Redacted in source (CCI — confidential commercial information).">Redacted in source (CCI — confidential commercial information).</td>
+                <td class="trace">acts: act-021</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #2E75B6;">Abbreviation (1)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">abbr</span></td>
+                <td class="type">table</td>
+                <td class="text-full" title="BP = blood pressure; CRU = clinical research unit; D = day; ECG = electrocardiogram; ED = early discontinuation; FU = follow-up; h = hours postdose; P = predose; PK = pharmacokinetic(s); PR = pulse rate.">BP = blood pressure; CRU = clinical research unit; D = day; ECG = electrocardiogram; ED = early d...</td>
+                <td class="trace">—</td>
+                <td class="trace">1 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">24 activities × 21 columns (122 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Screening / D-42 to -2">col-002</th><th class="col-header" title="Treatment Period (Study Days) / -1">col-003</th><th class="col-header" title="Treatment Period (Study Days) / 1">col-004</th><th class="col-header" title="Treatment Period (Study Days) / 2">col-005</th><th class="col-header" title="Treatment Period (Study Days) / 3">col-006</th><th class="col-header" title="Treatment Period (Study Days) / 4">col-007</th><th class="col-header" title="Treatment Period (Study Days) / 5">col-008</th><th class="col-header" title="Treatment Period (Study Days) / 6">col-009</th><th class="col-header" title="Treatment Period (Study Days) / 7">col-010</th><th class="col-header" title="Treatment Period (Study Days) / 8">col-011</th><th class="col-header" title="Treatment Period (Study Days) / 9">col-012</th><th class="col-header" title="Treatment Period (Study Days) / 10">col-013</th><th class="col-header" title="Treatment Period (Study Days) / 11">col-014</th><th class="col-header" title="Treatment Period (Study Days) / 12">col-015</th><th class="col-header" title="Treatment Period (Study Days) / 13">col-016</th><th class="col-header" title="Treatment Period (Study Days) / 14">col-017</th><th class="col-header" title="Treatment Period (Study Days) / 15">col-018</th><th class="col-header" title="Treatment Period (Study Days) / 16">col-019</th><th class="col-header" title="Treatment Period (Study Days) / 17">col-020</th><th class="col-header" title="Treatment Period (Study Days) / 18">col-021</th><th class="col-header" title="FU/ED / 24 (± 2 days)">col-022</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Study Phase<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Screening</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Period (Study Days)</td><td class="prop-cell" style="background: #375623; color: white;">FU/ED</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Study Day<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">D-42 to -2</td><td class="prop-cell" style="background: #548235; color: white;">-1</td><td class="prop-cell" style="background: #548235; color: white;">1</td><td class="prop-cell" style="background: #548235; color: white;">2</td><td class="prop-cell" style="background: #548235; color: white;">3</td><td class="prop-cell" style="background: #548235; color: white;">4</td><td class="prop-cell" style="background: #548235; color: white;">5</td><td class="prop-cell" style="background: #548235; color: white;">6</td><td class="prop-cell" style="background: #548235; color: white;">7</td><td class="prop-cell" style="background: #548235; color: white;">8</td><td class="prop-cell" style="background: #548235; color: white;">9</td><td class="prop-cell" style="background: #548235; color: white;">10</td><td class="prop-cell" style="background: #548235; color: white;">11</td><td class="prop-cell" style="background: #548235; color: white;">12</td><td class="prop-cell" style="background: #548235; color: white;">13</td><td class="prop-cell" style="background: #548235; color: white;">14</td><td class="prop-cell" style="background: #548235; color: white;">15</td><td class="prop-cell" style="background: #548235; color: white;">16</td><td class="prop-cell" style="background: #548235; color: white;">17</td><td class="prop-cell" style="background: #548235; color: white;">18</td><td class="prop-cell" style="background: #548235; color: white;">24 (± 2 days)</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Informed consent<br/><span class="act-id">act-001</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Admission to CRU<br/><span class="act-id">act-002</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Discharge from CRU<br/><span class="act-id">act-003</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Outpatient visit<br/><span class="act-id">act-004</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Medical history and demographics<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Participant eligibility<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Rosuvastatin administration<br/><span class="act-id">act-007</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Pirtobrutinib administration<br/><span class="act-id">act-008</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Height<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Weight<br/><span class="act-id">act-010</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Pregnancy test<br/><span class="act-id">act-011</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Urine drug screen (including cotinine)<br/><span class="act-id">act-012</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Ethanol test<br/><span class="act-id">act-013</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Supine vital signs (PR and BP)<br/><span class="act-id">act-014</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P, 2 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">24 h</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P, 2 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">24 h</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P, 2 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">24 h</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Oral body temperature<br/><span class="act-id">act-015</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;12-lead ECG<br/><span class="act-id">act-016</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Clinical laboratory tests<br/><span class="act-id">act-017</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Physical examination<br/><span class="act-id">act-018</span></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Genetic blood sample for screening<br/><span class="act-id">act-019</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;CCI<br/><span class="act-id">act-020</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Rosuvastatin PK samples<br/><span class="act-id">act-021</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">24 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">48 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">72 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">96 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h<sup class="cell-marker">f</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">24 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">48 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">72 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">96 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">120 h</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">24 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">48 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">72 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">96 h</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">120 h</td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;CCI<br/><span class="act-id">act-022</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Adverse event review<br/><span class="act-id">act-023</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Concomitant medication review<br/><span class="act-id">act-024</span></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
