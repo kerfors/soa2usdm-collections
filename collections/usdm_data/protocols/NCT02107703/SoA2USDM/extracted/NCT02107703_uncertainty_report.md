@@ -16,6 +16,8 @@ Two tables extracted.
 
 Both schema-valid; all markers resolve; no orphan annotations.
 
+> **Update — corrections applied (Protocol Reference column).** The source's **Protocol Reference** column (per-activity section cross-references, e.g. "Section 8.1", "Section 10.3") was not captured in the original extraction; it has since been added via the corrections sidecars as `source_note` annotations — **pr1–pr19** (Table 1) and **pr1–pr2** (Table 2) — each attached to its citing activities. Totals: 54 corrections = 21 `add` (new pr source_notes, deduplicated by text) + 33 `set` (attach pr markers to the citing activities). The raw `*_extraction.json` is unchanged; the notes live in `*_extraction.verified.json` and flow through to resolved (Table 1 → 36 annotations incl. 19 pr-notes; Table 2 → 5 incl. 2 pr-notes). The footnote inventory below (a–q / a–c) describes the raw extraction and is unaffected.
+
 ## SOURCE ISSUE — none
 
 - `_soa.pdf` page 1 (Document p72) is the Attachment cover (excluded from `page_start`). The main
