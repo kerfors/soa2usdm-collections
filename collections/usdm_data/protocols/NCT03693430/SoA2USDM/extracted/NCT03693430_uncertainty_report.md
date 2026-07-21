@@ -23,11 +23,11 @@ This `_soa.pdf` is **genuinely image-based** (4-char text layer; each page is on
 4. **Two follow-up rows** (Breast neoplasms, Colon neoplasms) mark only End of treatment (V33) + End of trial (V34). On page 3, the "Breast neoplasms follow-up" row is laid out between the repeated epoch band and the Visit row; treated as a normal SAFETY activity in reading order.
 
 ## Source defect
-- **V33 (End of treatment) visit window** prints **±3 on doc pp9–10** but **±5 on pp11–12** (repeated-header disagreement). Encoded **±3** (first occurrence); flagged.
+- **V33 (End of treatment) visit window** prints **±3 on doc pp9–10** but **±5 on pp11–12** (repeated-header disagreement). **[VERIFIED 2026-07-21]** Both values are legibly printed on the repeated header — checked against the rendered SoA pages, neither is a scan artifact (V34 End-of-trial reads "0 to +5" on both), and the protocol body never restates the EOT window. This is therefore an unresolvable **source contradiction**, not an open extraction question. Encoded **±3** (first occurrence); treat ±3/±5 as source-ambiguous downstream.
 - Top-right of every page has a redaction box over the running-head document title (cosmetic; not part of the table).
 
 ## Low-confidence calls
 1. Marks read by image-detection, not per-cell visual transcription (method validated on ~12 representative rows; column geometry exact).
 2. CoEQ lowercase "x" preserved as "x".
-3. V33 window encoded ±3 (vs ±5 on later pages).
+3. V33 window encoded ±3 (source contradicts itself — ±5 on later pages; confirmed source defect 2026-07-21, see above).
 4. Sub-parent indentation (Body measurements/Vital signs/Administration of trial product at indent 1, children indent 2) inferred from grey shading + indentation, consistent with sister trials.
