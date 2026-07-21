@@ -64,4 +64,4 @@ Table 1 header repeats across pages 14–15 (rows continue) → merged into one 
 Abbreviation lists (p 16, p 17) not emitted as `abbreviation` annotations — no in-grid markers; would be
 orphans. Consistent with prior extractions.
 
-**STOP — awaiting your verification before running the pipeline.**
+**[Pre-pipeline sign-off gate — superseded 2026-07-21.]** The pipeline has since been run (resolved/consolidated outputs exist), so this gate no longer applies. The items above are documented extraction decisions, consistent with prior extractions — no unresolved blocker.

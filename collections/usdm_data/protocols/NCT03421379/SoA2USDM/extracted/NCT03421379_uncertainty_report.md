@@ -72,4 +72,4 @@ Many cells carry post-dose timepoint lists relative to study-treatment administr
 240 min"), Vital Signs / Triplicate ECG / questionnaires ("Pre-hypoglycemia induction, …"), Physical Exam
 ("240 min"). All transcribed verbatim as `cell_value`.
 
-**STOP — awaiting your verification before running the pipeline.**
+**[Pre-pipeline sign-off gate — superseded 2026-07-21.]** The pipeline has since been run (resolved/consolidated outputs exist), so this gate no longer applies. The items above are documented extraction decisions, consistent with prior extractions — no unresolved blocker.

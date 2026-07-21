@@ -69,4 +69,4 @@ to confirm/replace.
 ## Not captured
 Abbreviation blocks (each table footer) not emitted as `abbreviation` annotations — no in-grid markers.
 
-**STOP — please confirm (especially the Table 9 footnote cross-references) before I run the pipeline.**
+**[Pre-pipeline sign-off gate — superseded 2026-07-21; the pipeline has since been run.]** One item remains **open for human confirmation**: the **Table 9 undefined footnotes** (markers 4–15 — see the ⚠️ section above). Their annotation texts are *labelled hypotheses* of the probable Table 7 equivalents, **not** asserted source content, and still need a clinical reviewer to confirm or replace each mapping. No data change has been made — flagging as a standing review item.
