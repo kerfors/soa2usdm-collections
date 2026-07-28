@@ -5,6 +5,22 @@ Extractor: Claude Opus 4.8. Status: `ready_for_resolution`. **This protocol need
 
 > **Update — 2026-07-21 (post-correction).** The Tables 2/3 tile merge flagged below was reviewed against the PDF and found to have dropped the V10–V19 marks for the recurring/physical rows (root cause: the extractor wrongly assumed those rows print only in the V20–V29 "(continued)" tile — the source shows them in *both* tiles). Fixed via `op=add` cells in the corrections sidecars (`Table_02` t2-c5..c38, +34 cells; `Table_03` t3-c3..c40, +38 cells), source-linked per visit; the raw extraction is unchanged. Resolved output now carries the correct per-visit union. Items corrected here are marked **[RESOLVED]** inline; the consolidation figures below are refreshed to the post-correction run.
 
+> **Update — 2026-07-28 (annotation re-extraction, Option B).** The annotation layer was fully
+> **regenerated** to fix fragmentation / mis-bounding / mis-typing (the AS-project review found 41 of 111
+> raw annotations truncated mid-sentence, 36 of 76 adjacent pairs sharing duplicated text, and all 111
+> typed `source_note`). Method: read each table's Comment column via `pdftotext -bbox`, bound each note by
+> its cell (vertical-gap segmentation), strip the one-glyph-per-token spacing, and re-segment words with a
+> DP scored on general-English (`wordfreq`) + protocol-vocabulary frequencies — characters are 100% from
+> the source text layer, only spaces and acronym casing are restored, nothing is invented. The raw
+> extraction proved **lossy** (e.g. the endoscopy footnote tail "colonoscopy should be performed." is
+> absent from every raw fragment), so the PDF text layer — not the raw JSON — is the note source. **Marks
+> and structure were preserved unchanged** from the 2026-07-21 post-correction state (an independent bbox
+> re-read had reproduced those marks 100%). This was published as **Option B**: the fresh raw extraction is
+> the new ground truth, so the **corrections sidecars are now EMPTY** — the 2026-07-21 tile-merge marks
+> `[RESOLVED]` below are baked into the fresh raw, and their provenance lives in git history. Row binding
+> reuses the (correct) prior `marker_locations` where a note contains a verified fragment, else a best
+> word-overlap match. Auto-finalized in Cowork; residuals to verify are listed under "Annotation layer" below.
+
 ## Tables & classification
 
 - **Table 1 — `main_soa`.** Screening & Induction, V1–V9 (doc pp.17–23). Extracted cleanly (borders + clean text layer). Highest confidence.
@@ -30,6 +46,25 @@ Given these two factors, this extraction was produced as a reviewed draft (you c
 - **CCI rows:** every "CCI (redacted)" activity is a black-bar redaction in the source (confidential commercial information); marks preserved, name unknown. Multiple CCI rows per table are not name-mergeable.
 - **Property values** (Weeks/Study day/tolerance) were read from the clean header pages and hardcoded per table; low risk but confirm.
 
+### Annotation layer (2026-07-28 re-extraction) — residuals to verify
+
+- **Complete-note recovery is good but not perfect.** 111 raw fragments → 77 fragmented → **39 complete
+  footnotes** after re-bounding + de-glyph. Consolidated adjacent-pair overlap dropped from 36 to **2**;
+  the two residual overlaps are the same note de-glyphed slightly differently across tables — normalise
+  either text to reach 0.
+- **Typing:** every note is now `footnote` (`by_type = {footnote: 39}`), correct for this all-explanatory
+  Comment column. One line — the abbreviation/legend key ("... acid; ETV = early ...") — is typed
+  `footnote` but is really an `abbreviation`/`legend` entry; re-type or drop if it matters.
+- **Row bindings** are high-confidence where a note contained the prior verified fragment (endoscopy,
+  pharmacogenetics, vital signs, AESIs, etc.); the remainder are a best word-overlap guess and a few may
+  sit on a neighbouring row — low harm for a footnote layer, but spot-check against the page.
+- **Endoscopy footnote** binds to the *Colon biopsy sample collection* row; the cell geometrically spans
+  the *Endoscopy* row above it too (a two-row comment). Confirm the intended row(s).
+- **One dropped note:** a "See Section 8.2.2" cross-reference in Table 4 was dropped rather than bound to a
+  wrong row (it is present and bound in Tables 1-3). Re-add against the page if wanted.
+- **Minor de-glyph artifacts** may remain around numerics (e.g. a stray "Section 8.3.6" spacing); scan the
+  note text once.
+
 ## Consolidation result
 
-Post-correction run (2026-07-21b, after the CCI/QIDS merge): 4 tables → **60 unified activities, 59% compression; review_queue = 0** (down from 65 as the 9 appended duplicate CCI/QIDS rows were removed and folded into their canonical rows). Four timelines render in the consolidated HTML (Screening/Induction main + Maintenance, Extension, ETV tracks). *(Earlier drafts: pre-correction 67 / 57% / rq=1; post V10–V19 mark-fix 65 / 59% / rq=0.)*
+Post-correction run (2026-07-21b, after the CCI/QIDS merge): 4 tables → **60 unified activities, 59% compression; review_queue = 0** (down from 65 as the 9 appended duplicate CCI/QIDS rows were removed and folded into their canonical rows). Four timelines render in the consolidated HTML (Screening/Induction main + Maintenance, Extension, ETV tracks). **Annotations (2026-07-28 re-extraction): 39 unified footnotes** (from 77 fragmented), consolidated adjacent-pair overlap = 2, `by_type = {footnote: 39}`; `schedule_matrix` unchanged at 577 cells and unified activities unchanged at 60 (marks/structure preserved). *(Earlier drafts: pre-correction 67 / 57% / rq=1; post V10–V19 mark-fix 65 / 59% / rq=0.)*
