@@ -12,9 +12,10 @@ baked in; provenance for every rework lives in git history.
 
 Consolidated: **60 unified activities** (165 source activities, 63% compression), **`schedule_matrix`
 603 cells**, review_queue 0. **Annotations: 41 unified footnotes** from 74 raw (T1 31 / T2 14 / T3 14 /
-T4 15), `by_type = {footnote: 41}`, longest duplicated sentence block 0 chars, none over 400 chars.
-One benign validation warning: `xannot-035` (T4 c1 "No fasting in this period") is `schedule_property`
-scope, and the consolidator deliberately does not expand property references to columns.
+T4 15), `by_type = {footnote: 41}`, longest duplicated sentence block 0 chars, none over 400 chars,
+0 validation warnings. `xannot-035` (T4 c1 "No fasting in this period") carries a `referenced_props`
+reference to the *Fasting visit* property (2026-08-15 consolidation; it previously reported as a
+benign orphan warning because property scope had no target in the consolidated model).
 
 A full row audit (extracted labels vs page labels, all 30 pages) found no missing activity rows. The only
 labels on the pages absent from the extraction are section headers — *Patient-Reported Outcomes
@@ -55,7 +56,7 @@ day/tolerance) were read from the clean header pages and hardcoded per table.
 - **Spot-checks worth one pass**: image-page activity labels (minor section-fragment bleed possible), and
   Table 4's restored first page (14 rows, 26 marks — new Layer-1 content from the 2026-07-30 rework).
 - **Not defects**: the PK-samples note legitimately prints twice per table (on *PK samples* and the CCI
-  row below — confirmed on doc p.22); `xannot-035` as described above.
+  row below — confirmed on doc p.22).
 
 ## History (details in git log and the per-commit messages)
 
