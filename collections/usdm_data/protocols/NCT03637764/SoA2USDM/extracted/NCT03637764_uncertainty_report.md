@@ -64,6 +64,19 @@ cross-references on the activity label. Flagging for your call.
 - `n8` "Informed consent may be signed prior to D-28" (footnote).
 - `n1`–`n8` markers are **synthesised** (the Notes column prints no marker letters); recorded here.
 
+## Source page deliberately not extracted (2026-08-15)
+
+`soa2usdm-row-audit` reports PDF page 5 of `NCT03637764_soa.pdf` (doc page 22, printed "Page 22")
+as a schedule page belonging to no extraction. It is correct: that page holds the
+**PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART** — the chart the Notes-column pointers on the
+PK/ADA/tumour-biopsy rows refer to (see the flow-chart-pointer judgement above).
+
+Decision: **out of scope, deliberately.** Its rows are sample types and its cells carry sample IDs
+and time windows relative to dosing ("SOI", "EOI +30 min", "S00", "P00", "AS00"), not schedule marks.
+That content is study timing rather than a schedule of activities, and the three-layer model does not
+carry it today. Recorded here so the audit finding is explained rather than rediscovered; revisit if
+USDM timing detail is taken on.
+
 ## Low-confidence / for human review against resolved HTML
 - The `a`/`b`/`c` footnote letters ARE printed in source; `n1`–`n8` are synthesised from the Notes column.
 - "As clinically indicated" spans (r7, r13 = [7:8]) — corrected from prior; verified on zoom but worth a
