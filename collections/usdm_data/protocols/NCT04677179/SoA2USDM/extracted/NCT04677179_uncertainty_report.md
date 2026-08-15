@@ -43,9 +43,13 @@ day/tolerance) were read from the clean header pages and hardcoded per table.
 
 ## Open items (all low severity)
 
-- **`T4 c11`** ("No dosing at ETV, V997, or post-treatment follow-up visits.") sits on *Urine pregnancy
-  (local)*; almost certainly belongs on *Randomization and Dosing* (cf. `T1 c22` "No dosing at V3."). A
-  footnote-block note outside the Comment-column geometry, so it was left as found rather than moved on a guess.
+- **`T4 c11` — RESOLVED 2026-08-15.** The note ("No dosing at ETV, V997, or post-treatment follow-up
+  visits.") sat on *Urine pregnancy (local)* because the row it belongs to had never been extracted:
+  Table 4's last row on doc p.46 is *Dosing*, under the *Randomization and Dosing* header (cf. `T1 c22`
+  "No dosing at V3." on Table 1's *Dosing* row). Found by `soa2usdm-row-audit` and confirmed on the
+  rendered page. The row is restored as row 40 through the corrections sidecar (`corr-001`–`corr-003`)
+  and the note re-bound to it. It carries no marks in any of the four visit columns, so `schedule_matrix`
+  is unchanged at 603 cells.
 - **Four corrupt abbreviation-key fragments** (`T1 c23`, `T2 c13`, `T3 c13`, `T4 c12`) from the
   multi-column abbreviation block under each table (doc pp.23/32/42/46) — column clip interleaved two
   text columns. No schedule logic; decision was to leave them.
