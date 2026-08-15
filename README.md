@@ -38,7 +38,7 @@ This repo starts fresh: the manifest and folder scaffold are here; the derived o
    ```
 
 2. In `soa2usdm`, run `notebooks/00_download_extract.ipynb` with `COLLECTION = "usdm_data"` to fetch a protocol PDF, slice out its SoA pages, and scaffold the protocol folder here.
-3. Run the Layer 1 extraction conversations (see the `soa2usdm` prompts), then `01_batch.ipynb` for resolution, consolidation, and visualization.
+3. Run Layer 1 extraction (the single-pass `PDF_TO_JSON_PROMPT.md` by default, or the two-conversation Excel path — see the `soa2usdm` prompts and workflow guide), then `01_batch.ipynb` for corrections, resolution, consolidation, and visualization.
 4. Regenerate the Pages index and commit the derived outputs (not the PDFs).
 
 The pipeline discovers this collection automatically at `../soa2usdm-collections/collections/`, or wherever `SOA2USDM_COLLECTIONS` points.
