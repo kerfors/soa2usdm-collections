@@ -17,7 +17,28 @@ narrative. Three extraction files follow. `soa_pages` will be recorded as `63-78
 All three schema-valid; no orphan annotations; every element marker resolves; no dup cells. Marks placed from
 `pdftotext -bbox` coordinates (authoritative), cross-checked against every rendered page.
 
-## ⚠️ Most important review item — Table 9 undefined footnotes (source defect)
+## ✅ RESOLVED 2026-08-15 — Table 9 undefined footnotes (source defect; clinical review complete)
+
+The standing review item below was closed by clinical review (Kerstin Forsberg, 2026-08-15), checking each
+hypothesis against the **Section 7.4 "Procedures by Visit – Main Study Extended Visit Cycles"** narrative
+(doc pp 80–82), which is the prose mirror of Table 9. Outcomes, recorded via
+`NCT01847274_Table_03_corrections.json` (raw unchanged; applied to `*.verified.json`, pipeline re-run):
+
+- **Confirmed (7): markers 5, 9, 11, 12, 13, 14, 15.** Each Table 7 mapping is restated by the §7.4
+  narrative — fn15/§7.4.5 verbatim; fn5 by §7.4.3's "AEs (SAEs recorded 30 days post study treatment
+  discontinuation)"; fn11 by §7.4.2 + §7.4.4; fn12/13/14 by §7.4.3–§7.4.4; fn9 by §7.4.3 (ECG at
+  discontinuation — the only ECG mark in this table).
+- **Hypothesis retained, unconfirmed (3): markers 6, 7, 8.** §7.4 does not restate these on-treatment lab
+  rules. Marker 7's T7 fn13 content is partly screening/Cycle-1-specific and may not apply in extended cycles.
+- **Contradiction flagged, unresolved (1): marker 10 (RECIST).** T7 fn22 says post-Cycle-14 imaging every
+  6 cycles (24 weeks); §7.4.2 says "then after every 3 cycles". Source-internal contradiction — both wordings
+  recorded, neither asserted.
+- **Unresolved (1): marker 4.** No Table 7 candidate; §7.4.1 confirms vitals at the local-clinic/in-home
+  visit, but that content is already printed footnote 3.
+
+Original description of the defect and handling kept below for the record.
+
+## Table 9 undefined footnotes (source defect) — original ⚠️ review item
 Table 9 has its **own** footnote numbering (its printed footnotes 1–3 are new — the "Location" column
 definitions — and are unrelated to Table 7's 1–3). The body references markers **4–15**, but **only 1–3 are
 printed on the page** — footnotes 4–15 are simply missing from the source. Final handling (your approved
@@ -69,4 +90,4 @@ to confirm/replace.
 ## Not captured
 Abbreviation blocks (each table footer) not emitted as `abbreviation` annotations — no in-grid markers.
 
-**[Pre-pipeline sign-off gate — superseded 2026-07-21; the pipeline has since been run.]** One item remains **open for human confirmation**: the **Table 9 undefined footnotes** (markers 4–15 — see the ⚠️ section above). Their annotation texts are *labelled hypotheses* of the probable Table 7 equivalents, **not** asserted source content, and still need a clinical reviewer to confirm or replace each mapping. No data change has been made — flagging as a standing review item.
+**[Pre-pipeline sign-off gate — superseded 2026-07-21; the pipeline has since been run.]** ~~One item remains **open for human confirmation**: the **Table 9 undefined footnotes** (markers 4–15).~~ **Closed 2026-08-15** — clinical review complete; see the ✅ RESOLVED section above. Markers 4 (unresolved) and 10 (source-internal contradiction) remain honestly labelled as such in the data; no footnote text is asserted as printed-source content.
