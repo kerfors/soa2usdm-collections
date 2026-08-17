@@ -61,327 +61,404 @@
     
     <script>
     const jsonData = {
- "schema_name": "soa-table-extraction",
- "schema_version": "1.0",
- "extraction_metadata": {
-  "extracted_at": "2026-07-12T17:20:00+00:00",
-  "extractor": "Claude Opus 4.8 (Cowork; single-pass, PDF text-layer bbox coordinate reconstruction, marks PDF-authoritative)",
-  "source_document": {
-   "filename": "NCT02107703_soa.pdf",
-   "document_type": "protocol",
-   "document_version": "I3Y-MC-JPBL"
+  "schema_name": "soa-table-extraction",
+  "schema_version": "1.0",
+  "extraction_metadata": {
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude-Opus-5 (prompt v3.7.3, single-pass PDF->JSON)",
+    "source_document": {
+      "filename": "NCT02107703_soa.pdf",
+      "document_type": "protocol",
+      "document_version": "Protocol I3Y-MC-JPBL (LY2835219), Attachment 1"
+    },
+    "extraction_status": "ready_for_resolution",
+    "extraction_notes": "Single-page table on document page 78, footnotes printed under the grid on the same page. Column geometry recovered from raster rule lines at 200 dpi (prompt section 1d); cell text from the pdftotext -bbox text layer."
   },
-  "extraction_status": "ready_for_resolution",
-  "extraction_notes": "'Study Schedule for the extension period only' (Document page 78). Separate timeline from the main schedule (own cycles X-Y and visits 501-5XX / 901) so typed as track. 3 leaf columns (grid cols 4-6): extension cycle Day 1 (col 4) and Day 15 (col 5), Extension Period Follow-Up / Visit 901 (col 6). Merged treatment-text cells (Fulvestrant/LY2835219 therapy) distributed across cols 4-5 with source_range 4:5. Footnote a (Cycle-row Follow-Up cell) anchored to schedule_cell; b and c to activity names."
- },
- "table_metadata": {
-  "table_number": 2,
-  "table_type": "track",
-  "track_label": "Extension period",
-  "table_title": "Study Schedule for the extension period only, Protocol I3Y-MC-JPBL",
-  "table_purpose": "Extension-period schedule for patients continuing LY2835219 + fulvestrant after study completion, with its own cycle/visit numbering and follow-up.",
-  "page_start": 78,
-  "page_end": 78,
-  "notes": "Printed Document page number. Separate timeline from Table 1 (main schedule)."
- },
- "schedule_properties": [
-  {
-   "table_number": 2,
-   "row_position": 1,
-   "property_name": "Study Phase",
-   "property_name_source": {
-    "row_position": 1,
-    "column_position": 1,
-    "cell_value": "",
-    "synthesized": true
-   },
-   "property_type": "epoch",
-   "property_comment": "Extension header band: Patients on Study Treatment (cols 4-5), Extension Period Follow-Up (col 6). Row-label blank so synthesized.",
-   "hierarchical_level": 1
+  "table_metadata": {
+    "table_number": 2,
+    "table_type": "track",
+    "track_label": "Extension Period",
+    "table_title": "Study Schedule for the extension period only, Protocol I3Y-MC-JPBL",
+    "table_purpose": "Schedule of activities for the extension period, which begins after study completion and ends at the end of trial.",
+    "page_start": 78,
+    "page_end": 78,
+    "notes": "Classified track, not domain or continuation: the column structure is entirely different from Table 1 (3 data columns; cycles X-Y, visits 501-5XX and 901 versus Table 1's BL/1/2-3/4+/801/802-8XX), and per its own footnote a the extension period 'begins after study completion and ends at the end of trial', so it schedules a different study phase for the subset of patients who continue treatment into it. track_label taken from the source's own wording 'extension period'. Three leading label columns (Procedure Category, Procedure, Protocol Reference) are excluded per prompt section 5, so the first data column is position 4 and data columns run 4-6. Row_position 6 is the repeated Procedure Category/Procedure/Protocol Reference label band and carries no schedule property."
   },
-  {
-   "table_number": 2,
-   "row_position": 2,
-   "property_name": "Cycle",
-   "property_name_source": {
-    "row_position": 2,
-    "column_position": 3,
-    "cell_value": "Cycle"
-   },
-   "property_type": "cycle",
-   "property_comment": "Cycle X-Y (cols 4-5) and Follow-Up (col 6, footnote a).",
-   "hierarchical_level": 2
-  },
-  {
-   "table_number": 2,
-   "row_position": 3,
-   "property_name": "Visit",
-   "property_name_source": {
-    "row_position": 3,
-    "column_position": 3,
-    "cell_value": "Visit"
-   },
-   "property_type": "visit",
-   "property_comment": "Visit 501-5XX (cols 4-5) and 901 (col 6).",
-   "hierarchical_level": 3
-  },
-  {
-   "table_number": 2,
-   "row_position": 4,
-   "property_name": "Duration (days)",
-   "property_name_source": {
-    "row_position": 4,
-    "column_position": 3,
-    "cell_value": "Duration (days)"
-   },
-   "property_type": "other",
-   "property_comment": "28 for extension cycles (cols 4-5), 30 for Follow-Up (col 6).",
-   "hierarchical_level": 4
-  },
-  {
-   "table_number": 2,
-   "row_position": 5,
-   "property_name": "Relative day within a cycle",
-   "property_name_source": {
-    "row_position": 5,
-    "column_position": 3,
-    "cell_value": "Relative day within a cycle"
-   },
-   "property_type": "study_day",
-   "property_comment": "Day 1 (col 4) and Day 15 (col 5); follow-up column blank.",
-   "hierarchical_level": 5
-  }
- ],
- "schedule_grid": [
-  {
-   "table_number": 2,
-   "row_position": 1,
-   "column_position": 4,
-   "cell_value": "Patients on Study Treatment",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 1,
-   "column_position": 5,
-   "cell_value": "Patients on Study Treatment",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 1,
-   "column_position": 6,
-   "cell_value": "Extension Period Follow-Up"
-  },
-  {
-   "table_number": 2,
-   "row_position": 2,
-   "column_position": 4,
-   "cell_value": "X-Y",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 2,
-   "column_position": 5,
-   "cell_value": "X-Y",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 2,
-   "column_position": 6,
-   "cell_value": "Follow-Up",
-   "annotation_markers": "a"
-  },
-  {
-   "table_number": 2,
-   "row_position": 3,
-   "column_position": 4,
-   "cell_value": "501-5XX",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 3,
-   "column_position": 5,
-   "cell_value": "501-5XX",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 3,
-   "column_position": 6,
-   "cell_value": "901"
-  },
-  {
-   "table_number": 2,
-   "row_position": 4,
-   "column_position": 4,
-   "cell_value": "28",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 4,
-   "column_position": 5,
-   "cell_value": "28",
-   "merged_cell_range": "4:5",
-   "is_merged_cell": true
-  },
-  {
-   "table_number": 2,
-   "row_position": 4,
-   "column_position": 6,
-   "cell_value": "30"
-  },
-  {
-   "table_number": 2,
-   "row_position": 5,
-   "column_position": 4,
-   "cell_value": "1"
-  },
-  {
-   "table_number": 2,
-   "row_position": 5,
-   "column_position": 5,
-   "cell_value": "15"
-  }
- ],
- "activities": [
-  {
-   "table_number": 2,
-   "row_position": 6,
-   "activity_name": "Adverse Events Collection/CTCAE Grading",
-   "activity_name_source": {
-    "cell_text": "Adverse Events Collection/CTCAE Grading",
-    "indentation_level": 0
-   },
-   "annotation_markers": "b"
-  },
-  {
-   "table_number": 2,
-   "row_position": 7,
-   "activity_name": "Study Drug",
-   "activity_name_source": {
-    "cell_text": "Study Drug",
-    "indentation_level": 0
-   }
-  },
-  {
-   "table_number": 2,
-   "row_position": 8,
-   "activity_name": "Fulvestrant Therapy",
-   "activity_name_source": {
-    "cell_text": "Fulvestrant Therapy",
-    "indentation_level": 1
-   },
-   "annotation_markers": "c"
-  },
-  {
-   "table_number": 2,
-   "row_position": 9,
-   "activity_name": "LY2835219 Therapy",
-   "activity_name_source": {
-    "cell_text": "LY2835219 Therapy",
-    "indentation_level": 1
-   },
-   "annotation_markers": "c"
-  }
- ],
- "activity_schedule": [
-  {
-   "table_number": 2,
-   "row_position": 6,
-   "column_position": 4,
-   "cell_value": "X"
-  },
-  {
-   "table_number": 2,
-   "row_position": 6,
-   "column_position": 6,
-   "cell_value": "X"
-  },
-  {
-   "table_number": 2,
-   "row_position": 8,
-   "column_position": 4,
-   "cell_value": "Days 1 and 15 of Cycle 1, then Day 1 of Cycle 2 and beyond",
-   "source_range": "4:5"
-  },
-  {
-   "table_number": 2,
-   "row_position": 8,
-   "column_position": 5,
-   "cell_value": "Days 1 and 15 of Cycle 1, then Day 1 of Cycle 2 and beyond",
-   "source_range": "4:5"
-  },
-  {
-   "table_number": 2,
-   "row_position": 9,
-   "column_position": 4,
-   "cell_value": "Daily every 12 hours",
-   "source_range": "4:5"
-  },
-  {
-   "table_number": 2,
-   "row_position": 9,
-   "column_position": 5,
-   "cell_value": "Daily every 12 hours",
-   "source_range": "4:5"
-  }
- ],
- "annotations": [
-  {
-   "annotation_marker": "a",
-   "annotation_type": "footnote",
-   "annotation_text": "The extension period begins after study completion and ends at the end of trial.",
-   "marker_locations": [
+  "schedule_properties": [
     {
-     "table_number": 2,
-     "location_type": "schedule_cell",
-     "row_position": 2,
-     "column_position": 6
-    }
-   ]
-  },
-  {
-   "annotation_marker": "b",
-   "annotation_type": "footnote",
-   "annotation_text": "Data on SAEs that occur before the end of trial will be stored in the collection database and the Lilly safety system.",
-   "marker_locations": [
-    {
-     "table_number": 2,
-     "location_type": "activity_name",
-     "row_position": 6
-    }
-   ]
-  },
-  {
-   "annotation_marker": "c",
-   "annotation_type": "footnote",
-   "annotation_text": "LY2835219 should be administered every 12 hours on Days 1 through 28 of each cycle. Patients should not consume food beginning 1 hour before and ending hour after taking study drug. Fulvestrant 500 mg should be administered intramuscularly into the buttocks slowly (1 to 2 minutes per injection) as two 250-mg injections, one in each buttock; however, for patients with moderate hepatic impairment (defined as Child-Pugh Class B), including any patient who develops moderate hepatic impairment during study treatment, fulvestrant 250 mg should be administered intramuscularly into the buttock slowly (1 to 2 minutes) as one 250-mg injection.",
-   "marker_locations": [
-    {
-     "table_number": 2,
-     "location_type": "activity_name",
-     "row_position": 8
+      "table_number": 2,
+      "row_position": 1,
+      "property_name": "Study Phase",
+      "property_name_source": {
+        "row_position": 1,
+        "column_position": 3,
+        "cell_value": "",
+        "synthesized": true
+      },
+      "property_type": "epoch",
+      "hierarchical_level": 1,
+      "annotation_markers": "lg1",
+      "property_comment": "Top header band, label cell empty. Values are the two phases of the extension period: 'Patients on Study Treatment' (merged over cols 4-5) and 'Extension Period Follow-Up' (col 6). Classified epoch because the values are major phases; property_name synthesized because the label cell is blank."
     },
     {
-     "table_number": 2,
-     "location_type": "activity_name",
-     "row_position": 9
+      "table_number": 2,
+      "row_position": 2,
+      "property_name": "Cycle",
+      "property_name_source": {
+        "row_position": 2,
+        "column_position": 3,
+        "cell_value": "Cycle"
+      },
+      "property_type": "cycle",
+      "hierarchical_level": 2,
+      "property_comment": "Printed row label 'Cycle'. Values are the extension-period cycle range 'X-Y' (cols 4-5) and 'Follow-Up' (col 6), i.e. the repeating treatment cycle each column belongs to."
+    },
+    {
+      "table_number": 2,
+      "row_position": 3,
+      "property_name": "Visit",
+      "property_name_source": {
+        "row_position": 3,
+        "column_position": 3,
+        "cell_value": "Visit"
+      },
+      "property_type": "visit",
+      "hierarchical_level": 3,
+      "property_comment": "Printed row label 'Visit'. Values are visit numbers 501-5XX (cols 4-5) and 901 (col 6)."
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "property_name": "Duration (days)",
+      "property_name_source": {
+        "row_position": 4,
+        "column_position": 3,
+        "cell_value": "Duration (days)"
+      },
+      "property_type": "other",
+      "hierarchical_level": null,
+      "property_comment": "Printed row label. Values are the nominal length in days of each cycle/period (28, 30). No enum value fits a period-length row, so 'other'; hierarchical_level null because the columns remain distinguishable without it."
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "property_name": "Relative day within a cycle",
+      "property_name_source": {
+        "row_position": 5,
+        "column_position": 3,
+        "cell_value": "Relative day within a cycle"
+      },
+      "property_type": "study_day",
+      "hierarchical_level": 4,
+      "property_comment": "Printed row label. Values are days relative to the start of the cycle (1, 15); this row is what splits the on-treatment block into two columns. Level 4 as the fourth level-bearing header row (the Duration row above it is null)."
     }
-   ]
-  }
- ]
+  ],
+  "schedule_grid": [
+    {
+      "table_number": 2,
+      "row_position": 1,
+      "column_position": 4,
+      "cell_value": "Patients on Study Treatment",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 1,
+      "column_position": 5,
+      "cell_value": "Patients on Study Treatment",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 1,
+      "column_position": 6,
+      "cell_value": "Extension Period Follow-Up"
+    },
+    {
+      "table_number": 2,
+      "row_position": 2,
+      "column_position": 4,
+      "cell_value": "X-Y",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 2,
+      "column_position": 5,
+      "cell_value": "X-Y",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 2,
+      "column_position": 6,
+      "cell_value": "Follow-Up",
+      "annotation_markers": "a"
+    },
+    {
+      "table_number": 2,
+      "row_position": 3,
+      "column_position": 4,
+      "cell_value": "501-5XX",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 3,
+      "column_position": 5,
+      "cell_value": "501-5XX",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 3,
+      "column_position": 6,
+      "cell_value": "901"
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 4,
+      "cell_value": "28",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 5,
+      "cell_value": "28",
+      "merged_cell_range": "4:5",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 6,
+      "cell_value": "30"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 4,
+      "cell_value": "1"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 5,
+      "cell_value": "15"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 6,
+      "cell_value": ""
+    }
+  ],
+  "activities": [
+    {
+      "table_number": 2,
+      "row_position": 7,
+      "source_page": 78,
+      "activity_name": "Adverse Events Collection/CTCAE Grading",
+      "activity_name_source": {
+        "cell_text": "Adverse Events Collection/CTCAE Gradingb",
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
+      },
+      "annotation_markers": "b,pr1"
+    },
+    {
+      "table_number": 2,
+      "row_position": 8,
+      "source_page": 78,
+      "activity_name": "Fulvestrant Therapy",
+      "activity_name_source": {
+        "cell_text": "Fulvestrant Therapyc",
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
+      },
+      "annotation_markers": "c,pr2"
+    },
+    {
+      "table_number": 2,
+      "row_position": 9,
+      "source_page": 78,
+      "activity_name": "LY2835219 Therapy",
+      "activity_name_source": {
+        "cell_text": "LY2835219 Therapyc",
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
+      },
+      "annotation_markers": "c,pr2"
+    }
+  ],
+  "activity_schedule": [
+    {
+      "table_number": 2,
+      "row_position": 7,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 7,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 8,
+      "column_position": 4,
+      "cell_value": "Days 1 and 15 of Cycle 1, then Day 1 of Cycle 2 and beyond",
+      "source_range": "4:5",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 2,
+      "row_position": 8,
+      "column_position": 5,
+      "cell_value": "Days 1 and 15 of Cycle 1, then Day 1 of Cycle 2 and beyond",
+      "source_range": "4:5",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 2,
+      "row_position": 9,
+      "column_position": 4,
+      "cell_value": "Daily every 12 hours",
+      "source_range": "4:5",
+      "annotation_markers": "c"
+    },
+    {
+      "table_number": 2,
+      "row_position": 9,
+      "column_position": 5,
+      "cell_value": "Daily every 12 hours",
+      "source_range": "4:5",
+      "annotation_markers": "c"
+    }
+  ],
+  "annotations": [
+    {
+      "annotation_marker": "a",
+      "annotation_type": "footnote",
+      "annotation_text": "The extension period begins after study completion and ends at the end of trial.",
+      "marker_locations": [
+        {
+          "table_number": 2,
+          "location_type": "schedule_cell",
+          "row_position": 2,
+          "column_position": 6
+        }
+      ]
+    },
+    {
+      "annotation_marker": "b",
+      "annotation_type": "footnote",
+      "annotation_text": "Data on SAEs that occur before the end of trial will be stored in the collection database and the Lilly safety system.",
+      "marker_locations": [
+        {
+          "table_number": 2,
+          "location_type": "activity_name",
+          "row_position": 7
+        }
+      ]
+    },
+    {
+      "annotation_marker": "c",
+      "annotation_type": "footnote",
+      "annotation_text": "LY2835219 should be administered every 12 hours on Days 1 through 28 of each cycle. Patients should not consume food beginning 1 hour before and ending hour after taking study drug. Fulvestrant 500 mg should be administered intramuscularly into the buttocks slowly (1 to 2 minutes per injection) as two 250-mg injections, one in each buttock; however, for patients with moderate hepatic impairment (defined as Child-Pugh Class B), including any patient who develops moderate hepatic impairment during study treatment, fulvestrant 250 mg should be administered intramuscularly into the buttock slowly (1 to 2 minutes) as one 250-mg injection.",
+      "marker_locations": [
+        {
+          "table_number": 2,
+          "location_type": "activity_name",
+          "row_position": 8
+        },
+        {
+          "table_number": 2,
+          "location_type": "activity_name",
+          "row_position": 9
+        },
+        {
+          "table_number": 2,
+          "location_type": "schedule_cell",
+          "row_position": 8,
+          "column_position": 4
+        },
+        {
+          "table_number": 2,
+          "location_type": "schedule_cell",
+          "row_position": 8,
+          "column_position": 5
+        },
+        {
+          "table_number": 2,
+          "location_type": "schedule_cell",
+          "row_position": 9,
+          "column_position": 4
+        },
+        {
+          "table_number": 2,
+          "location_type": "schedule_cell",
+          "row_position": 9,
+          "column_position": 5
+        }
+      ]
+    },
+    {
+      "annotation_marker": "pr1",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 10.3",
+      "marker_locations": [
+        {
+          "table_number": 2,
+          "location_type": "activity_name",
+          "row_position": 7,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "pr2",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 8.1.2",
+      "marker_locations": [
+        {
+          "table_number": 2,
+          "location_type": "activity_name",
+          "row_position": 8,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 2,
+          "location_type": "activity_name",
+          "row_position": 9,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "lg1",
+      "annotation_type": "legend",
+      "annotation_text": "Perform procedure as indicated.",
+      "marker_locations": [
+        {
+          "table_number": 2,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "method": "synthesized"
+        }
+      ]
+    }
+  ]
 };
     
     function escHtml(s) {

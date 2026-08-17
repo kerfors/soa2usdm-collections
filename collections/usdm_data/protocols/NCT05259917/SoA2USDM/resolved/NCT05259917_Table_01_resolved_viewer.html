@@ -64,7 +64,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:15.219274+00:00",
+    "resolved_at": "2026-08-17T19:13:16.908247+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -77,37 +77,42 @@
       "hierarchy_valid": true,
       "annotations_valid": true,
       "validation_warnings": [],
-      "validation_errors": []
+      "validation_errors": [],
+      "method_provenance": [
+        "property_structure:inferred_from_layout: 1",
+        "schedule_cell:raster_pixel_detection: 15"
+      ]
     },
     "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-12T20:10:26+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.3 single-pass)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude-Opus-5",
     "source_document": {
       "filename": "NCT05259917_soa.pdf",
       "document_type": "protocol",
-      "document_version": "KVD900-301 (KONFIDENT), Version 4.1 (US Only), 04 May 2023"
+      "document_version": "Version 4.1 (US Only)",
+      "document_date": "04 May 2023"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table 1 (Schedule of Events), KVD900-301 KONFIDENT (sebetralstat/KVD900 for HAE). main_soa; flat table (no organizational sub-headers - every row is a level-0 activity with marks). Header repeated across doc pages 17-18 (merged into one file). Text-layer table (only a small logo image); marks reconstructed from PDF text-layer coordinates and confirmed visually. Columns 2-7: Screening, Randomization, Treatment Period (1st/2nd/3rd eligible HAE attack), Final Visit/ET. Two-level header: row 1 epoch/phase (Treatment Period band merged 4:6), row 2 the three attack visits. Randomization column has ONE X vertically merged across the In-clinic and TeleVisit rows (footnote a: the visit may be a televisit or in-clinic) - transcribed as X on both rows. Three rows use a horizontal double-headed arrow instead of X (continuous activities): Conventional on-demand treatment washout (cols 4-6), Concomitant Medication Review (cols 2-7), Adverse Event Review (cols 2-7) - captured as cell_value '↔' distributed with source_range. Footnote r deduplicated over PGI-S/PGI-C/VAS/GA-NRS (4 activities) and references Table S1 (finer-timing patient-assessment frequency table, out of scope per user decision - not in the SoA excerpt). Abbreviation list not captured (no in-grid markers)."
+    "extraction_notes": "Single SoA table in the excerpt (Table 1: Schedule of Events), document pages 17-18. One leading label column (L=1); first data column is position 2; six data columns (2 Screening, 3 Randomization, 4-6 the three eligible HAE attacks, 7 Final Visit/ET). Column boundaries, cell merges and the three horizontal arrows were confirmed from rule-line geometry recovered from a 200 dpi render (vertical rules at 71.3, 309.6, 368.6, 454.9, 530.3, 600.1, 669.2, 720.4 pt); X marks were binned to header-anchored column centres from pdftotext -bbox and agreed with the visual read in every cell. The Randomization cell of the In-clinic / TeleVisit rows is merged VERTICALLY (the horizontal rule between those two rows is absent in that column only), so its single X is emitted on both activity rows; the schema has no vertical-merge field, so no source_range is set on those two cells. The abbreviations block (C1-INH, ECG, eDiary, ET, GA-NRS, HAE, IMP, PGI-C, PGI-S, RTSM, VAS) carries no printed in-grid marker, so per prompt section 6 no abbreviation annotations were emitted."
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
-    "table_title": "Table 1: Schedule of Events",
-    "table_purpose": "Anchor schedule across Screening, Randomization, Treatment Period (3 eligible HAE attacks), and Final Visit/ET.",
+    "table_title": "Schedule of Events",
+    "table_purpose": "Primary schedule of events for the trial: screening, randomization, the three eligible HAE attack treatment encounters, and the Final/Early Termination visit.",
     "page_start": 17,
     "page_end": 18,
     "track_label": null,
     "column_count": 6,
-    "row_count": 24,
+    "row_count": 26,
     "header_row_count": 2,
     "activity_row_count": 24,
-    "notes": "Section synopsis-level Schedule of Events. Single logical table, header repeated across doc pp 17-18 (encoded once). Flat activity list; three continuous-activity rows drawn as horizontal arrows. Footnotes a-s on doc page 18."
+    "notes": "main_soa by the section 2 discriminators: rows are procedures performed on subjects, there is no other table in the excerpt to be a continuation/domain/subsidiary of, and this is the protocol's primary anchor grid. The header rows reprint on document page 18 above the single remaining body row (Adverse Event Review), which is a page split of one logical table, so it is extracted as one table spanning pages 17-18 with the reprinted header counted once rather than as a separate continuation table. Header row 1 label is 'Visit'; header row 2 has no label and its property_name is synthesized. Three rows carry a horizontal double-headed arrow instead of X marks: Conventional on-demand treatment washout (columns 4-6), Concomitant Medication Review (columns 2-7) and Adverse Event Review (columns 2-7); each is distributed one entry per covered column with source_range set."
   },
   "schedule_properties": [
     {
@@ -120,8 +125,8 @@
         "column_position": 1,
         "cell_value": "Visit"
       },
-      "property_type": "epoch",
-      "property_comment": "Top header row: study phase / primary visit identifiers - Screening (col 2), Randomization (col 3), Treatment Period (epoch band, merged over cols 4-6), Final Visit/ET (col 7). Mixed epoch/visit; typed epoch as the dominant phase framing (Treatment Period is the spanning band). Col-1 label 'Visit' spans both header rows. Markers a on Randomization, c on Final Visit/ET.",
+      "property_type": "visit",
+      "property_comment": "Top header row, printed label 'Visit'. Carries the encounter names across the six data columns: Screening, Randomization, Treatment Period (one cell merged across columns 4-6), Final Visit/ET. Typed 'visit' from the source's own printed row label; note the row mixes visit names (Screening, Randomization, Final Visit/ET) with a phase name (Treatment Period) that spans the three attack columns, so the row is not purely one concept. The Screening, Randomization and Final Visit/ET cells also span down into header row 2 (no internal horizontal rule), which the schema has no field for.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -134,7 +139,7 @@
       "property_id": "prop-002",
       "table_id": "table-001",
       "row_position": 2,
-      "property_name": "Treatment Period Visit",
+      "property_name": "Eligible HAE attack",
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
@@ -142,7 +147,7 @@
         "synthesized": true
       },
       "property_type": "visit",
-      "property_comment": "Second header row: the three treatment visits (eligible HAE attacks) within the Treatment Period - 1st/2nd/3rd eligible HAE attack (cols 4-6). Cols 2,3,7 have no second-row label. Marker b rides each attack column. property_name synthesised (col-1 'Visit' label already used by row 1).",
+      "property_comment": "Second header row; the label column is blank so property_name is synthesized. Contains the three attack-level encounter identifiers ('1st eligible HAE attack', '2nd eligible HAE attack', '3rd eligible HAE attack') that subdivide the merged 'Treatment Period' cell above, so it is typed 'visit' at hierarchical level 2. Type and level come from the spanning geometry of the row above rather than from any printed label, hence structure_method inferred_from_layout. Columns 2, 3 and 7 are empty here because those header cells span vertically from row 1.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [],
@@ -280,10 +285,10 @@
     {
       "activity_id": "act-001",
       "table_id": "table-001",
-      "row_position": 1,
+      "row_position": 3,
       "activity_name": "In-clinic",
       "activity_name_source": {
-        "cell_text": "In-clinic",
+        "cell_text": "In-clinicd",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -299,10 +304,10 @@
     {
       "activity_id": "act-002",
       "table_id": "table-001",
-      "row_position": 2,
+      "row_position": 4,
       "activity_name": "TeleVisit",
       "activity_name_source": {
-        "cell_text": "TeleVisit",
+        "cell_text": "TeleVisite",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -318,10 +323,10 @@
     {
       "activity_id": "act-003",
       "table_id": "table-001",
-      "row_position": 3,
+      "row_position": 5,
       "activity_name": "Informed Consent/Assent",
       "activity_name_source": {
-        "cell_text": "Informed Consent/Assent",
+        "cell_text": "Informed Consent/Assentf",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -337,7 +342,7 @@
     {
       "activity_id": "act-004",
       "table_id": "table-001",
-      "row_position": 4,
+      "row_position": 6,
       "activity_name": "Eligibility Assessment",
       "activity_name_source": {
         "cell_text": "Eligibility Assessment",
@@ -354,10 +359,10 @@
     {
       "activity_id": "act-005",
       "table_id": "table-001",
-      "row_position": 5,
+      "row_position": 7,
       "activity_name": "HAE Diagnostic Lab Test",
       "activity_name_source": {
-        "cell_text": "HAE Diagnostic Lab Test",
+        "cell_text": "HAE Diagnostic Lab Testg",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -373,10 +378,10 @@
     {
       "activity_id": "act-006",
       "table_id": "table-001",
-      "row_position": 6,
+      "row_position": 8,
       "activity_name": "Medical History",
       "activity_name_source": {
-        "cell_text": "Medical History",
+        "cell_text": "Medical Historyh",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -392,10 +397,10 @@
     {
       "activity_id": "act-007",
       "table_id": "table-001",
-      "row_position": 7,
+      "row_position": 9,
       "activity_name": "12-lead ECG",
       "activity_name_source": {
-        "cell_text": "12-lead ECG",
+        "cell_text": "12-lead ECGi",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -411,10 +416,10 @@
     {
       "activity_id": "act-008",
       "table_id": "table-001",
-      "row_position": 8,
+      "row_position": 10,
       "activity_name": "Demographics",
       "activity_name_source": {
-        "cell_text": "Demographics",
+        "cell_text": "Demographicsj",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -430,10 +435,10 @@
     {
       "activity_id": "act-009",
       "table_id": "table-001",
-      "row_position": 9,
+      "row_position": 11,
       "activity_name": "Physical Examination",
       "activity_name_source": {
-        "cell_text": "Physical Examination",
+        "cell_text": "Physical Examinationk",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -449,10 +454,10 @@
     {
       "activity_id": "act-010",
       "table_id": "table-001",
-      "row_position": 10,
+      "row_position": 12,
       "activity_name": "Vital Signs",
       "activity_name_source": {
-        "cell_text": "Vital Signs",
+        "cell_text": "Vital Signsl",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -468,10 +473,10 @@
     {
       "activity_id": "act-011",
       "table_id": "table-001",
-      "row_position": 11,
+      "row_position": 13,
       "activity_name": "Safety Laboratory",
       "activity_name_source": {
-        "cell_text": "Safety Laboratory",
+        "cell_text": "Safety Laboratorym",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -487,10 +492,10 @@
     {
       "activity_id": "act-012",
       "table_id": "table-001",
-      "row_position": 12,
+      "row_position": 14,
       "activity_name": "Pregnancy Test",
       "activity_name_source": {
-        "cell_text": "Pregnancy Test",
+        "cell_text": "Pregnancy Testn",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -506,7 +511,7 @@
     {
       "activity_id": "act-013",
       "table_id": "table-001",
-      "row_position": 13,
+      "row_position": 15,
       "activity_name": "Randomize patient in RTSM",
       "activity_name_source": {
         "cell_text": "Randomize patient in RTSM",
@@ -523,7 +528,7 @@
     {
       "activity_id": "act-014",
       "table_id": "table-001",
-      "row_position": 14,
+      "row_position": 16,
       "activity_name": "Patient diary training",
       "activity_name_source": {
         "cell_text": "Patient diary training",
@@ -540,7 +545,7 @@
     {
       "activity_id": "act-015",
       "table_id": "table-001",
-      "row_position": 15,
+      "row_position": 17,
       "activity_name": "Patient diary retraining",
       "activity_name_source": {
         "cell_text": "Patient diary retraining",
@@ -557,10 +562,10 @@
     {
       "activity_id": "act-016",
       "table_id": "table-001",
-      "row_position": 16,
+      "row_position": 18,
       "activity_name": "Conventional on-demand treatment washout",
       "activity_name_source": {
-        "cell_text": "Conventional on-demand treatment washout",
+        "cell_text": "Conventional on-demand treatment washouto",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -576,10 +581,10 @@
     {
       "activity_id": "act-017",
       "table_id": "table-001",
-      "row_position": 17,
+      "row_position": 19,
       "activity_name": "Dose",
       "activity_name_source": {
-        "cell_text": "Dose",
+        "cell_text": "Dosep",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -595,10 +600,10 @@
     {
       "activity_id": "act-018",
       "table_id": "table-001",
-      "row_position": 18,
+      "row_position": 20,
       "activity_name": "IMP dispensing/return/accountability",
       "activity_name_source": {
-        "cell_text": "IMP dispensing/return/accountability",
+        "cell_text": "IMP dispensing/return/accountabilityq",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -614,10 +619,10 @@
     {
       "activity_id": "act-019",
       "table_id": "table-001",
-      "row_position": 19,
+      "row_position": 21,
       "activity_name": "PGI-S",
       "activity_name_source": {
-        "cell_text": "PGI-S",
+        "cell_text": "PGI-Sr",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -633,10 +638,10 @@
     {
       "activity_id": "act-020",
       "table_id": "table-001",
-      "row_position": 20,
+      "row_position": 22,
       "activity_name": "PGI-C",
       "activity_name_source": {
-        "cell_text": "PGI-C",
+        "cell_text": "PGI-Cr",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -652,10 +657,10 @@
     {
       "activity_id": "act-021",
       "table_id": "table-001",
-      "row_position": 21,
+      "row_position": 23,
       "activity_name": "VAS",
       "activity_name_source": {
-        "cell_text": "VAS",
+        "cell_text": "VASr",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -671,10 +676,10 @@
     {
       "activity_id": "act-022",
       "table_id": "table-001",
-      "row_position": 22,
+      "row_position": 24,
       "activity_name": "GA-NRS",
       "activity_name_source": {
-        "cell_text": "GA-NRS",
+        "cell_text": "GA-NRSr",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -690,7 +695,7 @@
     {
       "activity_id": "act-023",
       "table_id": "table-001",
-      "row_position": 23,
+      "row_position": 25,
       "activity_name": "Concomitant Medication Review",
       "activity_name_source": {
         "cell_text": "Concomitant Medication Review",
@@ -707,10 +712,10 @@
     {
       "activity_id": "act-024",
       "table_id": "table-001",
-      "row_position": 24,
+      "row_position": 26,
       "activity_name": "Adverse Event Review",
       "activity_name_source": {
-        "cell_text": "Adverse Event Review",
+        "cell_text": "Adverse Event Reviews",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -728,7 +733,7 @@
     {
       "activity_id": "act-001",
       "column_id": "col-002",
-      "row_position": 1,
+      "row_position": 3,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -739,7 +744,7 @@
     {
       "activity_id": "act-001",
       "column_id": "col-003",
-      "row_position": 1,
+      "row_position": 3,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -750,7 +755,7 @@
     {
       "activity_id": "act-001",
       "column_id": "col-007",
-      "row_position": 1,
+      "row_position": 3,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -761,7 +766,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-003",
-      "row_position": 2,
+      "row_position": 4,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -772,7 +777,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-004",
-      "row_position": 2,
+      "row_position": 4,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -783,7 +788,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-005",
-      "row_position": 2,
+      "row_position": 4,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -794,7 +799,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-006",
-      "row_position": 2,
+      "row_position": 4,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -805,39 +810,6 @@
     {
       "activity_id": "act-003",
       "column_id": "col-002",
-      "row_position": 3,
-      "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-004",
-      "column_id": "col-002",
-      "row_position": 4,
-      "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-004",
-      "column_id": "col-003",
-      "row_position": 4,
-      "column_position": 3,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-005",
-      "column_id": "col-002",
       "row_position": 5,
       "column_position": 2,
       "cell_value": "X",
@@ -847,7 +819,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-006",
+      "activity_id": "act-004",
       "column_id": "col-002",
       "row_position": 6,
       "column_position": 2,
@@ -858,7 +830,18 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-007",
+      "activity_id": "act-004",
+      "column_id": "col-003",
+      "row_position": 6,
+      "column_position": 3,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-005",
       "column_id": "col-002",
       "row_position": 7,
       "column_position": 2,
@@ -869,18 +852,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-007",
-      "column_id": "col-007",
-      "row_position": 7,
-      "column_position": 7,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-008",
+      "activity_id": "act-006",
       "column_id": "col-002",
       "row_position": 8,
       "column_position": 2,
@@ -891,7 +863,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-009",
+      "activity_id": "act-007",
       "column_id": "col-002",
       "row_position": 9,
       "column_position": 2,
@@ -902,7 +874,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-009",
+      "activity_id": "act-007",
       "column_id": "col-007",
       "row_position": 9,
       "column_position": 7,
@@ -913,7 +885,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-010",
+      "activity_id": "act-008",
       "column_id": "col-002",
       "row_position": 10,
       "column_position": 2,
@@ -924,9 +896,42 @@
       "linked_annotation_ids": []
     },
     {
+      "activity_id": "act-009",
+      "column_id": "col-002",
+      "row_position": 11,
+      "column_position": 2,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-009",
+      "column_id": "col-007",
+      "row_position": 11,
+      "column_position": 7,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-010",
+      "column_id": "col-002",
+      "row_position": 12,
+      "column_position": 2,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
       "activity_id": "act-010",
       "column_id": "col-007",
-      "row_position": 10,
+      "row_position": 12,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -937,7 +942,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-002",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -948,7 +953,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-007",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -959,7 +964,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-002",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -970,7 +975,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-007",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -981,7 +986,7 @@
     {
       "activity_id": "act-013",
       "column_id": "col-003",
-      "row_position": 13,
+      "row_position": 15,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -992,7 +997,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-002",
-      "row_position": 14,
+      "row_position": 16,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1003,7 +1008,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-003",
-      "row_position": 14,
+      "row_position": 16,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1014,7 +1019,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-004",
-      "row_position": 15,
+      "row_position": 17,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1025,7 +1030,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-005",
-      "row_position": 15,
+      "row_position": 17,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1036,7 +1041,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-006",
-      "row_position": 15,
+      "row_position": 17,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1047,7 +1052,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-004",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 4,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1058,7 +1063,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-005",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 5,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1069,7 +1074,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-006",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 6,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1080,7 +1085,7 @@
     {
       "activity_id": "act-017",
       "column_id": "col-004",
-      "row_position": 17,
+      "row_position": 19,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1091,7 +1096,7 @@
     {
       "activity_id": "act-017",
       "column_id": "col-005",
-      "row_position": 17,
+      "row_position": 19,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1102,7 +1107,7 @@
     {
       "activity_id": "act-017",
       "column_id": "col-006",
-      "row_position": 17,
+      "row_position": 19,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1113,7 +1118,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-003",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1124,7 +1129,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-007",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1135,7 +1140,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-004",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1146,7 +1151,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-005",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1157,7 +1162,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-006",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1168,7 +1173,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-004",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1179,7 +1184,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-005",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1190,7 +1195,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-006",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1201,7 +1206,7 @@
     {
       "activity_id": "act-021",
       "column_id": "col-004",
-      "row_position": 21,
+      "row_position": 23,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1212,7 +1217,7 @@
     {
       "activity_id": "act-021",
       "column_id": "col-005",
-      "row_position": 21,
+      "row_position": 23,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1223,7 +1228,7 @@
     {
       "activity_id": "act-021",
       "column_id": "col-006",
-      "row_position": 21,
+      "row_position": 23,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1234,7 +1239,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-004",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1245,7 +1250,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-005",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1256,7 +1261,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-006",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1267,7 +1272,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-002",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 2,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1278,7 +1283,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-003",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 3,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1289,7 +1294,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-004",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 4,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1300,7 +1305,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-005",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 5,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1311,7 +1316,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-006",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 6,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1322,7 +1327,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-007",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 7,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1333,7 +1338,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-002",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 2,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1344,7 +1349,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-003",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 3,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1355,7 +1360,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-004",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 4,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1366,7 +1371,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-005",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 5,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1377,7 +1382,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-006",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 6,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1388,7 +1393,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-007",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 7,
       "cell_value": "↔",
       "cell_value_type": "other",
@@ -1416,7 +1421,7 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 3
         }
@@ -1442,19 +1447,19 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 2,
           "column_position": 4
         },
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 2,
           "column_position": 5
         },
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 2,
           "column_position": 6
         }
@@ -1478,7 +1483,7 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 7
         }
@@ -1503,7 +1508,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 1
+          "row_position": 3
         }
       ]
     },
@@ -1526,7 +1531,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 2
+          "row_position": 4
         }
       ]
     },
@@ -1549,7 +1554,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 3
+          "row_position": 5
         }
       ]
     },
@@ -1572,7 +1577,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 5
+          "row_position": 7
         }
       ]
     },
@@ -1595,7 +1600,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 6
+          "row_position": 8
         }
       ]
     },
@@ -1618,7 +1623,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 7
+          "row_position": 9
         }
       ]
     },
@@ -1641,7 +1646,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 8
+          "row_position": 10
         }
       ]
     },
@@ -1664,7 +1669,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 9
+          "row_position": 11
         }
       ]
     },
@@ -1687,7 +1692,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 10
+          "row_position": 12
         }
       ]
     },
@@ -1710,7 +1715,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 11
+          "row_position": 13
         }
       ]
     },
@@ -1733,7 +1738,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 12
+          "row_position": 14
         }
       ]
     },
@@ -1756,7 +1761,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 16
+          "row_position": 18
         }
       ]
     },
@@ -1779,7 +1784,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 17
+          "row_position": 19
         }
       ]
     },
@@ -1802,7 +1807,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 18
+          "row_position": 20
         }
       ]
     },
@@ -1828,22 +1833,22 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 19
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 20
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
           "row_position": 21
         },
         {
           "table_number": 1,
           "location_type": "activity_name",
           "row_position": 22
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 23
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 24
         }
       ]
     },
@@ -1866,7 +1871,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 24
+          "row_position": 26
         }
       ]
     }

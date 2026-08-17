@@ -2,12 +2,12 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:15.050406+00:00",
+    "resolved_at": "2026-08-17T19:13:16.698050+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
       "schema_version": "1.0",
-      "extraction_file": "NCT04557384_Table_03_extraction.json",
+      "extraction_file": "NCT04557384_Table_03_extraction.verified.json",
       "extraction_status": "ready_for_resolution"
     },
     "validation_results": {
@@ -15,61 +15,67 @@
       "hierarchy_valid": true,
       "annotations_valid": true,
       "validation_warnings": [],
-      "validation_errors": []
+      "validation_errors": [],
+      "method_provenance": [
+        "activity_name:visual_transcription: 15",
+        "annotation_text:visual_transcription: 1",
+        "grid_cell:visual_read: 5",
+        "indentation_level:assumed_flat: 15",
+        "marker_location:synthesized: 1",
+        "schedule_cell:raster_pixel_detection: 20",
+        "schedule_cell:visual_read: 43"
+      ]
     },
     "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-13T00:00:00+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.1.0 single-pass; image-only SoA re-read visually at 170 dpi + rule-line/dark-pixel detector, confirmed cell-for-cell, supersedes PDF->Excel->JSON path)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude-Opus-5",
     "source_document": {
       "filename": "NCT04557384_soa.pdf",
       "document_type": "protocol",
       "document_version": "I4T-MC-JVDU(e)"
     },
-    "verification": {
-      "prior_excel_verified_by": "KL",
-      "excel_intermediate_removed": true,
-      "image_reread_reconfirmed": true
-    },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Single-pass v3.1.0 re-verification (image-only). PK Sampling reference table (rows are samples, not subject activities -> table_type reference). PK/IG collection X marks for all 14 samples + End of treatment re-read visually and matched the prior raw exactly. Prior provenance: Reference table (rows are sample-collection specifications, not procedures) per classification confirmed with reviewer. Sample cycle/day/timepoint folded into activity_name. Applies to all participants irrespective of 21- or 28-day cycle length."
+    "extraction_notes": "Image-only PDF (no text layer). Cell geometry recovered from the 200-dpi raster; X marks detected by near-black pixel counts inside rule-bounded cells and confirmed visually against the rendered page. Light grey shading marks cells where no sample is collected and is not transcribed. The abbreviation line below the table ('hr = hour; PK = pharmacokinetic') yielded no annotations: neither term is printed as a marker on a grid cell, header cell or activity label."
   },
   "table_metadata": {
     "table_id": "table-003",
     "table_number": 3,
-    "table_type": "reference",
+    "table_type": "subsidiary",
     "table_title": "Pharmacokinetic Sampling Schedule",
-    "table_purpose": "PK/immunogenicity sample collection timepoints (Samples 1-14 + End of treatment); referenced by the main-SoA PK and IG rows via \"See Section 1.3.1\".",
+    "table_purpose": "Per-sample timing for the PK and immunogenicity blood collections that appear in Table 1 as the single activities 'PK' and 'IG' (both pointing to Section 1.3.1).",
     "page_start": 24,
     "page_end": 24,
     "track_label": null,
-    "column_count": 2,
+    "column_count": 5,
     "row_count": 16,
     "header_row_count": 1,
     "activity_row_count": 15,
-    "notes": "Page numbers are printed Document Page numbers of the full protocol PDF."
+    "notes": "subsidiary rather than reference: the rows read 'Sample n', but the table's function is to give finer timing for activities that already exist in the main SoA (Table 1 rows 'PK' and 'IG', whose grid cells read 'See Section 1.3.1'), which is the subsidiary definition. Recorded as an interpretation - the literal reference test (are the rows procedures performed on subjects?) reads 'no'. 1 leading label column ('Sample #'), so the first data column is position 2 and data columns run 2-6. The 'Study Cycle', 'Day within Cycle' and 'Collection Time Point' columns were kept as data columns rather than treated as further label columns so that their per-row timing values are preserved as cell values."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-003",
       "row_position": 1,
-      "property_name": "Collection type",
+      "property_name": "Sample #",
       "property_name_source": {
         "row_position": 1,
-        "column_position": 2,
-        "cell_value": "Ramucirumab PK Collection"
+        "column_position": 1,
+        "cell_value": "Sample #"
       },
       "property_type": "other",
-      "property_comment": "Two collection-type columns marked per sample: Ramucirumab PK Collection and Immunogenicity Collection.",
+      "property_comment": "The table's single header row. Its data-column cells are not a single timing concept: 'Study Cycle', 'Day within Cycle' and 'Collection Time Point Relative to Ramucirumab Weekly Dose' give the per-row timing, while 'Ramucirumab PK Collection' and 'Immunogenicity Collection' name the two sample types that carry the X marks. Mixed timing-plus-sample-type header -> other.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [],
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "gi1",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     }
   ],
   "schedule_columns": [
@@ -77,6 +83,54 @@
       "column_id": "col-002",
       "table_id": "table-003",
       "column_position": 2,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "Study Cycle",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "Study Cycle",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-003",
+      "table_id": "table-003",
+      "column_position": 3,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "Day within Cycle",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "Day within Cycle",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-004",
+      "table_id": "table-003",
+      "column_position": 4,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "Collection Time Point Relative to Ramucirumab Weekly Dose",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "Collection Time Point Relative to Ramucirumab Weekly Dose",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-005",
+      "table_id": "table-003",
+      "column_position": 5,
       "is_label_column": false,
       "column_values": [
         {
@@ -90,9 +144,9 @@
       "linked_annotation_ids": []
     },
     {
-      "column_id": "col-003",
+      "column_id": "col-006",
       "table_id": "table-003",
-      "column_position": 3,
+      "column_position": 6,
       "is_label_column": false,
       "column_values": [
         {
@@ -111,10 +165,12 @@
       "activity_id": "act-001",
       "table_id": "table-003",
       "row_position": 2,
-      "activity_name": "Sample 1 (Cycle 1, Day 1, -1 hr (predose))",
+      "activity_name": "Sample 1",
       "activity_name_source": {
-        "cell_text": "Sample 1 (Cycle 1, Day 1, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "1",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -128,10 +184,12 @@
       "activity_id": "act-002",
       "table_id": "table-003",
       "row_position": 3,
-      "activity_name": "Sample 2 (Cycle 1, Day 2, 24 hrs ± 2 postdose)",
+      "activity_name": "Sample 2",
       "activity_name_source": {
-        "cell_text": "Sample 2 (Cycle 1, Day 2, 24 hrs ± 2 postdose)",
-        "indentation_level": 0
+        "cell_text": "2",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -145,10 +203,12 @@
       "activity_id": "act-003",
       "table_id": "table-003",
       "row_position": 4,
-      "activity_name": "Sample 3 (Cycle 1, Day 4 ± 1, 48-96 hrs postdose window)",
+      "activity_name": "Sample 3",
       "activity_name_source": {
-        "cell_text": "Sample 3 (Cycle 1, Day 4 ± 1, 48-96 hrs postdose window)",
-        "indentation_level": 0
+        "cell_text": "3",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -162,10 +222,12 @@
       "activity_id": "act-004",
       "table_id": "table-003",
       "row_position": 5,
-      "activity_name": "Sample 4 (Cycle 1, Day 8, -1 hr (predose))",
+      "activity_name": "Sample 4",
       "activity_name_source": {
-        "cell_text": "Sample 4 (Cycle 1, Day 8, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "4",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -179,10 +241,12 @@
       "activity_id": "act-005",
       "table_id": "table-003",
       "row_position": 6,
-      "activity_name": "Sample 5 (Cycle 1, Day 15, -1 hr (predose))",
+      "activity_name": "Sample 5",
       "activity_name_source": {
-        "cell_text": "Sample 5 (Cycle 1, Day 15, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "5",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -196,10 +260,12 @@
       "activity_id": "act-006",
       "table_id": "table-003",
       "row_position": 7,
-      "activity_name": "Sample 6 (Cycle 1, Day 18 ± 1, 48-96 hrs postdose window)",
+      "activity_name": "Sample 6",
       "activity_name_source": {
-        "cell_text": "Sample 6 (Cycle 1, Day 18 ± 1, 48-96 hrs postdose window)",
-        "indentation_level": 0
+        "cell_text": "6",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -213,10 +279,12 @@
       "activity_id": "act-007",
       "table_id": "table-003",
       "row_position": 8,
-      "activity_name": "Sample 7 (Cycle 2, Day 1, -1 hr (predose))",
+      "activity_name": "Sample 7",
       "activity_name_source": {
-        "cell_text": "Sample 7 (Cycle 2, Day 1, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "7",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -230,10 +298,12 @@
       "activity_id": "act-008",
       "table_id": "table-003",
       "row_position": 9,
-      "activity_name": "Sample 8 (Cycle 2, Day 8, -1 hr (predose))",
+      "activity_name": "Sample 8",
       "activity_name_source": {
-        "cell_text": "Sample 8 (Cycle 2, Day 8, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "8",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -247,10 +317,12 @@
       "activity_id": "act-009",
       "table_id": "table-003",
       "row_position": 10,
-      "activity_name": "Sample 9 (Cycle 2, Day 11 ± 1, 48-96 hrs postdose window)",
+      "activity_name": "Sample 9",
       "activity_name_source": {
-        "cell_text": "Sample 9 (Cycle 2, Day 11 ± 1, 48-96 hrs postdose window)",
-        "indentation_level": 0
+        "cell_text": "9",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -264,10 +336,12 @@
       "activity_id": "act-010",
       "table_id": "table-003",
       "row_position": 11,
-      "activity_name": "Sample 10 (Cycle 3, Day 1, -1 hr (predose))",
+      "activity_name": "Sample 10",
       "activity_name_source": {
-        "cell_text": "Sample 10 (Cycle 3, Day 1, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "10",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -281,10 +355,12 @@
       "activity_id": "act-011",
       "table_id": "table-003",
       "row_position": 12,
-      "activity_name": "Sample 11 (Cycle 3, Day 15, -1 hr (predose))",
+      "activity_name": "Sample 11",
       "activity_name_source": {
-        "cell_text": "Sample 11 (Cycle 3, Day 15, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "11",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -298,10 +374,12 @@
       "activity_id": "act-012",
       "table_id": "table-003",
       "row_position": 13,
-      "activity_name": "Sample 12 (Cycle 3, Day 18 ± 1, 48-96 hrs postdose window)",
+      "activity_name": "Sample 12",
       "activity_name_source": {
-        "cell_text": "Sample 12 (Cycle 3, Day 18 ± 1, 48-96 hrs postdose window)",
-        "indentation_level": 0
+        "cell_text": "12",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -315,10 +393,12 @@
       "activity_id": "act-013",
       "table_id": "table-003",
       "row_position": 14,
-      "activity_name": "Sample 13 (Cycle 4, Day 1, -1 hr (predose))",
+      "activity_name": "Sample 13",
       "activity_name_source": {
-        "cell_text": "Sample 13 (Cycle 4, Day 1, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "13",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -332,10 +412,12 @@
       "activity_id": "act-014",
       "table_id": "table-003",
       "row_position": 15,
-      "activity_name": "Sample 14 (Cycle 5, Day 1, -1 hr (predose))",
+      "activity_name": "Sample 14",
       "activity_name_source": {
-        "cell_text": "Sample 14 (Cycle 5, Day 1, -1 hr (predose))",
-        "indentation_level": 0
+        "cell_text": "14",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -349,10 +431,12 @@
       "activity_id": "act-015",
       "table_id": "table-003",
       "row_position": 16,
-      "activity_name": "End of treatment (30 days post last dose)",
+      "activity_name": "End of treatment",
       "activity_name_source": {
-        "cell_text": "End of treatment (30 days post last dose)",
-        "indentation_level": 0
+        "cell_text": "End of treatment",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -369,8 +453,8 @@
       "column_id": "col-002",
       "row_position": 2,
       "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
+      "cell_value": "1",
+      "cell_value_type": "other",
       "source_range": "",
       "annotation_markers": "",
       "linked_annotation_ids": []
@@ -380,6 +464,39 @@
       "column_id": "col-003",
       "row_position": 2,
       "column_position": 3,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-001",
+      "column_id": "col-004",
+      "row_position": 2,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-001",
+      "column_id": "col-005",
+      "row_position": 2,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-001",
+      "column_id": "col-006",
+      "row_position": 2,
+      "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -391,6 +508,39 @@
       "column_id": "col-002",
       "row_position": 3,
       "column_position": 2,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-002",
+      "column_id": "col-003",
+      "row_position": 3,
+      "column_position": 3,
+      "cell_value": "2",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-002",
+      "column_id": "col-004",
+      "row_position": 3,
+      "column_position": 4,
+      "cell_value": "24 hrs ± 2 postdose",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-002",
+      "column_id": "col-005",
+      "row_position": 3,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -402,6 +552,39 @@
       "column_id": "col-002",
       "row_position": 4,
       "column_position": 2,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-003",
+      "column_id": "col-003",
+      "row_position": 4,
+      "column_position": 3,
+      "cell_value": "4 ± 1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-003",
+      "column_id": "col-004",
+      "row_position": 4,
+      "column_position": 4,
+      "cell_value": "48-96 hrs postdose window",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-003",
+      "column_id": "col-005",
+      "row_position": 4,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -413,6 +596,39 @@
       "column_id": "col-002",
       "row_position": 5,
       "column_position": 2,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-004",
+      "column_id": "col-003",
+      "row_position": 5,
+      "column_position": 3,
+      "cell_value": "8",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-004",
+      "column_id": "col-004",
+      "row_position": 5,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-004",
+      "column_id": "col-005",
+      "row_position": 5,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -424,8 +640,8 @@
       "column_id": "col-002",
       "row_position": 6,
       "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
+      "cell_value": "1",
+      "cell_value_type": "other",
       "source_range": "",
       "annotation_markers": "",
       "linked_annotation_ids": []
@@ -435,6 +651,39 @@
       "column_id": "col-003",
       "row_position": 6,
       "column_position": 3,
+      "cell_value": "15",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-005",
+      "column_id": "col-004",
+      "row_position": 6,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-005",
+      "column_id": "col-005",
+      "row_position": 6,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-005",
+      "column_id": "col-006",
+      "row_position": 6,
+      "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -446,6 +695,39 @@
       "column_id": "col-002",
       "row_position": 7,
       "column_position": 2,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-006",
+      "column_id": "col-003",
+      "row_position": 7,
+      "column_position": 3,
+      "cell_value": "18 ± 1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-006",
+      "column_id": "col-004",
+      "row_position": 7,
+      "column_position": 4,
+      "cell_value": "48-96 hrs postdose window",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-006",
+      "column_id": "col-005",
+      "row_position": 7,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -457,6 +739,39 @@
       "column_id": "col-002",
       "row_position": 8,
       "column_position": 2,
+      "cell_value": "2",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-007",
+      "column_id": "col-003",
+      "row_position": 8,
+      "column_position": 3,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-007",
+      "column_id": "col-004",
+      "row_position": 8,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-007",
+      "column_id": "col-005",
+      "row_position": 8,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -468,8 +783,8 @@
       "column_id": "col-002",
       "row_position": 9,
       "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
+      "cell_value": "2",
+      "cell_value_type": "other",
       "source_range": "",
       "annotation_markers": "",
       "linked_annotation_ids": []
@@ -479,6 +794,39 @@
       "column_id": "col-003",
       "row_position": 9,
       "column_position": 3,
+      "cell_value": "8",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-008",
+      "column_id": "col-004",
+      "row_position": 9,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-008",
+      "column_id": "col-005",
+      "row_position": 9,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-008",
+      "column_id": "col-006",
+      "row_position": 9,
+      "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -490,6 +838,39 @@
       "column_id": "col-002",
       "row_position": 10,
       "column_position": 2,
+      "cell_value": "2",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-009",
+      "column_id": "col-003",
+      "row_position": 10,
+      "column_position": 3,
+      "cell_value": "11 ± 1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-009",
+      "column_id": "col-004",
+      "row_position": 10,
+      "column_position": 4,
+      "cell_value": "48-96 hrs postdose window",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-009",
+      "column_id": "col-005",
+      "row_position": 10,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -501,6 +882,39 @@
       "column_id": "col-002",
       "row_position": 11,
       "column_position": 2,
+      "cell_value": "3",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-010",
+      "column_id": "col-003",
+      "row_position": 11,
+      "column_position": 3,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-010",
+      "column_id": "col-004",
+      "row_position": 11,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-010",
+      "column_id": "col-005",
+      "row_position": 11,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -512,6 +926,39 @@
       "column_id": "col-002",
       "row_position": 12,
       "column_position": 2,
+      "cell_value": "3",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-003",
+      "row_position": 12,
+      "column_position": 3,
+      "cell_value": "15",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-004",
+      "row_position": 12,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-005",
+      "row_position": 12,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -523,6 +970,39 @@
       "column_id": "col-002",
       "row_position": 13,
       "column_position": 2,
+      "cell_value": "3",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-012",
+      "column_id": "col-003",
+      "row_position": 13,
+      "column_position": 3,
+      "cell_value": "18 ± 1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-012",
+      "column_id": "col-004",
+      "row_position": 13,
+      "column_position": 4,
+      "cell_value": "48-96 hrs postdose window",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-012",
+      "column_id": "col-005",
+      "row_position": 13,
+      "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -534,8 +1014,8 @@
       "column_id": "col-002",
       "row_position": 14,
       "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
+      "cell_value": "4",
+      "cell_value_type": "other",
       "source_range": "",
       "annotation_markers": "",
       "linked_annotation_ids": []
@@ -545,6 +1025,39 @@
       "column_id": "col-003",
       "row_position": 14,
       "column_position": 3,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-013",
+      "column_id": "col-004",
+      "row_position": 14,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-013",
+      "column_id": "col-005",
+      "row_position": 14,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-013",
+      "column_id": "col-006",
+      "row_position": 14,
+      "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -556,28 +1069,72 @@
       "column_id": "col-002",
       "row_position": 15,
       "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
+      "cell_value": "5",
+      "cell_value_type": "other",
       "source_range": "",
       "annotation_markers": "",
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-015",
-      "column_id": "col-002",
-      "row_position": 16,
-      "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-015",
+      "activity_id": "act-014",
       "column_id": "col-003",
-      "row_position": 16,
+      "row_position": 15,
       "column_position": 3,
+      "cell_value": "1",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-004",
+      "row_position": 15,
+      "column_position": 4,
+      "cell_value": "-1 hr (predose)",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-005",
+      "row_position": 15,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-015",
+      "column_id": "col-004",
+      "row_position": 16,
+      "column_position": 4,
+      "cell_value": "30 days post last dose",
+      "cell_value_type": "timing_text",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-015",
+      "column_id": "col-005",
+      "row_position": 16,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-015",
+      "column_id": "col-006",
+      "row_position": 16,
+      "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
@@ -585,5 +1142,30 @@
       "linked_annotation_ids": []
     }
   ],
-  "annotations": []
+  "annotations": [
+    {
+      "annotation_id": "annot-001",
+      "table_id": "table-003",
+      "annotation_marker": "gi1",
+      "annotation_type": "footnote",
+      "annotation_text": "General Instructions: The pharmacokinetic sampling table applies to all participants irrespective of 21-day or 28-day cycle length. Adequately record the actual collection date and time (24-hour clock; for example, 16:00, not 4 pm) on the requisition form of the sample. In case of cycle delay and/or ramucirumab dosing interruption, if possible, collect an additional unscheduled PK samples using the appropriate central lab collection kit: • at time as close as possible to the onset of the adverse event (AE) (if the cycle delay or ramucirumab dosing interruption is due to an AE). • at the time when ramucirumab dose should have been administered (if there had not been a delay or dose interruption). • prior to resuming the ramucirumab dosing after dosing interruption/dosing delay. Note:  If the above time points for unscheduled PK sampling happen to occur at the same time as a scheduled PK time point (see table below), then only the scheduled sample will be taken.",
+      "annotation_scope": "column",
+      "referenced_elements": {
+        "property_ids": [
+          "prop-001"
+        ],
+        "column_ids": [],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "method": "synthesized"
+        }
+      ]
+    }
+  ]
 }

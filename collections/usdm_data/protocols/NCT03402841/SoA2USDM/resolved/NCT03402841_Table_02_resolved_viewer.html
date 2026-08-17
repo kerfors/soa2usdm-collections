@@ -64,7 +64,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:14.754174+00:00",
+    "resolved_at": "2026-08-17T19:13:16.344541+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -77,29 +77,33 @@
       "hierarchy_valid": true,
       "annotations_valid": true,
       "validation_warnings": [],
-      "validation_errors": []
+      "validation_errors": [],
+      "method_provenance": [
+        "indentation_level:assumed_flat: 15"
+      ]
     },
     "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-12T14:28:46+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork; single-pass, PDF text-layer bbox coordinate reconstruction, marks PDF-authoritative)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude Opus 5 (claude-opus-5) — prompt v3.7.3 single-pass",
     "source_document": {
       "filename": "NCT03402841_soa.pdf",
       "document_type": "protocol",
-      "document_version": "D0816C00020, Version 3.0, 26 October 2018"
+      "document_version": "3.0",
+      "document_date": "26 October 2018"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table 2 'Study Plan Detailing the Procedures' (on-study procedures, Visits 2+). From NCT03402841_soa.pdf (protocol pp.42-44). 7 timepoint columns (2-8): Visit 2 (Day 1), Visit 3 (Day 29), Visit No. 4+ tumour assessment visits, Visit No. 5+ safety visits, Study treatment discontinued, 30-day Follow-up, Long-term follow up. Marks and cell footnote markers (b on Day-1 column; j on Olaparib dispensing) from PDF word coordinates. Footnote 'a' marks the col-5 visit header and the col-4 Day cell. Separate on-study schedule -> main_soa (companion to the screening Table 1). Source spelling 'restrospective' kept verbatim."
+    "extraction_notes": "Table 2 is the on-study schedule. One leading label column (L=1: the activity-name column, which also carries the 'Visit Number or type', 'Day' and 'Visit Window' header-row labels); first data column position is 2, last is 8. Column boundaries confirmed from the page raster rule lines at x=72.0, 211.2, 236.6, 265.0, 389.8, 504.0, 589.4, 688.3, 759.4 pt on document pages 42 and 43 — eight columns, every internal vertical rule present over the full table height, so no cell is merged and no mark was distributed. The three header rows reprint on document page 43 and were de-duplicated. Document page 44 carries footnotes g, h, j, k and l only and contributes no activity rows."
   },
   "table_metadata": {
     "table_id": "table-002",
     "table_number": 2,
     "table_type": "main_soa",
-    "table_title": "Table 2 — Study Plan Detailing the Procedures",
-    "table_purpose": "On-study procedures for treatment and follow-up (Visits 2 onward).",
+    "table_title": "Study Plan Detailing the Procedures",
+    "table_purpose": "On-study schedule from Visit 2 (Day 1) through treatment, tumour-assessment and safety visits, treatment discontinuation, 30-day follow up and long-term follow up.",
     "page_start": 42,
     "page_end": 44,
     "track_label": null,
@@ -107,7 +111,7 @@
     "row_count": 18,
     "header_row_count": 3,
     "activity_row_count": 15,
-    "notes": "Protocol printed page numbers (= PDF page numbers)."
+    "notes": "Typed main_soa: this is the protocol's primary on-study anchor grid ('On-study assessments are shown in Table 2'). It is not a continuation, domain or track of Table 1 — its column structure is entirely different (7 visit/encounter columns versus Table 1's 2 screening columns) and the taxonomy classifies an independent Screening table and Treatment table each as main_soa. Same participants as Table 1, so no track_label is set."
   },
   "schedule_properties": [
     {
@@ -121,7 +125,7 @@
         "cell_value": "Visit Number or type"
       },
       "property_type": "visit",
-      "property_comment": "Visit identifiers/types across treatment and follow-up: Visit 2, Visit 3, Visit No. 4+ tumour assessment visits, Visit No. 5+ safety visits, Study treatment discontinued, 30-day Follow-up, Long-term follow up.",
+      "property_comment": "Top header row. Values are visit identifiers and visit-type labels: numbered visits '2' and '3', then descriptive recurring/terminal encounters ('Visit No. 4 and subsequent tumour assessment visits', 'Visit No. 5 and subsequent safety visits', 'Study treatment discontinued', 'Follow up 30 days after last dose of study medication', 'Long-term follow up'). Typed visit because the printed label names the row 'Visit Number or type' and every value identifies a visit or encounter rather than a day, week or phase.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -141,7 +145,7 @@
         "cell_value": "Day"
       },
       "property_type": "study_day",
-      "property_comment": "Study day / visit-period timing per column (Day 1, Day 29, and recurring visit-period rules for V4/V5). Discontinuation / follow-up columns carry no fixed day.",
+      "property_comment": "Second header row, printed label 'Day'. Gives the study day of each visit column: '1' and '29' for Visits 2 and 3, and prose day rules for the recurring visit columns ('On the first day of next visit period (V4 = Day 57 ...)'). Typed study_day on the printed label and the numeric day values; the last three columns carry no day value and are left empty.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [
@@ -161,7 +165,7 @@
         "cell_value": "Visit Window"
       },
       "property_type": "window",
-      "property_comment": "Visit windows: 0, +/-3d, +/-7d, +/-3d, +/-7d, +7d. Long-term follow up has no window.",
+      "property_comment": "Third header row, printed label 'Visit Window'. Values are permitted visit-timing tolerances (0, ±3d, ±7d, ±3d, ±7d, +7d). Typed window because these are visit-window tolerances, not timepoints. The Long-term follow up column carries no window value.",
       "hierarchical_level": 3,
       "parent_property_id": "prop-002",
       "child_property_ids": [],
@@ -355,9 +359,10 @@
       "activity_name": "Physical examination",
       "activity_name_source": {
         "cell_text": "Physical examination c",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -374,9 +379,10 @@
       "activity_name": "Vital signs, body weight (includes blood pressure, pulse and temperature)",
       "activity_name_source": {
         "cell_text": "Vital signs, body weight (includes blood pressure, pulse and temperature) c",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -393,9 +399,10 @@
       "activity_name": "ECOG performance status",
       "activity_name_source": {
         "cell_text": "ECOG performance status",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -410,9 +417,10 @@
       "activity_name": "Haematology / clinical chemistry",
       "activity_name_source": {
         "cell_text": "Haematology / clinical chemistry d",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -429,9 +437,10 @@
       "activity_name": "Urinalysis",
       "activity_name_source": {
         "cell_text": "Urinalysis c",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -448,9 +457,10 @@
       "activity_name": "Pregnancy test",
       "activity_name_source": {
         "cell_text": "Pregnancy test e",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -467,9 +477,10 @@
       "activity_name": "Tumour assessment",
       "activity_name_source": {
         "cell_text": "Tumour assessment f",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -486,9 +497,10 @@
       "activity_name": "Blood sample for ctDNA",
       "activity_name_source": {
         "cell_text": "Blood sample for ctDNA",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -503,9 +515,10 @@
       "activity_name": "Blood sample for restrospective gBRCA test",
       "activity_name_source": {
         "cell_text": "Blood sample for restrospective gBRCA test g",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -522,9 +535,10 @@
       "activity_name": "AEs",
       "activity_name_source": {
         "cell_text": "AEs h",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -541,9 +555,10 @@
       "activity_name": "FACT-O and EQ-5D-5L questionnaires",
       "activity_name_source": {
         "cell_text": "FACT-O and EQ-5D-5L questionnaires",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -558,9 +573,10 @@
       "activity_name": "Concomitant medications including blood transfusions",
       "activity_name_source": {
         "cell_text": "Concomitant medications including blood transfusions",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -575,9 +591,10 @@
       "activity_name": "Olaparib dispensed/returned",
       "activity_name_source": {
         "cell_text": "Olaparib dispensed/returned",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -592,9 +609,10 @@
       "activity_name": "Subsequent cancer therapy following discontinuation of study treatment",
       "activity_name_source": {
         "cell_text": "Subsequent cancer therapy following discontinuation of study treatment k",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -611,9 +629,10 @@
       "activity_name": "Time to subsequent therapy and Survival",
       "activity_name_source": {
         "cell_text": "Time to subsequent therapy and Survival l",
-        "indentation_level": 1
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -1331,7 +1350,7 @@
       "table_id": "table-002",
       "annotation_marker": "g",
       "annotation_type": "footnote",
-      "annotation_text": "Unless patient was tested at Myriad as part of screening. All patients are required to provide a 9 ml blood sample for confirmation of gBRCA status. Please refer to the laboratory manual for further details regarding blood sample collection, shipping and storage.",
+      "annotation_text": "Unless patient was tested at Myriad as part of screening. All patients are required to provide a 9 ml blood sample for confirmation of gBRCA status. Please refer to the laboratory manual for further details regarding blood sample collection,shipping and storage.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],

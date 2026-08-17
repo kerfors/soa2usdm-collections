@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:14.770021+00:00",
+    "resolved_at": "2026-08-17T19:13:16.358338+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -14,48 +14,50 @@
       "structure_valid": true,
       "hierarchy_valid": true,
       "annotations_valid": true,
-      "validation_warnings": [
-        "Resolved annotation annot-027 ('note1') has no referenced elements — orphan: If multiple procedures take place at the same time...",
-        "Annotation summary: 1 of 27 annotations have no referenced elements (will be orphans in consolidation)"
-      ],
-      "validation_errors": []
+      "validation_warnings": [],
+      "validation_errors": [],
+      "method_provenance": [
+        "annotation_text:raster_band_cells: 25",
+        "indentation_level:font_signal: 36",
+        "marker_location:synthesized: 28"
+      ]
     },
-    "resolution_status": "resolved_with_warnings",
+    "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-12T17:16:25+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.2 single-pass)",
+    "extracted_at": "2026-08-17T17:28:35Z",
+    "extractor": "Claude-Opus-5",
     "source_document": {
       "filename": "NCT03421379_soa.pdf",
       "document_type": "protocol",
-      "document_version": "I8R-JE-IGBJ(a) Clinical Pharmacology Protocol (LY900018), Amendment (a), Approval Date 05-Dec-2017"
+      "document_version": "I8R-JE-IGBJ(a)"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Main SoA (Section 2, 'Study Schedule Protocol I8R-JE-IGBJ'), document pages 11-18. Single logical table with the two-row header repeated on each page; modeled as one main_soa table, header encoded once. Comments column (source physical col 10) excluded from the schedule grid and captured as synthesized annotations c1-c25 (footnotes; c5 and c15 are cross-reference source_notes). Dedup-by-text: c15 (See Appendix 2 ... for details.) links rows 22+24; c19 (Additional tests ... investigator.) links rows 27+28. Header footnote 'a' sits on the 'Additional Follow-up for TE ADA' epoch cell (row 1 col 9). Table-wide procedural Note captured as synthesized marker note1 linked table-scoped to the timing property row. Crossover design: many cells carry post-dose timepoint lists (relative to study-treatment administration, 0 min) rather than X. Abbreviations block (CRU, ECG, ED, FSH, HbA1c, IMG, min, PD, PG, PK, TE ADA) NOT captured as annotations (no in-grid markers; would be orphans) - consistent with prior extractions; flagged for review."
+    "extraction_notes": "Single Study Schedule table spanning document pages 11-18; the two header rows reprint on every page and were de-duplicated. Column model: 1 leading label column (Procedure), 8 schedule columns at positions 2-9, and a right-hand Comments column at source position 10 which is a notes column (excluded from schedule_grid/activity_schedule; each non-empty Comments cell emitted as an annotation per prompt section 6). Column boundaries and per-row cell boundaries were recovered from rule lines detected in a 200 dpi render; cell text was read from the PDF text layer and binned into those cells. The only merged cells in the whole table are the Period 1 and Period 2 header cells (columns 3:4 and 6:7); every body band has all 11 vertical rules present, so no body mark is merged."
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Study Schedule Protocol I8R-JE-IGBJ",
-    "table_purpose": "Main schedule of activities for a two-period crossover clin-pharm study: Screening, Period 1 (Day -1 / Day 1), Wash out, Period 2 (Day -1 / Day 1), Follow-up/ED, and Additional Follow-up for TE ADA.",
+    "table_purpose": "Primary schedule of procedures for the two-period crossover: Screening, Period 1, Wash out, Period 2, Follow-up/ED, and an additional follow-up for treatment-emergent antidrug antibodies.",
     "page_start": 11,
     "page_end": 18,
     "track_label": null,
     "column_count": 8,
-    "row_count": 36,
+    "row_count": 38,
     "header_row_count": 2,
     "activity_row_count": 36,
-    "notes": "Section 2. Single logical table with the two-row header repeated on each of document pages 11-18; modeled as one main_soa table. Comments column (source physical col 10) excluded from grid and captured as annotations. Data columns are positions 2-9."
+    "notes": "Classified main_soa: the rows are procedures performed on subjects and this is the only activity grid in the excerpt - the anchor timeline for the study. The eight pages carry one continuous table (identical two-row header reprinted on each page, body rows running on), so it is extracted as one table with page_start 11 / page_end 18 rather than a main table plus continuations. Document pages are taken from PAGEMAP.md; the printed page footers agree with it here but were not relied on."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-001",
       "row_position": 1,
-      "property_name": "Period",
+      "property_name": "Study Period",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -63,14 +65,16 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Level-1 top phase/period row: Screening, Period 1, Wash out, Period 2, Follow-up/ED, Additional Follow-up for TE ADA. Classified 'epoch' as the topmost column-distinguishing row; note it mixes true epochs (Screening, Wash out, Follow-up) with the two crossover treatment periods (Period 1, Period 2). Label cell empty; name synthesized. Marker 'a' rides the 'Additional Follow-up for TE ADA' cell (col 9).",
+      "property_comment": "Top header row naming the major study phases across the columns: Screening, Period 1, Wash out, Period 2, Follow-up/ED and Additional Follow-up for TE ADA. Classified 'epoch' because the values are named study phases rather than visits or days. The label cell in the leading Procedure column is empty on this row, so property_name was synthesized from the row's own values. Period 1 and Period 2 are each printed as one cell merged across the two day columns beneath them (confirmed from the rule-line geometry: the internal vertical rules at columns 3|4 and 6|7 are absent in this band only).",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
         "prop-002"
       ],
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "gn1",
+      "linked_annotation_ids": [
+        "annot-027"
+      ]
     },
     {
       "property_id": "prop-002",
@@ -84,7 +88,7 @@
         "synthesized": true
       },
       "property_type": "study_day",
-      "property_comment": "Level-2 per-column timing: Days -28 to -2 (screening), Day -1 / Day 1 (each period), 3 to 14 days (washout duration), Within 28+/-2 days after last study treatment (follow-up window). Row mixes study-day ranges and relative windows; classified 'study_day'. Col-1 label cell literally reads 'Procedure' (the activity-column header spanning both header rows), so the timing-row name is synthesized.",
+      "property_comment": "Second header row giving the protocol day / day-window for each column: Days -28 to -2, Day -1, Day 1, 3 to 14 days, Day -1, Day 1, Within 28+/-2 days after last study treatment. Classified 'study_day' because the values are protocol days and day windows relative to dosing. The leading label cell on this row prints 'Procedure', which is the column heading for the activity-name column and not a name for this schedule row, so property_name was synthesized from the row's values; the printed cell text is retained in property_name_source.cell_value. This row is needed to tell columns apart: 'Day -1' and 'Day 1' each occur twice and are only distinguished by the Period row above.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [],
@@ -270,14 +274,15 @@
     {
       "activity_id": "act-001",
       "table_id": "table-001",
-      "row_position": 1,
+      "row_position": 3,
       "activity_name": "Clinical Assessments",
       "activity_name_source": {
         "cell_text": "Clinical Assessments",
         "indentation_level": 0,
         "text_formatting": [
           "bold"
-        ]
+        ],
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -310,11 +315,12 @@
     {
       "activity_id": "act-002",
       "table_id": "table-001",
-      "row_position": 2,
+      "row_position": 4,
       "activity_name": "Informed Consent",
       "activity_name_source": {
         "cell_text": "Informed Consent",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -327,11 +333,12 @@
     {
       "activity_id": "act-003",
       "table_id": "table-001",
-      "row_position": 3,
+      "row_position": 5,
       "activity_name": "Randomization",
       "activity_name_source": {
         "cell_text": "Randomization",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -344,11 +351,12 @@
     {
       "activity_id": "act-004",
       "table_id": "table-001",
-      "row_position": 4,
+      "row_position": 6,
       "activity_name": "Admission to CRU",
       "activity_name_source": {
         "cell_text": "Admission to CRU",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -363,11 +371,12 @@
     {
       "activity_id": "act-005",
       "table_id": "table-001",
-      "row_position": 5,
+      "row_position": 7,
       "activity_name": "Discharge from CRU",
       "activity_name_source": {
         "cell_text": "Discharge from CRU",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -382,11 +391,12 @@
     {
       "activity_id": "act-006",
       "table_id": "table-001",
-      "row_position": 6,
+      "row_position": 8,
       "activity_name": "Medical History",
       "activity_name_source": {
         "cell_text": "Medical History",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -399,11 +409,12 @@
     {
       "activity_id": "act-007",
       "table_id": "table-001",
-      "row_position": 7,
+      "row_position": 9,
       "activity_name": "Collect Pre-existing Conditions and Adverse Events",
       "activity_name_source": {
         "cell_text": "Collect Pre-existing Conditions and Adverse Events",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -416,11 +427,12 @@
     {
       "activity_id": "act-008",
       "table_id": "table-001",
-      "row_position": 8,
+      "row_position": 10,
       "activity_name": "Physical Exam",
       "activity_name_source": {
         "cell_text": "Physical Exam",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -435,11 +447,12 @@
     {
       "activity_id": "act-009",
       "table_id": "table-001",
-      "row_position": 9,
+      "row_position": 11,
       "activity_name": "Height and Weight",
       "activity_name_source": {
         "cell_text": "Height and Weight",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -454,11 +467,12 @@
     {
       "activity_id": "act-010",
       "table_id": "table-001",
-      "row_position": 10,
+      "row_position": 12,
       "activity_name": "Collect Hypoglycemic Events",
       "activity_name_source": {
         "cell_text": "Collect Hypoglycemic Events",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -473,11 +487,12 @@
     {
       "activity_id": "act-011",
       "table_id": "table-001",
-      "row_position": 11,
+      "row_position": 13,
       "activity_name": "Collect Concomitant Medications",
       "activity_name_source": {
         "cell_text": "Collect Concomitant Medications",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -492,11 +507,12 @@
     {
       "activity_id": "act-012",
       "table_id": "table-001",
-      "row_position": 12,
+      "row_position": 14,
       "activity_name": "Meal",
       "activity_name_source": {
         "cell_text": "Meal",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -511,11 +527,12 @@
     {
       "activity_id": "act-013",
       "table_id": "table-001",
-      "row_position": 13,
+      "row_position": 15,
       "activity_name": "Insulin infusion to Induce Hypoglycemia",
       "activity_name_source": {
         "cell_text": "Insulin infusion to Induce Hypoglycemia",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -530,11 +547,12 @@
     {
       "activity_id": "act-014",
       "table_id": "table-001",
-      "row_position": 14,
+      "row_position": 16,
       "activity_name": "Bedside PG Monitoring for Safety",
       "activity_name_source": {
         "cell_text": "Bedside PG Monitoring for Safety",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -549,11 +567,12 @@
     {
       "activity_id": "act-015",
       "table_id": "table-001",
-      "row_position": 15,
+      "row_position": 17,
       "activity_name": "Study Treatment Administration",
       "activity_name_source": {
         "cell_text": "Study Treatment Administration",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -568,11 +587,12 @@
     {
       "activity_id": "act-016",
       "table_id": "table-001",
-      "row_position": 16,
+      "row_position": 18,
       "activity_name": "Injection-Site Assessment",
       "activity_name_source": {
         "cell_text": "Injection-Site Assessment",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -587,11 +607,12 @@
     {
       "activity_id": "act-017",
       "table_id": "table-001",
-      "row_position": 17,
+      "row_position": 19,
       "activity_name": "Nasal Inspection",
       "activity_name_source": {
         "cell_text": "Nasal Inspection",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -606,11 +627,12 @@
     {
       "activity_id": "act-018",
       "table_id": "table-001",
-      "row_position": 18,
+      "row_position": 20,
       "activity_name": "Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)",
       "activity_name_source": {
         "cell_text": "Vital Signs (Supine Blood Pressure, Pulse Rate, and Body Temperature)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -625,11 +647,12 @@
     {
       "activity_id": "act-019",
       "table_id": "table-001",
-      "row_position": 19,
+      "row_position": 21,
       "activity_name": "Single 12-lead ECG (Local)",
       "activity_name_source": {
         "cell_text": "Single 12-lead ECG (Local)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -642,11 +665,12 @@
     {
       "activity_id": "act-020",
       "table_id": "table-001",
-      "row_position": 20,
+      "row_position": 22,
       "activity_name": "Triplicate 12-lead ECG (Central)",
       "activity_name_source": {
         "cell_text": "Triplicate 12-lead ECG (Central)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -661,14 +685,15 @@
     {
       "activity_id": "act-021",
       "table_id": "table-001",
-      "row_position": 21,
+      "row_position": 23,
       "activity_name": "Laboratory Tests",
       "activity_name_source": {
         "cell_text": "Laboratory Tests",
         "indentation_level": 0,
         "text_formatting": [
           "bold"
-        ]
+        ],
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -693,11 +718,12 @@
     {
       "activity_id": "act-022",
       "table_id": "table-001",
-      "row_position": 22,
+      "row_position": 24,
       "activity_name": "Clinical Serology Tests",
       "activity_name_source": {
         "cell_text": "Clinical Serology Tests",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -712,11 +738,12 @@
     {
       "activity_id": "act-023",
       "table_id": "table-001",
-      "row_position": 23,
+      "row_position": 25,
       "activity_name": "Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)",
       "activity_name_source": {
         "cell_text": "Clinical Lab Tests (Hematology, Clinical Chemistry, and Urinalysis)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -731,11 +758,12 @@
     {
       "activity_id": "act-024",
       "table_id": "table-001",
-      "row_position": 24,
+      "row_position": 26,
       "activity_name": "HbA1c",
       "activity_name_source": {
         "cell_text": "HbA1c",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -750,11 +778,12 @@
     {
       "activity_id": "act-025",
       "table_id": "table-001",
-      "row_position": 25,
+      "row_position": 27,
       "activity_name": "Pregnancy Test (Female patients of childbearing potential only)",
       "activity_name_source": {
         "cell_text": "Pregnancy Test (Female patients of childbearing potential only)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -769,11 +798,12 @@
     {
       "activity_id": "act-026",
       "table_id": "table-001",
-      "row_position": 26,
+      "row_position": 28,
       "activity_name": "FSH (Female patients only)",
       "activity_name_source": {
         "cell_text": "FSH (Female patients only)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -788,11 +818,12 @@
     {
       "activity_id": "act-027",
       "table_id": "table-001",
-      "row_position": 27,
+      "row_position": 29,
       "activity_name": "Ethanol Testing",
       "activity_name_source": {
         "cell_text": "Ethanol Testing",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -807,11 +838,12 @@
     {
       "activity_id": "act-028",
       "table_id": "table-001",
-      "row_position": 28,
+      "row_position": 30,
       "activity_name": "Urine Drug Screen",
       "activity_name_source": {
         "cell_text": "Urine Drug Screen",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -826,11 +858,12 @@
     {
       "activity_id": "act-029",
       "table_id": "table-001",
-      "row_position": 29,
+      "row_position": 31,
       "activity_name": "PK (Glucagon)",
       "activity_name_source": {
         "cell_text": "PK (Glucagon)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -845,11 +878,12 @@
     {
       "activity_id": "act-030",
       "table_id": "table-001",
-      "row_position": 30,
+      "row_position": 32,
       "activity_name": "Plasma Glucose for PD",
       "activity_name_source": {
         "cell_text": "Plasma Glucose for PD",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -864,11 +898,12 @@
     {
       "activity_id": "act-031",
       "table_id": "table-001",
-      "row_position": 31,
+      "row_position": 33,
       "activity_name": "Genetic Sample (Stored)",
       "activity_name_source": {
         "cell_text": "Genetic Sample (Stored)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -883,11 +918,12 @@
     {
       "activity_id": "act-032",
       "table_id": "table-001",
-      "row_position": 32,
+      "row_position": 34,
       "activity_name": "Anti-glucagon Antibodies",
       "activity_name_source": {
         "cell_text": "Anti-glucagon Antibodies",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -902,14 +938,15 @@
     {
       "activity_id": "act-033",
       "table_id": "table-001",
-      "row_position": 33,
+      "row_position": 35,
       "activity_name": "Health Outcome Instruments",
       "activity_name_source": {
         "cell_text": "Health Outcome Instruments",
         "indentation_level": 0,
         "text_formatting": [
           "bold"
-        ]
+        ],
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -926,11 +963,12 @@
     {
       "activity_id": "act-034",
       "table_id": "table-001",
-      "row_position": 34,
+      "row_position": 36,
       "activity_name": "Clarke Hypoglycemia Awareness Survey",
       "activity_name_source": {
         "cell_text": "Clarke Hypoglycemia Awareness Survey",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -943,11 +981,12 @@
     {
       "activity_id": "act-035",
       "table_id": "table-001",
-      "row_position": 35,
+      "row_position": 37,
       "activity_name": "Nasal and Non-nasal Score Questionnaire",
       "activity_name_source": {
         "cell_text": "Nasal and Non-nasal Score Questionnaire",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -962,11 +1001,12 @@
     {
       "activity_id": "act-036",
       "table_id": "table-001",
-      "row_position": 36,
+      "row_position": 38,
       "activity_name": "Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia",
       "activity_name_source": {
         "cell_text": "Edinburgh Hypoglycemia Scale: Experimental Hypoglycemia",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -983,7 +1023,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-002",
-      "row_position": 2,
+      "row_position": 4,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -994,7 +1034,7 @@
     {
       "activity_id": "act-003",
       "column_id": "col-004",
-      "row_position": 3,
+      "row_position": 5,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1005,7 +1045,7 @@
     {
       "activity_id": "act-004",
       "column_id": "col-003",
-      "row_position": 4,
+      "row_position": 6,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1016,7 +1056,7 @@
     {
       "activity_id": "act-004",
       "column_id": "col-006",
-      "row_position": 4,
+      "row_position": 6,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1027,7 +1067,7 @@
     {
       "activity_id": "act-005",
       "column_id": "col-004",
-      "row_position": 5,
+      "row_position": 7,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1038,7 +1078,7 @@
     {
       "activity_id": "act-005",
       "column_id": "col-007",
-      "row_position": 5,
+      "row_position": 7,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1049,7 +1089,7 @@
     {
       "activity_id": "act-006",
       "column_id": "col-002",
-      "row_position": 6,
+      "row_position": 8,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1060,7 +1100,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-002",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1071,7 +1111,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-003",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1082,7 +1122,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-004",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1093,7 +1133,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-005",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1104,7 +1144,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-006",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1115,7 +1155,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-007",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1126,7 +1166,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-008",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1137,7 +1177,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-002",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1148,7 +1188,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-004",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 4,
       "cell_value": "240 min",
       "cell_value_type": "other",
@@ -1159,7 +1199,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-007",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 7,
       "cell_value": "240 min",
       "cell_value_type": "other",
@@ -1170,7 +1210,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-008",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1181,7 +1221,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-002",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1192,7 +1232,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-004",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction",
       "cell_value_type": "other",
@@ -1203,7 +1243,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-007",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction",
       "cell_value_type": "other",
@@ -1214,7 +1254,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-008",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1225,7 +1265,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-004",
-      "row_position": 10,
+      "row_position": 12,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1236,7 +1276,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-007",
-      "row_position": 10,
+      "row_position": 12,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1247,7 +1287,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-002",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1258,7 +1298,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-003",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1269,7 +1309,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-004",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1280,7 +1320,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-005",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1291,7 +1331,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-006",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1302,7 +1342,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-007",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1313,7 +1353,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-008",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1324,7 +1364,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-004",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1335,7 +1375,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-007",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1346,7 +1386,7 @@
     {
       "activity_id": "act-013",
       "column_id": "col-004",
-      "row_position": 13,
+      "row_position": 15,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1357,7 +1397,7 @@
     {
       "activity_id": "act-013",
       "column_id": "col-007",
-      "row_position": 13,
+      "row_position": 15,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1368,7 +1408,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-004",
-      "row_position": 14,
+      "row_position": 16,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1379,7 +1419,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-007",
-      "row_position": 14,
+      "row_position": 16,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1390,7 +1430,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-004",
-      "row_position": 15,
+      "row_position": 17,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1401,7 +1441,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-007",
-      "row_position": 15,
+      "row_position": 17,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1412,7 +1452,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-004",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, 90 min",
       "cell_value_type": "other",
@@ -1423,7 +1463,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-007",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, 90 min",
       "cell_value_type": "other",
@@ -1434,7 +1474,7 @@
     {
       "activity_id": "act-017",
       "column_id": "col-004",
-      "row_position": 17,
+      "row_position": 19,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, 90 min",
       "cell_value_type": "other",
@@ -1445,7 +1485,7 @@
     {
       "activity_id": "act-017",
       "column_id": "col-007",
-      "row_position": 17,
+      "row_position": 19,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, 90 min",
       "cell_value_type": "other",
@@ -1456,7 +1496,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-002",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1467,7 +1507,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-004",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min",
       "cell_value_type": "other",
@@ -1478,7 +1518,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-007",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min",
       "cell_value_type": "other",
@@ -1489,7 +1529,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-008",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1500,7 +1540,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-002",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1511,7 +1551,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-008",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1522,7 +1562,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-004",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction (30 and 15 min prior to insulin infusion), Predose, 15, 30, 60, 120, 240 min",
       "cell_value_type": "other",
@@ -1533,7 +1573,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-007",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction (30 and 15 min prior to insulin infusion), Predose, 15, 30, 60, 120, 240 min",
       "cell_value_type": "other",
@@ -1544,7 +1584,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-002",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1555,7 +1595,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-002",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1566,7 +1606,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-004",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction",
       "cell_value_type": "other",
@@ -1577,7 +1617,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-007",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction",
       "cell_value_type": "other",
@@ -1588,72 +1628,6 @@
     {
       "activity_id": "act-023",
       "column_id": "col-008",
-      "row_position": 23,
-      "column_position": 8,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-024",
-      "column_id": "col-002",
-      "row_position": 24,
-      "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-024",
-      "column_id": "col-004",
-      "row_position": 24,
-      "column_position": 4,
-      "cell_value": "Pre-hypoglycemia induction",
-      "cell_value_type": "other",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-025",
-      "column_id": "col-002",
-      "row_position": 25,
-      "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-025",
-      "column_id": "col-003",
-      "row_position": 25,
-      "column_position": 3,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-025",
-      "column_id": "col-006",
-      "row_position": 25,
-      "column_position": 6,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-025",
-      "column_id": "col-008",
       "row_position": 25,
       "column_position": 8,
       "cell_value": "X",
@@ -1663,7 +1637,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-026",
+      "activity_id": "act-024",
       "column_id": "col-002",
       "row_position": 26,
       "column_position": 2,
@@ -1674,7 +1648,18 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-027",
+      "activity_id": "act-024",
+      "column_id": "col-004",
+      "row_position": 26,
+      "column_position": 4,
+      "cell_value": "Pre-hypoglycemia induction",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-025",
       "column_id": "col-002",
       "row_position": 27,
       "column_position": 2,
@@ -1685,7 +1670,40 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-025",
+      "column_id": "col-003",
+      "row_position": 27,
+      "column_position": 3,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-025",
+      "column_id": "col-006",
+      "row_position": 27,
+      "column_position": 6,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-025",
+      "column_id": "col-008",
+      "row_position": 27,
+      "column_position": 8,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-026",
       "column_id": "col-002",
       "row_position": 28,
       "column_position": 2,
@@ -1696,9 +1714,31 @@
       "linked_annotation_ids": []
     },
     {
+      "activity_id": "act-027",
+      "column_id": "col-002",
+      "row_position": 29,
+      "column_position": 2,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-002",
+      "row_position": 30,
+      "column_position": 2,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
       "activity_id": "act-029",
       "column_id": "col-004",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min",
       "cell_value_type": "other",
@@ -1709,7 +1749,7 @@
     {
       "activity_id": "act-029",
       "column_id": "col-007",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min",
       "cell_value_type": "other",
@@ -1720,7 +1760,7 @@
     {
       "activity_id": "act-029",
       "column_id": "col-008",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1731,7 +1771,7 @@
     {
       "activity_id": "act-029",
       "column_id": "col-009",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 9,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1742,7 +1782,7 @@
     {
       "activity_id": "act-030",
       "column_id": "col-004",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, -5, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min",
       "cell_value_type": "other",
@@ -1753,7 +1793,7 @@
     {
       "activity_id": "act-030",
       "column_id": "col-007",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, -5, Predose, 5, 10, 15, 20, 25, 30, 40, 50, 60, 90, 120, 240 min",
       "cell_value_type": "other",
@@ -1764,7 +1804,7 @@
     {
       "activity_id": "act-031",
       "column_id": "col-003",
-      "row_position": 31,
+      "row_position": 33,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1775,7 +1815,7 @@
     {
       "activity_id": "act-032",
       "column_id": "col-004",
-      "row_position": 32,
+      "row_position": 34,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction",
       "cell_value_type": "other",
@@ -1786,7 +1826,7 @@
     {
       "activity_id": "act-032",
       "column_id": "col-008",
-      "row_position": 32,
+      "row_position": 34,
       "column_position": 8,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1797,7 +1837,7 @@
     {
       "activity_id": "act-032",
       "column_id": "col-009",
-      "row_position": 32,
+      "row_position": 34,
       "column_position": 9,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1808,7 +1848,7 @@
     {
       "activity_id": "act-034",
       "column_id": "col-003",
-      "row_position": 34,
+      "row_position": 36,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1819,7 +1859,7 @@
     {
       "activity_id": "act-035",
       "column_id": "col-004",
-      "row_position": 35,
+      "row_position": 37,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, 15, 30, 60, 120 min",
       "cell_value_type": "other",
@@ -1830,7 +1870,7 @@
     {
       "activity_id": "act-035",
       "column_id": "col-007",
-      "row_position": 35,
+      "row_position": 37,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, 15, 30, 60, 120 min",
       "cell_value_type": "other",
@@ -1841,7 +1881,7 @@
     {
       "activity_id": "act-036",
       "column_id": "col-004",
-      "row_position": 36,
+      "row_position": 38,
       "column_position": 4,
       "cell_value": "Pre-hypoglycemia induction, During hypoglycemia induction, Predose, 15, 30, 60, 120 min",
       "cell_value_type": "other",
@@ -1852,7 +1892,7 @@
     {
       "activity_id": "act-036",
       "column_id": "col-007",
-      "row_position": 36,
+      "row_position": 38,
       "column_position": 7,
       "cell_value": "Pre-hypoglycemia induction, During hypoglycemia induction, Predose, 15, 30, 60, 120 min",
       "cell_value_type": "other",
@@ -1881,7 +1921,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 4
+          "row_position": 6,
+          "method": "synthesized"
         }
       ]
     },
@@ -1904,7 +1945,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 5
+          "row_position": 7,
+          "method": "synthesized"
         }
       ]
     },
@@ -1927,7 +1969,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 8
+          "row_position": 10,
+          "method": "synthesized"
         }
       ]
     },
@@ -1950,7 +1993,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 9
+          "row_position": 11,
+          "method": "synthesized"
         }
       ]
     },
@@ -1973,7 +2017,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 10
+          "row_position": 12,
+          "method": "synthesized"
         }
       ]
     },
@@ -1982,7 +2027,7 @@
       "table_id": "table-001",
       "annotation_marker": "c6",
       "annotation_type": "footnote",
-      "annotation_text": "Review patients' insulin regimens to confirm acceptability to undergo the procedure to induce hypoglycemia.",
+      "annotation_text": "Review patients’ insulin regimens to confirm acceptability to undergo the procedure to induce hypoglycemia.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -1996,7 +2041,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 11
+          "row_position": 13,
+          "method": "synthesized"
         }
       ]
     },
@@ -2005,7 +2051,7 @@
       "table_id": "table-001",
       "annotation_marker": "c7",
       "annotation_type": "footnote",
-      "annotation_text": "After completion of all PK sampling, patients will be provided a carbohydrate-rich meal. The investigator will ensure the patient's PG is stable. A prandial insulin dose will be administered if needed.",
+      "annotation_text": "After completion of all PK sampling, patients will be provided a carbohydrate-rich meal. The investigator will ensure the patient’s PG is stable. A prandial insulin dose will be administered if needed.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -2019,7 +2065,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 12
+          "row_position": 14,
+          "method": "synthesized"
         }
       ]
     },
@@ -2042,7 +2089,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 13
+          "row_position": 15,
+          "method": "synthesized"
         }
       ]
     },
@@ -2065,7 +2113,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 14
+          "row_position": 16,
+          "method": "synthesized"
         }
       ]
     },
@@ -2088,7 +2137,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 15
+          "row_position": 17,
+          "method": "synthesized"
         }
       ]
     },
@@ -2111,7 +2161,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 16
+          "row_position": 18,
+          "method": "synthesized"
         }
       ]
     },
@@ -2134,7 +2185,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 17
+          "row_position": 19,
+          "method": "synthesized"
         }
       ]
     },
@@ -2157,7 +2209,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 18
+          "row_position": 20,
+          "method": "synthesized"
         }
       ]
     },
@@ -2180,7 +2233,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 20
+          "row_position": 22,
+          "method": "synthesized"
         }
       ]
     },
@@ -2204,12 +2258,14 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 22
+          "row_position": 24,
+          "method": "synthesized"
         },
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 24
+          "row_position": 26,
+          "method": "synthesized"
         }
       ]
     },
@@ -2232,7 +2288,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 23
+          "row_position": 25,
+          "method": "synthesized"
         }
       ]
     },
@@ -2255,7 +2312,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 25
+          "row_position": 27,
+          "method": "synthesized"
         }
       ]
     },
@@ -2278,7 +2336,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 26
+          "row_position": 28,
+          "method": "synthesized"
         }
       ]
     },
@@ -2302,12 +2361,14 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 27
+          "row_position": 29,
+          "method": "synthesized"
         },
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 28
+          "row_position": 30,
+          "method": "synthesized"
         }
       ]
     },
@@ -2330,7 +2391,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 29
+          "row_position": 31,
+          "method": "synthesized"
         }
       ]
     },
@@ -2353,7 +2415,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 30
+          "row_position": 32,
+          "method": "synthesized"
         }
       ]
     },
@@ -2376,7 +2439,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 31
+          "row_position": 33,
+          "method": "synthesized"
         }
       ]
     },
@@ -2399,7 +2463,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 32
+          "row_position": 34,
+          "method": "synthesized"
         }
       ]
     },
@@ -2422,7 +2487,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 35
+          "row_position": 37,
+          "method": "synthesized"
         }
       ]
     },
@@ -2445,7 +2511,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 36
+          "row_position": 38,
+          "method": "synthesized"
         }
       ]
     },
@@ -2467,7 +2534,7 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 9
         }
@@ -2476,12 +2543,14 @@
     {
       "annotation_id": "annot-027",
       "table_id": "table-001",
-      "annotation_marker": "note1",
+      "annotation_marker": "gn1",
       "annotation_type": "footnote",
-      "annotation_text": "If multiple procedures take place at the same time point, the following order of the procedure should be used: ECG, vital signs, and venipuncture. Plasma glucose sample should be collected as close as possible of protocol-specified time point.",
-      "annotation_scope": "table",
+      "annotation_text": "Note: if multiple procedures take place at the same time point, the following order of the procedure should be used: ECG, vital signs, and venipuncture. Plasma glucose sample should be collected as close as possible of protocol-specified time point.",
+      "annotation_scope": "column",
       "referenced_elements": {
-        "property_ids": [],
+        "property_ids": [
+          "prop-001"
+        ],
         "column_ids": [],
         "activity_ids": [],
         "cell_references": []
@@ -2490,7 +2559,8 @@
         {
           "table_number": 1,
           "location_type": "schedule_property",
-          "row_position": 2
+          "row_position": 1,
+          "method": "synthesized"
         }
       ]
     }

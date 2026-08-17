@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:14.914713+00:00",
+    "resolved_at": "2026-08-17T19:13:16.548992+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -14,34 +14,34 @@
       "structure_valid": true,
       "hierarchy_valid": true,
       "annotations_valid": true,
-      "validation_warnings": [
-        "Resolved annotation annot-028 ('note1') has no referenced elements — orphan: Dosing (i.e., Day 1 of each cycle), in induction p...",
-        "Resolved annotation annot-029 ('abbr') has no referenced elements — orphan: (a)PTT=(activated) partial thromboplastin time; D=...",
-        "Annotation summary: 2 of 29 annotations have no referenced elements (will be orphans in consolidation)"
-      ],
-      "validation_errors": []
+      "validation_warnings": [],
+      "validation_errors": [],
+      "method_provenance": [
+        "marker_location:synthesized: 1",
+        "property_structure:inferred_from_layout: 2"
+      ]
     },
-    "resolution_status": "resolved_with_warnings",
+    "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-12T13:43:35+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork; single-pass, PDF text-layer bbox coordinate reconstruction, marks PDF-authoritative)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude-Opus-5 (prompt v3.7.3)",
     "source_document": {
       "filename": "NCT03817853_soa.pdf",
       "document_type": "protocol",
       "document_version": "Protocol MO40597, Version 5"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Obinutuzumab (G-chemo) follicular-lymphoma protocol MO40597 v5, Appendix 1 SoA. Single table with a 4-level merged header (Phase / Treatment sub-phase / Cycle / Day). Marks and cell footnote markers transcribed from PDF text-layer word coordinates (poppler pdftotext -bbox); the markdown was not used for the grid. 11 timepoint columns (2-12): Screening D-28..D-1, D-7..D-1; Induction C1 D1/D8/D15, C2 D1, Cycles 3-6/8 D1; EOI; Maintenance; EOM; Follow-up. Footnotes a-aa, general Notes and the abbreviation list occupy soa-PDF pages 2-3 (protocol pp.101-102) and are captured here."
+    "extraction_notes": "Single SoA table (Appendix 1). Document pages 100-102 per PAGEMAP.md; page 100 carries the whole grid, pages 101-102 carry only the general Notes paragraph and footnotes a-z, aa. Column geometry recovered from 200-dpi raster rule lines (13 full-height vertical rules -> 1 label column + 11 data columns) and marks binned from the pdftotext -bbox text layer into those rule-bounded cells."
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
-    "table_title": "Appendix 1 — Schedule of Activities",
-    "table_purpose": "Single SoA for the G-chemo induction + obinutuzumab maintenance follicular lymphoma study.",
+    "table_title": "Appendix 1 Schedule of Activities",
+    "table_purpose": "Primary schedule of activities for screening, induction, EOI, maintenance, EOM and safety follow-up",
     "page_start": 100,
     "page_end": 102,
     "track_label": null,
@@ -49,14 +49,14 @@
     "row_count": 31,
     "header_row_count": 4,
     "activity_row_count": 27,
-    "notes": "Protocol printed page numbers; table on p.100, footnotes/abbreviations pp.100-102."
+    "notes": "Only SoA table in the excerpt, so main_soa by the §2 discriminators: rows are procedures performed on subjects and this is the primary anchor grid. One leading label column (L=1): the 13 full-height vertical rules at 200 dpi give one label column plus 11 data columns, so the first data column is position 2 and the last is 12. The label column carries an internal vertical rule ONLY across the two study-drug rows (x=372 px, rows y=1090-1171 px), so it is a nested split, not a second table column. 'Study drug administration' is a label cell vertically merged across those two rows; it is emitted as a level-0 organisational activity row (row_position 24) that carries no marks, so the 27 emitted activity rows correspond to 26 physical body rows. Pages 101-102 contribute footnote text only, no activity rows."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-001",
       "row_position": 1,
-      "property_name": "Phase",
+      "property_name": "Study phase",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -64,20 +64,22 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Top-level study phases: Screening (cols 2-3), the merged 'Treatment' super-group (cols 4-11, covering Induction/EOI/Maintenance/EOM), and Follow-up (col 12). Label cell blank, so name synthesized. Classified epoch (major phases).",
+      "property_comment": "Top header band: 'Screening' (merged over columns 2-3), 'Treatment' (merged over columns 4-11) and 'Follow-up (3 months)' (column 12). These are the major study phases, hence epoch. The Screening and Follow-up cells are also vertically merged downward (Screening through header row 3, Follow-up through header row 4); the schema has no vertical merge, so each is recorded once, on this row.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
         "prop-002"
       ],
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "n1",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "property_id": "prop-002",
       "table_id": "table-001",
       "row_position": 2,
-      "property_name": "Treatment sub-phase",
+      "property_name": "Treatment period",
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
@@ -85,7 +87,7 @@
         "synthesized": true
       },
       "property_type": "period",
-      "property_comment": "Second header level under Treatment: Induction (6-8 cycles, merged cols 4-8), EOI (end of induction), Maintenance (every 8 weeks +/- 10 days), EOM (end of maintenance). Classified period; EOI and EOM are end-of-phase milestone visits placed at this level.",
+      "property_comment": "Second header band, printed only under 'Treatment': 'Induction (6-8 cycles)' merged over columns 4-8, then EOI, Maintenance (every 8 weeks +/- 10 days) and EOM. Typed period because the row subdivides the Treatment epoch; note that EOI and EOM read more like end-of-phase encounters than periods, so the type is a judgement call recorded in the uncertainty report. Level 2 from the rule-line geometry (this band sits below the epoch band and above the cycle band); the label cell is empty, so the name is synthesised.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [
@@ -106,7 +108,7 @@
         "synthesized": true
       },
       "property_type": "cycle",
-      "property_comment": "Induction cycle grouping: Cycle 1 (merged cols 4-6), Cycle 2 (col 7), Cycles 3-6/8 (col 8).",
+      "property_comment": "Third header band, printed only under Induction: 'Cycle 1' merged over columns 4-6, 'Cycle 2' (column 7), 'Cycles 3-6/8' (column 8). Repeating treatment cycles, hence cycle. Label cell empty, name synthesised from the cell values.",
       "hierarchical_level": 3,
       "parent_property_id": "prop-002",
       "child_property_ids": [
@@ -126,7 +128,7 @@
         "cell_value": "Day"
       },
       "property_type": "study_day",
-      "property_comment": "Day row (label cell 'Day'). Screening day ranges D-28 to D-1 / D-7 to D-1, and within-cycle days D1/D8/D15 (C1), D1 (C2), D1 (Cycles 3-6/8). EOI/Maintenance/EOM/Follow-up have no day label.",
+      "property_comment": "Bottom header band, labelled 'Day' in the label column: screening windows 'D-28 to D-1' and 'D-7 to D-1' and cycle days D1, D8, D15, D1, D1. Protocol days relative to each cycle, hence study_day. Columns 9-12 (EOI, Maintenance, EOM, Follow-up) have no day cell here - their header cells are vertically merged from the band above.",
       "hierarchical_level": 4,
       "parent_property_id": "prop-003",
       "child_property_ids": [],
@@ -156,7 +158,7 @@
       ],
       "composite_label": "Screening / D–28 to D–1",
       "linked_annotation_ids": [
-        "annot-001"
+        "annot-002"
       ]
     },
     {
@@ -180,7 +182,7 @@
       ],
       "composite_label": "Screening / D–7 to D–1",
       "linked_annotation_ids": [
-        "annot-001"
+        "annot-002"
       ]
     },
     {
@@ -216,7 +218,7 @@
       ],
       "composite_label": "Treatment / Induction (6–8 cycles) / Cycle 1 / D1",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-003"
       ]
     },
     {
@@ -252,7 +254,7 @@
       ],
       "composite_label": "Treatment / Induction (6–8 cycles) / Cycle 1 / D8",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-003"
       ]
     },
     {
@@ -288,7 +290,7 @@
       ],
       "composite_label": "Treatment / Induction (6–8 cycles) / Cycle 1 / D15",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-003"
       ]
     },
     {
@@ -324,7 +326,7 @@
       ],
       "composite_label": "Treatment / Induction (6–8 cycles) / Cycle 2 / D1",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-003"
       ]
     },
     {
@@ -360,7 +362,7 @@
       ],
       "composite_label": "Treatment / Induction (6–8 cycles) / Cycles 3–6/8 / D1",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-003"
       ]
     },
     {
@@ -406,7 +408,7 @@
       ],
       "composite_label": "Treatment / Maintenance (every 8 weeks ± 10 days)",
       "linked_annotation_ids": [
-        "annot-005"
+        "annot-006"
       ]
     },
     {
@@ -446,7 +448,7 @@
       ],
       "composite_label": "Follow-up (3 months)",
       "linked_annotation_ids": [
-        "annot-027"
+        "annot-028"
       ]
     }
   ],
@@ -458,9 +460,9 @@
       "activity_name": "Informed consent",
       "activity_name_source": {
         "cell_text": "Informed consent",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -475,9 +477,9 @@
       "activity_name": "Demographic data",
       "activity_name_source": {
         "cell_text": "Demographic data",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -492,9 +494,9 @@
       "activity_name": "Medical history and baseline conditions",
       "activity_name_source": {
         "cell_text": "Medical history and baseline conditions",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -509,9 +511,9 @@
       "activity_name": "Ann Arbor, FLIPI, and FLIPI2",
       "activity_name_source": {
         "cell_text": "Ann Arbor, FLIPI, and FLIPI2",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -526,9 +528,9 @@
       "activity_name": "ECOG performance status",
       "activity_name_source": {
         "cell_text": "ECOG performance status",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -543,16 +545,16 @@
       "activity_name": "Vital signs",
       "activity_name_source": {
         "cell_text": "Vital signs g",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "g",
       "linked_annotation_ids": [
-        "annot-007"
+        "annot-008"
       ]
     },
     {
@@ -562,9 +564,9 @@
       "activity_name": "Weight",
       "activity_name_source": {
         "cell_text": "Weight",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -579,9 +581,9 @@
       "activity_name": "Height",
       "activity_name_source": {
         "cell_text": "Height",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -596,9 +598,9 @@
       "activity_name": "ECG",
       "activity_name_source": {
         "cell_text": "ECG",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -613,16 +615,16 @@
       "activity_name": "LVEF (echocardiography or MUGA scan)",
       "activity_name_source": {
         "cell_text": "LVEF (echocardiography or MUGA scan) z",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "z",
       "linked_annotation_ids": [
-        "annot-026"
+        "annot-027"
       ]
     },
     {
@@ -632,17 +634,17 @@
       "activity_name": "Complete physical examination",
       "activity_name_source": {
         "cell_text": "Complete physical examination h,i",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "h,i",
       "linked_annotation_ids": [
-        "annot-008",
-        "annot-009"
+        "annot-009",
+        "annot-010"
       ]
     },
     {
@@ -652,17 +654,17 @@
       "activity_name": "Targeted physical examination",
       "activity_name_source": {
         "cell_text": "Targeted physical examination j,k",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "j,k",
       "linked_annotation_ids": [
-        "annot-010",
-        "annot-011"
+        "annot-011",
+        "annot-012"
       ]
     },
     {
@@ -672,16 +674,16 @@
       "activity_name": "B symptoms",
       "activity_name_source": {
         "cell_text": "B symptoms l",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "l",
       "linked_annotation_ids": [
-        "annot-012"
+        "annot-013"
       ]
     },
     {
@@ -691,16 +693,16 @@
       "activity_name": "Hematology",
       "activity_name_source": {
         "cell_text": "Hematology m",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "m",
       "linked_annotation_ids": [
-        "annot-013"
+        "annot-014"
       ]
     },
     {
@@ -710,16 +712,16 @@
       "activity_name": "Chemistry",
       "activity_name_source": {
         "cell_text": "Chemistry n",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "n",
       "linked_annotation_ids": [
-        "annot-014"
+        "annot-015"
       ]
     },
     {
@@ -729,16 +731,16 @@
       "activity_name": "Pregnancy test",
       "activity_name_source": {
         "cell_text": "Pregnancy test o",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "o",
       "linked_annotation_ids": [
-        "annot-015"
+        "annot-016"
       ]
     },
     {
@@ -748,9 +750,9 @@
       "activity_name": "Coagulation INR, aPTT or PTT and PT",
       "activity_name_source": {
         "cell_text": "Coagulation INR, aPTT or PTT and PT",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
@@ -765,16 +767,16 @@
       "activity_name": "Urinalysis",
       "activity_name_source": {
         "cell_text": "Urinalysis p",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "p",
       "linked_annotation_ids": [
-        "annot-016"
+        "annot-017"
       ]
     },
     {
@@ -784,16 +786,16 @@
       "activity_name": "HIV, HTLV-1, Hep B / C testing",
       "activity_name_source": {
         "cell_text": "HIV, HTLV-1, Hep B / C testing q",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "q",
       "linked_annotation_ids": [
-        "annot-017"
+        "annot-018"
       ]
     },
     {
@@ -810,12 +812,7 @@
       "parent_activity_id": null,
       "child_activity_ids": [
         "act-021",
-        "act-022",
-        "act-023",
-        "act-024",
-        "act-025",
-        "act-026",
-        "act-027"
+        "act-022"
       ],
       "has_schedule_data": false,
       "annotation_markers": "",
@@ -837,7 +834,7 @@
       "has_schedule_data": true,
       "annotation_markers": "r",
       "linked_annotation_ids": [
-        "annot-018"
+        "annot-019"
       ]
     },
     {
@@ -856,7 +853,7 @@
       "has_schedule_data": true,
       "annotation_markers": "s",
       "linked_annotation_ids": [
-        "annot-019"
+        "annot-020"
       ]
     },
     {
@@ -866,16 +863,16 @@
       "activity_name": "Tumor assessment",
       "activity_name_source": {
         "cell_text": "Tumor assessment t",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
-      "parent_activity_id": "act-020",
+      "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "t",
       "linked_annotation_ids": [
-        "annot-020"
+        "annot-021"
       ]
     },
     {
@@ -885,17 +882,17 @@
       "activity_name": "Concomitant medications",
       "activity_name_source": {
         "cell_text": "Concomitant medications u,v",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
-      "parent_activity_id": "act-020",
+      "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "u,v",
       "linked_annotation_ids": [
-        "annot-021",
-        "annot-022"
+        "annot-022",
+        "annot-023"
       ]
     },
     {
@@ -905,16 +902,16 @@
       "activity_name": "Adverse events",
       "activity_name_source": {
         "cell_text": "Adverse events w",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
-      "parent_activity_id": "act-020",
+      "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "w",
       "linked_annotation_ids": [
-        "annot-023"
+        "annot-024"
       ]
     },
     {
@@ -924,11 +921,11 @@
       "activity_name": "Provider-reported measures",
       "activity_name_source": {
         "cell_text": "Provider-reported measures",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
-      "parent_activity_id": "act-020",
+      "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "",
@@ -941,16 +938,16 @@
       "activity_name": "Patient-reported measures",
       "activity_name_source": {
         "cell_text": "Patient-reported measures y",
-        "indentation_level": 1
+        "indentation_level": 0
       },
-      "hierarchy_level": 1,
+      "hierarchy_level": 0,
       "is_section_header": false,
-      "parent_activity_id": "act-020",
+      "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
       "annotation_markers": "y",
       "linked_annotation_ids": [
-        "annot-025"
+        "annot-026"
       ]
     }
   ],
@@ -965,7 +962,7 @@
       "source_range": "",
       "annotation_markers": "f",
       "linked_annotation_ids": [
-        "annot-006"
+        "annot-007"
       ]
     },
     {
@@ -1484,7 +1481,7 @@
       "source_range": "",
       "annotation_markers": "c",
       "linked_annotation_ids": [
-        "annot-003"
+        "annot-004"
       ]
     },
     {
@@ -1497,7 +1494,7 @@
       "source_range": "",
       "annotation_markers": "c",
       "linked_annotation_ids": [
-        "annot-003"
+        "annot-004"
       ]
     },
     {
@@ -1510,7 +1507,7 @@
       "source_range": "",
       "annotation_markers": "c",
       "linked_annotation_ids": [
-        "annot-003"
+        "annot-004"
       ]
     },
     {
@@ -1523,7 +1520,7 @@
       "source_range": "",
       "annotation_markers": "d",
       "linked_annotation_ids": [
-        "annot-004"
+        "annot-005"
       ]
     },
     {
@@ -1536,7 +1533,7 @@
       "source_range": "",
       "annotation_markers": "d",
       "linked_annotation_ids": [
-        "annot-004"
+        "annot-005"
       ]
     },
     {
@@ -1549,7 +1546,7 @@
       "source_range": "",
       "annotation_markers": "d",
       "linked_annotation_ids": [
-        "annot-004"
+        "annot-005"
       ]
     },
     {
@@ -1628,7 +1625,7 @@
       "source_range": "",
       "annotation_markers": "u",
       "linked_annotation_ids": [
-        "annot-021"
+        "annot-022"
       ]
     },
     {
@@ -1641,7 +1638,7 @@
       "source_range": "",
       "annotation_markers": "u",
       "linked_annotation_ids": [
-        "annot-021"
+        "annot-022"
       ]
     },
     {
@@ -1654,7 +1651,7 @@
       "source_range": "",
       "annotation_markers": "u",
       "linked_annotation_ids": [
-        "annot-021"
+        "annot-022"
       ]
     },
     {
@@ -1755,7 +1752,7 @@
       "source_range": "",
       "annotation_markers": "w",
       "linked_annotation_ids": [
-        "annot-023"
+        "annot-024"
       ]
     },
     {
@@ -1768,7 +1765,7 @@
       "source_range": "",
       "annotation_markers": "w",
       "linked_annotation_ids": [
-        "annot-023"
+        "annot-024"
       ]
     },
     {
@@ -1781,7 +1778,7 @@
       "source_range": "",
       "annotation_markers": "w",
       "linked_annotation_ids": [
-        "annot-023"
+        "annot-024"
       ]
     },
     {
@@ -1882,7 +1879,7 @@
       "source_range": "",
       "annotation_markers": "x",
       "linked_annotation_ids": [
-        "annot-024"
+        "annot-025"
       ]
     },
     {
@@ -1967,6 +1964,30 @@
     {
       "annotation_id": "annot-001",
       "table_id": "table-001",
+      "annotation_marker": "n1",
+      "annotation_type": "footnote",
+      "annotation_text": "Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit date, with the exception of C1D1 which should take place within 28 days of the patient entering screening. All assessments should be performed within 2 days of the scheduled visit, unless otherwise specified. On treatment days, all assessments should be performed prior to dosing, unless otherwise specified. Results from hematology and biochemistry must be reviewed, and the review documented, prior to study drug administration.",
+      "annotation_scope": "column",
+      "referenced_elements": {
+        "property_ids": [
+          "prop-001"
+        ],
+        "column_ids": [],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-002",
+      "table_id": "table-001",
       "annotation_marker": "a",
       "annotation_type": "footnote",
       "annotation_text": "Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the defined window may be used; such tests do not need to be repeated for screening.",
@@ -1996,7 +2017,7 @@
       ]
     },
     {
-      "annotation_id": "annot-002",
+      "annotation_id": "annot-003",
       "table_id": "table-001",
       "annotation_marker": "b",
       "annotation_type": "footnote",
@@ -2048,7 +2069,7 @@
       ]
     },
     {
-      "annotation_id": "annot-003",
+      "annotation_id": "annot-004",
       "table_id": "table-001",
       "annotation_marker": "c",
       "annotation_type": "footnote",
@@ -2095,7 +2116,7 @@
       ]
     },
     {
-      "annotation_id": "annot-004",
+      "annotation_id": "annot-005",
       "table_id": "table-001",
       "annotation_marker": "d",
       "annotation_type": "footnote",
@@ -2142,7 +2163,7 @@
       ]
     },
     {
-      "annotation_id": "annot-005",
+      "annotation_id": "annot-006",
       "table_id": "table-001",
       "annotation_marker": "e",
       "annotation_type": "footnote",
@@ -2166,7 +2187,7 @@
       ]
     },
     {
-      "annotation_id": "annot-006",
+      "annotation_id": "annot-007",
       "table_id": "table-001",
       "annotation_marker": "f",
       "annotation_type": "footnote",
@@ -2193,7 +2214,7 @@
       ]
     },
     {
-      "annotation_id": "annot-007",
+      "annotation_id": "annot-008",
       "table_id": "table-001",
       "annotation_marker": "g",
       "annotation_type": "footnote",
@@ -2216,7 +2237,7 @@
       ]
     },
     {
-      "annotation_id": "annot-008",
+      "annotation_id": "annot-009",
       "table_id": "table-001",
       "annotation_marker": "h",
       "annotation_type": "footnote",
@@ -2239,7 +2260,7 @@
       ]
     },
     {
-      "annotation_id": "annot-009",
+      "annotation_id": "annot-010",
       "table_id": "table-001",
       "annotation_marker": "i",
       "annotation_type": "footnote",
@@ -2262,7 +2283,7 @@
       ]
     },
     {
-      "annotation_id": "annot-010",
+      "annotation_id": "annot-011",
       "table_id": "table-001",
       "annotation_marker": "j",
       "annotation_type": "footnote",
@@ -2285,7 +2306,7 @@
       ]
     },
     {
-      "annotation_id": "annot-011",
+      "annotation_id": "annot-012",
       "table_id": "table-001",
       "annotation_marker": "k",
       "annotation_type": "footnote",
@@ -2308,7 +2329,7 @@
       ]
     },
     {
-      "annotation_id": "annot-012",
+      "annotation_id": "annot-013",
       "table_id": "table-001",
       "annotation_marker": "l",
       "annotation_type": "footnote",
@@ -2331,7 +2352,7 @@
       ]
     },
     {
-      "annotation_id": "annot-013",
+      "annotation_id": "annot-014",
       "table_id": "table-001",
       "annotation_marker": "m",
       "annotation_type": "footnote",
@@ -2354,7 +2375,7 @@
       ]
     },
     {
-      "annotation_id": "annot-014",
+      "annotation_id": "annot-015",
       "table_id": "table-001",
       "annotation_marker": "n",
       "annotation_type": "footnote",
@@ -2377,7 +2398,7 @@
       ]
     },
     {
-      "annotation_id": "annot-015",
+      "annotation_id": "annot-016",
       "table_id": "table-001",
       "annotation_marker": "o",
       "annotation_type": "footnote",
@@ -2400,7 +2421,7 @@
       ]
     },
     {
-      "annotation_id": "annot-016",
+      "annotation_id": "annot-017",
       "table_id": "table-001",
       "annotation_marker": "p",
       "annotation_type": "footnote",
@@ -2423,7 +2444,7 @@
       ]
     },
     {
-      "annotation_id": "annot-017",
+      "annotation_id": "annot-018",
       "table_id": "table-001",
       "annotation_marker": "q",
       "annotation_type": "footnote",
@@ -2446,7 +2467,7 @@
       ]
     },
     {
-      "annotation_id": "annot-018",
+      "annotation_id": "annot-019",
       "table_id": "table-001",
       "annotation_marker": "r",
       "annotation_type": "footnote",
@@ -2469,7 +2490,7 @@
       ]
     },
     {
-      "annotation_id": "annot-019",
+      "annotation_id": "annot-020",
       "table_id": "table-001",
       "annotation_marker": "s",
       "annotation_type": "footnote",
@@ -2492,7 +2513,7 @@
       ]
     },
     {
-      "annotation_id": "annot-020",
+      "annotation_id": "annot-021",
       "table_id": "table-001",
       "annotation_marker": "t",
       "annotation_type": "footnote",
@@ -2515,7 +2536,7 @@
       ]
     },
     {
-      "annotation_id": "annot-021",
+      "annotation_id": "annot-022",
       "table_id": "table-001",
       "annotation_marker": "u",
       "annotation_type": "footnote",
@@ -2569,7 +2590,7 @@
       ]
     },
     {
-      "annotation_id": "annot-022",
+      "annotation_id": "annot-023",
       "table_id": "table-001",
       "annotation_marker": "v",
       "annotation_type": "footnote",
@@ -2592,7 +2613,7 @@
       ]
     },
     {
-      "annotation_id": "annot-023",
+      "annotation_id": "annot-024",
       "table_id": "table-001",
       "annotation_marker": "w",
       "annotation_type": "footnote",
@@ -2646,7 +2667,7 @@
       ]
     },
     {
-      "annotation_id": "annot-024",
+      "annotation_id": "annot-025",
       "table_id": "table-001",
       "annotation_marker": "x",
       "annotation_type": "footnote",
@@ -2673,7 +2694,7 @@
       ]
     },
     {
-      "annotation_id": "annot-025",
+      "annotation_id": "annot-026",
       "table_id": "table-001",
       "annotation_marker": "y",
       "annotation_type": "footnote",
@@ -2696,7 +2717,7 @@
       ]
     },
     {
-      "annotation_id": "annot-026",
+      "annotation_id": "annot-027",
       "table_id": "table-001",
       "annotation_marker": "z",
       "annotation_type": "footnote",
@@ -2719,7 +2740,7 @@
       ]
     },
     {
-      "annotation_id": "annot-027",
+      "annotation_id": "annot-028",
       "table_id": "table-001",
       "annotation_marker": "aa",
       "annotation_type": "footnote",
@@ -2739,48 +2760,6 @@
           "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 12
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-028",
-      "table_id": "table-001",
-      "annotation_marker": "note1",
-      "annotation_type": "footnote",
-      "annotation_text": "Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit date, with the exception of C1D1 which should take place within 28 days of the patient entering screening. All assessments should be performed within 2 days of the scheduled visit, unless otherwise specified. On treatment days, all assessments should be performed prior to dosing, unless otherwise specified. Results from hematology and biochemistry must be reviewed, and the review documented, prior to study drug administration.",
-      "annotation_scope": "table",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 1
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-029",
-      "table_id": "table-001",
-      "annotation_marker": "abbr",
-      "annotation_type": "abbreviation",
-      "annotation_text": "(a)PTT=(activated) partial thromboplastin time; D=day; ECG=electrocardiogram; ECOG=Eastern Cooperative Oncology Group; EOI=end of induction; EOM=end of maintenance; FLIPI=Follicular Lymphoma International Prognostic Index; HIV, human immunodeficiency virus; HTLV-1, human T-lymphotropic virus 1; INR=International Normalized Ratio; LVEF=left ventricular ejection fraction; MUGA= multigated acquisition (scan); PT=prothrombin time.",
-      "annotation_scope": "table",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 1
         }
       ]
     }

@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:14.577578+00:00",
+    "resolved_at": "2026-08-17T19:13:16.194665+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -14,44 +14,38 @@
       "structure_valid": true,
       "hierarchy_valid": true,
       "annotations_valid": true,
-      "validation_warnings": [
-        "Resolved annotation annot-001 ('X') has no referenced elements — orphan: X = Performed at this visit....",
-        "Resolved annotation annot-004 ('P') has no referenced elements — orphan: P = Practice only - It is recommended that a sampl...",
-        "Resolved annotation annot-005 ('CT') has no referenced elements — orphan: CT = computed tomography...",
-        "Resolved annotation annot-006 ('ECG') has no referenced elements — orphan: ECG = electrocardiogram...",
-        "Annotation summary: 4 of 6 annotations have no referenced elements (will be orphans in consolidation)"
-      ],
+      "validation_warnings": [],
       "validation_errors": []
     },
-    "resolution_status": "resolved_with_warnings",
+    "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-06T17:18:55+00:00",
-    "extractor": "Claude Fable 5 (Cowork, single-pass PDF->JSON v3.0.2)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude Opus 5 (claude-opus-5)",
     "source_document": {
       "filename": "CDISC_Pilot_soa.pdf",
       "document_type": "protocol",
-      "document_version": "H2Q-MC-LZZT(c)"
+      "document_version": "H2Q-MC-LZZT(c) - Protocol Attachment LZZT.1"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Visual transcription from sliced SoA PDF (full-protocol document pages 53-54; page numbers below refer to the printed 'Document Page' numbers). Physical column 1 = activity labels; physical column 2 is a second label sub-column holding the header row names 'VISIT' and 'WEEK' - it is treated as part of the label area (property_name_source column 2) and excluded from schedule_grid. Data columns are physical columns 3-10. The empty column between Visit 5 and Visit 7 (column 8) is transcribed literally as an empty column - no visit number, no week, no marks. WEEK value '-.3' for Visit 2 transcribed literally. The three-line row 'Study drug record / Medications dispensed / Medications returned' is one physical row with a single set of marks and is kept as one activity. Trailing colon on 'Laboratory (Chem/Hemat):' kept in cell_text, dropped from clean name."
+    "extraction_notes": "Single logical SoA table printed as two horizontally tiled column blocks on document pages 53 (VISIT 1-8) and 54 (VISIT 9-13, ET, RT); the second block repeats every body row of the first, so the tiles were merged by activity name and the union of marks taken (prompt v3.7.2 SS5). Two leading label columns (L=2): the activity-name column and the narrow column carrying the 'VISIT'/'WEEK' row labels, so the first data column is position 3. Tile A occupies data positions 3-10, tile B positions 11-17. Position 8 is a genuine rule-bounded column on page 53 that carries no VISIT value, no WEEK value and no marks in any row; it is retained so that VISIT 7 and VISIT 8 keep their printed positions. Mark matrix derived mechanically by pdftotext -bbox column-binning against header-anchored column centres and raster-recovered rule lines, then diffed cell-for-cell against a visual read of both rendered pages with no disagreements."
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Schedule of Events for Protocol H2Q-MC-LZZT(c)",
-    "table_purpose": "Main schedule: screening (Visits 1-2) and first treatment-period visits (Visits 3-8, Weeks -2 to 8)",
+    "table_purpose": "Primary schedule of events for protocol H2Q-MC-LZZT(c): all study activities against visits 1-13 plus Early Termination and Retrieval encounters.",
     "page_start": 53,
-    "page_end": 53,
+    "page_end": 54,
     "track_label": null,
-    "column_count": 8,
-    "row_count": 30,
+    "column_count": 15,
+    "row_count": 32,
     "header_row_count": 2,
-    "activity_row_count": 28,
-    "notes": "Protocol Attachment LZZT.1. Page numbers are the printed 'Document Page' numbers of the full protocol PDF."
+    "activity_row_count": 30,
+    "notes": "Classified main_soa: the rows are procedures performed on subjects and this is the protocol's only, and therefore anchor, activity x timepoint grid. NOT continuation: page 54 does not continue the row list, it repeats all 28 printed body rows under a different set of visit columns, which is the horizontally tiled wide-table pattern (SS5) - one logical table, two column-block tiles. Page 54 is headed '(concluded)'. The three text lines 'Study drug record' / 'Medications dispensed' / 'Medications returned' sit inside ONE rule-bounded row band with no internal horizontal rule; they are transcribed as three separate activities (rows 24-26) because they are three distinct procedure names, and the printed X marks, which are aligned only with the 'Study drug record' line, are recorded on row 24 only. See the uncertainty report."
   },
   "schedule_properties": [
     {
@@ -65,7 +59,7 @@
         "cell_value": "VISIT"
       },
       "property_type": "visit",
-      "property_comment": "Visit numbers (1, 2, 3, 4, 5, blank, 7, 8); one physical column between Visit 5 and Visit 7 has an empty header (no Visit 6 column value printed) - transcribed literally as an empty column. Classified as 'visit': row of visit identifiers.",
+      "property_comment": "Visit identifiers running across the two horizontally tiled column blocks: numbered visits 1-5, an unlabelled column, 7-13, then the named encounters ET (Early Termination) and RT (Retrieval). Classified 'visit' because the values are visit identifiers, not days or weeks. The label 'VISIT' is printed in the narrow second label column.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -85,7 +79,7 @@
         "cell_value": "WEEK"
       },
       "property_type": "week",
-      "property_comment": "Study week numbers (-2, -.3, 0, 2, 4, 6, 8). Classified as 'week': numeric week values aligned to visits.",
+      "property_comment": "Study week for each visit column (-2, -.3, 0, 2, 4, 6, 8, 12, 16, 20, 24, 26). Classified 'week' because the values are week numbers relative to randomization at Week 0. The ET and RT columns carry no week value; the unlabelled column (position 8) carries none either. Label 'WEEK' printed in the narrow second label column, on the same printed row as the activity-column heading 'ACTIVITY'.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [],
@@ -269,6 +263,164 @@
       ],
       "composite_label": "8 / 8",
       "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-011",
+      "table_id": "table-001",
+      "column_position": 11,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "9",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-002",
+          "value": "12",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "9 / 12",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-012",
+      "table_id": "table-001",
+      "column_position": 12,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "10",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-002",
+          "value": "16",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "10 / 16",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-013",
+      "table_id": "table-001",
+      "column_position": 13,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "11",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-002",
+          "value": "20",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "11 / 20",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-014",
+      "table_id": "table-001",
+      "column_position": 14,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "12",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-002",
+          "value": "24",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "12 / 24",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-015",
+      "table_id": "table-001",
+      "column_position": 15,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "13",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-002",
+          "value": "26",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "13 / 26",
+      "linked_annotation_ids": []
+    },
+    {
+      "column_id": "col-016",
+      "table_id": "table-001",
+      "column_position": 16,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "ET",
+          "is_merged": false,
+          "annotation_markers": "ET"
+        },
+        {
+          "property_id": "prop-002",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "ET",
+      "linked_annotation_ids": [
+        "annot-007"
+      ]
+    },
+    {
+      "column_id": "col-017",
+      "table_id": "table-001",
+      "column_position": 17,
+      "is_label_column": false,
+      "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "RT",
+          "is_merged": false,
+          "annotation_markers": "RT"
+        },
+        {
+          "property_id": "prop-002",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
+        }
+      ],
+      "composite_label": "RT",
+      "linked_annotation_ids": [
+        "annot-008"
+      ]
     }
   ],
   "activities": [
@@ -473,8 +625,10 @@
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "ECG",
+      "linked_annotation_ids": [
+        "annot-006"
+      ]
     },
     {
       "activity_id": "act-013",
@@ -490,8 +644,10 @@
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "ECG",
+      "linked_annotation_ids": [
+        "annot-006"
+      ]
     },
     {
       "activity_id": "act-014",
@@ -507,8 +663,10 @@
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "ECG",
+      "linked_annotation_ids": [
+        "annot-006"
+      ]
     },
     {
       "activity_id": "act-015",
@@ -541,8 +699,10 @@
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "CT",
+      "linked_annotation_ids": [
+        "annot-005"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -565,7 +725,7 @@
       "activity_id": "act-018",
       "table_id": "table-001",
       "row_position": 20,
-      "activity_name": "Laboratory (Chem/Hemat)",
+      "activity_name": "Laboratory (Chem/Hemat):",
       "activity_name_source": {
         "cell_text": "Laboratory (Chem/Hemat):",
         "indentation_level": 0
@@ -633,9 +793,9 @@
       "activity_id": "act-022",
       "table_id": "table-001",
       "row_position": 24,
-      "activity_name": "Study drug record Medications dispensed Medications returned",
+      "activity_name": "Study drug record",
       "activity_name_source": {
-        "cell_text": "Study drug record\nMedications dispensed\nMedications returned",
+        "cell_text": "Study drug record",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -650,9 +810,9 @@
       "activity_id": "act-023",
       "table_id": "table-001",
       "row_position": 25,
-      "activity_name": "TTS Acceptability Survey",
+      "activity_name": "Medications dispensed",
       "activity_name_source": {
-        "cell_text": "TTS Acceptability Survey",
+        "cell_text": "Medications dispensed",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -667,16 +827,16 @@
       "activity_id": "act-024",
       "table_id": "table-001",
       "row_position": 26,
-      "activity_name": "ADAS-Cog",
+      "activity_name": "Medications returned",
       "activity_name_source": {
-        "cell_text": "ADAS-Cog",
+        "cell_text": "Medications returned",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
       "parent_activity_id": null,
       "child_activity_ids": [],
-      "has_schedule_data": true,
+      "has_schedule_data": false,
       "annotation_markers": "",
       "linked_annotation_ids": []
     },
@@ -684,9 +844,9 @@
       "activity_id": "act-025",
       "table_id": "table-001",
       "row_position": 27,
-      "activity_name": "CIBIC+",
+      "activity_name": "TTS Acceptability Survey",
       "activity_name_source": {
-        "cell_text": "CIBIC+",
+        "cell_text": "TTS Acceptability Survey",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -701,9 +861,9 @@
       "activity_id": "act-026",
       "table_id": "table-001",
       "row_position": 28,
-      "activity_name": "DAD",
+      "activity_name": "ADAS-Cog",
       "activity_name_source": {
-        "cell_text": "DAD",
+        "cell_text": "ADAS-Cog",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -718,9 +878,9 @@
       "activity_id": "act-027",
       "table_id": "table-001",
       "row_position": 29,
-      "activity_name": "NPI-X",
+      "activity_name": "CIBIC+",
       "activity_name_source": {
-        "cell_text": "NPI-X",
+        "cell_text": "CIBIC+",
         "indentation_level": 0
       },
       "hierarchy_level": 0,
@@ -735,6 +895,40 @@
       "activity_id": "act-028",
       "table_id": "table-001",
       "row_position": 30,
+      "activity_name": "DAD",
+      "activity_name_source": {
+        "cell_text": "DAD",
+        "indentation_level": 0
+      },
+      "hierarchy_level": 0,
+      "is_section_header": false,
+      "parent_activity_id": null,
+      "child_activity_ids": [],
+      "has_schedule_data": true,
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-029",
+      "table_id": "table-001",
+      "row_position": 31,
+      "activity_name": "NPI-X",
+      "activity_name_source": {
+        "cell_text": "NPI-X",
+        "indentation_level": 0
+      },
+      "hierarchy_level": 0,
+      "is_section_header": false,
+      "parent_activity_id": null,
+      "child_activity_ids": [],
+      "has_schedule_data": true,
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-030",
+      "table_id": "table-001",
+      "row_position": 32,
       "activity_name": "Adverse events",
       "activity_name_source": {
         "cell_text": "Adverse events",
@@ -758,8 +952,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-002",
@@ -769,8 +965,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-003",
@@ -780,8 +978,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-004",
@@ -791,8 +991,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-005",
@@ -802,8 +1004,36 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-005",
+      "column_id": "col-015",
+      "row_position": 7,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-005",
+      "column_id": "col-016",
+      "row_position": 7,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-006",
@@ -813,8 +1043,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-007",
@@ -824,8 +1056,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-008",
@@ -835,8 +1069,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-009",
@@ -846,8 +1082,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-010",
@@ -857,8 +1095,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -868,8 +1108,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -879,8 +1121,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -890,8 +1134,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -901,8 +1147,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -912,8 +1160,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -923,8 +1173,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-011",
@@ -934,8 +1186,101 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-011",
+      "row_position": 13,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-012",
+      "row_position": 13,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-013",
+      "row_position": 13,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-014",
+      "row_position": 13,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-015",
+      "row_position": 13,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-016",
+      "row_position": 13,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-011",
+      "column_id": "col-017",
+      "row_position": 13,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-012",
@@ -945,8 +1290,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-013",
@@ -956,8 +1303,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-014",
@@ -967,8 +1316,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-014",
@@ -978,8 +1329,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-014",
@@ -989,8 +1342,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-014",
@@ -1000,8 +1355,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-014",
@@ -1011,8 +1368,88 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-011",
+      "row_position": 16,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-012",
+      "row_position": 16,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-013",
+      "row_position": 16,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-014",
+      "row_position": 16,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-015",
+      "row_position": 16,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-016",
+      "row_position": 16,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-015",
@@ -1022,8 +1459,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-016",
@@ -1033,8 +1472,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -1044,8 +1485,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -1055,8 +1498,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -1066,8 +1511,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -1077,8 +1524,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -1088,8 +1537,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-017",
@@ -1099,8 +1550,101 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-011",
+      "row_position": 19,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-012",
+      "row_position": 19,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-013",
+      "row_position": 19,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-014",
+      "row_position": 19,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-015",
+      "row_position": 19,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-016",
+      "row_position": 19,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-017",
+      "column_id": "col-017",
+      "row_position": 19,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-018",
@@ -1110,8 +1654,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-018",
@@ -1121,8 +1667,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-018",
@@ -1132,8 +1680,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-018",
@@ -1143,8 +1693,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-018",
@@ -1154,8 +1706,88 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-011",
+      "row_position": 20,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-012",
+      "row_position": 20,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-013",
+      "row_position": 20,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-014",
+      "row_position": 20,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-015",
+      "row_position": 20,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-016",
+      "row_position": 20,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-019",
@@ -1165,8 +1797,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-019",
@@ -1176,8 +1810,49 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-019",
+      "column_id": "col-011",
+      "row_position": 21,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-019",
+      "column_id": "col-014",
+      "row_position": 21,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-019",
+      "column_id": "col-016",
+      "row_position": 21,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-020",
@@ -1187,8 +1862,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-020",
@@ -1198,8 +1875,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-020",
@@ -1209,8 +1888,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-020",
@@ -1220,8 +1901,49 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-020",
+      "column_id": "col-011",
+      "row_position": 22,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-020",
+      "column_id": "col-013",
+      "row_position": 22,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-020",
+      "column_id": "col-016",
+      "row_position": 22,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-021",
@@ -1244,8 +1966,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-022",
@@ -1255,8 +1979,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-022",
@@ -1266,8 +1992,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-022",
@@ -1277,8 +2005,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-022",
@@ -1288,74 +2018,114 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-024",
-      "column_id": "col-003",
-      "row_position": 26,
-      "column_position": 3,
-      "cell_value": "P",
-      "cell_value_type": "other",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-024",
-      "column_id": "col-005",
-      "row_position": 26,
-      "column_position": 5,
+      "activity_id": "act-022",
+      "column_id": "col-011",
+      "row_position": 24,
+      "column_position": 11,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-024",
-      "column_id": "col-010",
-      "row_position": 26,
-      "column_position": 10,
+      "activity_id": "act-022",
+      "column_id": "col-012",
+      "row_position": 24,
+      "column_position": 12,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-022",
+      "column_id": "col-013",
+      "row_position": 24,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-022",
+      "column_id": "col-014",
+      "row_position": 24,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-022",
+      "column_id": "col-015",
+      "row_position": 24,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-022",
+      "column_id": "col-016",
+      "row_position": 24,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-025",
-      "column_id": "col-003",
+      "column_id": "col-015",
       "row_position": 27,
-      "column_position": 3,
-      "cell_value": "P",
-      "cell_value_type": "other",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-025",
-      "column_id": "col-005",
-      "row_position": 27,
-      "column_position": 5,
+      "column_position": 15,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-025",
-      "column_id": "col-010",
+      "column_id": "col-016",
       "row_position": 27,
-      "column_position": 10,
+      "column_position": 16,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-026",
@@ -1365,8 +2135,10 @@
       "cell_value": "P",
       "cell_value_type": "other",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "P",
+      "linked_annotation_ids": [
+        "annot-004"
+      ]
     },
     {
       "activity_id": "act-026",
@@ -1376,8 +2148,10 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-026",
@@ -1387,8 +2161,62 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-026",
+      "column_id": "col-012",
+      "row_position": 28,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-026",
+      "column_id": "col-014",
+      "row_position": 28,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-026",
+      "column_id": "col-016",
+      "row_position": 28,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-026",
+      "column_id": "col-017",
+      "row_position": 28,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-027",
@@ -1398,8 +2226,10 @@
       "cell_value": "P",
       "cell_value_type": "other",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "P",
+      "linked_annotation_ids": [
+        "annot-004"
+      ]
     },
     {
       "activity_id": "act-027",
@@ -1409,46 +2239,236 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "activity_id": "act-027",
+      "column_id": "col-010",
+      "row_position": 29,
+      "column_position": 10,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-027",
+      "column_id": "col-012",
+      "row_position": 29,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-027",
+      "column_id": "col-014",
+      "row_position": 29,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-027",
+      "column_id": "col-016",
+      "row_position": 29,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-027",
+      "column_id": "col-017",
+      "row_position": 29,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-003",
+      "row_position": 30,
+      "column_position": 3,
+      "cell_value": "P",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "P",
+      "linked_annotation_ids": [
+        "annot-004"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-005",
+      "row_position": 30,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-010",
+      "row_position": 30,
+      "column_position": 10,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-012",
+      "row_position": 30,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-014",
+      "row_position": 30,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-016",
+      "row_position": 30,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-028",
+      "column_id": "col-017",
+      "row_position": 30,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-003",
+      "row_position": 31,
+      "column_position": 3,
+      "cell_value": "P",
+      "cell_value_type": "other",
+      "source_range": "",
+      "annotation_markers": "P",
+      "linked_annotation_ids": [
+        "annot-004"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-005",
+      "row_position": 31,
+      "column_position": 5,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-029",
       "column_id": "col-006",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-027",
+      "activity_id": "act-029",
       "column_id": "col-007",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-027",
+      "activity_id": "act-029",
       "column_id": "col-009",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 9,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-027",
+      "activity_id": "act-029",
       "column_id": "col-010",
-      "row_position": 29,
+      "row_position": 31,
       "column_position": 10,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1459,81 +2479,277 @@
       ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-029",
+      "column_id": "col-011",
+      "row_position": 31,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "b",
+      "linked_annotation_ids": [
+        "annot-003"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-012",
+      "row_position": 31,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "b",
+      "linked_annotation_ids": [
+        "annot-003"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-013",
+      "row_position": 31,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "b",
+      "linked_annotation_ids": [
+        "annot-003"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-014",
+      "row_position": 31,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-015",
+      "row_position": 31,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-016",
+      "row_position": 31,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-029",
+      "column_id": "col-017",
+      "row_position": 31,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
       "column_id": "col-003",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-030",
       "column_id": "col-004",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-030",
       "column_id": "col-005",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-030",
       "column_id": "col-006",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 6,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-030",
       "column_id": "col-007",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 7,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-030",
       "column_id": "col-009",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 9,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
-      "activity_id": "act-028",
+      "activity_id": "act-030",
       "column_id": "col-010",
-      "row_position": 30,
+      "row_position": 32,
       "column_position": 10,
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-011",
+      "row_position": 32,
+      "column_position": 11,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-012",
+      "row_position": 32,
+      "column_position": 12,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-013",
+      "row_position": 32,
+      "column_position": 13,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-014",
+      "row_position": 32,
+      "column_position": 14,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-015",
+      "row_position": 32,
+      "column_position": 15,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-016",
+      "row_position": 32,
+      "column_position": 16,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
+    },
+    {
+      "activity_id": "act-030",
+      "column_id": "col-017",
+      "row_position": 32,
+      "column_position": 17,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "X",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     }
   ],
   "annotations": [
@@ -1543,12 +2759,533 @@
       "annotation_marker": "X",
       "annotation_type": "legend",
       "annotation_text": "X = Performed at this visit.",
-      "annotation_scope": "table",
+      "annotation_scope": "cell",
       "referenced_elements": {
         "property_ids": [],
         "column_ids": [],
         "activity_ids": [],
-        "cell_references": []
+        "cell_references": [
+          {
+            "activity_id": "act-001",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-002",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-003",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-004",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-005",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-005",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-005",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-006",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-007",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-008",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-009",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-010",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-004"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-011",
+            "column_id": "col-017"
+          },
+          {
+            "activity_id": "act-012",
+            "column_id": "col-004"
+          },
+          {
+            "activity_id": "act-013",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-014",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-015",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-016",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-017",
+            "column_id": "col-017"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-018",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-019",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-019",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-019",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-019",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-019",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-020",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-022",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-025",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-025",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-026",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-026",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-026",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-026",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-026",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-026",
+            "column_id": "col-017"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-017"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-017"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-017"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-004"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-005"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-006"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-007"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-009"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-013"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-014"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-015"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-016"
+          },
+          {
+            "activity_id": "act-030",
+            "column_id": "col-017"
+          }
+        ]
       },
       "marker_locations": [
         {
@@ -1580,6 +3317,18 @@
           "location_type": "schedule_cell",
           "row_position": 7,
           "column_position": 3
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 7,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 7,
+          "column_position": 16
         },
         {
           "table_number": 1,
@@ -1656,6 +3405,48 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 13,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
           "row_position": 14,
           "column_position": 4
         },
@@ -1694,6 +3485,42 @@
           "location_type": "schedule_cell",
           "row_position": 16,
           "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 16
         },
         {
           "table_number": 1,
@@ -1746,6 +3573,48 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 19,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
           "row_position": 20,
           "column_position": 3
         },
@@ -1772,6 +3641,42 @@
           "location_type": "schedule_cell",
           "row_position": 20,
           "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 20,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 20,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 20,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 20,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 20,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 20,
+          "column_position": 16
         },
         {
           "table_number": 1,
@@ -1788,6 +3693,24 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
+          "row_position": 21,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 21,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 21,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
           "row_position": 22,
           "column_position": 5
         },
@@ -1812,8 +3735,20 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 23,
-          "column_position": 3
+          "row_position": 22,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 16
         },
         {
           "table_number": 1,
@@ -1848,26 +3783,50 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 26,
-          "column_position": 5
+          "row_position": 24,
+          "column_position": 11
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 26,
-          "column_position": 10
+          "row_position": 24,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 24,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 24,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 24,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 24,
+          "column_position": 16
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
           "row_position": 27,
-          "column_position": 5
+          "column_position": 15
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
           "row_position": 27,
-          "column_position": 10
+          "column_position": 16
         },
         {
           "table_number": 1,
@@ -1884,26 +3843,32 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
+          "row_position": 28,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 28,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 28,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 28,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
           "row_position": 29,
           "column_position": 5
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 29,
-          "column_position": 6
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 29,
-          "column_position": 7
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 29,
-          "column_position": 9
         },
         {
           "table_number": 1,
@@ -1914,44 +3879,194 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 30,
-          "column_position": 3
+          "row_position": 29,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 29,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 29,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 29,
+          "column_position": 17
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
           "row_position": 30,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 30,
+          "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 30,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 30,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 30,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 30,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 7
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 9
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 3
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
           "column_position": 4
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 30,
+          "row_position": 32,
           "column_position": 5
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 30,
+          "row_position": 32,
           "column_position": 6
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 30,
+          "row_position": 32,
           "column_position": 7
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 30,
+          "row_position": 32,
           "column_position": 9
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 30,
+          "row_position": 32,
           "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 15
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 32,
+          "column_position": 17
         }
       ]
     },
@@ -1995,8 +4110,20 @@
         "activity_ids": [],
         "cell_references": [
           {
-            "activity_id": "act-027",
+            "activity_id": "act-029",
             "column_id": "col-010"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-011"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-012"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-013"
           }
         ]
       },
@@ -2004,8 +4131,26 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 29,
+          "row_position": 31,
           "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 13
         }
       ]
     },
@@ -2015,26 +4160,31 @@
       "annotation_marker": "P",
       "annotation_type": "legend",
       "annotation_text": "P = Practice only - It is recommended that a sampling of the CIBIC+, ADAS-Cog, DAD, and NPI-X be administered at Visit 1. Data from this sampling would not be considered as study data and would not be collected.",
-      "annotation_scope": "table",
+      "annotation_scope": "cell",
       "referenced_elements": {
         "property_ids": [],
         "column_ids": [],
         "activity_ids": [],
-        "cell_references": []
+        "cell_references": [
+          {
+            "activity_id": "act-026",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-027",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-028",
+            "column_id": "col-003"
+          },
+          {
+            "activity_id": "act-029",
+            "column_id": "col-003"
+          }
+        ]
       },
       "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 26,
-          "column_position": 3
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 27,
-          "column_position": 3
-        },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
@@ -2046,6 +4196,18 @@
           "location_type": "schedule_cell",
           "row_position": 29,
           "column_position": 3
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 30,
+          "column_position": 3
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 31,
+          "column_position": 3
         }
       ]
     },
@@ -2055,11 +4217,13 @@
       "annotation_marker": "CT",
       "annotation_type": "abbreviation",
       "annotation_text": "CT = computed tomography",
-      "annotation_scope": "table",
+      "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
         "column_ids": [],
-        "activity_ids": [],
+        "activity_ids": [
+          "act-016"
+        ],
         "cell_references": []
       },
       "marker_locations": [
@@ -2076,11 +4240,15 @@
       "annotation_marker": "ECG",
       "annotation_type": "abbreviation",
       "annotation_text": "ECG = electrocardiogram",
-      "annotation_scope": "table",
+      "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
         "column_ids": [],
-        "activity_ids": [],
+        "activity_ids": [
+          "act-012",
+          "act-013",
+          "act-014"
+        ],
         "cell_references": []
       },
       "marker_locations": [
@@ -2098,6 +4266,54 @@
           "table_number": 1,
           "location_type": "activity_name",
           "row_position": 16
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-007",
+      "table_id": "table-001",
+      "annotation_marker": "ET",
+      "annotation_type": "abbreviation",
+      "annotation_text": "ET = Early Termination",
+      "annotation_scope": "column",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [
+          "col-016"
+        ],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "column_position": 16
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-008",
+      "table_id": "table-001",
+      "annotation_marker": "RT",
+      "annotation_type": "abbreviation",
+      "annotation_text": "RT = Retrieval",
+      "annotation_scope": "column",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [
+          "col-017"
+        ],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "column_position": 17
         }
       ]
     }

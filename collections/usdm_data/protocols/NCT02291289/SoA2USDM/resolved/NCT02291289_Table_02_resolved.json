@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:14.672384+00:00",
+    "resolved_at": "2026-08-17T19:13:16.272717+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -15,44 +15,53 @@
       "hierarchy_valid": true,
       "annotations_valid": true,
       "validation_warnings": [],
-      "validation_errors": []
+      "validation_errors": [],
+      "method_provenance": [
+        "activity_name:visual_transcription: 25",
+        "annotation_text:visual_transcription: 10",
+        "grid_cell:visual_read: 8",
+        "indentation_level:assumed_flat: 25",
+        "property_structure:inferred_from_layout: 2",
+        "schedule_cell:raster_pixel_detection: 21",
+        "schedule_cell:visual_read: 26"
+      ]
     },
     "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-13T00:00:00+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.3 single-pass, image-based)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude-Opus-5 (SoA PDF->JSON prompt v3.7.2)",
     "source_document": {
       "filename": "NCT02291289_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Bevacizumab MO29112 (mCRC), Version 9"
+      "document_version": "Version 9"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Appendix 2 (Maintenance, Cohort 1). track (track_label 'Cohort 1'); IMAGE-BASED scanned table, marks read visually, lowercase 'x'. Text cells (Prior to Cycles.../Every cycle/At 6 months/Experimental arm only/No sample collection.../etc.) verbatim. 'Experimental Arm only' qualifier kept in activity_name where the row applies to the experimental arm. Footnote c linked to Follow-Up header + Subsequent anti-cancer therapies + Patient survival."
+    "extraction_notes": "Rule lines recovered from the 200 dpi raster; marks detected by near-black pixel count inside rule-bounded cells and validated against direct visual reads. Footnotes a-j transcribed visually from the scanned page 176; footnotes k-x read from the text layer of pages 177-178."
   },
   "table_metadata": {
     "table_id": "table-002",
     "table_number": 2,
     "table_type": "track",
-    "table_title": "Appendix 2 Schedule of Assessments During Maintenance Phase (Cohort 1)",
-    "table_purpose": "Maintenance Phase schedule for Cohort 1 (experimental + control arms).",
+    "table_title": "APPENDIX 2  SCHEDULE OF ASSESSMENTS DURING MAINTENANCE PHASE (COHORT 1)",
+    "table_purpose": "Maintenance Treatment Phase schedule for patients assigned to maintenance Cohort 1, plus Study Treatment Discontinuation Visit and Post-Treatment Follow-Up columns.",
     "page_start": 174,
-    "page_end": 176,
+    "page_end": 178,
     "track_label": "Cohort 1",
     "column_count": 4,
-    "row_count": 25,
+    "row_count": 27,
     "header_row_count": 2,
     "activity_row_count": 25,
-    "notes": "Appendix 11.2. Scanned image table, header (Study Phase / Timing) repeated across doc pp174-176 (encoded once). 4 data columns (2-5). Footnotes a-j on the grid (doc p176), k-x on text pages (doc pp177-178). table_type=track (Cohort 1 maintenance timeline)."
+    "notes": "Classified track, not domain or continuation: its columns differ from the main SoA (Table 1) - a 'Prior to randomization' column and a Maintenance Treatment Phase column replace the Screening/Baseline and Induction columns - and it schedules a mutually exclusive subset of patients (only those assigned to maintenance Cohort 1 at the cohort-assignment decision). Tables 2-5 carry near-identical column labels for Cohorts 1-4 but each applies to a different, mutually exclusive cohort, so each is its own track rather than a domain of the others. One label column (L=1); first data column position is 2; 4 data columns (2-5). Grid pages 174-176 are scanned images with no text layer; footnote pages 177-178 carry a text layer and contribute no activity rows (they hold footnotes k-x only)."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-002",
       "row_position": 1,
-      "property_name": "Study Phase",
+      "property_name": "Study phase",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -60,7 +69,7 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Study phases for Cohort 1 Maintenance: Prior to randomization (col 2), Maintenance Treatment Phase [a] (col 3), Study Treatment Discontinuation Visit [b] (col 4), Post-Treatment Follow-Up Phase [c] (col 5). Label cell empty (synthesised).",
+      "property_comment": "Top header row naming the study phase of each column: Prior to randomization, Maintenance Treatment Phase, Study Treatment Discontinuation Visit, Post-Treatment Follow-Up Phase. These are the protocol's own phase names, hence epoch; topmost row that distinguishes columns, hence level 1. Name synthesized - the label cell is empty.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -73,15 +82,15 @@
       "property_id": "prop-002",
       "table_id": "table-002",
       "row_position": 2,
-      "property_name": "Timing",
+      "property_name": "Visit timing",
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
         "cell_value": "",
         "synthesized": true
       },
-      "property_type": "timepoint",
-      "property_comment": "Timing per column: Within 3 weeks of completing Induction Treatment Phase; Every 2 cycles (approximately every 4 weeks); ≤ 30 days after last dose; Every 3 months. Label cell empty.",
+      "property_type": "other",
+      "property_comment": "Second header row giving the timing/frequency under each phase. The values mix a pre-randomization window, cycle-based frequencies and a post-dose window, so no single printed concept applies - property_type=other. It is the row that carries the actual timing for each column, hence level 2. Name synthesized - the label cell is empty.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [],
@@ -150,12 +159,12 @@
         },
         {
           "property_id": "prop-002",
-          "value": "≤ 30 days after last dose of study treatment",
+          "value": "(≤ 30 days after last dose of study treatment)",
           "is_merged": false,
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Study Treatment Discontinuation Visit / ≤ 30 days after last dose of study treatment",
+      "composite_label": "Study Treatment Discontinuation Visit / (≤ 30 days after last dose of study treatment)",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -189,11 +198,13 @@
     {
       "activity_id": "act-001",
       "table_id": "table-002",
-      "row_position": 1,
+      "row_position": 3,
       "activity_name": "Assignment of cohort",
       "activity_name_source": {
         "cell_text": "Assignment of cohort [d]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -208,11 +219,13 @@
     {
       "activity_id": "act-002",
       "table_id": "table-002",
-      "row_position": 2,
-      "activity_name": "Cohort-specific informed consent",
+      "row_position": 4,
+      "activity_name": "Cohort- specific informed consent",
       "activity_name_source": {
         "cell_text": "Cohort- specific informed consent",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -225,11 +238,13 @@
     {
       "activity_id": "act-003",
       "table_id": "table-002",
-      "row_position": 3,
+      "row_position": 5,
       "activity_name": "Confirmation of cohort-specific eligibility",
       "activity_name_source": {
         "cell_text": "Confirmation of cohort-specific eligibility [e]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -244,11 +259,13 @@
     {
       "activity_id": "act-004",
       "table_id": "table-002",
-      "row_position": 4,
+      "row_position": 6,
       "activity_name": "Randomisation",
       "activity_name_source": {
         "cell_text": "Randomisation [f]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -263,11 +280,13 @@
     {
       "activity_id": "act-005",
       "table_id": "table-002",
-      "row_position": 5,
+      "row_position": 7,
       "activity_name": "Vital signs and weight",
       "activity_name_source": {
         "cell_text": "Vital signs and weight [g]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -282,11 +301,13 @@
     {
       "activity_id": "act-006",
       "table_id": "table-002",
-      "row_position": 6,
+      "row_position": 8,
       "activity_name": "Physical examination",
       "activity_name_source": {
         "cell_text": "Physical examination [h]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -301,11 +322,13 @@
     {
       "activity_id": "act-007",
       "table_id": "table-002",
-      "row_position": 7,
+      "row_position": 9,
       "activity_name": "Head and neck assessment for SCC (Experimental Arm only)",
       "activity_name_source": {
-        "cell_text": "Head and neck assessment for SCC [i] (Experimental Arm only)",
-        "indentation_level": 0
+        "cell_text": "Head and neck assessment for SCC [i]\n(Experimental Arm only)",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -320,11 +343,13 @@
     {
       "activity_id": "act-008",
       "table_id": "table-002",
-      "row_position": 8,
+      "row_position": 10,
       "activity_name": "Chest CT assessment for SCC (Experimental Arm only)",
       "activity_name_source": {
-        "cell_text": "Chest CT assessment for SCC [j] (Experimental Arm only)",
-        "indentation_level": 0
+        "cell_text": "Chest CT assessment for SCC [j]\n(Experimental Arm only)",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -339,11 +364,13 @@
     {
       "activity_id": "act-009",
       "table_id": "table-002",
-      "row_position": 9,
+      "row_position": 11,
       "activity_name": "Dermatology evaluation (Experimental Arm only)",
       "activity_name_source": {
-        "cell_text": "Dermatology evaluation [k] (Experimental Arm only)",
-        "indentation_level": 0
+        "cell_text": "Dermatology evaluation [k]\n(Experimental Arm only)",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -358,11 +385,13 @@
     {
       "activity_id": "act-010",
       "table_id": "table-002",
-      "row_position": 10,
+      "row_position": 12,
       "activity_name": "Anal and pelvic exam (Experimental Arm only)",
       "activity_name_source": {
-        "cell_text": "Anal and pelvic exam [l] (Experimental Arm only)",
-        "indentation_level": 0
+        "cell_text": "Anal and pelvic exam [l]\n(Experimental Arm only)",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -377,11 +406,13 @@
     {
       "activity_id": "act-011",
       "table_id": "table-002",
-      "row_position": 11,
+      "row_position": 13,
       "activity_name": "ECOG performance status",
       "activity_name_source": {
         "cell_text": "ECOG performance status [m]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -396,11 +427,13 @@
     {
       "activity_id": "act-012",
       "table_id": "table-002",
-      "row_position": 12,
+      "row_position": 14,
       "activity_name": "12-lead ECG",
       "activity_name_source": {
         "cell_text": "12-lead ECG [n]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -415,11 +448,13 @@
     {
       "activity_id": "act-013",
       "table_id": "table-002",
-      "row_position": 13,
+      "row_position": 15,
       "activity_name": "Concomitant medications",
       "activity_name_source": {
         "cell_text": "Concomitant medications [o]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -434,11 +469,13 @@
     {
       "activity_id": "act-014",
       "table_id": "table-002",
-      "row_position": 14,
+      "row_position": 16,
       "activity_name": "Haematology and blood chemistry",
       "activity_name_source": {
         "cell_text": "Haematology and blood chemistry [p]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -453,11 +490,13 @@
     {
       "activity_id": "act-015",
       "table_id": "table-002",
-      "row_position": 15,
+      "row_position": 17,
       "activity_name": "INR, aPTT (select patients)",
       "activity_name_source": {
         "cell_text": "INR, aPTT (select patients) [q]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -472,11 +511,13 @@
     {
       "activity_id": "act-016",
       "table_id": "table-002",
-      "row_position": 16,
+      "row_position": 18,
       "activity_name": "Urinalysis (dipstick)",
       "activity_name_source": {
         "cell_text": "Urinalysis (dipstick) [r]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -491,11 +532,13 @@
     {
       "activity_id": "act-017",
       "table_id": "table-002",
-      "row_position": 17,
+      "row_position": 19,
       "activity_name": "Pregnancy test",
       "activity_name_source": {
         "cell_text": "Pregnancy test [s]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -510,11 +553,13 @@
     {
       "activity_id": "act-018",
       "table_id": "table-002",
-      "row_position": 18,
+      "row_position": 20,
       "activity_name": "Tumour assessments",
       "activity_name_source": {
         "cell_text": "Tumour assessments [t]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -529,11 +574,13 @@
     {
       "activity_id": "act-019",
       "table_id": "table-002",
-      "row_position": 19,
+      "row_position": 21,
       "activity_name": "Metastatic tumour tissue for exploratory biomarker assessment",
       "activity_name_source": {
-        "cell_text": "Metastatic tumour tissue for exploratory biomarker assessment [u] Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.",
-        "indentation_level": 0
+        "cell_text": "Metastatic tumour tissue for exploratory biomarker assessment [u]\nSupplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -548,11 +595,13 @@
     {
       "activity_id": "act-020",
       "table_id": "table-002",
-      "row_position": 20,
+      "row_position": 22,
       "activity_name": "Plasma samples",
       "activity_name_source": {
         "cell_text": "Plasma samples [v]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -567,11 +616,13 @@
     {
       "activity_id": "act-021",
       "table_id": "table-002",
-      "row_position": 21,
+      "row_position": 23,
       "activity_name": "Stool sample",
       "activity_name_source": {
-        "cell_text": "Stool sample Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.",
-        "indentation_level": 0
+        "cell_text": "Stool sample\nSupplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.",
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -584,11 +635,13 @@
     {
       "activity_id": "act-022",
       "table_id": "table-002",
-      "row_position": 22,
+      "row_position": 24,
       "activity_name": "Adverse events (including SAEs)",
       "activity_name_source": {
         "cell_text": "Adverse events (including SAEs) [w]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -603,11 +656,13 @@
     {
       "activity_id": "act-023",
       "table_id": "table-002",
-      "row_position": 23,
+      "row_position": 25,
       "activity_name": "Study medication administration",
       "activity_name_source": {
         "cell_text": "Study medication administration [x]",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -622,11 +677,13 @@
     {
       "activity_id": "act-024",
       "table_id": "table-002",
-      "row_position": 24,
+      "row_position": 26,
       "activity_name": "Subsequent anti-cancer therapies",
       "activity_name_source": {
         "cell_text": "Subsequent anti-cancer therapies (see [c])",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -641,11 +698,13 @@
     {
       "activity_id": "act-025",
       "table_id": "table-002",
-      "row_position": 25,
+      "row_position": 27,
       "activity_name": "Patient survival",
       "activity_name_source": {
         "cell_text": "Patient survival (see [c])",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "method": "visual_transcription",
+        "indentation_method": "assumed_flat"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -662,7 +721,7 @@
     {
       "activity_id": "act-001",
       "column_id": "col-002",
-      "row_position": 1,
+      "row_position": 3,
       "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -673,7 +732,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-002",
-      "row_position": 2,
+      "row_position": 4,
       "column_position": 2,
       "cell_value": "x (sites using 2 consent forms only)",
       "cell_value_type": "other",
@@ -684,7 +743,7 @@
     {
       "activity_id": "act-003",
       "column_id": "col-002",
-      "row_position": 3,
+      "row_position": 5,
       "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -695,7 +754,7 @@
     {
       "activity_id": "act-004",
       "column_id": "col-002",
-      "row_position": 4,
+      "row_position": 6,
       "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -706,7 +765,7 @@
     {
       "activity_id": "act-005",
       "column_id": "col-003",
-      "row_position": 5,
+      "row_position": 7,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -717,7 +776,7 @@
     {
       "activity_id": "act-005",
       "column_id": "col-004",
-      "row_position": 5,
+      "row_position": 7,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -728,7 +787,7 @@
     {
       "activity_id": "act-006",
       "column_id": "col-003",
-      "row_position": 6,
+      "row_position": 8,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -739,7 +798,7 @@
     {
       "activity_id": "act-006",
       "column_id": "col-004",
-      "row_position": 6,
+      "row_position": 8,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -750,7 +809,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-003",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 3,
       "cell_value": "Prior to Cycles 1, 4, 7, 10, 13, 16, 19, 22 and every 3 cycles thereafter",
       "cell_value_type": "other",
@@ -761,7 +820,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-004",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -772,7 +831,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-005",
-      "row_position": 7,
+      "row_position": 9,
       "column_position": 5,
       "cell_value": "At 6 months",
       "cell_value_type": "other",
@@ -783,7 +842,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-003",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 3,
       "cell_value": "Prior to Cycles 1, 7, 13, 19, 25, 31 and every 6 cycles thereafter",
       "cell_value_type": "other",
@@ -794,7 +853,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-004",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -805,7 +864,7 @@
     {
       "activity_id": "act-008",
       "column_id": "col-005",
-      "row_position": 8,
+      "row_position": 10,
       "column_position": 5,
       "cell_value": "At 6 months",
       "cell_value_type": "other",
@@ -816,7 +875,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-003",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 3,
       "cell_value": "Prior to Cycles 1, 3, 5, 7, 9, 11, 13, 15 and every 2 cycles thereafter",
       "cell_value_type": "other",
@@ -827,7 +886,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-004",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -838,7 +897,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-005",
-      "row_position": 9,
+      "row_position": 11,
       "column_position": 5,
       "cell_value": "At 6 months",
       "cell_value_type": "other",
@@ -849,7 +908,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-003",
-      "row_position": 10,
+      "row_position": 12,
       "column_position": 3,
       "cell_value": "Prior to Cycle 1",
       "cell_value_type": "other",
@@ -860,7 +919,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-004",
-      "row_position": 10,
+      "row_position": 12,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -871,7 +930,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-003",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -882,7 +941,7 @@
     {
       "activity_id": "act-011",
       "column_id": "col-004",
-      "row_position": 11,
+      "row_position": 13,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -893,7 +952,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-002",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -904,7 +963,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-003",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 3,
       "cell_value": "Experimental arm only",
       "cell_value_type": "other",
@@ -915,7 +974,7 @@
     {
       "activity_id": "act-012",
       "column_id": "col-004",
-      "row_position": 12,
+      "row_position": 14,
       "column_position": 4,
       "cell_value": "Experimental arm only",
       "cell_value_type": "other",
@@ -926,7 +985,7 @@
     {
       "activity_id": "act-013",
       "column_id": "col-003",
-      "row_position": 13,
+      "row_position": 15,
       "column_position": 3,
       "cell_value": "Every cycle",
       "cell_value_type": "other",
@@ -937,7 +996,7 @@
     {
       "activity_id": "act-013",
       "column_id": "col-004",
-      "row_position": 13,
+      "row_position": 15,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -948,7 +1007,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-003",
-      "row_position": 14,
+      "row_position": 16,
       "column_position": 3,
       "cell_value": "Every cycle",
       "cell_value_type": "other",
@@ -959,7 +1018,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-004",
-      "row_position": 14,
+      "row_position": 16,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -970,7 +1029,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-003",
-      "row_position": 15,
+      "row_position": 17,
       "column_position": 3,
       "cell_value": "According to local standard of care",
       "cell_value_type": "other",
@@ -981,7 +1040,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-003",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 3,
       "cell_value": "Every cycle",
       "cell_value_type": "other",
@@ -992,7 +1051,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-004",
-      "row_position": 16,
+      "row_position": 18,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1003,7 +1062,7 @@
     {
       "activity_id": "act-017",
       "column_id": "col-003",
-      "row_position": 17,
+      "row_position": 19,
       "column_position": 3,
       "cell_value": "If clinically indicated",
       "cell_value_type": "conditional",
@@ -1014,7 +1073,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-003",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 3,
       "cell_value": "Up to and including May 31, 2019: Every 8 weeks regardless of treatment delays After May 31, 2019: per local practice",
       "cell_value_type": "timing_text",
@@ -1025,7 +1084,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-005",
-      "row_position": 18,
+      "row_position": 20,
       "column_position": 5,
       "cell_value": "Up to and including May 31, 2019: Every 8 weeks until disease progression After May 31, 2019: per local practice",
       "cell_value_type": "timing_text",
@@ -1036,7 +1095,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-002",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 2,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
       "cell_value_type": "other",
@@ -1047,7 +1106,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-003",
-      "row_position": 19,
+      "row_position": 21,
       "column_position": 3,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
       "cell_value_type": "other",
@@ -1058,7 +1117,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-003",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 3,
       "cell_value": "Cycles 1, 2, 4, 6, 8, 10, 12,14 and every 2 cycles thereafter And at time of PD",
       "cell_value_type": "other",
@@ -1069,7 +1128,7 @@
     {
       "activity_id": "act-020",
       "column_id": "col-005",
-      "row_position": 20,
+      "row_position": 22,
       "column_position": 5,
       "cell_value": "At time of progression (if patient has not yet progressed)",
       "cell_value_type": "conditional",
@@ -1080,7 +1139,7 @@
     {
       "activity_id": "act-021",
       "column_id": "col-002",
-      "row_position": 21,
+      "row_position": 23,
       "column_position": 2,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
       "cell_value_type": "other",
@@ -1091,7 +1150,7 @@
     {
       "activity_id": "act-021",
       "column_id": "col-004",
-      "row_position": 21,
+      "row_position": 23,
       "column_position": 4,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
       "cell_value_type": "other",
@@ -1102,7 +1161,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-003",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 3,
       "cell_value": "Every cycle",
       "cell_value_type": "other",
@@ -1113,7 +1172,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-004",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1124,7 +1183,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-005",
-      "row_position": 22,
+      "row_position": 24,
       "column_position": 5,
       "cell_value": "x (as applicable)",
       "cell_value_type": "other",
@@ -1135,7 +1194,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-003",
-      "row_position": 23,
+      "row_position": 25,
       "column_position": 3,
       "cell_value": "Every cycle",
       "cell_value_type": "other",
@@ -1146,7 +1205,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-005",
-      "row_position": 24,
+      "row_position": 26,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1157,7 +1216,7 @@
     {
       "activity_id": "act-025",
       "column_id": "col-004",
-      "row_position": 25,
+      "row_position": 27,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1168,7 +1227,7 @@
     {
       "activity_id": "act-025",
       "column_id": "col-005",
-      "row_position": 25,
+      "row_position": 27,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1196,7 +1255,7 @@
       "marker_locations": [
         {
           "table_number": 2,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 3
         }
@@ -1207,7 +1266,7 @@
       "table_id": "table-002",
       "annotation_marker": "b",
       "annotation_type": "footnote",
-      "annotation_text": "Patients who experience PD at any time during the Maintenance Treatment Phase, or who need to permanently discontinue study medication for any reason, will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study medication. These patients will then enter the Post-Treatment Follow-up.",
+      "annotation_text": "Patients who experience PD at any time during the Maintenance Treatment Phase, or who need to permanently discontinue study medication for any reason, will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study medication.  These patients will then enter the Post-Treatment Follow-up.",
       "annotation_scope": "column",
       "referenced_elements": {
         "property_ids": [],
@@ -1220,7 +1279,7 @@
       "marker_locations": [
         {
           "table_number": 2,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 4
         }
@@ -1231,7 +1290,7 @@
       "table_id": "table-002",
       "annotation_marker": "c",
       "annotation_type": "footnote",
-      "annotation_text": "After discontinuation of study treatment and the Study Discontinuation Visit, patients will enter the Post-Treatment Follow-up Phase. Beginning after the Study Treatment Discontinuation visit, patients will be followed up every 3 months. Up to and including May 31, 2019, follow-up will include disease status (patients discontinuing study treatment prior to disease progression only) in addition to safety evaluations and recording of subsequent anti-cancer therapies and survival. After May 31, 2019, disease status will not be documented for study purposes. Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion. Patients who discontinue study treatment prior to disease progression will be followed for PFS, with disease status followed every 8 weeks until progression or May 31, 2019, whichever comes first.",
+      "annotation_text": "After discontinuation of study treatment and the Study Discontinuation Visit, patients will enter the Post-Treatment Follow-up Phase. Beginning after the Study Treatment Discontinuation visit, patients will be followed up every 3 months. Up to and including May 31, 2019, follow-up will include disease status (patients discontinuing study treatment prior to disease progression only) in addition to safety evaluations and recording of subsequent anti-cancer therapies and survival. After May 31, 2019, disease status will not be documented for study purposes. Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion.  Patients who discontinue study treatment prior to disease progression will be followed for PFS, with disease status followed every 8 weeks until progression or May 31, 2019, whichever comes first.",
       "annotation_scope": "multiple",
       "referenced_elements": {
         "property_ids": [],
@@ -1247,19 +1306,19 @@
       "marker_locations": [
         {
           "table_number": 2,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 5
         },
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 24
+          "row_position": 26
         },
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 25
+          "row_position": 27
         }
       ]
     },
@@ -1282,7 +1341,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 1
+          "row_position": 3
         }
       ]
     },
@@ -1305,7 +1364,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 3
+          "row_position": 5
         }
       ]
     },
@@ -1314,7 +1373,7 @@
       "table_id": "table-002",
       "annotation_marker": "f",
       "annotation_type": "footnote",
-      "annotation_text": "Each cohort will consist of an experimental treatment arm and a control arm. Randomised on a 2:1 (experimental:control) basis to either the experimental treatment arm or the control arm of that cohort. See Section 4.2.",
+      "annotation_text": "Each cohort will consist of an experimental treatment arm and a control arm.  Randomised on a 2:1 (experimental:control) basis to either the experimental treatment arm or the control arm of that cohort.  See Section 4.2.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -1328,7 +1387,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 4
+          "row_position": 6
         }
       ]
     },
@@ -1351,7 +1410,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 5
+          "row_position": 7
         }
       ]
     },
@@ -1374,7 +1433,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 6
+          "row_position": 8
         }
       ]
     },
@@ -1397,7 +1456,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 7
+          "row_position": 9
         }
       ]
     },
@@ -1420,7 +1479,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 8
+          "row_position": 10
         }
       ]
     },
@@ -1443,7 +1502,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 9
+          "row_position": 11
         }
       ]
     },
@@ -1466,7 +1525,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 10
+          "row_position": 12
         }
       ]
     },
@@ -1474,7 +1533,7 @@
       "annotation_id": "annot-013",
       "table_id": "table-002",
       "annotation_marker": "m",
-      "annotation_type": "footnote",
+      "annotation_type": "source_note",
       "annotation_text": "See Appendix 8.",
       "annotation_scope": "activity",
       "referenced_elements": {
@@ -1489,7 +1548,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 11
+          "row_position": 13
         }
       ]
     },
@@ -1512,7 +1571,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 12
+          "row_position": 14
         }
       ]
     },
@@ -1535,7 +1594,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 13
+          "row_position": 15
         }
       ]
     },
@@ -1558,7 +1617,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 14
+          "row_position": 16
         }
       ]
     },
@@ -1581,7 +1640,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 15
+          "row_position": 17
         }
       ]
     },
@@ -1604,7 +1663,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 16
+          "row_position": 18
         }
       ]
     },
@@ -1627,7 +1686,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 17
+          "row_position": 19
         }
       ]
     },
@@ -1650,7 +1709,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 18
+          "row_position": 20
         }
       ]
     },
@@ -1673,7 +1732,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 19
+          "row_position": 21
         }
       ]
     },
@@ -1696,7 +1755,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 20
+          "row_position": 22
         }
       ]
     },
@@ -1719,7 +1778,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 22
+          "row_position": 24
         }
       ]
     },
@@ -1742,7 +1801,7 @@
         {
           "table_number": 2,
           "location_type": "activity_name",
-          "row_position": 23
+          "row_position": 25
         }
       ]
     }

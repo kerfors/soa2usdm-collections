@@ -65,7 +65,7 @@
   "schema_version": "1.1",
   "protocol_id": "NCT04557384",
   "consolidation_metadata": {
-    "consolidated_at": "2026-08-17T06:22:15.059411+00:00",
+    "consolidated_at": "2026-08-17T19:13:16.710238+00:00",
     "consolidator": "soa2usdm.steps.consolidate v1.1",
     "source_tables": [
       {
@@ -73,41 +73,41 @@
         "table_num": 1,
         "table_type": "main_soa",
         "table_title": "Screening, On-Study, and Post-Treatment Schedule of Activities",
-        "table_purpose": "Main oncology cycle-based schedule: Screening, On-Treatment (Cycles 1..3-n incl. DX), Post-Treatment short-term follow-up (V801).",
+        "table_purpose": "Primary schedule for screening, on-treatment cycles (Cycle 1 through Cycle 3-n plus the DX additional-ramucirumab-dose column) and short-term post-treatment follow-up.",
         "track_label": null,
         "activity_count": 25,
         "column_count": 15,
-        "annotation_count": 26,
+        "annotation_count": 23,
         "property_hierarchy": [
           {
             "hierarchical_level": 1,
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "property_type": "epoch",
-            "property_comment": "Study phase spanning columns: Screening, On-Treatment, Post-Treatment."
+            "property_comment": "Top header band naming the three study phases: 'Screening' over the two screening-day columns, 'On-Treatment' over the twelve cycle-day columns and 'Post-Treatment' over V801. Phase names -> epoch. The 'Screening' and 'Post-Treatment' cells are vertically merged with row 2, so their text is emitted on both rows (the schema has no vertical-merge field)."
           },
           {
             "hierarchical_level": 2,
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "property_type": "period",
-            "property_comment": "Cycle-length grouping under On-Treatment (21 days, or 28 days for Cohorts B & C)."
+            "property_comment": "Second header band. Over the on-treatment columns it states the cycle duration that defines each sub-phase ('Cycle = 21 days'; 'Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)'), i.e. sub-phases of the On-Treatment epoch -> period. The Screening and Post-Treatment cells here are the vertical-merge continuation of row 1."
           },
           {
             "hierarchical_level": 3,
             "property_name": "Cycle",
             "property_type": "cycle",
-            "property_comment": "Cycle grouping incl. screening day window, Cycle 1, Cycle 2, Cycle 2-n (combo held/ramucirumab given), Cycle 3-n, Short-term follow-up."
+            "property_comment": "Third header band carrying the repeating treatment-cycle identifiers (Cycle 1, Cycle 2, Cycle 2-n, Cycle 3-n) -> cycle. The screening cell of this band reads '(Day Relative to C1D1)' and the post-treatment cell reads 'Short-term follow-up', which are not cycles; the row is classified by its dominant content."
           },
           {
             "hierarchical_level": 4,
-            "property_name": "Visit window",
-            "property_type": "window",
-            "property_comment": "Allowable visit window (+/-3 days)."
+            "property_name": "Study Day",
+            "property_type": "study_day",
+            "property_comment": "Bottom header band giving the per-column timing label: screening days relative to C1D1 (<=28, <=7), day within cycle (D1, D8, D15, D22), the DX additional-dose column, and the post-treatment visit number V801. Predominantly protocol day labels -> study_day."
           },
           {
-            "hierarchical_level": 5,
-            "property_name": "Day",
-            "property_type": "study_day",
-            "property_comment": "Day relative to cycle/C1D1; DX = additional ramucirumab dose day; V801 = follow-up visit."
+            "hierarchical_level": null,
+            "property_name": "Visit Window",
+            "property_type": "window",
+            "property_comment": "Band printing '(+/-3 days)' over every treatment and follow-up column group. All values are identical, so removing the row would not make any two columns indistinguishable -> hierarchical_level null (purely qualifying). Visit windows -> window."
           }
         ]
       },
@@ -116,7 +116,7 @@
         "table_num": 2,
         "table_type": "track",
         "table_title": "Continued Access Schedule of Activities",
-        "table_purpose": "Continued-access period schedule (Study Treatment visits 501-5XX and Follow-Up visit 901).",
+        "table_purpose": "Schedule for participants who continue ramucirumab treatment in the continued-access period, plus its own follow-up visit.",
         "track_label": "Continued Access",
         "activity_count": 3,
         "column_count": 2,
@@ -124,34 +124,34 @@
         "property_hierarchy": [
           {
             "hierarchical_level": 1,
-            "property_name": "Period",
+            "property_name": "Study Period",
             "property_type": "epoch",
-            "property_comment": "Continued-access period columns: Study Treatment and Follow-Up."
+            "property_comment": "Top header row naming the two phases of the continued-access period: 'Study Treatment' and 'Follow-Up'. Phase names -> epoch. The label cell of column 1 is vertically merged across header rows 1-2 and its text ('Visit') sits on the row-2 line, so this row's name is synthesized."
           },
           {
             "hierarchical_level": 2,
             "property_name": "Visit",
             "property_type": "visit",
-            "property_comment": "Visit identifiers for the continued-access period."
+            "property_comment": "Visit-number row: '501-5XX' for the continued-access treatment visits and '901' for the follow-up visit. Visit identifiers -> visit."
           }
         ]
       },
       {
         "table_id": "table-003",
         "table_num": 3,
-        "table_type": "reference",
+        "table_type": "subsidiary",
         "table_title": "Pharmacokinetic Sampling Schedule",
-        "table_purpose": "PK/immunogenicity sample collection timepoints (Samples 1-14 + End of treatment); referenced by the main-SoA PK and IG rows via \"See Section 1.3.1\".",
+        "table_purpose": "Per-sample timing for the PK and immunogenicity blood collections that appear in Table 1 as the single activities 'PK' and 'IG' (both pointing to Section 1.3.1).",
         "track_label": null,
         "activity_count": 15,
-        "column_count": 2,
-        "annotation_count": 0,
+        "column_count": 5,
+        "annotation_count": 1,
         "property_hierarchy": [
           {
             "hierarchical_level": 1,
-            "property_name": "Collection type",
+            "property_name": "Sample #",
             "property_type": "other",
-            "property_comment": "Two collection-type columns marked per sample: Ramucirumab PK Collection and Immunogenicity Collection."
+            "property_comment": "The table's single header row. Its data-column cells are not a single timing concept: 'Study Cycle', 'Day within Cycle' and 'Collection Time Point Relative to Ramucirumab Weekly Dose' give the per-row timing, while 'Ramucirumab PK Collection' and 'Immunogenicity Collection' name the two sample types that carry the X marks. Mixed timing-plus-sample-type header -> other."
           }
         ]
       }
@@ -160,20 +160,20 @@
       "exact": 1,
       "fuzzy_auto": 1,
       "fuzzy_cross_parent": 0,
-      "fuzzy_review": 0,
-      "new": 26
+      "fuzzy_review": 1,
+      "new": 40
     },
-    "source_activity_count": 28,
-    "unified_activity_count": 26,
+    "source_activity_count": 43,
+    "unified_activity_count": 40,
     "compression_percent": 7,
     "annotation_stats": {
-      "source_annotation_count": 30,
-      "unified_annotation_count": 29,
-      "deduplicated_count": 1,
-      "deduplication_percent": 3,
+      "source_annotation_count": 28,
+      "unified_annotation_count": 28,
+      "deduplicated_count": 0,
+      "deduplication_percent": 0,
       "by_type": {
-        "footnote": 2,
-        "source_note": 27
+        "footnote": 26,
+        "source_note": 2
       }
     }
   },
@@ -181,40 +181,47 @@
     {
       "property_id": "prop-001",
       "property_type": "epoch",
-      "property_name": "Phase",
+      "property_name": "Study Epoch",
       "hierarchical_level": 1,
-      "property_comment": "Study phase spanning columns: Screening, On-Treatment, Post-Treatment."
+      "property_comment": "Top header band naming the three study phases: 'Screening' over the two screening-day columns, 'On-Treatment' over the twelve cycle-day columns and 'Post-Treatment' over V801. Phase names -> epoch. The 'Screening' and 'Post-Treatment' cells are vertically merged with row 2, so their text is emitted on both rows (the schema has no vertical-merge field)."
     },
     {
       "property_id": "prop-002",
       "property_type": "period",
-      "property_name": "Cycle length",
+      "property_name": "Cycle Length",
       "hierarchical_level": 2,
-      "property_comment": "Cycle-length grouping under On-Treatment (21 days, or 28 days for Cohorts B & C)."
+      "property_comment": "Second header band. Over the on-treatment columns it states the cycle duration that defines each sub-phase ('Cycle = 21 days'; 'Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)'), i.e. sub-phases of the On-Treatment epoch -> period. The Screening and Post-Treatment cells here are the vertical-merge continuation of row 1."
     },
     {
       "property_id": "prop-003",
       "property_type": "cycle",
       "property_name": "Cycle",
       "hierarchical_level": 3,
-      "property_comment": "Cycle grouping incl. screening day window, Cycle 1, Cycle 2, Cycle 2-n (combo held/ramucirumab given), Cycle 3-n, Short-term follow-up."
-    },
-    {
-      "property_id": "prop-004",
-      "property_type": "window",
-      "property_name": "Visit window",
-      "hierarchical_level": 4,
-      "property_comment": "Allowable visit window (+/-3 days)."
+      "property_comment": "Third header band carrying the repeating treatment-cycle identifiers (Cycle 1, Cycle 2, Cycle 2-n, Cycle 3-n) -> cycle. The screening cell of this band reads '(Day Relative to C1D1)' and the post-treatment cell reads 'Short-term follow-up', which are not cycles; the row is classified by its dominant content."
     },
     {
       "property_id": "prop-005",
       "property_type": "study_day",
-      "property_name": "Day",
-      "hierarchical_level": 5,
-      "property_comment": "Day relative to cycle/C1D1; DX = additional ramucirumab dose day; V801 = follow-up visit."
+      "property_name": "Study Day",
+      "hierarchical_level": 4,
+      "property_comment": "Bottom header band giving the per-column timing label: screening days relative to C1D1 (<=28, <=7), day within cycle (D1, D8, D15, D22), the DX additional-dose column, and the post-treatment visit number V801. Predominantly protocol day labels -> study_day."
+    },
+    {
+      "property_id": "prop-004",
+      "property_type": "window",
+      "property_name": "Visit Window",
+      "hierarchical_level": null,
+      "property_comment": "Band printing '(+/-3 days)' over every treatment and follow-up column group. All values are identical, so removing the row would not make any two columns indistinguishable -> hierarchical_level null (purely qualifying). Visit windows -> window."
     }
   ],
-  "review_queue": [],
+  "review_queue": [
+    {
+      "xact_id": "xact-021",
+      "confidence": 0.8,
+      "existing_name": "Sample collection",
+      "new_name": "Sample 1"
+    }
+  ],
   "unified_activities": [
     {
       "xact_id": "xact-001",
@@ -718,14 +725,21 @@
           "table_num": 1,
           "activity_id": "act-021",
           "row_position": 26
+        },
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-001",
+          "row_position": 2
         }
       ],
       "name_variations": [
-        "Sample collection"
+        "Sample collection",
+        "Sample 1"
       ],
-      "match_status": "new",
-      "match_confidence": 1.0,
-      "table_count": 1
+      "match_status": "fuzzy_review",
+      "match_confidence": 0.8,
+      "table_count": 2
     },
     {
       "xact_id": "xact-022",
@@ -852,20 +866,362 @@
       "match_status": "new",
       "match_confidence": 1.0,
       "table_count": 1
+    },
+    {
+      "xact_id": "xact-027",
+      "activity_name": "Sample 2",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 27,
+      "qualified_key": "::Sample 2",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-002",
+          "row_position": 3
+        }
+      ],
+      "name_variations": [
+        "Sample 2"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-028",
+      "activity_name": "Sample 3",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 28,
+      "qualified_key": "::Sample 3",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-003",
+          "row_position": 4
+        }
+      ],
+      "name_variations": [
+        "Sample 3"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-029",
+      "activity_name": "Sample 4",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 29,
+      "qualified_key": "::Sample 4",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-004",
+          "row_position": 5
+        }
+      ],
+      "name_variations": [
+        "Sample 4"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-030",
+      "activity_name": "Sample 5",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 30,
+      "qualified_key": "::Sample 5",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-005",
+          "row_position": 6
+        }
+      ],
+      "name_variations": [
+        "Sample 5"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-031",
+      "activity_name": "Sample 6",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 31,
+      "qualified_key": "::Sample 6",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-006",
+          "row_position": 7
+        }
+      ],
+      "name_variations": [
+        "Sample 6"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-032",
+      "activity_name": "Sample 7",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 32,
+      "qualified_key": "::Sample 7",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-007",
+          "row_position": 8
+        }
+      ],
+      "name_variations": [
+        "Sample 7"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-033",
+      "activity_name": "Sample 8",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 33,
+      "qualified_key": "::Sample 8",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-008",
+          "row_position": 9
+        }
+      ],
+      "name_variations": [
+        "Sample 8"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-034",
+      "activity_name": "Sample 9",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 34,
+      "qualified_key": "::Sample 9",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-009",
+          "row_position": 10
+        }
+      ],
+      "name_variations": [
+        "Sample 9"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-035",
+      "activity_name": "Sample 10",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 35,
+      "qualified_key": "::Sample 10",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-010",
+          "row_position": 11
+        }
+      ],
+      "name_variations": [
+        "Sample 10"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-036",
+      "activity_name": "Sample 11",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 36,
+      "qualified_key": "::Sample 11",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-011",
+          "row_position": 12
+        }
+      ],
+      "name_variations": [
+        "Sample 11"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-037",
+      "activity_name": "Sample 12",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 37,
+      "qualified_key": "::Sample 12",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-012",
+          "row_position": 13
+        }
+      ],
+      "name_variations": [
+        "Sample 12"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-038",
+      "activity_name": "Sample 13",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 38,
+      "qualified_key": "::Sample 13",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-013",
+          "row_position": 14
+        }
+      ],
+      "name_variations": [
+        "Sample 13"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-039",
+      "activity_name": "Sample 14",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 39,
+      "qualified_key": "::Sample 14",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-014",
+          "row_position": 15
+        }
+      ],
+      "name_variations": [
+        "Sample 14"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
+    },
+    {
+      "xact_id": "xact-040",
+      "activity_name": "End of treatment",
+      "parent_name": "",
+      "parent_xact_id": null,
+      "hierarchy_level": 0,
+      "display_order": 40,
+      "qualified_key": "::End of treatment",
+      "is_section_header": false,
+      "source_refs": [
+        {
+          "table_id": "table-003",
+          "table_num": 3,
+          "activity_id": "act-015",
+          "row_position": 16
+        }
+      ],
+      "name_variations": [
+        "End of treatment"
+      ],
+      "match_status": "new",
+      "match_confidence": 1.0,
+      "table_count": 1
     }
   ],
   "timeline_segments": {
     "main": [
       {
         "xcol_id": "xcol-001",
-        "composite_label": "Screening / (Day Relative to C1D1) / ≤28",
+        "composite_label": "Screening / Screening / (Day Relative to C1D1) / (Day Relative to C1D1) / ≤28",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
+            "value": "Screening"
+          },
+          {
+            "level": 2,
+            "property_type": "period",
+            "property_name": "Cycle Length",
             "value": "Screening"
           },
           {
@@ -875,10 +1231,16 @@
             "value": "(Day Relative to C1D1)"
           },
           {
-            "level": 5,
+            "level": 4,
             "property_type": "study_day",
-            "property_name": "Day",
+            "property_name": "Study Day",
             "value": "≤28"
+          },
+          {
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(Day Relative to C1D1)"
           }
         ],
         "source_columns": [
@@ -892,14 +1254,20 @@
       },
       {
         "xcol_id": "xcol-002",
-        "composite_label": "Screening / (Day Relative to C1D1) / ≤7",
+        "composite_label": "Screening / Screening / (Day Relative to C1D1) / (Day Relative to C1D1) / ≤7",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
+            "value": "Screening"
+          },
+          {
+            "level": 2,
+            "property_type": "period",
+            "property_name": "Cycle Length",
             "value": "Screening"
           },
           {
@@ -909,10 +1277,16 @@
             "value": "(Day Relative to C1D1)"
           },
           {
-            "level": 5,
+            "level": 4,
             "property_type": "study_day",
-            "property_name": "Day",
+            "property_name": "Study Day",
             "value": "≤7"
+          },
+          {
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(Day Relative to C1D1)"
           }
         ],
         "source_columns": [
@@ -926,20 +1300,20 @@
       },
       {
         "xcol_id": "xcol-003",
-        "composite_label": "On-Treatment / Cycle = 21 days / Cycle 1 / ±3 days / D1",
+        "composite_label": "On-Treatment / Cycle = 21 days / Cycle 1 / (±3 days) / D1",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days"
           },
           {
@@ -950,15 +1324,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D1"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D1"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -972,20 +1346,20 @@
       },
       {
         "xcol_id": "xcol-004",
-        "composite_label": "On-Treatment / Cycle = 21 days / Cycle 1 / ±3 days / D8",
+        "composite_label": "On-Treatment / Cycle = 21 days / Cycle 1 / (±3 days) / D8",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days"
           },
           {
@@ -996,15 +1370,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D8"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D8"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1018,20 +1392,20 @@
       },
       {
         "xcol_id": "xcol-005",
-        "composite_label": "On-Treatment / Cycle = 21 days / Cycle 1 / ±3 days / D15",
+        "composite_label": "On-Treatment / Cycle = 21 days / Cycle 1 / (±3 days) / D15",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days"
           },
           {
@@ -1042,15 +1416,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D15"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D15"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1064,20 +1438,20 @@
       },
       {
         "xcol_id": "xcol-006",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / ±3 days / D1",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / (±3 days) / D1",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1088,15 +1462,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D1"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D1"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1110,20 +1484,20 @@
       },
       {
         "xcol_id": "xcol-007",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / ±3 days / D8",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / (±3 days) / D8",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1134,15 +1508,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D8"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D8"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1156,20 +1530,20 @@
       },
       {
         "xcol_id": "xcol-008",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / ±3 days / D15",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / (±3 days) / D15",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1180,15 +1554,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D15"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D15"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1202,20 +1576,20 @@
       },
       {
         "xcol_id": "xcol-009",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / ±3 days / D22",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2 / (±3 days) / D22",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1226,15 +1600,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D22"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D22"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1248,20 +1622,20 @@
       },
       {
         "xcol_id": "xcol-010",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2-n (If combo therapy is held and ramucirumab is given) / ±3 days / DX",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 2-n (If combo therapy is held and ramucirumab is given) / (±3 days) / DX",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1272,15 +1646,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "DX"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "DX"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1294,20 +1668,20 @@
       },
       {
         "xcol_id": "xcol-011",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / ±3 days / D1",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / (±3 days) / D1",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1318,15 +1692,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D1"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D1"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1340,20 +1714,20 @@
       },
       {
         "xcol_id": "xcol-012",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / ±3 days / D8",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / (±3 days) / D8",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1364,15 +1738,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D8"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D8"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1386,20 +1760,20 @@
       },
       {
         "xcol_id": "xcol-013",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / ±3 days / D15",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / (±3 days) / D15",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1410,15 +1784,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D15"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D15"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1432,20 +1806,20 @@
       },
       {
         "xcol_id": "xcol-014",
-        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / ±3 days / D22",
+        "composite_label": "On-Treatment / Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen) / Cycle 3-n / (±3 days) / D22",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
             "value": "On-Treatment"
           },
           {
             "level": 2,
             "property_type": "period",
-            "property_name": "Cycle length",
+            "property_name": "Cycle Length",
             "value": "Cycle = 21 days (or 28 days for Cohorts B & C per combination regimen)"
           },
           {
@@ -1456,15 +1830,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "D22"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "D22"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1478,14 +1852,20 @@
       },
       {
         "xcol_id": "xcol-015",
-        "composite_label": "Post-Treatment / Short-term follow-up / ±3 days / V801",
+        "composite_label": "Post-Treatment / Post-Treatment / Short-term follow-up / (±3 days) / V801",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Phase",
+            "property_name": "Study Epoch",
+            "value": "Post-Treatment"
+          },
+          {
+            "level": 2,
+            "property_type": "period",
+            "property_name": "Cycle Length",
             "value": "Post-Treatment"
           },
           {
@@ -1496,15 +1876,15 @@
           },
           {
             "level": 4,
-            "property_type": "window",
-            "property_name": "Visit window",
-            "value": "±3 days"
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "V801"
           },
           {
-            "level": 5,
-            "property_type": "study_day",
-            "property_name": "Day",
-            "value": "V801"
+            "level": null,
+            "property_type": "window",
+            "property_name": "Visit Window",
+            "value": "(±3 days)"
           }
         ],
         "source_columns": [
@@ -1527,7 +1907,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Period",
+            "property_name": "Study Period",
             "value": "Study Treatment"
           },
           {
@@ -1555,7 +1935,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Period",
+            "property_name": "Study Period",
             "value": "Follow-Up"
           },
           {
@@ -1571,6 +1951,118 @@
             "table_num": 2,
             "column_id": "col-003",
             "column_position": 3
+          }
+        ]
+      }
+    ],
+    "subsidiary": [
+      {
+        "xcol_id": "xcol-018",
+        "composite_label": "Study Cycle",
+        "segment": "subsidiary",
+        "population_track": null,
+        "property_values": [
+          {
+            "level": 1,
+            "property_type": "other",
+            "property_name": "Sample #",
+            "value": "Study Cycle"
+          }
+        ],
+        "source_columns": [
+          {
+            "table_id": "table-003",
+            "table_num": 3,
+            "column_id": "col-002",
+            "column_position": 2
+          }
+        ]
+      },
+      {
+        "xcol_id": "xcol-019",
+        "composite_label": "Day within Cycle",
+        "segment": "subsidiary",
+        "population_track": null,
+        "property_values": [
+          {
+            "level": 1,
+            "property_type": "other",
+            "property_name": "Sample #",
+            "value": "Day within Cycle"
+          }
+        ],
+        "source_columns": [
+          {
+            "table_id": "table-003",
+            "table_num": 3,
+            "column_id": "col-003",
+            "column_position": 3
+          }
+        ]
+      },
+      {
+        "xcol_id": "xcol-020",
+        "composite_label": "Collection Time Point Relative to Ramucirumab Weekly Dose",
+        "segment": "subsidiary",
+        "population_track": null,
+        "property_values": [
+          {
+            "level": 1,
+            "property_type": "other",
+            "property_name": "Sample #",
+            "value": "Collection Time Point Relative to Ramucirumab Weekly Dose"
+          }
+        ],
+        "source_columns": [
+          {
+            "table_id": "table-003",
+            "table_num": 3,
+            "column_id": "col-004",
+            "column_position": 4
+          }
+        ]
+      },
+      {
+        "xcol_id": "xcol-021",
+        "composite_label": "Ramucirumab PK Collection",
+        "segment": "subsidiary",
+        "population_track": null,
+        "property_values": [
+          {
+            "level": 1,
+            "property_type": "other",
+            "property_name": "Sample #",
+            "value": "Ramucirumab PK Collection"
+          }
+        ],
+        "source_columns": [
+          {
+            "table_id": "table-003",
+            "table_num": 3,
+            "column_id": "col-005",
+            "column_position": 5
+          }
+        ]
+      },
+      {
+        "xcol_id": "xcol-022",
+        "composite_label": "Immunogenicity Collection",
+        "segment": "subsidiary",
+        "population_track": null,
+        "property_values": [
+          {
+            "level": 1,
+            "property_type": "other",
+            "property_name": "Sample #",
+            "value": "Immunogenicity Collection"
+          }
+        ],
+        "source_columns": [
+          {
+            "table_id": "table-003",
+            "table_num": 3,
+            "column_id": "col-006",
+            "column_position": 6
           }
         ]
       }
@@ -1611,6 +2103,14 @@
     },
     {
       "xact_id": "xact-005",
+      "xcol_id": "xcol-001",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-005",
       "xcol_id": "xcol-003",
       "consolidated_value": "X",
       "source_values": {
@@ -1706,14 +2206,6 @@
       }
     },
     {
-      "xact_id": "xact-005",
-      "xcol_id": "xcol-001",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
       "xact_id": "xact-006",
       "xcol_id": "xcol-001",
       "consolidated_value": "X",
@@ -1771,6 +2263,14 @@
     },
     {
       "xact_id": "xact-007",
+      "xcol_id": "xcol-001",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-007",
       "xcol_id": "xcol-003",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -1791,14 +2291,6 @@
       "consolidated_value": "See instructions",
       "source_values": {
         "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-007",
-      "xcol_id": "xcol-001",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
       }
     },
     {
@@ -1883,6 +2375,14 @@
     },
     {
       "xact_id": "xact-008",
+      "xcol_id": "xcol-001",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-008",
       "xcol_id": "xcol-003",
       "consolidated_value": "X",
       "source_values": {
@@ -1979,14 +2479,6 @@
     },
     {
       "xact_id": "xact-008",
-      "xcol_id": "xcol-001",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-008",
       "xcol_id": "xcol-015",
       "consolidated_value": "X",
       "source_values": {
@@ -2028,6 +2520,14 @@
     {
       "xact_id": "xact-009",
       "xcol_id": "xcol-015",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-010",
+      "xcol_id": "xcol-001",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -2127,14 +2627,6 @@
       "consolidated_value": "See instructions",
       "source_values": {
         "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-010",
-      "xcol_id": "xcol-001",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
       }
     },
     {
@@ -2435,6 +2927,14 @@
     },
     {
       "xact_id": "xact-015",
+      "xcol_id": "xcol-002",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-015",
       "xcol_id": "xcol-003",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2527,14 +3027,6 @@
       "consolidated_value": "See instructions",
       "source_values": {
         "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-015",
-      "xcol_id": "xcol-002",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
       }
     },
     {
@@ -2547,102 +3039,6 @@
     },
     {
       "xact_id": "xact-016",
-      "xcol_id": "xcol-003",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-004",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-005",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-006",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-007",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-008",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-009",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-010",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-011",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-012",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-013",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-014",
-      "consolidated_value": "See instructions",
-      "source_values": {
-        "1": "See instructions"
-      }
-    },
-    {
-      "xact_id": "xact-016",
       "xcol_id": "xcol-002",
       "consolidated_value": "X",
       "source_values": {
@@ -2651,14 +3047,6 @@
     },
     {
       "xact_id": "xact-016",
-      "xcol_id": "xcol-015",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-017",
       "xcol_id": "xcol-003",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2666,7 +3054,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-004",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2674,7 +3062,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-005",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2682,7 +3070,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-006",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2690,7 +3078,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-007",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2698,7 +3086,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-008",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2706,7 +3094,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-009",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2714,7 +3102,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-010",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2722,7 +3110,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-011",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2730,7 +3118,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-012",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2738,7 +3126,7 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-013",
       "consolidated_value": "See instructions",
       "source_values": {
@@ -2746,11 +3134,19 @@
       }
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-016",
       "xcol_id": "xcol-014",
       "consolidated_value": "See instructions",
       "source_values": {
         "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-016",
+      "xcol_id": "xcol-015",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
       }
     },
     {
@@ -2763,6 +3159,102 @@
     },
     {
       "xact_id": "xact-017",
+      "xcol_id": "xcol-003",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-004",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-005",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-006",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-007",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-008",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-009",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-010",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-011",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-012",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-013",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
+      "xcol_id": "xcol-014",
+      "consolidated_value": "See instructions",
+      "source_values": {
+        "1": "See instructions"
+      }
+    },
+    {
+      "xact_id": "xact-017",
       "xcol_id": "xcol-015",
       "consolidated_value": "X",
       "source_values": {
@@ -3059,14 +3551,6 @@
     },
     {
       "xact_id": "xact-022",
-      "xcol_id": "xcol-003",
-      "consolidated_value": "See Section 1.3.1",
-      "source_values": {
-        "1": "See Section 1.3.1"
-      }
-    },
-    {
-      "xact_id": "xact-022",
       "xcol_id": "xcol-004",
       "consolidated_value": "See Section 1.3.1",
       "source_values": {
@@ -3156,14 +3640,6 @@
     {
       "xact_id": "xact-022",
       "xcol_id": "xcol-015",
-      "consolidated_value": "See Section 1.3.1",
-      "source_values": {
-        "1": "See Section 1.3.1"
-      }
-    },
-    {
-      "xact_id": "xact-023",
-      "xcol_id": "xcol-003",
       "consolidated_value": "See Section 1.3.1",
       "source_values": {
         "1": "See Section 1.3.1"
@@ -3472,6 +3948,510 @@
       "source_values": {
         "2": "X"
       }
+    },
+    {
+      "xact_id": "xact-021",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-021",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-021",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-021",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-021",
+      "xcol_id": "xcol-022",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-027",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-027",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "2",
+      "source_values": {
+        "3": "2"
+      }
+    },
+    {
+      "xact_id": "xact-027",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "24 hrs ± 2 postdose",
+      "source_values": {
+        "3": "24 hrs ± 2 postdose"
+      }
+    },
+    {
+      "xact_id": "xact-027",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-028",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-028",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "4 ± 1",
+      "source_values": {
+        "3": "4 ± 1"
+      }
+    },
+    {
+      "xact_id": "xact-028",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "48-96 hrs postdose window",
+      "source_values": {
+        "3": "48-96 hrs postdose window"
+      }
+    },
+    {
+      "xact_id": "xact-028",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-029",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-029",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "8",
+      "source_values": {
+        "3": "8"
+      }
+    },
+    {
+      "xact_id": "xact-029",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-029",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-030",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-030",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "15",
+      "source_values": {
+        "3": "15"
+      }
+    },
+    {
+      "xact_id": "xact-030",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-030",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-030",
+      "xcol_id": "xcol-022",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-031",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-031",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "18 ± 1",
+      "source_values": {
+        "3": "18 ± 1"
+      }
+    },
+    {
+      "xact_id": "xact-031",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "48-96 hrs postdose window",
+      "source_values": {
+        "3": "48-96 hrs postdose window"
+      }
+    },
+    {
+      "xact_id": "xact-031",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-032",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "2",
+      "source_values": {
+        "3": "2"
+      }
+    },
+    {
+      "xact_id": "xact-032",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-032",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-032",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-033",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "2",
+      "source_values": {
+        "3": "2"
+      }
+    },
+    {
+      "xact_id": "xact-033",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "8",
+      "source_values": {
+        "3": "8"
+      }
+    },
+    {
+      "xact_id": "xact-033",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-033",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-033",
+      "xcol_id": "xcol-022",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-034",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "2",
+      "source_values": {
+        "3": "2"
+      }
+    },
+    {
+      "xact_id": "xact-034",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "11 ± 1",
+      "source_values": {
+        "3": "11 ± 1"
+      }
+    },
+    {
+      "xact_id": "xact-034",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "48-96 hrs postdose window",
+      "source_values": {
+        "3": "48-96 hrs postdose window"
+      }
+    },
+    {
+      "xact_id": "xact-034",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-035",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "3",
+      "source_values": {
+        "3": "3"
+      }
+    },
+    {
+      "xact_id": "xact-035",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-035",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-035",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-036",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "3",
+      "source_values": {
+        "3": "3"
+      }
+    },
+    {
+      "xact_id": "xact-036",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "15",
+      "source_values": {
+        "3": "15"
+      }
+    },
+    {
+      "xact_id": "xact-036",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-036",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-037",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "3",
+      "source_values": {
+        "3": "3"
+      }
+    },
+    {
+      "xact_id": "xact-037",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "18 ± 1",
+      "source_values": {
+        "3": "18 ± 1"
+      }
+    },
+    {
+      "xact_id": "xact-037",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "48-96 hrs postdose window",
+      "source_values": {
+        "3": "48-96 hrs postdose window"
+      }
+    },
+    {
+      "xact_id": "xact-037",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-038",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "4",
+      "source_values": {
+        "3": "4"
+      }
+    },
+    {
+      "xact_id": "xact-038",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-038",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-038",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-038",
+      "xcol_id": "xcol-022",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-039",
+      "xcol_id": "xcol-018",
+      "consolidated_value": "5",
+      "source_values": {
+        "3": "5"
+      }
+    },
+    {
+      "xact_id": "xact-039",
+      "xcol_id": "xcol-019",
+      "consolidated_value": "1",
+      "source_values": {
+        "3": "1"
+      }
+    },
+    {
+      "xact_id": "xact-039",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "-1 hr (predose)",
+      "source_values": {
+        "3": "-1 hr (predose)"
+      }
+    },
+    {
+      "xact_id": "xact-039",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-040",
+      "xcol_id": "xcol-020",
+      "consolidated_value": "30 days post last dose",
+      "source_values": {
+        "3": "30 days post last dose"
+      }
+    },
+    {
+      "xact_id": "xact-040",
+      "xcol_id": "xcol-021",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
+    },
+    {
+      "xact_id": "xact-040",
+      "xcol_id": "xcol-022",
+      "consolidated_value": "X",
+      "source_values": {
+        "3": "X"
+      }
     }
   ],
   "unified_annotations": [
@@ -3491,21 +4471,19 @@
       "referenced_xcols": [
         "xcol-015"
       ],
-      "referenced_props": [
-        "prop-003"
-      ],
+      "referenced_props": [],
       "cell_references": [],
       "occurrence_count": 1
     },
     {
       "xannot_id": "xannot-002",
-      "annotation_type": "source_note",
-      "annotation_text": "For applicable participants who have their combination therapy held while SC weekly ramucirumab is continued, procedures noted in column DX are to be performed at the time of the additional ramucirumab doses.",
-      "display_markers": "T1:dx",
+      "annotation_type": "footnote",
+      "annotation_text": "Note:  For applicable participants who have their combination therapy held while SC weekly ramucirumab is continued, procedures noted in column DX are to be performed at the time of the additional ramucirumab doses.",
+      "display_markers": "T1:n1",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "dx",
+          "marker": "n1",
           "annotation_id": "annot-002"
         }
       ],
@@ -3519,34 +4497,33 @@
     },
     {
       "xannot_id": "xannot-003",
-      "annotation_type": "source_note",
+      "annotation_type": "footnote",
       "annotation_text": "D22 for 28-day cycles only.",
-      "display_markers": "T1:d22",
+      "display_markers": "T1:n2",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "d22",
+          "marker": "n2",
           "annotation_id": "annot-003"
         }
       ],
       "referenced_xacts": [],
-      "referenced_xcols": [
-        "xcol-009",
-        "xcol-014"
+      "referenced_xcols": [],
+      "referenced_props": [
+        "prop-005"
       ],
-      "referenced_props": [],
       "cell_references": [],
       "occurrence_count": 1
     },
     {
       "xannot_id": "xannot-004",
-      "annotation_type": "source_note",
+      "annotation_type": "footnote",
       "annotation_text": "ICF must be signed before any protocol-specific procedures are performed",
-      "display_markers": "T1:i1",
+      "display_markers": "T1:n3",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i1",
+          "marker": "n3",
           "annotation_id": "annot-004"
         }
       ],
@@ -3560,13 +4537,13 @@
     },
     {
       "xannot_id": "xannot-005",
-      "annotation_type": "source_note",
+      "annotation_type": "footnote",
       "annotation_text": "Including assessment of preexisting conditions, historical illnesses, and habits (such as tobacco and alcohol use).",
-      "display_markers": "T1:i2",
+      "display_markers": "T1:n4",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i2",
+          "marker": "n4",
           "annotation_id": "annot-005"
         }
       ],
@@ -3580,13 +4557,13 @@
     },
     {
       "xannot_id": "xannot-006",
-      "annotation_type": "source_note",
+      "annotation_type": "footnote",
       "annotation_text": "Record prior anti-cancer therapy",
-      "display_markers": "T1:i3",
+      "display_markers": "T1:n5",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i3",
+          "marker": "n5",
           "annotation_id": "annot-006"
         }
       ],
@@ -3600,13 +4577,13 @@
     },
     {
       "xannot_id": "xannot-007",
-      "annotation_type": "source_note",
-      "annotation_text": "At baseline, record prior and concurrent medications. Record all premedication, supportive care, and concomitant medication continuously at every visit and throughout the study.",
-      "display_markers": "T1:i4",
+      "annotation_type": "footnote",
+      "annotation_text": "• At baseline, record prior and concurrent medications. • Record all premedication, supportive care, and concomitant medication continuously at every visit and throughout the study.",
+      "display_markers": "T1:n6",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i4",
+          "marker": "n6",
           "annotation_id": "annot-007"
         }
       ],
@@ -3620,13 +4597,13 @@
     },
     {
       "xannot_id": "xannot-008",
-      "annotation_type": "source_note",
-      "annotation_text": "Measure vital signs (height [at baseline], weight, temperature, blood pressure, pulse rate, and respiration rate). On days with concurrent ECGs, vital signs, and/or PK sampling, these measurements should occur at approximately the same time. Vital sign measurements will be obtained: Day 1 at predose (prior to SC ramucirumab dose, but within 90 minutes prior to predose blood draw); C1D2 (24 hours postdose); C1D8; C1D15; Any time for other specified visits, but prior to SC ramucirumab dose at same visit.",
-      "display_markers": "T1:i5",
+      "annotation_type": "footnote",
+      "annotation_text": "Measure vital signs (height [at baseline], weight, temperature, blood pressure, pulse rate, and respiration rate). On days with concurrent ECGs, vital signs, and/or PK sampling, these measurements should occur at approximately the same time. Vital sign measurements will be obtained: • Day 1 at predose (prior to SC ramucirumab dose, but within 90 minutes prior to predose blood draw) • C1D2 (24 hours postdose) • C1D8 • C1D15 • Any time for other specified visits, but prior to SC ramucirumab dose at same visit.",
+      "display_markers": "T1:n7",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i5",
+          "marker": "n7",
           "annotation_id": "annot-008"
         }
       ],
@@ -3640,13 +4617,13 @@
     },
     {
       "xannot_id": "xannot-009",
-      "annotation_type": "source_note",
-      "annotation_text": "Collect continuously at every visit and throughout the study. CTCAE Version 5.0. See Section 10.3 for AE grading for lab investigations.",
-      "display_markers": "T1:i6",
+      "annotation_type": "footnote",
+      "annotation_text": "• Collect continuously at every visit and throughout the study. • CTCAE Version 5.0 • See Section 10.3 for AE grading for lab investigations.",
+      "display_markers": "T1:n8",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i6",
+          "marker": "n8",
           "annotation_id": "annot-009"
         }
       ],
@@ -3660,13 +4637,13 @@
     },
     {
       "xannot_id": "xannot-010",
-      "annotation_type": "source_note",
-      "annotation_text": "During study treatment, perform <=3 days prior to treatment.",
-      "display_markers": "T1:i7",
+      "annotation_type": "footnote",
+      "annotation_text": "During study treatment, perform ≤3 days prior to treatment.",
+      "display_markers": "T1:n9",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i7",
+          "marker": "n9",
           "annotation_id": "annot-010"
         }
       ],
@@ -3680,13 +4657,13 @@
     },
     {
       "xannot_id": "xannot-011",
-      "annotation_type": "source_note",
-      "annotation_text": "Single, local. On days with concurrent measurements, see vital sign row for more details. Times are referenced to the end of dosing. ECGs will be obtained: C1D1 at predose. Every 6 weeks thereafter, predose. Any other time as clinically indicated.",
-      "display_markers": "T1:i8",
+      "annotation_type": "footnote",
+      "annotation_text": "Single, local. On days with concurrent measurements, see vital sign row for more details.  Times are referenced to the end of dosing. ECGs will be obtained: • C1D1 at predose. • Every 6 weeks thereafter, predose. • Any other time as clinically indicated.",
+      "display_markers": "T1:n10",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i8",
+          "marker": "n10",
           "annotation_id": "annot-011"
         }
       ],
@@ -3702,17 +4679,12 @@
       "xannot_id": "xannot-012",
       "annotation_type": "source_note",
       "annotation_text": "See Appendix 2.",
-      "display_markers": "T1:i9, T1:i11",
+      "display_markers": "T1:n11",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i9",
+          "marker": "n11",
           "annotation_id": "annot-012"
-        },
-        {
-          "table_num": 1,
-          "marker": "i11",
-          "annotation_id": "annot-014"
         }
       ],
       "referenced_xacts": [
@@ -3722,17 +4694,17 @@
       "referenced_xcols": [],
       "referenced_props": [],
       "cell_references": [],
-      "occurrence_count": 2
+      "occurrence_count": 1
     },
     {
       "xannot_id": "xannot-013",
-      "annotation_type": "source_note",
-      "annotation_text": "See Appendix 2. Perform at baseline, C2D1, D1 of every other cycle afterwards (C4D1, C6D1, etc.), and as clinically indicated.",
-      "display_markers": "T1:i10",
+      "annotation_type": "footnote",
+      "annotation_text": "See Appendix 2.  Perform at baseline, C2D1, D1 of every other cycle afterwards (C4D1, C6D1, etc.), and as clinically indicated.",
+      "display_markers": "T1:n12",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i10",
+          "marker": "n12",
           "annotation_id": "annot-013"
         }
       ],
@@ -3746,14 +4718,14 @@
     },
     {
       "xannot_id": "xannot-014",
-      "annotation_type": "source_note",
-      "annotation_text": "See Appendix 2. In addition, perform as clinically indicated.",
-      "display_markers": "T1:i12",
+      "annotation_type": "footnote",
+      "annotation_text": "See Appendix 2.  In addition, perform as clinically indicated.",
+      "display_markers": "T1:n13",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i12",
-          "annotation_id": "annot-015"
+          "marker": "n13",
+          "annotation_id": "annot-014"
         }
       ],
       "referenced_xacts": [
@@ -3766,14 +4738,14 @@
     },
     {
       "xannot_id": "xannot-015",
-      "annotation_type": "source_note",
-      "annotation_text": "Applies only to women of childbearing potential. Note: During study treatment, perform monthly or as required per local regulations and/or institutional guidelines. See Appendix 2.",
-      "display_markers": "T1:i13",
+      "annotation_type": "footnote",
+      "annotation_text": "• Applies only to women of childbearing potential. • Note:  During study treatment, perform monthly or as required per local regulations and/or institutional guidelines. See Appendix 2.",
+      "display_markers": "T1:n14",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i13",
-          "annotation_id": "annot-016"
+          "marker": "n14",
+          "annotation_id": "annot-015"
         }
       ],
       "referenced_xacts": [
@@ -3786,14 +4758,14 @@
     },
     {
       "xannot_id": "xannot-016",
-      "annotation_type": "source_note",
-      "annotation_text": "See Appendix 2. Starting C1D1, then every 3 months thereafter.",
-      "display_markers": "T1:i14",
+      "annotation_type": "footnote",
+      "annotation_text": "See Appendix 2.  Starting C1D1, then every 3 months thereafter.",
+      "display_markers": "T1:n15",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i14",
-          "annotation_id": "annot-017"
+          "marker": "n15",
+          "annotation_id": "annot-016"
         }
       ],
       "referenced_xacts": [
@@ -3806,14 +4778,14 @@
     },
     {
       "xannot_id": "xannot-017",
-      "annotation_type": "source_note",
-      "annotation_text": "Perform according to RECIST 1.1, by the same method used at baseline, every 8 weeks (+/-7 days) for the first 6 months after C1D1 and every 12 weeks (+/-7 days) thereafter until radiographic disease progression, death, or study completion, whichever occurs first. Perform as scheduled, even if study treatment is delayed or omitted.",
-      "display_markers": "T1:i15",
+      "annotation_type": "footnote",
+      "annotation_text": "• Perform according to RECIST 1.1, by the same method used at baseline, every 8 weeks (±7 days) for the first 6 months after C1D1 and every 12 weeks (±7 days) thereafter until radiographic disease progression, death, or study completion, whichever occurs first. Perform as scheduled, even if study treatment is delayed or omitted.",
+      "display_markers": "T1:n16",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i15",
-          "annotation_id": "annot-018"
+          "marker": "n16",
+          "annotation_id": "annot-017"
         }
       ],
       "referenced_xacts": [
@@ -3826,14 +4798,14 @@
     },
     {
       "xannot_id": "xannot-018",
-      "annotation_type": "source_note",
-      "annotation_text": "Prior to each injection and at the designated timepoints, the investigator/investigator designee will ask the participant if they have any injection site concerns and record the participant’s response. 1. Cycle 1 collection: a. C1D1: 5-15 min after injection is complete and 60 min after injection is complete; b. C1D2 (approximately 24 hr after injection); c. C1D4 (+/-1 day); d. C1D8: 5-15 min after injection and 60 min after injection; e. C1D15: 5-15 min after injection and 60 min after injection. 2. Cycle 2-n collection: a. 5-15 min after injection and 60 min after injection. The findings from the assessment are recorded on the ISR questionnaire. All positive responses of pain require an additional assessment using the participant-completed Pain VAS. If there are >=2 injections, the ISR questionnaire will be filled out separately for each site, after all injections have been administered. See Section 8.2.5 for details.",
-      "display_markers": "T1:i16",
+      "annotation_type": "footnote",
+      "annotation_text": "Prior to each injection and at the designated timepoints, the investigator/investigator designee will ask the participant if they have any injection site concerns and record the participant’s response. 1.Cycle 1 collection: a.C1D1:  5-15 min after injection is complete and 60 min after injection is complete b.C1D2 (approximately 24 hr after injection) c.C1D4 (± 1 day) d.C1D8:  5-15 min after injection and 60 min after injection e.C1D15:  5-15 min after injection and 60 min after injection 2.Cycle 2-n collection: a.5-15 min after injection and 60 min after injection The findings from the assessment are recorded on the ISR questionnaire. All positive responses of pain require an additional assessment using the participant-completed Pain VAS.  If there are ≥2 injections, the ISR questionnaire will be filled out separately for each site, after all injections have been administered. See Section 8.2.5 for details.",
+      "display_markers": "T1:n17",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i16",
-          "annotation_id": "annot-019"
+          "marker": "n17",
+          "annotation_id": "annot-018"
         }
       ],
       "referenced_xacts": [
@@ -3846,14 +4818,14 @@
     },
     {
       "xannot_id": "xannot-019",
-      "annotation_type": "source_note",
+      "annotation_type": "footnote",
       "annotation_text": "1. ISR questionnaire completed outside of solicited assessment schedule. 2. May be triggered by participant anytime during the cycle based on diary. 3. If the participant indicates presence of pain during spontaneous ISR reporting, no VAS assessment is required.",
-      "display_markers": "T1:i17",
+      "display_markers": "T1:n18",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i17",
-          "annotation_id": "annot-020"
+          "marker": "n18",
+          "annotation_id": "annot-019"
         }
       ],
       "referenced_xacts": [
@@ -3866,14 +4838,14 @@
     },
     {
       "xannot_id": "xannot-020",
-      "annotation_type": "source_note",
-      "annotation_text": "Participant will assess injection site(s) daily. If any ISR symptoms present, the participant should contact the investigator. Diary should be returned to the investigator at each weekly visit.",
-      "display_markers": "T1:i18",
+      "annotation_type": "footnote",
+      "annotation_text": "• Participant will assess injection site(s) daily.  If any ISR symptoms present, the participant should contact the investigator. • Diary should be returned to the investigator at each weekly visit.",
+      "display_markers": "T1:n19",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i18",
-          "annotation_id": "annot-021"
+          "marker": "n19",
+          "annotation_id": "annot-020"
         }
       ],
       "referenced_xacts": [
@@ -3888,12 +4860,12 @@
       "xannot_id": "xannot-021",
       "annotation_type": "source_note",
       "annotation_text": "See Section 1.3.1 for PK and IG.",
-      "display_markers": "T1:i19",
+      "display_markers": "T1:n20",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i19",
-          "annotation_id": "annot-022"
+          "marker": "n20",
+          "annotation_id": "annot-021"
         }
       ],
       "referenced_xacts": [
@@ -3906,54 +4878,14 @@
     },
     {
       "xannot_id": "xannot-022",
-      "annotation_type": "source_note",
-      "annotation_text": "See Section 1.3.1 (Pharmacokinetic Sampling Schedule) for PK sample collection timepoints.",
-      "display_markers": "T1:i20",
+      "annotation_type": "footnote",
+      "annotation_text": "See Section 6.1.  Participants must be closely monitored for a 1-hour observation period following the administration of SC ramucirumab (see Section 6.1).",
+      "display_markers": "T1:n21",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i20",
-          "annotation_id": "annot-023"
-        }
-      ],
-      "referenced_xacts": [
-        "xact-022"
-      ],
-      "referenced_xcols": [],
-      "referenced_props": [],
-      "cell_references": [],
-      "occurrence_count": 1
-    },
-    {
-      "xannot_id": "xannot-023",
-      "annotation_type": "source_note",
-      "annotation_text": "See Section 1.3.1 (Pharmacokinetic Sampling Schedule) for immunogenicity sample collection timepoints.",
-      "display_markers": "T1:i21",
-      "source_occurrences": [
-        {
-          "table_num": 1,
-          "marker": "i21",
-          "annotation_id": "annot-024"
-        }
-      ],
-      "referenced_xacts": [
-        "xact-023"
-      ],
-      "referenced_xcols": [],
-      "referenced_props": [],
-      "cell_references": [],
-      "occurrence_count": 1
-    },
-    {
-      "xannot_id": "xannot-024",
-      "annotation_type": "source_note",
-      "annotation_text": "See Section 6.1. Participants must be closely monitored for a 1-hour observation period following the administration of SC ramucirumab (see Section 6.1).",
-      "display_markers": "T1:i22",
-      "source_occurrences": [
-        {
-          "table_num": 1,
-          "marker": "i22",
-          "annotation_id": "annot-025"
+          "marker": "n21",
+          "annotation_id": "annot-022"
         }
       ],
       "referenced_xacts": [
@@ -3965,15 +4897,15 @@
       "occurrence_count": 1
     },
     {
-      "xannot_id": "xannot-025",
-      "annotation_type": "source_note",
-      "annotation_text": "Begin Combination anti-cancer therapies along with weekly SC ramucirumab at Cycle-2. See details in Section 6.1. Erlotinib (1L EGFR+ NSCLC), docetaxel (2L NSCLC), paclitaxel (2L gastric), FOLFIRI (2L CRC).",
-      "display_markers": "T1:i23",
+      "xannot_id": "xannot-023",
+      "annotation_type": "footnote",
+      "annotation_text": "Begin Combination anti-cancer therapies along with weekly SC ramucirumab at Cycle-2.  See details in Section 6.1.  Erlotinib (1L EGFR+ NSCLC), docetaxel (2L NSCLC), paclitaxel (2L gastric), FOLFIRI (2L CRC).",
+      "display_markers": "T1:n22",
       "source_occurrences": [
         {
           "table_num": 1,
-          "marker": "i23",
-          "annotation_id": "annot-026"
+          "marker": "n22",
+          "annotation_id": "annot-023"
         }
       ],
       "referenced_xacts": [
@@ -3985,9 +4917,9 @@
       "occurrence_count": 1
     },
     {
-      "xannot_id": "xannot-026",
+      "xannot_id": "xannot-024",
       "annotation_type": "footnote",
-      "annotation_text": "Continued-access follow-up begins when the participant and the investigator agree that the participant will no longer continue treatment in the continued-access period and lasts a minimum of 30 days following the last dose of study drug. In all cases, no follow-up procedures will be performed for a participant who withdraws informed consent unless he or she has explicitly provided permission and consent.",
+      "annotation_text": "Continued-access follow-up begins when the participant and the investigator agree that the participant will no longer continue treatment in the continued-access period and lasts a minimum of 30 days following the last dose of study drug.  In all cases, no follow-up procedures will be performed for a participant who withdraws informed consent unless he or she has explicitly provided permission and consent.",
       "display_markers": "T2:a",
       "source_occurrences": [
         {
@@ -4000,21 +4932,19 @@
       "referenced_xcols": [
         "xcol-017"
       ],
-      "referenced_props": [
-        "prop-001"
-      ],
+      "referenced_props": [],
       "cell_references": [],
       "occurrence_count": 1
     },
     {
-      "xannot_id": "xannot-027",
-      "annotation_type": "source_note",
-      "annotation_text": "Grading via CTCAE, Version 5.0. As part of AE collection, monitor vital signs and perform standard laboratory tests (hematology, chemistry, urinalysis, and pregnancy testing) at the same frequency as during the study treatment period. See Section 10.3 for AE grading for lab investigations. All laboratory tests during the continued access period will be performed in the local laboratories only.",
-      "display_markers": "T2:i1",
+      "xannot_id": "xannot-025",
+      "annotation_type": "footnote",
+      "annotation_text": "Grading via CTCAE, Version 5.0.  As part of AE collection, monitor vital signs and perform standard laboratory tests (hematology, chemistry, urinalysis, and pregnancy testing) at the same frequency as during the study treatment period.  See Section 10.3 for AE grading for lab investigations.  All laboratory tests during the continued access period will be performed in the local laboratories only.",
+      "display_markers": "T2:m1",
       "source_occurrences": [
         {
           "table_num": 2,
-          "marker": "i1",
+          "marker": "m1",
           "annotation_id": "annot-002"
         }
       ],
@@ -4027,14 +4957,14 @@
       "occurrence_count": 1
     },
     {
-      "xannot_id": "xannot-028",
-      "annotation_type": "source_note",
-      "annotation_text": "In the event of hypersensitivity, blood samples will be collected for PK, IG, and exploratory hypersensitivity analyses at the following time points, as close as possible to: (i) the onset of the hypersensitivity, (ii) the resolution of the hypersensitivity, and (iii) 30 (+/-3) days following the hypersensitivity.",
-      "display_markers": "T2:i2",
+      "xannot_id": "xannot-026",
+      "annotation_type": "footnote",
+      "annotation_text": "In the event of hypersensitivity, blood samples will be collected for PK, IG, and exploratory hypersensitivity analyses at the following time points, as close as possible to:  (i) the onset of the hypersensitivity, (ii) the resolution of the hypersensitivity, and (iii) 30 (±3) days following the hypersensitivity.",
+      "display_markers": "T2:m2",
       "source_occurrences": [
         {
           "table_num": 2,
-          "marker": "i2",
+          "marker": "m2",
           "annotation_id": "annot-003"
         }
       ],
@@ -4047,14 +4977,14 @@
       "occurrence_count": 1
     },
     {
-      "xannot_id": "xannot-029",
-      "annotation_type": "source_note",
-      "annotation_text": "See Section 6.1. Participants must be closely monitored for a 1-hour observation period following the ramucirumab injection (see Section 6.1).",
-      "display_markers": "T2:i3",
+      "xannot_id": "xannot-027",
+      "annotation_type": "footnote",
+      "annotation_text": "See Section 6.1.  Participants must be closely monitored for a 1-hour observation period following the ramucirumab injection (see Section 6.1).",
+      "display_markers": "T2:m3",
       "source_occurrences": [
         {
           "table_num": 2,
-          "marker": "i3",
+          "marker": "m3",
           "annotation_id": "annot-004"
         }
       ],
@@ -4063,6 +4993,26 @@
       ],
       "referenced_xcols": [],
       "referenced_props": [],
+      "cell_references": [],
+      "occurrence_count": 1
+    },
+    {
+      "xannot_id": "xannot-028",
+      "annotation_type": "footnote",
+      "annotation_text": "General Instructions: The pharmacokinetic sampling table applies to all participants irrespective of 21-day or 28-day cycle length. Adequately record the actual collection date and time (24-hour clock; for example, 16:00, not 4 pm) on the requisition form of the sample. In case of cycle delay and/or ramucirumab dosing interruption, if possible, collect an additional unscheduled PK samples using the appropriate central lab collection kit: • at time as close as possible to the onset of the adverse event (AE) (if the cycle delay or ramucirumab dosing interruption is due to an AE). • at the time when ramucirumab dose should have been administered (if there had not been a delay or dose interruption). • prior to resuming the ramucirumab dosing after dosing interruption/dosing delay. Note:  If the above time points for unscheduled PK sampling happen to occur at the same time as a scheduled PK time point (see table below), then only the scheduled sample will be taken.",
+      "display_markers": "T3:gi1",
+      "source_occurrences": [
+        {
+          "table_num": 3,
+          "marker": "gi1",
+          "annotation_id": "annot-001"
+        }
+      ],
+      "referenced_xacts": [],
+      "referenced_xcols": [],
+      "referenced_props": [
+        "prop-001"
+      ],
       "cell_references": [],
       "occurrence_count": 1
     }

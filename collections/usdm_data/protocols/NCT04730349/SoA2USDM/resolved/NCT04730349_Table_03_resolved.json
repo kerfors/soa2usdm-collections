@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:15.178660+00:00",
+    "resolved_at": "2026-08-17T19:13:16.862777+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -15,40 +15,44 @@
       "hierarchy_valid": true,
       "annotations_valid": true,
       "validation_warnings": [
-        "Resolved annotation annot-003 ('c') has no referenced elements — orphan: Some of the assessments referred to in this sectio...",
+        "Resolved annotation annot-015 ('c') has no referenced elements — orphan: Some of the assessments referred to in this sectio...",
         "Annotation summary: 1 of 15 annotations have no referenced elements (will be orphans in consolidation)"
       ],
-      "validation_errors": []
+      "validation_errors": [],
+      "method_provenance": [
+        "indentation_level:font_signal: 19",
+        "marker_location:synthesized: 13",
+        "property_structure:inferred_from_layout: 1"
+      ]
     },
     "resolution_status": "resolved_with_warnings",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-12T20:10:26+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.3 single-pass)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude Opus 5 (claude-opus-5), prompt PDF_TO_JSON_PROMPT v3.7.2",
     "source_document": {
       "filename": "NCT04730349_soa.pdf",
-      "document_type": "protocol",
-      "document_version": "BMS-986321 / CA045020 (19-214-27), Protocol Amendment 01, 28-Nov"
+      "document_type": "protocol"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table 2-3 (Long-term Follow-up Period). main_soa; landscape. One visit header row (synthesised 'Follow-up Visit'): Safety Follow-up Visits 1-3 + Survival Follow-up. Marks from PDF coordinates. Merged text cells (As clinically indicated / See Section 9.5.1) span cols 2-5 (source_range 2:5); Lab Tests Visit-2/Visit-3 cells carry conditional text 'If toxicities are present.' as individual cell values; AE Survival cell = 'See Notes'. Footnote c is printed on the Notes-column header (Notes^c); since the Notes column is not a modelled schedule element, c is treated as table-scope (one schedule_property marker_location for traceability; marker not placed on any element). NOTE: the 'Pregnancy Test' row (X at Visits 1-3) is present in the PDF but was dropped by the markdown extraction - taken from the PDF. Notes column -> footnotes/source_notes (synthesised markers). Abbreviation list not captured."
+    "extraction_notes": "Text-layer PDF. Cell boundaries and merged spans recovered from 200-dpi raster rule-line detection (§1d), cross-checked cell-for-cell by pdftotext -bbox column binning (§1b) - no disagreement. One leading label column (Procedure): data columns are positions 2-5 and the right-hand Notes column (position 6) is not a schedule column. A full-width black redaction band covers the bottom of the table on document page 40 and may conceal activity rows and their marks. The footnote marker c printed on the Notes column header has no modelled element and is recorded as table-scope per §6. Symbol-font glyphs normalized: U+F0B7 to bullet, U+F0B1 to plus-minus."
   },
   "table_metadata": {
     "table_id": "table-003",
     "table_number": 3,
     "table_type": "main_soa",
     "table_title": "Table 2-3: Long-term Follow-up Period (CA045020)",
-    "table_purpose": "Long-term follow-up: Safety Follow-up Visits 1-3 and Survival Follow-up (every 3 months).",
+    "table_purpose": "Safety follow-up visits 1-3 and 3-monthly survival follow-up after last dose",
     "page_start": 39,
     "page_end": 42,
     "track_label": null,
     "column_count": 4,
-    "row_count": 19,
+    "row_count": 20,
     "header_row_count": 1,
     "activity_row_count": 19,
-    "notes": "Section 2, Table 2-3. Landscape grid, header repeated across document pages 39-42 (merged into one file). 4 schedule columns (2-5): Safety Follow-up Visits 1/2/3 and Survival Follow-up Every 3 Months; col 6 (Notes) not modelled. Merged text cells span all 4 schedule columns (source_range 2:5). Footnotes a (Visits 1-3), b (Survival), and c on the Notes-column header - modelled table-scoped since the Notes column is not a schedule element. A redaction box (CCI) sits below Pregnancy Test (doc page 40) - possible additional redacted rows."
+    "notes": "Classified main_soa rather than track: it is an independent schedule with its own column structure, but it schedules the same single participant population as Tables 2-1 and 2-2 in a later study phase, and the taxonomy's main_soa definition treats several independent schedules of one study as several main_soa tables. No mutually exclusive population split is present. Footnote marker c sits on the Notes column header, which is not a modelled element; it is recorded as table-scope on the schedule_property with method 'synthesized' and deliberately NOT added to any element's annotation_markers (§6)."
   },
   "schedule_properties": [
     {
@@ -59,11 +63,11 @@
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
-        "cell_value": "",
+        "cell_value": "Procedure",
         "synthesized": true
       },
       "property_type": "visit",
-      "property_comment": "Single header row of follow-up columns: Safety Follow-up Visit 1/2/3 (cols 2-4) and Survival Follow-up Every 3 Months (± 14 Days) (col 5, the survival phase). property_type=visit. Label cell (col 1) holds the activity header 'Procedure', so name synthesised. Marker a rides Visits 1/2/3; marker b rides the Survival Follow-up column.",
+      "property_comment": "Single header band of Table 2-3, one cell per data column: Safety Follow-up Visit 1 / Visit 2 / Visit 3 (each carrying footnote marker a) and Survival Follow-up Every 3 Months (± 14 Days) (marker b). Typed 'visit' because the values are named follow-up encounters; the ± 14-day window is printed inside the Survival Follow-up cell and is kept in that cell_value. property_name synthesized - the label column carries the activity header 'Procedure'.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [],
@@ -87,7 +91,7 @@
       ],
       "composite_label": "Safety Follow-up Visit 1",
       "linked_annotation_ids": [
-        "annot-001"
+        "annot-013"
       ]
     },
     {
@@ -105,7 +109,7 @@
       ],
       "composite_label": "Safety Follow-up Visit 2",
       "linked_annotation_ids": [
-        "annot-001"
+        "annot-013"
       ]
     },
     {
@@ -123,7 +127,7 @@
       ],
       "composite_label": "Safety Follow-up Visit 3",
       "linked_annotation_ids": [
-        "annot-001"
+        "annot-013"
       ]
     },
     {
@@ -141,7 +145,7 @@
       ],
       "composite_label": "Survival Follow-up Every 3 Months (± 14 Days)",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-014"
       ]
     }
   ],
@@ -149,11 +153,12 @@
     {
       "activity_id": "act-001",
       "table_id": "table-003",
-      "row_position": 1,
+      "row_position": 2,
       "activity_name": "Safety Assessments",
       "activity_name_source": {
         "cell_text": "Safety Assessments",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
         ]
@@ -176,11 +181,12 @@
     {
       "activity_id": "act-002",
       "table_id": "table-003",
-      "row_position": 2,
+      "row_position": 3,
       "activity_name": "Vital Signs",
       "activity_name_source": {
         "cell_text": "Vital Signs",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -189,17 +195,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n1",
       "linked_annotation_ids": [
-        "annot-004"
+        "annot-001"
       ]
     },
     {
       "activity_id": "act-003",
       "table_id": "table-003",
-      "row_position": 3,
+      "row_position": 4,
       "activity_name": "Performance Status",
       "activity_name_source": {
         "cell_text": "Performance Status",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -208,17 +215,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n2",
       "linked_annotation_ids": [
-        "annot-005"
+        "annot-002"
       ]
     },
     {
       "activity_id": "act-004",
       "table_id": "table-003",
-      "row_position": 4,
+      "row_position": 5,
       "activity_name": "12-lead ECG",
       "activity_name_source": {
         "cell_text": "12-lead ECG",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -227,17 +235,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n3",
       "linked_annotation_ids": [
-        "annot-006"
+        "annot-003"
       ]
     },
     {
       "activity_id": "act-005",
       "table_id": "table-003",
-      "row_position": 5,
+      "row_position": 6,
       "activity_name": "Adverse Events and Serious Adverse Events (SAE) Assessment",
       "activity_name_source": {
-        "cell_text": "Adverse Events and Serious Adverse Events (SAE) Assessment",
-        "indentation_level": 1
+        "cell_text": "Adverse Events and\nSerious Adverse Events\n(SAE) Assessment",
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -246,17 +255,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n4",
       "linked_annotation_ids": [
-        "annot-007"
+        "annot-004"
       ]
     },
     {
       "activity_id": "act-006",
       "table_id": "table-003",
-      "row_position": 6,
+      "row_position": 7,
       "activity_name": "Subsequent Medications",
       "activity_name_source": {
         "cell_text": "Subsequent Medications",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -269,11 +279,12 @@
     {
       "activity_id": "act-007",
       "table_id": "table-003",
-      "row_position": 7,
+      "row_position": 8,
       "activity_name": "Review of Subsequent Anti-cancer Therapy",
       "activity_name_source": {
-        "cell_text": "Review of Subsequent Anti-cancer Therapy",
-        "indentation_level": 1
+        "cell_text": "Review of Subsequent\nAnti-cancer Therapy",
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -282,17 +293,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n5",
       "linked_annotation_ids": [
-        "annot-008"
+        "annot-005"
       ]
     },
     {
       "activity_id": "act-008",
       "table_id": "table-003",
-      "row_position": 8,
+      "row_position": 9,
       "activity_name": "Laboratory Tests",
       "activity_name_source": {
         "cell_text": "Laboratory Tests",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
         ]
@@ -311,30 +323,32 @@
     {
       "activity_id": "act-009",
       "table_id": "table-003",
-      "row_position": 9,
+      "row_position": 10,
       "activity_name": "Laboratory Tests (includes blood and urine samples)",
       "activity_name_source": {
-        "cell_text": "Laboratory Tests (includes blood and urine samples)",
-        "indentation_level": 1
+        "cell_text": "Laboratory Tests (includes\nblood and urine samples)",
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
       "parent_activity_id": "act-008",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "s6",
+      "annotation_markers": "n6",
       "linked_annotation_ids": [
-        "annot-009"
+        "annot-006"
       ]
     },
     {
       "activity_id": "act-010",
       "table_id": "table-003",
-      "row_position": 10,
+      "row_position": 11,
       "activity_name": "Pregnancy Test",
       "activity_name_source": {
         "cell_text": "Pregnancy Test",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -343,17 +357,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n7",
       "linked_annotation_ids": [
-        "annot-010"
+        "annot-007"
       ]
     },
     {
       "activity_id": "act-011",
       "table_id": "table-003",
-      "row_position": 11,
+      "row_position": 12,
       "activity_name": "Efficacy Assessments",
       "activity_name_source": {
         "cell_text": "Efficacy Assessments",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
         ]
@@ -375,30 +390,32 @@
     {
       "activity_id": "act-012",
       "table_id": "table-003",
-      "row_position": 12,
+      "row_position": 13,
       "activity_name": "Body Imaging",
       "activity_name_source": {
         "cell_text": "Body Imaging",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
       "parent_activity_id": "act-011",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "s8",
+      "annotation_markers": "n8",
       "linked_annotation_ids": [
-        "annot-011"
+        "annot-008"
       ]
     },
     {
       "activity_id": "act-013",
       "table_id": "table-003",
-      "row_position": 13,
+      "row_position": 14,
       "activity_name": "Brain Imaging",
       "activity_name_source": {
         "cell_text": "Brain Imaging",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -407,17 +424,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n9",
       "linked_annotation_ids": [
-        "annot-012"
+        "annot-009"
       ]
     },
     {
       "activity_id": "act-014",
       "table_id": "table-003",
-      "row_position": 14,
+      "row_position": 15,
       "activity_name": "CSF - solid tumors and leukemia",
       "activity_name_source": {
-        "cell_text": "CSF - solid tumors and leukemia",
-        "indentation_level": 1
+        "cell_text": "CSF - solid tumors and\nleukemia",
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -426,17 +444,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n10",
       "linked_annotation_ids": [
-        "annot-013"
+        "annot-010"
       ]
     },
     {
       "activity_id": "act-015",
       "table_id": "table-003",
-      "row_position": 15,
+      "row_position": 16,
       "activity_name": "Bone marrow aspirate - solid tumors and leukemia",
       "activity_name_source": {
-        "cell_text": "Bone marrow aspirate - solid tumors and leukemia",
-        "indentation_level": 1
+        "cell_text": "Bone marrow aspirate -\nsolid tumors and leukemia",
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -445,17 +464,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n11",
       "linked_annotation_ids": [
-        "annot-014"
+        "annot-011"
       ]
     },
     {
       "activity_id": "act-016",
       "table_id": "table-003",
-      "row_position": 16,
+      "row_position": 17,
       "activity_name": "Survival Status",
       "activity_name_source": {
         "cell_text": "Survival Status",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -464,17 +484,18 @@
       "has_schedule_data": true,
       "annotation_markers": "n12",
       "linked_annotation_ids": [
-        "annot-015"
+        "annot-012"
       ]
     },
     {
       "activity_id": "act-017",
       "table_id": "table-003",
-      "row_position": 17,
+      "row_position": 18,
       "activity_name": "Pharmacokinetics (PK)/Immunogenicity Assessment",
       "activity_name_source": {
         "cell_text": "Pharmacokinetics (PK)/Immunogenicity Assessment",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
         ]
@@ -493,11 +514,12 @@
     {
       "activity_id": "act-018",
       "table_id": "table-003",
-      "row_position": 18,
+      "row_position": 19,
       "activity_name": "PK Samples",
       "activity_name_source": {
         "cell_text": "PK Samples",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -510,11 +532,12 @@
     {
       "activity_id": "act-019",
       "table_id": "table-003",
-      "row_position": 19,
+      "row_position": 20,
       "activity_name": "Immunogenicity Samples",
       "activity_name_source": {
         "cell_text": "Immunogenicity Samples",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -529,7 +552,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-002",
-      "row_position": 2,
+      "row_position": 3,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -540,7 +563,7 @@
     {
       "activity_id": "act-002",
       "column_id": "col-003",
-      "row_position": 2,
+      "row_position": 3,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -551,28 +574,6 @@
     {
       "activity_id": "act-002",
       "column_id": "col-004",
-      "row_position": 2,
-      "column_position": 4,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-003",
-      "column_id": "col-002",
-      "row_position": 3,
-      "column_position": 2,
-      "cell_value": "X",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-003",
-      "column_id": "col-004",
       "row_position": 3,
       "column_position": 4,
       "cell_value": "X",
@@ -582,7 +583,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-004",
+      "activity_id": "act-003",
       "column_id": "col-002",
       "row_position": 4,
       "column_position": 2,
@@ -593,7 +594,18 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-005",
+      "activity_id": "act-003",
+      "column_id": "col-004",
+      "row_position": 4,
+      "column_position": 4,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-004",
       "column_id": "col-002",
       "row_position": 5,
       "column_position": 2,
@@ -605,8 +617,19 @@
     },
     {
       "activity_id": "act-005",
+      "column_id": "col-002",
+      "row_position": 6,
+      "column_position": 2,
+      "cell_value": "X",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-005",
       "column_id": "col-003",
-      "row_position": 5,
+      "row_position": 6,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -617,7 +640,7 @@
     {
       "activity_id": "act-005",
       "column_id": "col-004",
-      "row_position": 5,
+      "row_position": 6,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -628,7 +651,7 @@
     {
       "activity_id": "act-005",
       "column_id": "col-005",
-      "row_position": 5,
+      "row_position": 6,
       "column_position": 5,
       "cell_value": "See Notes",
       "cell_value_type": "other",
@@ -639,7 +662,7 @@
     {
       "activity_id": "act-006",
       "column_id": "col-002",
-      "row_position": 6,
+      "row_position": 7,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -650,7 +673,7 @@
     {
       "activity_id": "act-006",
       "column_id": "col-003",
-      "row_position": 6,
+      "row_position": 7,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -661,7 +684,7 @@
     {
       "activity_id": "act-006",
       "column_id": "col-004",
-      "row_position": 6,
+      "row_position": 7,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -672,7 +695,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-002",
-      "row_position": 7,
+      "row_position": 8,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -683,7 +706,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-003",
-      "row_position": 7,
+      "row_position": 8,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -694,7 +717,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-004",
-      "row_position": 7,
+      "row_position": 8,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -705,7 +728,7 @@
     {
       "activity_id": "act-007",
       "column_id": "col-005",
-      "row_position": 7,
+      "row_position": 8,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -716,7 +739,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-002",
-      "row_position": 9,
+      "row_position": 10,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -727,7 +750,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-003",
-      "row_position": 9,
+      "row_position": 10,
       "column_position": 3,
       "cell_value": "If toxicities are present.",
       "cell_value_type": "conditional",
@@ -738,7 +761,7 @@
     {
       "activity_id": "act-009",
       "column_id": "col-004",
-      "row_position": 9,
+      "row_position": 10,
       "column_position": 4,
       "cell_value": "If toxicities are present",
       "cell_value_type": "conditional",
@@ -749,7 +772,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-002",
-      "row_position": 10,
+      "row_position": 11,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -760,7 +783,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-003",
-      "row_position": 10,
+      "row_position": 11,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -771,7 +794,7 @@
     {
       "activity_id": "act-010",
       "column_id": "col-004",
-      "row_position": 10,
+      "row_position": 11,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -782,9 +805,9 @@
     {
       "activity_id": "act-012",
       "column_id": "col-002",
-      "row_position": 12,
+      "row_position": 13,
       "column_position": 2,
-      "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+      "cell_value": "• Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. • Not applicable to participants with leukemia. • Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. • Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. • Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -793,9 +816,9 @@
     {
       "activity_id": "act-012",
       "column_id": "col-003",
-      "row_position": 12,
+      "row_position": 13,
       "column_position": 3,
-      "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+      "cell_value": "• Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. • Not applicable to participants with leukemia. • Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. • Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. • Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -804,9 +827,9 @@
     {
       "activity_id": "act-012",
       "column_id": "col-004",
-      "row_position": 12,
+      "row_position": 13,
       "column_position": 4,
-      "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+      "cell_value": "• Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. • Not applicable to participants with leukemia. • Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. • Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. • Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -815,9 +838,9 @@
     {
       "activity_id": "act-012",
       "column_id": "col-005",
-      "row_position": 12,
+      "row_position": 13,
       "column_position": 5,
-      "cell_value": "Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. Not applicable to participants with leukemia. Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
+      "cell_value": "• Imaging should occur every 9 weeks (± 7 days) from start of treatment for the first 54 weeks, then every 12 weeks (± 7 days) until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Use same imaging method as was used at screening. After completion of study therapy for participants without progression, results of additional imaging (including bone marrow and CSF, if applicable) are requested for the duration of the study. • Not applicable to participants with leukemia. • Skull base to mid-thigh [18F]fluorodeoxyglucose (FDG) positron emission tomography-computed tomography (PET-CT) or PET-magnetic resonance imaging (PET-MRI); additional anatomy to include all sites of disease for FDG-avid non-Hodgkin lymphoma. • Contrast-enhanced CT of the chest, contrast-enhanced CT/magnetic resonance imaging (MRI) of the abdomen, pelvis, and all other known and/or suspected sites of disease. • Participants with metaiodobenzylguanidine (MIBG)-avid neuroblastoma must also undergo MIBG scintigraphy in addition to CT/MRI as above.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -826,9 +849,9 @@
     {
       "activity_id": "act-013",
       "column_id": "col-002",
-      "row_position": 13,
+      "row_position": 14,
       "column_position": 2,
-      "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+      "cell_value": "• Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -837,9 +860,9 @@
     {
       "activity_id": "act-013",
       "column_id": "col-003",
-      "row_position": 13,
+      "row_position": 14,
       "column_position": 3,
-      "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+      "cell_value": "• Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -848,9 +871,9 @@
     {
       "activity_id": "act-013",
       "column_id": "col-004",
-      "row_position": 13,
+      "row_position": 14,
       "column_position": 4,
-      "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+      "cell_value": "• Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -859,9 +882,9 @@
     {
       "activity_id": "act-013",
       "column_id": "col-005",
-      "row_position": 13,
+      "row_position": 14,
       "column_position": 5,
-      "cell_value": "Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
+      "cell_value": "• Participants in brain tumor-related cohorts and those with a history of brain metastasis or symptoms should undergo MRI of the brain without and with contrast every 9 weeks (± 7 days) from start of treatment up to 54 weeks, and then approximately every 12 weeks (± 7 days), or sooner if clinically indicated until disease progression (including treatment beyond progression) or end of study, whichever occurs later. Cerebrospinal fluid (CSF), if clinically indicated, should be followed as per Response Assessment in Pediatric Neuro-Oncology guidelines.",
       "cell_value_type": "timing_text",
       "source_range": "2:5",
       "annotation_markers": "",
@@ -870,7 +893,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-002",
-      "row_position": 14,
+      "row_position": 15,
       "column_position": 2,
       "cell_value": "As clinically indicated.",
       "cell_value_type": "other",
@@ -881,7 +904,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-003",
-      "row_position": 14,
+      "row_position": 15,
       "column_position": 3,
       "cell_value": "As clinically indicated.",
       "cell_value_type": "other",
@@ -892,7 +915,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-004",
-      "row_position": 14,
+      "row_position": 15,
       "column_position": 4,
       "cell_value": "As clinically indicated.",
       "cell_value_type": "other",
@@ -903,7 +926,7 @@
     {
       "activity_id": "act-014",
       "column_id": "col-005",
-      "row_position": 14,
+      "row_position": 15,
       "column_position": 5,
       "cell_value": "As clinically indicated.",
       "cell_value_type": "other",
@@ -914,7 +937,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-002",
-      "row_position": 15,
+      "row_position": 16,
       "column_position": 2,
       "cell_value": "As clinically indicated",
       "cell_value_type": "other",
@@ -925,7 +948,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-003",
-      "row_position": 15,
+      "row_position": 16,
       "column_position": 3,
       "cell_value": "As clinically indicated",
       "cell_value_type": "other",
@@ -936,7 +959,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-004",
-      "row_position": 15,
+      "row_position": 16,
       "column_position": 4,
       "cell_value": "As clinically indicated",
       "cell_value_type": "other",
@@ -947,7 +970,7 @@
     {
       "activity_id": "act-015",
       "column_id": "col-005",
-      "row_position": 15,
+      "row_position": 16,
       "column_position": 5,
       "cell_value": "As clinically indicated",
       "cell_value_type": "other",
@@ -958,7 +981,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-002",
-      "row_position": 16,
+      "row_position": 17,
       "column_position": 2,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -969,7 +992,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-003",
-      "row_position": 16,
+      "row_position": 17,
       "column_position": 3,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -980,7 +1003,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-004",
-      "row_position": 16,
+      "row_position": 17,
       "column_position": 4,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -991,7 +1014,7 @@
     {
       "activity_id": "act-016",
       "column_id": "col-005",
-      "row_position": 16,
+      "row_position": 17,
       "column_position": 5,
       "cell_value": "X",
       "cell_value_type": "marker",
@@ -1002,7 +1025,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-002",
-      "row_position": 18,
+      "row_position": 19,
       "column_position": 2,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1013,7 +1036,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-003",
-      "row_position": 18,
+      "row_position": 19,
       "column_position": 3,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1024,7 +1047,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-004",
-      "row_position": 18,
+      "row_position": 19,
       "column_position": 4,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1035,7 +1058,7 @@
     {
       "activity_id": "act-018",
       "column_id": "col-005",
-      "row_position": 18,
+      "row_position": 19,
       "column_position": 5,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1046,7 +1069,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-002",
-      "row_position": 19,
+      "row_position": 20,
       "column_position": 2,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1057,7 +1080,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-003",
-      "row_position": 19,
+      "row_position": 20,
       "column_position": 3,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1068,7 +1091,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-004",
-      "row_position": 19,
+      "row_position": 20,
       "column_position": 4,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1079,7 +1102,7 @@
     {
       "activity_id": "act-019",
       "column_id": "col-005",
-      "row_position": 19,
+      "row_position": 20,
       "column_position": 5,
       "cell_value": "See Section 9.5.1 for further details.",
       "cell_value_type": "other",
@@ -1091,6 +1114,294 @@
   "annotations": [
     {
       "annotation_id": "annot-001",
+      "table_id": "table-003",
+      "annotation_marker": "n1",
+      "annotation_type": "footnote",
+      "annotation_text": "Blood pressure, heart rate, temperature.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-002"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 3,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-002",
+      "table_id": "table-003",
+      "annotation_marker": "n2",
+      "annotation_type": "footnote",
+      "annotation_text": "Lansky play score for ≤ 16 years or Karnofsky performance score for > 16 years of age (Appendix 7).",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-003"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 4,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-003",
+      "table_id": "table-003",
+      "annotation_marker": "n3",
+      "annotation_type": "footnote",
+      "annotation_text": "Participant should rest for 5 minutes prior to each ECG.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-004"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 5,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-004",
+      "table_id": "table-003",
+      "annotation_marker": "n4",
+      "annotation_type": "footnote",
+      "annotation_text": "All SAEs and non-serious AEs should be collected continuously during the treatment period and for a minimum of 150 days following discontinuation of study treatment. Participants will be followed for all SAEs, non-serious AEs of special interest (as defined in Section 9.2.8) and all AEs (SAEs and non-serious AEs) associated with confirmed or suspected SARS-CoV-2 infection until resolution, the condition stabilizes, the event is otherwise explained, the event is deemed irreversible, the participant is lost to follow-up (as defined in Section 8.3), or for suspected cases, until SARS-CoV-2 infection is ruled-out.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-005"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 6,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-005",
+      "table_id": "table-003",
+      "annotation_marker": "n5",
+      "annotation_type": "footnote",
+      "annotation_text": "Additional subsequent cancer therapy details such as regimen, setting of the regimen, line of therapy, start and end date of each regimen, best response to the regimen, and date of progression to subsequent anti-cancer therapies will be collected.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-007"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 8,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-006",
+      "table_id": "table-003",
+      "annotation_marker": "n6",
+      "annotation_type": "source_note",
+      "annotation_text": "See Section 9.4.6 for the list of laboratory tests.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-009"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 10,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-007",
+      "table_id": "table-003",
+      "annotation_marker": "n7",
+      "annotation_type": "footnote",
+      "annotation_text": "Women of childbearing potential only. Serum or urine pregnancy test (minimum sensitivity equivalent units 25 IU/L or equivalent units of human chorionic gonadotropin) is required.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-010"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 11,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-008",
+      "table_id": "table-003",
+      "annotation_marker": "n8",
+      "annotation_type": "source_note",
+      "annotation_text": "See Section 9.1.1 for further details.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-012"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 13,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-009",
+      "table_id": "table-003",
+      "annotation_marker": "n9",
+      "annotation_type": "footnote",
+      "annotation_text": "Except for glioma, medulloblastoma, ependymoma, and other central nervous system tumors in which an MRI is required, CT of the brain without and with contrast can be performed if MRI is contraindicated. See Section 9.1.1 for further details.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-013"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 14,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-010",
+      "table_id": "table-003",
+      "annotation_marker": "n10",
+      "annotation_type": "footnote",
+      "annotation_text": "CSF cytopathology should be obtained in any participant with a previously positive CSF as part of response assessment. See Section 9.1",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-014"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 15,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-011",
+      "table_id": "table-003",
+      "annotation_marker": "n11",
+      "annotation_type": "footnote",
+      "annotation_text": "Bone marrow aspirate should be obtained in any participant with a previously positive bone marrow aspirate as part of response assessment. See Section 9.1.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-015"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 16,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-012",
+      "table_id": "table-003",
+      "annotation_marker": "n12",
+      "annotation_type": "footnote",
+      "annotation_text": "During safety follow-up and every 3 months (clinic visit or by telephone) thereafter and during survival phase. Include documentation of subsequent chemotherapy. See Section 5.1.4.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-016"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 3,
+          "location_type": "activity_name",
+          "row_position": 17,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-013",
       "table_id": "table-003",
       "annotation_marker": "a",
       "annotation_type": "footnote",
@@ -1109,26 +1420,26 @@
       "marker_locations": [
         {
           "table_number": 3,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 2
         },
         {
           "table_number": 3,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 3
         },
         {
           "table_number": 3,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 4
         }
       ]
     },
     {
-      "annotation_id": "annot-002",
+      "annotation_id": "annot-014",
       "table_id": "table-003",
       "annotation_marker": "b",
       "annotation_type": "footnote",
@@ -1145,14 +1456,14 @@
       "marker_locations": [
         {
           "table_number": 3,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 5
         }
       ]
     },
     {
-      "annotation_id": "annot-003",
+      "annotation_id": "annot-015",
       "table_id": "table-003",
       "annotation_marker": "c",
       "annotation_type": "footnote",
@@ -1168,283 +1479,8 @@
         {
           "table_number": 3,
           "location_type": "schedule_property",
-          "row_position": 1
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-004",
-      "table_id": "table-003",
-      "annotation_marker": "n1",
-      "annotation_type": "footnote",
-      "annotation_text": "Blood pressure, heart rate, temperature.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-002"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 2
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-005",
-      "table_id": "table-003",
-      "annotation_marker": "n2",
-      "annotation_type": "footnote",
-      "annotation_text": "Lansky play score for ≤ 16 years or Karnofsky performance score for > 16 years of age (Appendix 7).",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-003"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 3
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-006",
-      "table_id": "table-003",
-      "annotation_marker": "n3",
-      "annotation_type": "footnote",
-      "annotation_text": "Participant should rest for 5 minutes prior to each ECG.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-004"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 4
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-007",
-      "table_id": "table-003",
-      "annotation_marker": "n4",
-      "annotation_type": "footnote",
-      "annotation_text": "All SAEs and non-serious AEs should be collected continuously during the treatment period and for a minimum of 150 days following discontinuation of study treatment. Participants will be followed for all SAEs, non-serious AEs of special interest (as defined in Section 9.2.8) and all AEs (SAEs and non-serious AEs) associated with confirmed or suspected SARS-CoV-2 infection until resolution, the condition stabilizes, the event is otherwise explained, the event is deemed irreversible, the participant is lost to follow-up (as defined in Section 8.3), or for suspected cases, until SARS-CoV-2 infection is ruled-out.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-005"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 5
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-008",
-      "table_id": "table-003",
-      "annotation_marker": "n5",
-      "annotation_type": "footnote",
-      "annotation_text": "Additional subsequent cancer therapy details such as regimen, setting of the regimen, line of therapy, start and end date of each regimen, best response to the regimen, and date of progression to subsequent anti-cancer therapies will be collected.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-007"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 7
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-009",
-      "table_id": "table-003",
-      "annotation_marker": "s6",
-      "annotation_type": "source_note",
-      "annotation_text": "See Section 9.4.6 for the list of laboratory tests.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-009"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 9
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-010",
-      "table_id": "table-003",
-      "annotation_marker": "n7",
-      "annotation_type": "footnote",
-      "annotation_text": "Women of childbearing potential only. Serum or urine pregnancy test (minimum sensitivity equivalent units 25 IU/L or equivalent units of human chorionic gonadotropin) is required.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-010"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 10
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-011",
-      "table_id": "table-003",
-      "annotation_marker": "s8",
-      "annotation_type": "source_note",
-      "annotation_text": "See Section 9.1.1 for further details.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-012"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 12
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-012",
-      "table_id": "table-003",
-      "annotation_marker": "n9",
-      "annotation_type": "footnote",
-      "annotation_text": "Except for glioma, medulloblastoma, ependymoma, and other central nervous system tumors in which an MRI is required, CT of the brain without and with contrast can be performed if MRI is contraindicated. See Section 9.1.1 for further details.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-013"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 13
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-013",
-      "table_id": "table-003",
-      "annotation_marker": "n10",
-      "annotation_type": "footnote",
-      "annotation_text": "CSF cytopathology should be obtained in any participant with a previously positive CSF as part of response assessment. See Section 9.1",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-014"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 14
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-014",
-      "table_id": "table-003",
-      "annotation_marker": "n11",
-      "annotation_type": "footnote",
-      "annotation_text": "Bone marrow aspirate should be obtained in any participant with a previously positive bone marrow aspirate as part of response assessment. See Section 9.1.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-015"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 15
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-015",
-      "table_id": "table-003",
-      "annotation_marker": "n12",
-      "annotation_type": "footnote",
-      "annotation_text": "During safety follow-up and every 3 months (clinic visit or by telephone) thereafter and during survival phase. Include documentation of subsequent chemotherapy. See Section 5.1.4.",
-      "annotation_scope": "activity",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [
-          "act-016"
-        ],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 16
+          "row_position": 1,
+          "method": "synthesized"
         }
       ]
     }

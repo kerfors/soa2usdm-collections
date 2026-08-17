@@ -64,7 +64,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T06:22:15.006815+00:00",
+    "resolved_at": "2026-08-17T19:13:16.646625+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -77,47 +77,53 @@
       "hierarchy_valid": true,
       "annotations_valid": true,
       "validation_warnings": [
-        "Resolved annotation annot-021 ('note1') has no referenced elements — orphan: On treatment days, all assessments should be perfo...",
+        "Resolved annotation annot-001 ('tn1') has no referenced elements — orphan: Note: On treatment days, all assessments should be...",
         "Annotation summary: 1 of 21 annotations have no referenced elements (will be orphans in consolidation)"
       ],
-      "validation_errors": []
+      "validation_errors": [],
+      "method_provenance": [
+        "indentation_level:font_signal: 1",
+        "indentation_level:visual_estimate: 7",
+        "marker_location:synthesized: 1",
+        "property_structure:inferred_from_layout: 1"
+      ]
     },
     "resolution_status": "resolved_with_warnings",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-07-12T18:00:14+00:00",
-    "extractor": "Claude Opus 4.8 (Cowork, PDF->JSON v3.0.2 single-pass)",
+    "extracted_at": "2026-08-17T00:00:00Z",
+    "extractor": "Claude-Opus-5",
     "source_document": {
       "filename": "NCT04320615_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Tocilizumab WA42380, Version 3 (COVID-19)"
+      "document_version": "Version 3"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Appendix 1 (Days 1-2) of the tocilizumab COVID-19 SoA. One of three sequential main_soa phase tables (Appendix 2 = Days 3-28, Appendix 3 = After Day 28). Landscape; body on pp 77-78, footnotes pp 78-80. Screening header carries markers a,b (grid col 2). Cell-level markers o (Serum PD Day-1 cells col 3-4) and q (Serum PK Day-1 cells col 3-4). PaO2/FiO2 'Optional' distributed across the post-dose columns (source_range 3:6). Footnote h dedup across SpO2 + Vital signs. General Note (assessments prior to dosing) as synthesized note1 (table-scoped). Abbreviation list not captured."
+    "extraction_notes": "Appendix 1 of protocol WA42380 v3. The table body runs across document pages 77-78; the header block (3 schedule_property rows) is reprinted verbatim on page 78 and is de-duplicated here (counted once). Pages 79-80 carry only footnote text (no activity rows). One leading label column (L=1); first data column is 2. Symbol-font glyphs (private-use code points in the text layer) were mapped to Unicode: \\uf02d→−, \\uf02b→+, \\uf0b1→±, \\uf0df→←, \\uf0e0→→, \\uf0e2→®."
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
-    "table_title": "Appendix 1: Schedule of Activities: Days 1 and 2",
-    "table_purpose": "Intensive Days 1-2 schedule (Screening, Baseline/Day 1 with pre-dose and post-infusion timepoints, Day 2).",
+    "table_title": "Appendix 1 Schedule of Activities: Days 1 and 2",
+    "table_purpose": "Screening, baseline (Day 1) and Day 2 assessments around the initial study drug infusion",
     "page_start": 77,
     "page_end": 80,
     "track_label": null,
     "column_count": 5,
-    "row_count": 28,
+    "row_count": 31,
     "header_row_count": 3,
     "activity_row_count": 28,
-    "notes": "Appendix 1 (document pages 77-80). One of three sequential phase schedules; header (Epoch/Study Day/Timepoint) repeated across pages 77-78; footnotes on pages 78-80. 5 data columns (2-6)."
+    "notes": "Classified main_soa: rows are procedures performed on subjects, and this is the anchor grid for the screening/baseline/Day-2 portion of the timeline. Appendices 2 and 3 are separate main_soa tables rather than continuations because their column structures differ (day-by-day Days 3-28; Days 35/45/60). The '(Cont.)' page (document page 78) reprints the same header and continues the same rows, so it is treated as part of this table rather than as a separate continuation table, per the de-duplication rule for reprinted header rows. Pages 79-80 contribute footnote text only."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-001",
       "row_position": 1,
-      "property_name": "Epoch",
+      "property_name": "Study Period",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -125,7 +131,7 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Top header band: Screening (col 2, markers a,b) and Baseline (col 3). Cols 4-6 (post-dose timepoints) have no epoch label. Label cell empty; name synthesized.",
+      "property_comment": "Top header band naming the study phase over each column group: 'Screening' over the screening column and 'Baseline' over the Day 1 pre-dose column; the remaining columns (4-6) are covered by an empty merged cell. The row label cell is blank in the source, so property_name was synthesized. Classified 'epoch' because the values are major study phases, not visit names or days.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -145,7 +151,7 @@
         "cell_value": "Study Day"
       },
       "property_type": "study_day",
-      "property_comment": "Study Day: -2 to 0 (Screening, col 2), Day 1 (cols 3-4, merged), Day 2 (cols 5-6, merged).",
+      "property_comment": "Protocol study days: '−2 to 0' for screening, '1' merged across the two Day 1 columns and '2' merged across the two Day 2 columns. Classified 'study_day' because the values are protocol day numbers/ranges.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [
@@ -162,10 +168,10 @@
       "property_name_source": {
         "row_position": 3,
         "column_position": 1,
-        "cell_value": "Time Post Initial Treatment (Assessment Window)"
+        "cell_value": "Time Post Initial Treatment\n(Assessment Window)"
       },
       "property_type": "timepoint",
-      "property_comment": "Within-day timing relative to initial treatment: 0 Pre-dose (-4 hrs) (col 3), 15 min After end of infusion (+1 hr) (col 4), 24 hrs (±4 hrs) (col 5), 36 hrs (±4 hrs) (col 6). Col 2 (Screening) has no timepoint.",
+      "property_comment": "Within-visit timing relative to the initial infusion, with the assessment window in parentheses (0 Pre-dose, 15 min after end of infusion, 24 hrs, 36 hrs). Classified 'timepoint' because the values are hour/minute offsets within a visit rather than days or visits; the parenthetical windows are printed inside the same cells rather than on a separate window row.",
       "hierarchical_level": 3,
       "parent_property_id": "prop-002",
       "child_property_ids": [],
@@ -188,15 +194,21 @@
         },
         {
           "property_id": "prop-002",
-          "value": "-2 to 0",
+          "value": "−2 to 0",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-003",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Screening / -2 to 0",
+      "composite_label": "Screening / −2 to 0",
       "linked_annotation_ids": [
-        "annot-001",
-        "annot-002"
+        "annot-002",
+        "annot-003"
       ]
     },
     {
@@ -219,12 +231,12 @@
         },
         {
           "property_id": "prop-003",
-          "value": "0 Pre-dose (-4 hrs)",
+          "value": "0 Pre-dose (−4 hrs)",
           "is_merged": false,
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Baseline / 1 / 0 Pre-dose (-4 hrs)",
+      "composite_label": "Baseline / 1 / 0 Pre-dose (−4 hrs)",
       "linked_annotation_ids": []
     },
     {
@@ -233,6 +245,12 @@
       "column_position": 4,
       "is_label_column": false,
       "column_values": [
+        {
+          "property_id": "prop-001",
+          "value": "",
+          "is_merged": true,
+          "annotation_markers": ""
+        },
         {
           "property_id": "prop-002",
           "value": "1",
@@ -256,6 +274,12 @@
       "is_label_column": false,
       "column_values": [
         {
+          "property_id": "prop-001",
+          "value": "",
+          "is_merged": true,
+          "annotation_markers": ""
+        },
+        {
           "property_id": "prop-002",
           "value": "2",
           "is_merged": true,
@@ -278,6 +302,12 @@
       "is_label_column": false,
       "column_values": [
         {
+          "property_id": "prop-001",
+          "value": "",
+          "is_merged": true,
+          "annotation_markers": ""
+        },
+        {
           "property_id": "prop-002",
           "value": "2",
           "is_merged": true,
@@ -298,14 +328,11 @@
     {
       "activity_id": "act-001",
       "table_id": "table-001",
-      "row_position": 1,
+      "row_position": 4,
       "activity_name": "Informed consent",
       "activity_name_source": {
         "cell_text": "Informed consent",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -318,14 +345,11 @@
     {
       "activity_id": "act-002",
       "table_id": "table-001",
-      "row_position": 2,
+      "row_position": 5,
       "activity_name": "Inclusion/exclusion criteria",
       "activity_name_source": {
         "cell_text": "Inclusion/exclusion criteria",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -338,14 +362,11 @@
     {
       "activity_id": "act-003",
       "table_id": "table-001",
-      "row_position": 3,
+      "row_position": 6,
       "activity_name": "Demographic data",
       "activity_name_source": {
         "cell_text": "Demographic data",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -358,14 +379,11 @@
     {
       "activity_id": "act-004",
       "table_id": "table-001",
-      "row_position": 4,
+      "row_position": 7,
       "activity_name": "Randomization",
       "activity_name_source": {
         "cell_text": "Randomization",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -378,14 +396,11 @@
     {
       "activity_id": "act-005",
       "table_id": "table-001",
-      "row_position": 5,
+      "row_position": 8,
       "activity_name": "Medical history",
       "activity_name_source": {
         "cell_text": "Medical history",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -398,14 +413,11 @@
     {
       "activity_id": "act-006",
       "table_id": "table-001",
-      "row_position": 6,
+      "row_position": 9,
       "activity_name": "Complete physical examination",
       "activity_name_source": {
         "cell_text": "Complete physical examination c",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -414,20 +426,17 @@
       "has_schedule_data": true,
       "annotation_markers": "c",
       "linked_annotation_ids": [
-        "annot-003"
+        "annot-004"
       ]
     },
     {
       "activity_id": "act-007",
       "table_id": "table-001",
-      "row_position": 7,
+      "row_position": 10,
       "activity_name": "Weight",
       "activity_name_source": {
         "cell_text": "Weight",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -440,14 +449,11 @@
     {
       "activity_id": "act-008",
       "table_id": "table-001",
-      "row_position": 8,
+      "row_position": 11,
       "activity_name": "COVID-19 diagnosis",
       "activity_name_source": {
         "cell_text": "COVID-19 diagnosis d",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -456,20 +462,17 @@
       "has_schedule_data": true,
       "annotation_markers": "d",
       "linked_annotation_ids": [
-        "annot-004"
+        "annot-005"
       ]
     },
     {
       "activity_id": "act-009",
       "table_id": "table-001",
-      "row_position": 9,
+      "row_position": 12,
       "activity_name": "Chest X-ray/CT scan",
       "activity_name_source": {
         "cell_text": "Chest X-ray/CT scan e",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -478,20 +481,17 @@
       "has_schedule_data": true,
       "annotation_markers": "e",
       "linked_annotation_ids": [
-        "annot-005"
+        "annot-006"
       ]
     },
     {
       "activity_id": "act-010",
       "table_id": "table-001",
-      "row_position": 10,
+      "row_position": 13,
       "activity_name": "ECG",
       "activity_name_source": {
         "cell_text": "ECG",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -504,14 +504,11 @@
     {
       "activity_id": "act-011",
       "table_id": "table-001",
-      "row_position": 11,
+      "row_position": 14,
       "activity_name": "Pregnancy test",
       "activity_name_source": {
         "cell_text": "Pregnancy test f",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -520,20 +517,17 @@
       "has_schedule_data": true,
       "annotation_markers": "f",
       "linked_annotation_ids": [
-        "annot-006"
+        "annot-007"
       ]
     },
     {
       "activity_id": "act-012",
       "table_id": "table-001",
-      "row_position": 12,
+      "row_position": 15,
       "activity_name": "PaO2/FiO2",
       "activity_name_source": {
         "cell_text": "PaO2/FiO2 g",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -542,20 +536,17 @@
       "has_schedule_data": true,
       "annotation_markers": "g",
       "linked_annotation_ids": [
-        "annot-007"
+        "annot-008"
       ]
     },
     {
       "activity_id": "act-013",
       "table_id": "table-001",
-      "row_position": 13,
+      "row_position": 16,
       "activity_name": "SpO2",
       "activity_name_source": {
         "cell_text": "SpO2 h",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -564,20 +555,17 @@
       "has_schedule_data": true,
       "annotation_markers": "h",
       "linked_annotation_ids": [
-        "annot-008"
+        "annot-009"
       ]
     },
     {
       "activity_id": "act-014",
       "table_id": "table-001",
-      "row_position": 14,
+      "row_position": 17,
       "activity_name": "Vital signs",
       "activity_name_source": {
         "cell_text": "Vital signs h",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -586,20 +574,17 @@
       "has_schedule_data": true,
       "annotation_markers": "h",
       "linked_annotation_ids": [
-        "annot-008"
+        "annot-009"
       ]
     },
     {
       "activity_id": "act-015",
       "table_id": "table-001",
-      "row_position": 15,
+      "row_position": 18,
       "activity_name": "Ordinal scoring",
       "activity_name_source": {
         "cell_text": "Ordinal scoring i",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -608,20 +593,17 @@
       "has_schedule_data": true,
       "annotation_markers": "i",
       "linked_annotation_ids": [
-        "annot-009"
+        "annot-010"
       ]
     },
     {
       "activity_id": "act-016",
       "table_id": "table-001",
-      "row_position": 16,
+      "row_position": 19,
       "activity_name": "Adverse events",
       "activity_name_source": {
         "cell_text": "Adverse events j",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -630,20 +612,17 @@
       "has_schedule_data": true,
       "annotation_markers": "j",
       "linked_annotation_ids": [
-        "annot-010"
+        "annot-011"
       ]
     },
     {
       "activity_id": "act-017",
       "table_id": "table-001",
-      "row_position": 17,
+      "row_position": 20,
       "activity_name": "Concomitant medications",
       "activity_name_source": {
         "cell_text": "Concomitant medications k",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -652,20 +631,17 @@
       "has_schedule_data": true,
       "annotation_markers": "k",
       "linked_annotation_ids": [
-        "annot-011"
+        "annot-012"
       ]
     },
     {
       "activity_id": "act-018",
       "table_id": "table-001",
-      "row_position": 18,
+      "row_position": 21,
       "activity_name": "Hematology",
       "activity_name_source": {
         "cell_text": "Hematology l",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -674,20 +650,17 @@
       "has_schedule_data": true,
       "annotation_markers": "l",
       "linked_annotation_ids": [
-        "annot-012"
+        "annot-013"
       ]
     },
     {
       "activity_id": "act-019",
       "table_id": "table-001",
-      "row_position": 19,
+      "row_position": 22,
       "activity_name": "Chemistry",
       "activity_name_source": {
         "cell_text": "Chemistry m",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -696,20 +669,17 @@
       "has_schedule_data": true,
       "annotation_markers": "m",
       "linked_annotation_ids": [
-        "annot-013"
+        "annot-014"
       ]
     },
     {
       "activity_id": "act-020",
       "table_id": "table-001",
-      "row_position": 20,
+      "row_position": 23,
       "activity_name": "Study drug administration",
       "activity_name_source": {
         "cell_text": "Study drug administration n",
-        "indentation_level": 0,
-        "text_formatting": [
-          "bold"
-        ]
+        "indentation_level": 0
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -718,20 +688,22 @@
       "has_schedule_data": true,
       "annotation_markers": "n",
       "linked_annotation_ids": [
-        "annot-014"
+        "annot-015"
       ]
     },
     {
       "activity_id": "act-021",
       "table_id": "table-001",
-      "row_position": 21,
+      "row_position": 24,
       "activity_name": "Central Labs",
       "activity_name_source": {
         "cell_text": "Central Labs",
         "indentation_level": 0,
         "text_formatting": [
-          "bold"
-        ]
+          "bold",
+          "underline"
+        ],
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -752,11 +724,12 @@
     {
       "activity_id": "act-022",
       "table_id": "table-001",
-      "row_position": 22,
+      "row_position": 25,
       "activity_name": "Serum PD (CRP, IL-6, sIL-6R)",
       "activity_name_source": {
         "cell_text": "Serum PD (CRP, IL-6, sIL-6R)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -769,11 +742,12 @@
     {
       "activity_id": "act-023",
       "table_id": "table-001",
-      "row_position": 23,
+      "row_position": 26,
       "activity_name": "Serum PK",
       "activity_name_source": {
         "cell_text": "Serum PK p",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -782,17 +756,18 @@
       "has_schedule_data": true,
       "annotation_markers": "p",
       "linked_annotation_ids": [
-        "annot-016"
+        "annot-017"
       ]
     },
     {
       "activity_id": "act-024",
       "table_id": "table-001",
-      "row_position": 24,
+      "row_position": 27,
       "activity_name": "Serum sample for exploratory biomarkers",
       "activity_name_source": {
         "cell_text": "Serum sample for exploratory biomarkers",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -805,11 +780,12 @@
     {
       "activity_id": "act-025",
       "table_id": "table-001",
-      "row_position": 25,
+      "row_position": 28,
       "activity_name": "SARS-CoV-2 viral load",
       "activity_name_source": {
         "cell_text": "SARS-CoV-2 viral load r",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -818,17 +794,18 @@
       "has_schedule_data": true,
       "annotation_markers": "r",
       "linked_annotation_ids": [
-        "annot-018"
+        "annot-019"
       ]
     },
     {
       "activity_id": "act-026",
       "table_id": "table-001",
-      "row_position": 26,
+      "row_position": 29,
       "activity_name": "Serum SARS-CoV-2 antibody titer",
       "activity_name_source": {
         "cell_text": "Serum SARS-CoV-2 antibody titer",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -841,11 +818,12 @@
     {
       "activity_id": "act-027",
       "table_id": "table-001",
-      "row_position": 27,
+      "row_position": 30,
       "activity_name": "Cryopreserved PBMCs",
       "activity_name_source": {
         "cell_text": "Cryopreserved PBMCs s",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -854,17 +832,18 @@
       "has_schedule_data": true,
       "annotation_markers": "s",
       "linked_annotation_ids": [
-        "annot-019"
+        "annot-020"
       ]
     },
     {
       "activity_id": "act-028",
       "table_id": "table-001",
-      "row_position": 28,
+      "row_position": 31,
       "activity_name": "Whole blood in PAXgene® tubes for RNA analyses",
       "activity_name_source": {
         "cell_text": "Whole blood in PAXgene® tubes for RNA analyses t",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -873,7 +852,7 @@
       "has_schedule_data": true,
       "annotation_markers": "t",
       "linked_annotation_ids": [
-        "annot-020"
+        "annot-021"
       ]
     }
   ],
@@ -881,52 +860,8 @@
     {
       "activity_id": "act-001",
       "column_id": "col-002",
-      "row_position": 1,
-      "column_position": 2,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-002",
-      "column_id": "col-002",
-      "row_position": 2,
-      "column_position": 2,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-002",
-      "column_id": "col-003",
-      "row_position": 2,
-      "column_position": 3,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-003",
-      "column_id": "col-002",
-      "row_position": 3,
-      "column_position": 2,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-004",
-      "column_id": "col-003",
       "row_position": 4,
-      "column_position": 3,
+      "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
@@ -934,7 +869,18 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-005",
+      "activity_id": "act-002",
+      "column_id": "col-002",
+      "row_position": 5,
+      "column_position": 2,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-002",
       "column_id": "col-003",
       "row_position": 5,
       "column_position": 3,
@@ -945,7 +891,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-006",
+      "activity_id": "act-003",
       "column_id": "col-002",
       "row_position": 6,
       "column_position": 2,
@@ -956,7 +902,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-007",
+      "activity_id": "act-004",
       "column_id": "col-003",
       "row_position": 7,
       "column_position": 3,
@@ -967,10 +913,10 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-008",
-      "column_id": "col-002",
+      "activity_id": "act-005",
+      "column_id": "col-003",
       "row_position": 8,
-      "column_position": 2,
+      "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
@@ -978,7 +924,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-009",
+      "activity_id": "act-006",
       "column_id": "col-002",
       "row_position": 9,
       "column_position": 2,
@@ -989,10 +935,10 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-010",
-      "column_id": "col-002",
+      "activity_id": "act-007",
+      "column_id": "col-003",
       "row_position": 10,
-      "column_position": 2,
+      "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
@@ -1000,7 +946,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-011",
+      "activity_id": "act-008",
       "column_id": "col-002",
       "row_position": 11,
       "column_position": 2,
@@ -1011,7 +957,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-012",
+      "activity_id": "act-009",
       "column_id": "col-002",
       "row_position": 12,
       "column_position": 2,
@@ -1022,51 +968,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-012",
-      "column_id": "col-003",
-      "row_position": 12,
-      "column_position": 3,
-      "cell_value": "Optional",
-      "cell_value_type": "conditional",
-      "source_range": "3:6",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-012",
-      "column_id": "col-004",
-      "row_position": 12,
-      "column_position": 4,
-      "cell_value": "Optional",
-      "cell_value_type": "conditional",
-      "source_range": "3:6",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-012",
-      "column_id": "col-005",
-      "row_position": 12,
-      "column_position": 5,
-      "cell_value": "Optional",
-      "cell_value_type": "conditional",
-      "source_range": "3:6",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-012",
-      "column_id": "col-006",
-      "row_position": 12,
-      "column_position": 6,
-      "cell_value": "Optional",
-      "cell_value_type": "conditional",
-      "source_range": "3:6",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-013",
+      "activity_id": "act-010",
       "column_id": "col-002",
       "row_position": 13,
       "column_position": 2,
@@ -1077,51 +979,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-013",
-      "column_id": "col-003",
-      "row_position": 13,
-      "column_position": 3,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-013",
-      "column_id": "col-004",
-      "row_position": 13,
-      "column_position": 4,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-013",
-      "column_id": "col-005",
-      "row_position": 13,
-      "column_position": 5,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-013",
-      "column_id": "col-006",
-      "row_position": 13,
-      "column_position": 6,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-014",
+      "activity_id": "act-011",
       "column_id": "col-002",
       "row_position": 14,
       "column_position": 2,
@@ -1132,10 +990,10 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-014",
-      "column_id": "col-003",
-      "row_position": 14,
-      "column_position": 3,
+      "activity_id": "act-012",
+      "column_id": "col-002",
+      "row_position": 15,
+      "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
@@ -1143,54 +1001,54 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-014",
-      "column_id": "col-004",
-      "row_position": 14,
-      "column_position": 4,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-014",
-      "column_id": "col-005",
-      "row_position": 14,
-      "column_position": 5,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-014",
-      "column_id": "col-006",
-      "row_position": 14,
-      "column_position": 6,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-015",
+      "activity_id": "act-012",
       "column_id": "col-003",
       "row_position": 15,
       "column_position": 3,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
+      "cell_value": "← Optional →",
+      "cell_value_type": "conditional",
+      "source_range": "3:6",
       "annotation_markers": "",
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-015",
+      "activity_id": "act-012",
+      "column_id": "col-004",
+      "row_position": 15,
+      "column_position": 4,
+      "cell_value": "← Optional →",
+      "cell_value_type": "conditional",
+      "source_range": "3:6",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-012",
       "column_id": "col-005",
       "row_position": 15,
       "column_position": 5,
+      "cell_value": "← Optional →",
+      "cell_value_type": "conditional",
+      "source_range": "3:6",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-012",
+      "column_id": "col-006",
+      "row_position": 15,
+      "column_position": 6,
+      "cell_value": "← Optional →",
+      "cell_value_type": "conditional",
+      "source_range": "3:6",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-013",
+      "column_id": "col-002",
+      "row_position": 16,
+      "column_position": 2,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
@@ -1198,7 +1056,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-016",
+      "activity_id": "act-013",
       "column_id": "col-003",
       "row_position": 16,
       "column_position": 3,
@@ -1209,7 +1067,18 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-016",
+      "activity_id": "act-013",
+      "column_id": "col-004",
+      "row_position": 16,
+      "column_position": 4,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-013",
       "column_id": "col-005",
       "row_position": 16,
       "column_position": 5,
@@ -1220,7 +1089,29 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-017",
+      "activity_id": "act-013",
+      "column_id": "col-006",
+      "row_position": 16,
+      "column_position": 6,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-014",
+      "column_id": "col-002",
+      "row_position": 17,
+      "column_position": 2,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-014",
       "column_id": "col-003",
       "row_position": 17,
       "column_position": 3,
@@ -1231,7 +1122,18 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-017",
+      "activity_id": "act-014",
+      "column_id": "col-004",
+      "row_position": 17,
+      "column_position": 4,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-014",
       "column_id": "col-005",
       "row_position": 17,
       "column_position": 5,
@@ -1242,10 +1144,10 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-018",
-      "column_id": "col-002",
-      "row_position": 18,
-      "column_position": 2,
+      "activity_id": "act-014",
+      "column_id": "col-006",
+      "row_position": 17,
+      "column_position": 6,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
@@ -1253,7 +1155,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-018",
+      "activity_id": "act-015",
       "column_id": "col-003",
       "row_position": 18,
       "column_position": 3,
@@ -1264,7 +1166,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-018",
+      "activity_id": "act-015",
       "column_id": "col-005",
       "row_position": 18,
       "column_position": 5,
@@ -1275,18 +1177,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-019",
-      "column_id": "col-002",
-      "row_position": 19,
-      "column_position": 2,
-      "cell_value": "x",
-      "cell_value_type": "marker",
-      "source_range": "",
-      "annotation_markers": "",
-      "linked_annotation_ids": []
-    },
-    {
-      "activity_id": "act-019",
+      "activity_id": "act-016",
       "column_id": "col-003",
       "row_position": 19,
       "column_position": 3,
@@ -1297,7 +1188,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-019",
+      "activity_id": "act-016",
       "column_id": "col-005",
       "row_position": 19,
       "column_position": 5,
@@ -1308,7 +1199,7 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-020",
+      "activity_id": "act-017",
       "column_id": "col-003",
       "row_position": 20,
       "column_position": 3,
@@ -1319,35 +1210,123 @@
       "linked_annotation_ids": []
     },
     {
-      "activity_id": "act-022",
+      "activity_id": "act-017",
+      "column_id": "col-005",
+      "row_position": 20,
+      "column_position": 5,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-002",
+      "row_position": 21,
+      "column_position": 2,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-003",
+      "row_position": 21,
+      "column_position": 3,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-018",
+      "column_id": "col-005",
+      "row_position": 21,
+      "column_position": 5,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-019",
+      "column_id": "col-002",
+      "row_position": 22,
+      "column_position": 2,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-019",
       "column_id": "col-003",
       "row_position": 22,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-019",
+      "column_id": "col-005",
+      "row_position": 22,
+      "column_position": 5,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-020",
+      "column_id": "col-003",
+      "row_position": 23,
+      "column_position": 3,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
+      "annotation_markers": "",
+      "linked_annotation_ids": []
+    },
+    {
+      "activity_id": "act-022",
+      "column_id": "col-003",
+      "row_position": 25,
+      "column_position": 3,
+      "cell_value": "x",
+      "cell_value_type": "marker",
+      "source_range": "",
       "annotation_markers": "o",
       "linked_annotation_ids": [
-        "annot-015"
+        "annot-016"
       ]
     },
     {
       "activity_id": "act-022",
       "column_id": "col-004",
-      "row_position": 22,
+      "row_position": 25,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
       "annotation_markers": "o",
       "linked_annotation_ids": [
-        "annot-015"
+        "annot-016"
       ]
     },
     {
       "activity_id": "act-022",
       "column_id": "col-005",
-      "row_position": 22,
+      "row_position": 25,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1358,7 +1337,7 @@
     {
       "activity_id": "act-022",
       "column_id": "col-006",
-      "row_position": 22,
+      "row_position": 25,
       "column_position": 6,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1369,33 +1348,33 @@
     {
       "activity_id": "act-023",
       "column_id": "col-003",
-      "row_position": 23,
+      "row_position": 26,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
       "annotation_markers": "q",
       "linked_annotation_ids": [
-        "annot-017"
+        "annot-018"
       ]
     },
     {
       "activity_id": "act-023",
       "column_id": "col-004",
-      "row_position": 23,
+      "row_position": 26,
       "column_position": 4,
       "cell_value": "x",
       "cell_value_type": "marker",
       "source_range": "",
       "annotation_markers": "q",
       "linked_annotation_ids": [
-        "annot-017"
+        "annot-018"
       ]
     },
     {
       "activity_id": "act-023",
       "column_id": "col-005",
-      "row_position": 23,
+      "row_position": 26,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1406,7 +1385,7 @@
     {
       "activity_id": "act-023",
       "column_id": "col-006",
-      "row_position": 23,
+      "row_position": 26,
       "column_position": 6,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1417,7 +1396,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-003",
-      "row_position": 24,
+      "row_position": 27,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1428,7 +1407,7 @@
     {
       "activity_id": "act-024",
       "column_id": "col-005",
-      "row_position": 24,
+      "row_position": 27,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1439,7 +1418,7 @@
     {
       "activity_id": "act-025",
       "column_id": "col-003",
-      "row_position": 25,
+      "row_position": 28,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1450,7 +1429,7 @@
     {
       "activity_id": "act-025",
       "column_id": "col-005",
-      "row_position": 25,
+      "row_position": 28,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1461,7 +1440,7 @@
     {
       "activity_id": "act-026",
       "column_id": "col-003",
-      "row_position": 26,
+      "row_position": 29,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1472,7 +1451,7 @@
     {
       "activity_id": "act-027",
       "column_id": "col-003",
-      "row_position": 27,
+      "row_position": 30,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1483,7 +1462,7 @@
     {
       "activity_id": "act-027",
       "column_id": "col-005",
-      "row_position": 27,
+      "row_position": 30,
       "column_position": 5,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1494,7 +1473,7 @@
     {
       "activity_id": "act-028",
       "column_id": "col-003",
-      "row_position": 28,
+      "row_position": 31,
       "column_position": 3,
       "cell_value": "x",
       "cell_value_type": "marker",
@@ -1506,6 +1485,28 @@
   "annotations": [
     {
       "annotation_id": "annot-001",
+      "table_id": "table-001",
+      "annotation_marker": "tn1",
+      "annotation_type": "footnote",
+      "annotation_text": "Note: On treatment days, all assessments should be performed prior to dosing, unless otherwise specified.",
+      "annotation_scope": "table",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-002",
       "table_id": "table-001",
       "annotation_marker": "a",
       "annotation_type": "footnote",
@@ -1522,14 +1523,14 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 2
         }
       ]
     },
     {
-      "annotation_id": "annot-002",
+      "annotation_id": "annot-003",
       "table_id": "table-001",
       "annotation_marker": "b",
       "annotation_type": "footnote",
@@ -1546,14 +1547,14 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_property",
+          "location_type": "schedule_cell",
           "row_position": 1,
           "column_position": 2
         }
       ]
     },
     {
-      "annotation_id": "annot-003",
+      "annotation_id": "annot-004",
       "table_id": "table-001",
       "annotation_marker": "c",
       "annotation_type": "footnote",
@@ -1571,12 +1572,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 6
+          "row_position": 9
         }
       ]
     },
     {
-      "annotation_id": "annot-004",
+      "annotation_id": "annot-005",
       "table_id": "table-001",
       "annotation_marker": "d",
       "annotation_type": "footnote",
@@ -1594,12 +1595,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 8
+          "row_position": 11
         }
       ]
     },
     {
-      "annotation_id": "annot-005",
+      "annotation_id": "annot-006",
       "table_id": "table-001",
       "annotation_marker": "e",
       "annotation_type": "footnote",
@@ -1617,12 +1618,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 9
+          "row_position": 12
         }
       ]
     },
     {
-      "annotation_id": "annot-006",
+      "annotation_id": "annot-007",
       "table_id": "table-001",
       "annotation_marker": "f",
       "annotation_type": "footnote",
@@ -1640,12 +1641,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 11
+          "row_position": 14
         }
       ]
     },
     {
-      "annotation_id": "annot-007",
+      "annotation_id": "annot-008",
       "table_id": "table-001",
       "annotation_marker": "g",
       "annotation_type": "footnote",
@@ -1663,12 +1664,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 12
+          "row_position": 15
         }
       ]
     },
     {
-      "annotation_id": "annot-008",
+      "annotation_id": "annot-009",
       "table_id": "table-001",
       "annotation_marker": "h",
       "annotation_type": "footnote",
@@ -1687,17 +1688,17 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 13
+          "row_position": 16
         },
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 14
+          "row_position": 17
         }
       ]
     },
     {
-      "annotation_id": "annot-009",
+      "annotation_id": "annot-010",
       "table_id": "table-001",
       "annotation_marker": "i",
       "annotation_type": "footnote",
@@ -1715,12 +1716,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 15
+          "row_position": 18
         }
       ]
     },
     {
-      "annotation_id": "annot-010",
+      "annotation_id": "annot-011",
       "table_id": "table-001",
       "annotation_marker": "j",
       "annotation_type": "footnote",
@@ -1738,12 +1739,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 16
+          "row_position": 19
         }
       ]
     },
     {
-      "annotation_id": "annot-011",
+      "annotation_id": "annot-012",
       "table_id": "table-001",
       "annotation_marker": "k",
       "annotation_type": "footnote",
@@ -1761,12 +1762,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 17
+          "row_position": 20
         }
       ]
     },
     {
-      "annotation_id": "annot-012",
+      "annotation_id": "annot-013",
       "table_id": "table-001",
       "annotation_marker": "l",
       "annotation_type": "footnote",
@@ -1784,12 +1785,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 18
+          "row_position": 21
         }
       ]
     },
     {
-      "annotation_id": "annot-013",
+      "annotation_id": "annot-014",
       "table_id": "table-001",
       "annotation_marker": "m",
       "annotation_type": "footnote",
@@ -1807,12 +1808,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 19
+          "row_position": 22
         }
       ]
     },
     {
-      "annotation_id": "annot-014",
+      "annotation_id": "annot-015",
       "table_id": "table-001",
       "annotation_marker": "n",
       "annotation_type": "footnote",
@@ -1830,16 +1831,16 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 20
+          "row_position": 23
         }
       ]
     },
     {
-      "annotation_id": "annot-015",
+      "annotation_id": "annot-016",
       "table_id": "table-001",
       "annotation_marker": "o",
       "annotation_type": "footnote",
-      "annotation_text": "On Day 1, CRP, IL-6, and sIL-6R samples should be drawn 0–4 hours before the start of infusion and then within 15 minutes (to 1 hour) after the end of the infusion, on the opposite arm as the infusion. Patents receiving a second infusion of study drug should provide extra samples for CRP, IL-6, and sIL-6R prior to and 15 minutes after the end of the infusion, on the opposite arm as the infusion.",
+      "annotation_text": "On Day 1, CRP, IL-6, and sIL-6R samples should be drawn 0−4 hours before the start of infusion and then within 15 minutes (to 1 hour) after the end of the infusion, on the opposite arm as the infusion. Patents receiving a second infusion of study drug should provide extra samples for CRP, IL-6, and sIL-6R prior to and 15 minutes after the end of the infusion, on the opposite arm as the infusion.",
       "annotation_scope": "cell",
       "referenced_elements": {
         "property_ids": [],
@@ -1860,19 +1861,19 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 22,
+          "row_position": 25,
           "column_position": 3
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 22,
+          "row_position": 25,
           "column_position": 4
         }
       ]
     },
     {
-      "annotation_id": "annot-016",
+      "annotation_id": "annot-017",
       "table_id": "table-001",
       "annotation_marker": "p",
       "annotation_type": "footnote",
@@ -1890,16 +1891,16 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 23
+          "row_position": 26
         }
       ]
     },
     {
-      "annotation_id": "annot-017",
+      "annotation_id": "annot-018",
       "table_id": "table-001",
       "annotation_marker": "q",
       "annotation_type": "footnote",
-      "annotation_text": "On Day 1, PK samples should be drawn 0–4 hours before the start of infusion and then within 15 minutes (to 1 hour) after the end of the infusion, on the opposite arm as the infusion.",
+      "annotation_text": "On Day 1, PK samples should be drawn 0−4 hours before the start of infusion and then within 15 minutes (to 1 hour) after the end of the infusion, on the opposite arm as the infusion.",
       "annotation_scope": "cell",
       "referenced_elements": {
         "property_ids": [],
@@ -1920,19 +1921,19 @@
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 23,
+          "row_position": 26,
           "column_position": 3
         },
         {
           "table_number": 1,
           "location_type": "schedule_cell",
-          "row_position": 23,
+          "row_position": 26,
           "column_position": 4
         }
       ]
     },
     {
-      "annotation_id": "annot-018",
+      "annotation_id": "annot-019",
       "table_id": "table-001",
       "annotation_marker": "r",
       "annotation_type": "footnote",
@@ -1950,12 +1951,12 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 25
+          "row_position": 28
         }
       ]
     },
     {
-      "annotation_id": "annot-019",
+      "annotation_id": "annot-020",
       "table_id": "table-001",
       "annotation_marker": "s",
       "annotation_type": "footnote",
@@ -1973,16 +1974,16 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 27
+          "row_position": 30
         }
       ]
     },
     {
-      "annotation_id": "annot-020",
+      "annotation_id": "annot-021",
       "table_id": "table-001",
       "annotation_marker": "t",
       "annotation_type": "footnote",
-      "annotation_text": "The first draw of blood should not be for PAXgene tubes to avoid contact with RNA preservation reagent inside the tube.",
+      "annotation_text": "The first draw of blood should not be for PAXgene® tubes to avoid contact with RNA preservation reagent inside the tube.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -1996,28 +1997,7 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 28
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-021",
-      "table_id": "table-001",
-      "annotation_marker": "note1",
-      "annotation_type": "footnote",
-      "annotation_text": "On treatment days, all assessments should be performed prior to dosing, unless otherwise specified.",
-      "annotation_scope": "table",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 1
+          "row_position": 31
         }
       ]
     }
