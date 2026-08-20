@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT05324124 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT05324124 — SoA extraction uncertainty report</h1>
+<p>Source: <code>/root/ph3/blind/NCT05324124/NCT05324124_soa.pdf</code> (4 PDF pages = document pages 9–12 per
+<code>PAGEMAP.md</code>; no excerpt page falls beyond the declared SoA range, so there is no back matter here).
+Prompt v3.7.3, schema <code>soa-table-extraction</code> v1.0.</p>
+<hr />
+<h2>1. Table inventory and classification</h2>
+<p><strong>One table.</strong> <code>NCT05324124_Table_01_extraction.json</code>.</p>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>table_number</td>
+<td>1</td>
+</tr>
+<tr>
+<td>table_type</td>
+<td><code>main_soa</code></td>
+</tr>
+<tr>
+<td>pages</td>
+<td>9–12 (document numbering)</td>
+</tr>
+<tr>
+<td>label columns (L)</td>
+<td>1 → first data column = position <strong>2</strong></td>
+</tr>
+<tr>
+<td>data columns</td>
+<td>15 (positions 2–16)</td>
+</tr>
+<tr>
+<td>excluded trailing column</td>
+<td>source column 17, "Comments" (notes column)</td>
+</tr>
+<tr>
+<td>header rows</td>
+<td>3</td>
+</tr>
+<tr>
+<td>activities</td>
+<td>19</td>
+</tr>
+<tr>
+<td>activity_schedule cells</td>
+<td>77</td>
+</tr>
+<tr>
+<td>annotations</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why <code>main_soa</code>:</strong> it is the only activity × timepoint grid in the excerpt and the anchor for the
+study timeline — a screening window, an inpatient treatment period Day −1 → Day 11 with an early
+discontinuation column, and a follow-up phone call. There is no second population, no finer-timing
+subsidiary grid and no non-activity table, so the <code>track</code> / <code>subsidiary</code> / <code>domain</code> / <code>reference</code>
+discriminators do not fire.</p>
+<p><strong>Why one table and not 1 + 3 continuations:</strong> the three header rows and the <code>Procedure</code> label column
+reprint verbatim on pages 10, 11 and 12 because a single Word table breaks across pages; the body rows
+simply continue. Per §1b I de-duplicated the reprinted header rows and counted each activity once, and
+declared one table with <code>page_start</code> 9 / <code>page_end</code> 12. Recorded in <code>table_metadata.notes</code>.</p>
+<p><strong>Activity rows per page across the declared range</strong> (every page contributes):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">document page</th>
+<th style="text-align: right;">rows</th>
+<th>activities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">6</td>
+<td>Informed consent; Inclusion and exclusion criteria; Demography; Participant admission to CRU; Participant discharge from CRU; Outpatient visit</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">3</td>
+<td>Medical history; Medical assessment; Height and weight</td>
+</tr>
+<tr>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">6</td>
+<td>Serum or urine pregnancy test …; Follicle-stimulating hormone …; Human immunodeficiency virus, hepatitis B and C screen; 12-lead ECG; Vital signs (supine), pulse rate, and blood pressure; Clinical laboratory tests</td>
+</tr>
+<tr>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">4</td>
+<td>Genetic sample; Selpercatinib administration; Adverse event /Serious adverse event review; Concomitant medication review</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Column layout.</strong> One leading label column ("Procedure"), so data columns are numbered from 2 and are
+not renumbered: 2 = the screening window <code>-28 to -2 days prior to Day 1</code>; 3–14 = Days <code>-1</code> … <code>11</code>;
+15 = <code>ED</code>; 16 = the follow-up phone call, <code>within 7 to 10 days after last dose</code>. The right-hand
+"Comments" column (source column 17) is a notes column: excluded from <code>schedule_grid</code> and
+<code>activity_schedule</code>, and its eight non-empty cells emitted as annotations (§6).</p>
+<p><strong>Empty data column — flagged, not repaired.</strong> Column 16 (the Follow-Up phone call) carries <strong>no mark
+on any of the 19 activity rows</strong>. This was confirmed mechanically (zero near-black pixels in that
+column band for every body row) as well as by eye. Nothing was inferred into it.</p>
+<hr />
+<h2>2. Source defects (transcribed, never resolved)</h2>
+<ol>
+<li><strong>Full-width redaction block on page 12.</strong> A black box spans y ≈ 222–363 pt across the whole table
+   width, between the <code>Genetic sample</code> row and the <code>Selpercatinib administration</code> row. At ~141 pt it is
+   tall enough to conceal several single-line rows (single-line rows in this table run ~17 pt). Nothing
+   under it exists in the text layer — the only text-layer content in that region is the redaction's own
+   large red overlay lettering, which <code>pdftotext</code> returns as two glyph tokens (<code>C</code> and <code>CI</code>).
+   <strong>This region may conceal activity rows and their marks.</strong> No rows were
+   invented for it; no row boundary was reconstructed inside it. Flagged in <code>table_metadata.notes</code> and
+   <code>extraction_metadata.extraction_notes</code>.</li>
+<li><strong>Truncated abbreviations line (page 12).</strong> The line under the table reads (de-glyphed)
+   <code>Abbreviations: CRU = clinical research unit; ECG = electrocardiogram; ED = early discontinuation; h = hour;</code>
+   and is then cut off by a second, smaller redaction block. Whatever followed the final <code>;</code> is not
+   recoverable.</li>
+<li><strong>Undefined in-grid mark <code>P</code>.</strong> <code>P</code> is used as a scheduling value on Day 1 and Day 8 for four
+   activities, but no legend defines it anywhere in the excerpt — most likely a casualty of defect 2.
+   Per §6 (marker referenced but not defined) it is transcribed where it appears and carries a <code>legend</code>
+   annotation whose text states plainly that the definition is not printed in the source. <strong>No meaning
+   was guessed</strong> (in particular it was <em>not</em> expanded to "predose").</li>
+<li><strong>Internally inconsistent cell text.</strong> The vital-signs row prints the Day 1 cell as <code>P, 1, 2h</code> and
+   the Day 8 cell as <code>P, 1,2h</code> (different spacing). Both are transcribed literally; not normalised.</li>
+<li><strong>Missing terminal punctuation.</strong> The pregnancy-test comment ends without a full stop —
+   <code>… urine pregnancy test at all other time points</code>. Transcribed as printed.</li>
+</ol>
+<hr />
+<h2>3. Merged cells and distributed values</h2>
+<p><strong>Header merges (<code>schedule_grid</code>).</strong> Confirmed from vertical-rule geometry, not from glyph position:
+in header rows 1 and 2 the only internal rules are at x = 158.2 and 211.3 pt, so
+- row 1 <code>Treatment Period</code> → merged across columns <strong>3:15</strong>, one entry per covered column;
+- row 2 <code>Days</code> → merged across columns <strong>3:15</strong>, one entry per covered column;
+- row 1 <code>Screening</code> (col 2) and <code>Follow-Up phone call</code> (col 16) are single cells.</p>
+<p><strong>Vertical header merge, not expressible in the schema.</strong> In column 16 there is no horizontal rule
+between header rows 2 and 3 (the rule at y = 170.3 pt is present in columns 1, 2 and 17 but absent in
+column 16), so <code>within 7 to 10 days after last dose</code> is one cell spanning header rows 2–3. The schema
+has no vertical merge notation, so the value is recorded once, on row 3 (the row that gives each column
+its timing), with <code>is_merged_cell: true</code> and <strong>no</strong> <code>merged_cell_range</code> — the merge is vertical, and
+<code>merged_cell_range</code> is a column range. Flagged here so the flag is not misread as a column span.</p>
+<p><strong>Distributed marks (<code>activity_schedule</code>).</strong> Two rows, both on page 12:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">row</th>
+<th>activity</th>
+<th>value</th>
+<th>source_range</th>
+<th>covered columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">21</td>
+<td>Adverse event /Serious adverse event review</td>
+<td><code>↔</code></td>
+<td><code>4:14</code></td>
+<td>Day 1 … Day 11</td>
+</tr>
+<tr>
+<td style="text-align: right;">22</td>
+<td>Concomitant medication review</td>
+<td><code>↔</code></td>
+<td><code>4:14</code></td>
+<td>Day 1 … Day 11</td>
+</tr>
+</tbody>
+</table>
+<p>Basis: in these two rows <em>only</em>, every internal vertical rule between x = 239.6 pt and x = 555.5 pt is
+absent — those two row bands yield 8 vertical rules (at x ≈ 72.2, 157.9, 211.1, 239.6, 555.5, 586.6,
+629.3, 719.5 pt) against the 18 that every other body row yields. So the arrow sits in one cell merged
+across columns 4–14 and is
+distributed to all 11, not collapsed onto the columns where the glyph happens to be drawn (the drawn
+extent is only x ≈ 272–526 pt, which would have wrongly read as Day 2 … Day 10).</p>
+<p><strong>Arrow glyph transcription.</strong> The mark renders as a double-headed horizontal arrow (a line with a
+head at each end). Its text layer is not a real arrow character — <code>pdftotext</code> returns a run of <code>=</code>
+signs flanked by two symbol-font glyphs. <code>cell_value</code> is recorded as <code>↔</code>, with
+<code>method: "visual_read"</code>, because the arrowheads are vector graphics and no faithful character is
+present in the text layer. This is the one place a glyph was normalised; flagged per §5.</p>
+<p>No other merged marks, no qualified marks, no vertically merged marks anywhere in the table.</p>
+<hr />
+<h2>4. Synthesised names and markers</h2>
+<p><strong>Synthesised <code>property_name</code> values</strong> (all three header rows; the label column carries no timing-row
+names):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">row</th>
+<th>synthesised name</th>
+<th>label-cell content</th>
+<th>reasoning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td><code>Study Period</code></td>
+<td>empty</td>
+<td>row carries only spanning phase labels (<code>Screening</code>, <code>Treatment Period</code>, <code>Follow-Up phone call</code>)</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td><code>Days</code></td>
+<td>empty</td>
+<td>row's only content is the word <code>Days</code> merged across columns 3–15</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td><code>Study Day</code></td>
+<td><code>Procedure</code></td>
+<td>the column-1 cell labels the <em>activity</em> column, not this timing row, so the name was taken from the row's own values</td>
+</tr>
+</tbody>
+</table>
+<p>All three carry <code>property_name_source.synthesized: true</code> and <code>structure_method: "inferred_from_layout"</code>.</p>
+<p><strong>Synthesised annotation markers.</strong> The Comments column carries no printed markers, so markers <code>n1</code>–<code>n8</code>
+were synthesised in printed order and each linked by <code>marker_locations</code> (<code>method: "synthesized"</code>) to the
+activity row whose Comments cell it is; the same marker is written into that activity's
+<code>annotation_markers</code> so <code>resolve</code> can bind it:</p>
+<table>
+<thead>
+<tr>
+<th>marker</th>
+<th style="text-align: right;">page</th>
+<th style="text-align: right;">bound to row</th>
+<th>activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">8</td>
+<td>Participant discharge from CRU</td>
+</tr>
+<tr>
+<td>n2</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
+<td>Medical assessment</td>
+</tr>
+<tr>
+<td>n3</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">12</td>
+<td>Height and weight</td>
+</tr>
+<tr>
+<td>n4</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">13</td>
+<td>Serum or urine pregnancy test (women of childbearing potential only)</td>
+</tr>
+<tr>
+<td>n5</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">16</td>
+<td>12-lead ECG</td>
+</tr>
+<tr>
+<td>n6</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">17</td>
+<td>Vital signs (supine), pulse rate, and blood pressure</td>
+</tr>
+<tr>
+<td>n7</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">18</td>
+<td>Clinical laboratory tests</td>
+</tr>
+<tr>
+<td>n8</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">20</td>
+<td>Selpercatinib administration</td>
+</tr>
+</tbody>
+</table>
+<p>Each note cell is bounded by the row's own horizontal rules (each Comments cell occupies exactly one
+activity row here — no note spans two rows and no row's note is split), so the bindings are positional,
+not word-overlap. <code>method: "synthesized"</code> records only that the <em>marker</em> is invented, not the position.</p>
+<hr />
+<h2>5. Mechanical mark-check</h2>
+<p>Both surfaces were built and diffed.</p>
+<ul>
+<li><strong>Text layer (§1b):</strong> <code>pdftotext -bbox</code>; column x-centres fixed from the header day/visit labels
+  (<code>-1</code> @223–231, <code>1</code> @253–258, … <code>11</code> @537–547, <code>ED</code> @564–578 pt), mark tokens binned to the nearest
+  centre. Header rows de-duplicated across the four pages.</li>
+<li><strong>Raster rule lines + dark-pixel counts (§1a/§1d):</strong> pages rendered at 200 dpi; horizontal rules read
+  from the <em>text-bearing</em> Procedure column (never from the redacted band, per §1d) to fix row bands;
+  vertical rules re-detected <strong>per row band</strong> (they shift by up to 2 pt between bands, and using one
+  page-wide boundary set produced false positives where a rule fell inside a cell); each cell then
+  scored by counting pixels below intensity 90.</li>
+</ul>
+<p><strong>Result: zero disagreements.</strong> Every cell the pixel detector scored above threshold corresponds to a
+text-layer token in the same column, and vice versa, on all 19 rows × 15 data columns. Representative
+dense/sparse rows were also read by eye against the render (<code>Vital signs …</code> — 10 marks; <code>Demography</code> —
+1 mark) and agreed.</p>
+<p>Two detector artefacts were identified and discarded rather than transcribed, both caused by a
+mis-placed column boundary letting a rule line into a cell: an apparent mark in column 9 of
+<code>Genetic sample</code>, and apparent marks in columns 13–14 of <code>Medical assessment</code>. Re-detecting boundaries
+per row band removed both. The arrow spans in rows 21–22 score above threshold in columns 5–13 for the
+same "ink in cell" reason; those are the arrow itself and are handled as a merge (§3), not as nine
+separate marks.</p>
+<p>Worth a spot-check on the resolved HTML, because they look irregular but are what the page shows:
+- <code>12-lead ECG</code> has a mark at Day 10 and Day 11 but <strong>not</strong> Day 9;
+- <code>Clinical laboratory tests</code> has a mark at Day 4 and Day 11 but <strong>not</strong> Day 3 and <strong>not</strong> Day 10,
+  while <code>Vital signs …</code> has marks at Day 3, Day 4 <strong>and</strong> Day 10;
+- <code>Adverse event /Serious adverse event review</code> and <code>Concomitant medication review</code> carry marks at
+  screening, Day −1 and ED <em>in addition to</em> the Day 1–11 arrow.</p>
+<hr />
+<h2>6. Annotation text integrity</h2>
+<ul>
+<li><strong>Glyph-spread source (§1c): page 12 only.</strong> Pages 9–11 have an ordinary text layer; page 12 returns
+  one glyph per token — 325 word tokens for visibly less content than page 11's 165, and the layout dump
+  of that page renders the header as letter-spaced text (<code>S c r e e ni n g</code>, <code>T r e at m e nt P e ri o d</code>).
+  Reconstructed fields on that page: the four activity names (<code>Genetic sample</code>,
+  <code>Selpercatinib administration</code>, <code>Adverse event /Serious adverse event review</code>,
+  <code>Concomitant medication review</code> — <code>activity_name_source.method: "glyph_reconstruction"</code>), the n8 note
+  text and the <code>ED</code> abbreviation text (<code>annotation_text_source.method: "deglyph_reconstruction"</code>), and
+  the abbreviations line quoted inside the <code>P</code> legend. The header text on page 12 is also glyph-spread
+  but was <strong>not</strong> reconstructed — it is identical to the header on pages 9–11, which is clean, and the
+  clean text was used. Every reconstructed string was re-read as running prose against the 300 dpi
+  render before delivery.</li>
+<li><strong>Containment pairs: none.</strong> No annotation's text is contained in another's, and no two notes share a
+  long run at a boundary. Every Comments cell is a single-row cell delimited top and bottom by that
+  activity row's own horizontal rules, so there is no split-note or merged-note risk here.</li>
+<li><strong>Notes bounded by geometry, not proximity.</strong> No annotation uses <code>proximity_bounded</code>.</li>
+<li><strong>Text completeness.</strong> Each note starts at its cell's first word and ends at its last; multi-line
+  cells were joined with single spaces. The typographic apostrophe in
+  <code>… at physician’s discretion.</code> is preserved as printed (U+2019).</li>
+</ul>
+<hr />
+<h2>7. Low-confidence calls</h2>
+<ol>
+<li><strong>Header row 2 (<code>Days</code>) typed <code>other</code> with <code>hierarchical_level: null</code>.</strong> It is a unit label merged
+   across columns 3–15 and assigns no per-column value; removing it leaves every column still
+   distinguishable, so it does not earn a level. An alternative reading types it <code>study_day</code> at level 2
+   and pushes the numeric row to level 3. Low impact but noted.</li>
+<li><strong>Header row 3 typed <code>study_day</code>.</strong> Mixed content: twelve day numbers plus a screening window, an
+   <code>ED</code> visit label and a follow-up window. Day numbers dominate, so <code>study_day</code>; a reviewer could
+   argue <code>visit</code>.</li>
+<li><strong><code>Comments</code> treated as a notes column, not a schedule column.</strong> It has no timing value in the
+   header and its cells are prose. Firm call, but it is what removes source column 17 from the grid.</li>
+<li><strong><code>ED</code> emitted as the only <code>abbreviation</code>.</strong> <code>ED</code> is printed <em>as</em> a header cell — the cell's entire
+   content is the term — so its <code>marker_location</code> is a printed position (default method), which is the
+   §6-permitted case. <code>CRU</code>, <code>ECG</code> and <code>h</code> were <strong>dropped</strong>: <code>CRU</code> and <code>ECG</code> occur only inside the
+   running text of activity labels (<code>Participant admission to CRU</code>, <code>12-lead ECG</code>) and <code>h</code> only inside
+   composite cell values (<code>2h</code>, <code>24h</code>); binding any of them would be the <code>text_match</code> standalone-list
+   binding §6 forbids.</li>
+<li><strong><code>P</code> legend text is an extraction statement, not source wording.</strong> Its <code>annotation_text</code> says the
+   definition is not printed and quotes the truncated abbreviations line as context. Nothing is asserted
+   as source content. Note that <code>P</code> is deliberately both the <code>cell_value</code> (§5: a legend-defined in-grid
+   scheduling mark stays in the grid) and the <code>annotation_markers</code> value on those eight cells (§6:
+   locations and markers must agree) — that duplication is intentional, not an uncleaned cell.</li>
+<li><strong>n7 typed <code>source_note</code>.</strong> <code>See Appendix 10.2, Clinical Laboratory Tests, for details.</code> is a bare
+   pointer with nothing explained (§8). The other seven Comments notes explain and stay <code>footnote</code>.</li>
+<li><strong>No full-protocol markdown was supplied</strong>, so there is no PDF/markdown disagreement to report; the
+   PDF is the sole authority for both structure and text.</li>
+</ol>
+<hr />
+<h2>8. Orphan risk</h2>
+<ul>
+<li>Every annotation has ≥ 1 <code>marker_locations</code> entry, and every location's marker is present in the
+  corresponding row's / cell's <code>annotation_markers</code> (checked mechanically both directions — no
+  unmatched markers in either).</li>
+<li>No <code>unresolved</code> marker locations were needed.</li>
+<li><strong>Residual risk:</strong> the <code>P</code> legend is definitionally incomplete (see §2.3) — resolvable and correctly
+  bound to its eight cells, but it points at an absent definition. Anything hidden by the page-12
+  redaction (§2.1) is unrecoverable and therefore unrepresented: if that block conceals rows, both those
+  activities and any Comments notes beside them are missing from this extraction.</li>
+</ul>
+<hr />
+<h2>9. Method provenance (every non-default value recorded)</h2>
+<table>
+<thead>
+<tr>
+<th>where</th>
+<th>field</th>
+<th>value</th>
+<th>why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>schedule_properties rows 1, 2, 3</td>
+<td><code>structure_method</code></td>
+<td><code>inferred_from_layout</code></td>
+<td>type and level read off spanning/merge geometry; no printed row labels</td>
+</tr>
+<tr>
+<td>schedule_properties rows 1, 2, 3</td>
+<td><code>property_name_source.synthesized</code></td>
+<td><code>true</code></td>
+<td>label column empty (rows 1–2) or carrying the activity-column header <code>Procedure</code> (row 3)</td>
+</tr>
+<tr>
+<td>activities rows 4–22 (all 19)</td>
+<td><code>activity_name_source.indentation_method</code></td>
+<td><code>assumed_flat</code></td>
+<td>flat table — every label starts at the same x; no grouping headers, no indentation evidence</td>
+</tr>
+<tr>
+<td>activities rows 19–22</td>
+<td><code>activity_name_source.method</code></td>
+<td><code>glyph_reconstruction</code></td>
+<td>page 12 text layer is one glyph per token</td>
+</tr>
+<tr>
+<td>annotation n8, <code>P</code>, <code>ED</code></td>
+<td><code>annotation_text_source.method</code></td>
+<td><code>deglyph_reconstruction</code></td>
+<td>same, for text read from page 12</td>
+</tr>
+<tr>
+<td>activity_schedule rows 21 &amp; 22, columns 4–14 (22 cells)</td>
+<td><code>method</code></td>
+<td><code>visual_read</code></td>
+<td>arrow is a vector graphic with no faithful text-layer character</td>
+</tr>
+<tr>
+<td>annotations n1–n8</td>
+<td><code>marker_locations[].method</code></td>
+<td><code>synthesized</code></td>
+<td>Comments column prints no markers; markers invented, positions read from rule-line geometry</td>
+</tr>
+<tr>
+<td>—</td>
+<td><code>location_type: "unresolved"</code></td>
+<td>none</td>
+<td>no marker's target was indeterminable</td>
+</tr>
+</tbody>
+</table>
+<p>No <code>proximity</code>, <code>proximity_bounded</code>, <code>text_match</code>, <code>visual_transcription</code>, <code>raster_band_cells</code> or
+<code>raster_pixel_detection</code> values were used: rule lines were recoverable everywhere outside the redaction,
+and the text layer supplied every cell value except the two arrows.</p>
+</body>
+</html>

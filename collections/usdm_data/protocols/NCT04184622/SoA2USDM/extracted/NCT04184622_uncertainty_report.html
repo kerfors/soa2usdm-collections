@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT04184622 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT04184622 — SoA extraction uncertainty report</h1>
+<p>Source: <code>/root/ph3/blind/NCT04184622/NCT04184622_soa.pdf</code> (11 PDF pages; protocol I8F-MC-GPHK(b),
+LY3298176 / tirzepatide). Page numbers below are <strong>document</strong> pages taken from <code>PAGEMAP.md</code>
+(PDF 1–11 → doc 18–28); declared SoA range doc 18–24, doc 25–28 flagged as back matter.</p>
+<p>Prompt v3.7.3, schema soa-table-extraction v1.0. Two extraction files written:</p>
+<table>
+<thead>
+<tr>
+<th>file</th>
+<th>table</th>
+<th>type</th>
+<th>pages</th>
+<th>data cols</th>
+<th>activities</th>
+<th>annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NCT04184622_Table_01_extraction.json</code></td>
+<td>1</td>
+<td><code>main_soa</code></td>
+<td>18–21</td>
+<td>24 (positions 2–25)</td>
+<td>54</td>
+<td>28</td>
+</tr>
+<tr>
+<td><code>NCT04184622_Table_02_extraction.json</code></td>
+<td>2</td>
+<td><code>track</code> ("Prediabetes")</td>
+<td>22–24</td>
+<td>19 (positions 2–20)</td>
+<td>39</td>
+<td>19</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>1. Structure discovery — how many tables</h2>
+<p>The excerpt contains exactly <strong>two</strong> SoA tables, both inside protocol section 1.3:</p>
+<ul>
+<li>§1.3.1 "Schedule of Activities covering visits to primary study endpoint", doc 18–21.</li>
+<li>§1.3.2 "Schedule of Activities for additional 2-year treatment period for participants with prediabetes at randomization", doc 22–24.</li>
+</ul>
+<p>Each spans several pages with its full 5-row header block reprinted on every page. Those reprints
+were <strong>de-duplicated</strong> (§1b): each table carries one set of 5 <code>schedule_property</code> rows, read from its
+first page (doc 18 / doc 22). Each table is therefore modelled as one multi-page table, not as a
+parent plus <code>continuation</code> children.</p>
+<p>A third grid — "Additional Information Regarding Activities Described in Schedule of Activities"
+(doc 25–28) — was <strong>not</strong> emitted as a table. It falls beyond the declared SoA range, and its rows key
+to activities/visits that already appear in the two SoA tables, which is precisely the case the
+taxonomy sends to annotations rather than to a <code>reference</code> table. See §5 below for the consequences.</p>
+<h2>2. Table type calls</h2>
+<p><strong>Table 1 = <code>main_soa</code>.</strong> Rows are procedures performed on subjects; it is the anchor grid for the
+study timeline (Visits 1–21 plus 99 / ED / 801, Weeks −2 to 72).</p>
+<p><strong>Table 2 = <code>track</code>, <code>track_label</code> "Prediabetes".</strong> Not obvious, so recorded in
+<code>table_metadata.notes</code> as well. Discriminators applied in order: rows are activities (not
+<code>reference</code>); columns are <em>not</em> the same as Table 1 (Visits 101–116, 199, ED, 802; Weeks 78–176), so
+neither <code>continuation</code> nor <code>domain</code>; it is not finer timing for a subset of Table 1's activities, so
+not <code>subsidiary</code>; it is a separate phase attended only by a subgroup — the title says
+"…additional 2-year treatment period for participants with prediabetes at randomization" — hence
+<code>track</code>. The label is taken from the source's own population wording ("prediabetes"), shortened to
+one word per the §2 rule against restating the table number or the phase.</p>
+<p>The population split is also asserted inside the source: note n5 says
+"Participants with prediabetes continuing to Week 78 should not perform Visit 801." — Table 1's
+801 column and Table 2's 802 column are mutually exclusive by construction.</p>
+<h2>3. Columns and label columns</h2>
+<p><code>L = 1</code> label column in <strong>both</strong> tables (the activity-name column only; the header rows' own labels
+"Visit", "Week of Treatment" sit in that same column). <strong>First data column position = 2</strong> in both.
+No renumbering was applied.</p>
+<p>Column counts were fixed from raster rule-line geometry, not from token positions: 26 vertical rules
+on doc 18–21 → 25 columns → 1 label + 24 data; 21 vertical rules on doc 22–24 → 20 columns →
+1 label + 19 data. Both match the header labels one-for-one.</p>
+<p>Header cells with no printed value are emitted with <code>cell_value: ""</code> (the ED column has no
+"Week of Treatment" and no "Allowable Deviation" value in either table — the emptiness is data).
+Rows 1–3 (Visit / Week / Allowable Deviation) emit an entry for every data column; rows 4–5
+(Fasting Visit / Telephone Visit) behave like mark rows and emit entries only where an X is printed.</p>
+<h2>4. Schedule properties</h2>
+<p>Five per table, <code>hierarchical_level</code> 1–5:</p>
+<ol>
+<li><strong>Visit</strong> → <code>visit</code></li>
+<li><strong>Week of Treatment</strong> → <code>week</code></li>
+<li><strong>Allowable Deviation (days)</strong> → <code>window</code></li>
+<li><strong>Fasting Visit</strong> → <code>modality</code></li>
+<li><strong>Telephone Visit</strong> → <code>modality</code></li>
+</ol>
+<p><em>Low-confidence call:</em> rows 4 and 5 are X-mark rows, not label rows, and <code>modality</code> vs <code>condition</code>
+was arguable for <strong>Fasting Visit</strong>. It was typed <code>modality</code> because the two rows partition the
+columns exhaustively and disjointly — Table 1: fasting at 16 columns, telephone at 8, 16 + 8 = 24;
+Table 2: 11 + 8 = 19 — i.e. the pair encodes <em>visit type</em>, not a conditional. Both levels are
+non-null because the rows carry data that characterises columns; a reviewer who reads them as purely
+presentational qualifier bands would set both to <code>null</code>.</p>
+<p>No <code>property_name</code> was synthesised; every label cell is printed. No <code>structure_method</code> recorded —
+<code>property_type</code> and <code>hierarchical_level</code> come from the printed header labels.</p>
+<h2>5. Annotations — the single <code>*</code> marker, and the out-of-range notes table</h2>
+<p><strong>This is the largest interpretation in the run; please review it first.</strong></p>
+<p>Both tables use exactly one printed footnote marker: <code>*</code>. It is defined once, by the line printed
+directly beneath Table 2 on doc page 24:</p>
+<blockquote>
+<p>"*Please see table below for corresponding additional information"</p>
+</blockquote>
+<p>and the notes it points to are the 27 rows of the
+"Additional Information Regarding Activities Described in Schedule of Activities" table on
+doc pages <strong>25–28</strong>, which <code>PAGEMAP.md</code> flags as beyond the declared SoA range.</p>
+<p>Decision taken: <strong>do not</strong> emit a third table for that grid (it is out of range and, by the taxonomy,
+is annotation content rather than a table), but <strong>do</strong> transcribe its 27 note cells as annotations on
+the two in-range tables. The alternative — dropping them — would have left <code>*</code> printed at 35 places in
+Table 1 and 21 in Table 2 with nothing to resolve to, and would have forced the §6
+"marker referenced but not defined" wording, which would be false: the definitions plainly are
+printed in the excerpt.</p>
+<p>Consequence to review: annotation <em>text</em> for the 27 notes comes from pages outside
+<code>page_start..page_end</code>. <code>table_metadata.page_start/page_end</code> and every <code>source_page</code> remain strictly
+inside the declared range.</p>
+<h3>Synthesised markers</h3>
+<p>One <code>*</code> stands for 27 different notes. Left as <code>*</code>, resolve would link all 27 notes to every
+<code>*</code>-bearing row. So each note received a <strong>distinct synthesised marker <code>n1</code>…<code>n27</code></strong>, numbered in the
+printed order of the Additional Information table, and used <strong>consistently across both tables</strong>
+(Table 1 cites n1–n27; Table 2 cites the subset n1, n3, n4, n5, n6, n8, n9, n10, n11, n12, n13, n14,
+n19, n21, n23, n24, n26, n27). Every citing row's <code>annotation_markers</code> carries both the printed <code>*</code>
+and its synthesised <code>nK</code>, e.g. <code>"*,n8"</code> on Weight.</p>
+<p>The printed <code>*</code> itself is emitted once per table as a <code>source_note</code> (its whole text is a bare
+pointer, per the §8 typing rule) with a <code>marker_location</code> at every place <code>*</code> is printed — 35
+locations in Table 1, 21 in Table 2. Those locations carry <strong>no</strong> <code>method</code>: the <code>*</code> really is printed
+there.</p>
+<h3>Marker locations that are not printed marks</h3>
+<p>Every <code>n1</code>…<code>n27</code> location carries <code>method: "text_match"</code>. The scope is real but is established by the
+note's Activity-column key naming the row (e.g. the note keyed "Weight" ↔ the activity <code>Weight</code>),
+not by the token <code>nK</code> being printed at that location. Notes keyed to more than one row got one
+location per row, one annotation only (n1 → the Visit and Fasting Visit property rows; n22 → five
+lab rows; n26 → four activity rows in Table 1, three in Table 2). <strong>No orphans</strong>: every annotation in
+both files has ≥1 location, and every location's marker is present in that row's
+<code>annotation_markers</code> (checked mechanically).</p>
+<h3>Header-cell and grid-cell footnotes (kept per-column, not per-row)</h3>
+<p><code>*</code> printed on individual header cells was bound to that column's <code>schedule_grid</code> cell, never to the
+<code>schedule_property</code> row:</p>
+<table>
+<thead>
+<tr>
+<th>table</th>
+<th>header cell</th>
+<th>column_position</th>
+<th>note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>3*</code></td>
+<td>4</td>
+<td>n2 (Visit 3)</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>99*</code></td>
+<td>23</td>
+<td>n3 (Visit 99 / 199)</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>ED*</code></td>
+<td>24</td>
+<td>n4</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>801*</code></td>
+<td>25</td>
+<td>n5</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>199*</code></td>
+<td>18</td>
+<td>n3</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>ED*</code></td>
+<td>19</td>
+<td>n4</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>802*</code></td>
+<td>20</td>
+<td>n5</td>
+</tr>
+</tbody>
+</table>
+<p>Six body cells print <code>X*</code> rather than a plain X; the marker was cleaned out of <code>cell_value</code> and put
+on the cell:</p>
+<ul>
+<li>Table 1 row 25 (<code>Dispense study drug</code>), column 22 (Visit 21) → n16, whose text is
+  "This applies only to those participants going into the additional 2-year treatment period for participants with prediabetes at randomization."</li>
+<li>Table 1 rows 38, 39, 40, 41, 44 (Urinary albumin/creatinine, Cystatin-c, Calcitonin, Hematology,
+  Thyroid-stimulating hormone), column 2 (Visit 1) → n22,
+  "Screening visit assessment will be used to confirm eligibility. …"</li>
+</ul>
+<p>Note that Table 1 row 44 <code>Thyroid-stimulating hormone</code> carries no <code>*</code> on its <strong>label</strong> — only on its
+Visit 1 cell. That is how the source prints it; it was not repaired.</p>
+<h3>Abbreviation blocks — deliberately dropped</h3>
+<p>Two abbreviation blocks are printed in the excerpt, one in range (doc 24, beginning
+"Abbreviations: BP = blood pressure; Cr= creatinine; C-SSRS = Columbia-Suicide Severity Rating Scale; ED= early")
+and one out of range (doc 28). <strong>Zero <code>abbreviation</code> annotations were emitted.</strong> None of the terms is
+printed as a marker; they occur only inside activity labels and running text, and §6 forbids binding
+an abbreviation by word overlap or by a synthesised location. The nearest call was <code>ED</code>, which is the
+entire content of a header cell in both tables — but its meaning is already carried by note n4, and
+admitting it would equally have admitted TZP, PK, BP, HR, IWRS and the rest. Flagging in case a
+reviewer wants <code>ED</code> reinstated.</p>
+<h3>Section prose not captured</h3>
+<p>The paragraph above Table 1 on doc 18 —
+"The Schedule of Activities described below should be followed for all participants enrolled in Study GPHK."
+… "refer to Section 10.10 Appendix 10 for additional guidance." — is section body text above the
+table title, carries no marker, and was <strong>not</strong> emitted as an annotation. It is arguably a
+table-scope note; noting it so the omission is a declared one.</p>
+<h2>6. Mechanical mark-check</h2>
+<p>Method (both tables identical, so one method for the whole document):</p>
+<ol>
+<li><code>pdftotext -bbox</code> for every token's box (no pdfplumber).</li>
+<li>Pages rendered at 200 dpi with <code>pdftoppm -r 200 -gray</code>. <strong>Vertical rules</strong> = image columns with
+   ink fraction &gt; 0.30 over the page height. <strong>Horizontal rules</strong> = image rows with ink fraction<blockquote>
+<p>0.85 <em>within the activity-label column's</em> x-range (a text-bearing column, per §1d) — those
+   bands were then applied across the whole row.</p>
+</blockquote>
+</li>
+<li>Each text-layer token assigned to the (band × column) rectangle its centre falls in.</li>
+<li><strong>Independent cross-check:</strong> a second, purely pixel-based detector counted near-black pixels
+   (&lt; 128 grey) inside each inset cell rectangle and flagged &gt; 60 as "marked". Its matrix was diffed
+   cell-for-cell against the text-layer read.</li>
+</ol>
+<p><strong>Diff result: 37 disagreements (23 in Table 1, 14 in Table 2), all of them on the full-width section
+band rows</strong> — Clinical Assessments, Participant Education and Assessment, Laboratory Tests, Mental
+Health Questionnaires, Patient Reported Outcomes / PROs. In those rows the centred band title's
+letters fall inside several notional column rectangles, so the pixel detector reports ink where the
+text-layer read (correctly, from the merge geometry) reports no cell. <strong>Zero disagreements on any
+activity row or header row.</strong> The mark matrices are otherwise identical.</p>
+<p>Visual spot-checks against rendered crops confirmed the mechanical read on: the whole Table 1 header
+block (doc 18), the dense rows <code>Adverse events and product complaints</code> / <code>Concomitant medications</code>
+(24 of 24 marks each), the sparse rows <code>Immunogenicity (includes PK sample)</code> (8 marks) and <code>TZP PK</code>
+(3 marks), the <code>X*</code> cluster on doc 20, <code>Dispense study drug</code> (X* at Visit 21), the
+<code>C-SSRS (Baseline/Screening) Version)</code> label, and both Self-Harm rows on doc 24 (19 of 19 marks
+each).</p>
+<p><code>method</code> provenance was <strong>not</strong> set on <code>schedule_grid</code> / <code>activity_schedule</code> cells: the mark values
+are text-layer reads (the schema default). Only the <em>cell boundaries</em> came from the raster, and the
+enum offers no value for that hybrid; <code>raster_pixel_detection</code> would misdescribe what was done.</p>
+<h2>7. Merged cells and distributed marks</h2>
+<ul>
+<li><strong>No merged marks anywhere.</strong> Internal vertical rules were tested band-by-band across both tables;
+  every activity row and every header row has all internal rules present. Consequently <strong>no</strong>
+  <code>source_range</code> and <strong>no</strong> <code>merged_cell_range</code> values are set in either file, and no mark or text
+  was distributed across a span.</li>
+<li>The only merges in the document are the section band rows, each a single cell merged across all
+  25 (Table 1) / 20 (Table 2) columns. They are emitted as activities at <code>indentation_level</code> 0 with
+  <strong>no</strong> <code>activity_schedule</code> entries, per §4.</li>
+<li>No arrows, no vertically-merged marks, no qualified marks. Every one of the 414 (Table 1) and 311
+  (Table 2) body cell values is the single glyph <code>X</code>; no <code>x</code>, <code>✓</code> or <code>•</code> occurs, so no case
+  normalisation was needed.</li>
+</ul>
+<h2>8. Page coverage</h2>
+<p>Every page in each declared range contributed activity rows:</p>
+<ul>
+<li>Table 1: doc 18 → 15 rows, doc 19 → 11, doc 20 → 16, doc 21 → 12. Total 54.</li>
+<li>Table 2: doc 22 → 14 rows, doc 23 → 17, doc 24 → 8. Total 39.</li>
+</ul>
+<p>No page in either range contributed zero rows. The tables are not horizontally tiled, so the §4 tiling
+exception does not apply.</p>
+<h2>9. Hierarchy / indentation</h2>
+<p>The source uses <strong>no leading whitespace</strong>; every activity label is flush left. Hierarchy is expressed
+only by the full-width, centred, merged section bands. So every activity in both files carries
+<code>activity_name_source.indentation_method: "visual_estimate"</code> — level derived from the merge geometry
+of the band rows, not from text-layer whitespace.</p>
+<p>Levels assigned: band rows = 0; rows below a band = 1. Table 1 rows 6–8
+(<code>Informed consent</code>, <code>Randomization</code>, <code>Register study visit in IWRS</code>) and Table 2 row 6
+(<code>Register study visit in IWRS</code>) print <strong>above</strong> the first band and belong to no group, so they are
+level 0 while still carrying marks. They are ordinary activities, not grouping headers — the §4 rule
+that level-0 rows carry no marks applies to grouping headers, and those four rows group nothing.</p>
+<h2>10. Annotation text integrity</h2>
+<ul>
+<li>The text layer is <strong>not</strong> glyph-spread; tokens are whole words. No <code>deglyph_reconstruction</code> was
+  needed anywhere, and no field was reconstructed.</li>
+<li>All 27 note texts were bounded by rule-line geometry (a 2-column grid: Activity | Notes, with
+  horizontal rules recovered from the raster), never by vertical-gap proximity. Each carries
+  <code>annotation_text_source: {"method": "raster_band_cells"}</code>. <strong>No note anywhere in this run is
+  <code>proximity_bounded</code>.</strong></li>
+<li><strong>Containment pairs — re-verified against the page, and they are source-faithful, not a split
+  note.</strong> Three notes share an opening run:</li>
+<li>n15 (Injection training with Autoinjector demonstration device):
+    "All training should be repeated as needed to ensure participant compliance" (no full stop)</li>
+<li>n11 (Hand out diary, instruct in use):
+    "All training should be repeated as needed to ensure participant compliance."</li>
+<li>n14 (Review diet and exercise goals):
+    "All training should be repeated as needed to ensure participant compliance. Study personnel to provide reinforcement and encouragement for lifestyle modifications."</li>
+</ul>
+<p>n15 ⊂ n11 ⊂ n14. A rendered crop of doc page 27 shows <code>Lifestyle Program instructions</code>,
+  <code>Review diet and exercise goals</code> and <code>Injection training with Autoinjector demonstration device</code>
+  as three separate rule-bounded rows, each with its own Notes cell; n11 sits on doc page 26. The
+  sponsor simply repeats the sentence. <strong>Nothing was merged, truncated or dropped.</strong>
+- Each note text starts at its cell's first word and ends at its last; no letter-spacing artefacts.</p>
+<h2>11. Source defects transcribed, never repaired</h2>
+<table>
+<thead>
+<tr>
+<th>where</th>
+<th>as printed</th>
+<th>left as-is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Table 1 row 51 activity label</td>
+<td><code>C-SSRS (Baseline/Screening) Version)</code></td>
+<td>stray closing parenthesis after "Screening"; the Additional Information table spells it "C-SSRS (Baseline/Screening Version)"</td>
+</tr>
+<tr>
+<td>note n25 (TZP PK)</td>
+<td>"…as assignedby IWRS at randomization."</td>
+<td>missing space in "assignedby"</td>
+</tr>
+<tr>
+<td>Table 1 row 38 vs Table 2 row 27</td>
+<td><code>Urinary albumin/creatinine</code> vs <code>Urinary albumin/creatinine ratio</code></td>
+<td>same assay, two spellings</td>
+</tr>
+<tr>
+<td>Table 1 row 21 vs Table 2 row 16</td>
+<td><code>Review study participant diary, including study-drug compliance</code> vs <code>Review study participant diary, including study drug compliance</code></td>
+<td>hyphen present in one table, absent in the other</td>
+</tr>
+<tr>
+<td>Table 1 row 32 vs Table 2 row 23</td>
+<td><code>2-hour oral glucose tolerance test (includes glucose, insulin, c-peptide at each timepoint)</code> vs <code>2 hour oral glucose tolerance test (includes glucose, insulin, c-peptide)</code></td>
+<td>hyphen and scope wording differ</td>
+</tr>
+<tr>
+<td>Table 1 row 33 vs Table 2 row 24</td>
+<td><code>Chemistry panel (include Cr for eGFR calculation and glucose)</code> vs <code>Chemistry panel (includes Cr for eGFR calculation and glucose)</code></td>
+<td>include / includes</td>
+</tr>
+<tr>
+<td>Table 1 row 17 vs Table 2 row 12</td>
+<td><code>Adverse events and product complaints</code> vs <code>Adverse events/Product Complaints</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Table 1 rows 57–58 vs Table 2 rows 42–43</td>
+<td><code>SF-36, version 2, acute form</code> / <code>IWQOL-Lite CT</code> vs <code>SF-36, version 2 acute</code> / <code>IWQOL-Lite -CT</code></td>
+<td></td>
+</tr>
+<tr>
+<td>Table 1 row 55 vs Table 2 row 40</td>
+<td>band <code>Patient Reported Outcomes</code> vs band <code>PROs</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Two line-broken compounds were rejoined in <code>activity_name</code> while the printed break is preserved in
+<code>activity_name_source.cell_text</code>: <code>study- / drug</code> → <code>study-drug</code> (Table 1 row 21) and
+<code>c- / peptide</code> → <code>c-peptide</code> (Table 1 row 32). Flagged because rejoining is a judgement; the raw
+cell text lets a reviewer undo it.</p>
+<p>No redactions, no illegible regions, no missing pages.</p>
+<h2>12. Method provenance — full list of non-default values recorded</h2>
+<ul>
+<li><code>activity_name_source.indentation_method: "visual_estimate"</code> — every activity in both files
+  (54 + 39). Reason in §9.</li>
+<li><code>annotation_text_source.method: "raster_band_cells"</code> — all 27 notes in Table 1 and all 18 in
+  Table 2. Reason in §10. The <code>*</code> <code>source_note</code> in each file has no
+  <code>annotation_text_source</code>: its one-line text was read directly from the text layer on doc 24.</li>
+<li><code>marker_locations[].method: "text_match"</code> — every location of every <code>nK</code> annotation. Reason in §5.
+  The <code>*</code> annotation's 35 (Table 1) / 21 (Table 2) locations carry no method: printed.</li>
+<li><strong>No <code>location_type: "unresolved"</code> anywhere.</strong> Every marker's target was determinable.</li>
+<li>No <code>structure_method</code>, no <code>property_name_source.synthesized</code>, no
+  <code>activity_name_source.method</code>, no cell-level <code>method</code>.</li>
+</ul>
+<h2>13. Recommended reviewer spot-checks</h2>
+<ol>
+<li>The §5 decision to source annotation text from doc 25–28 (out of declared range) — accept or drop.</li>
+<li>The <code>n1</code>…<code>n27</code> synthesised marker scheme, and whether <code>*</code> should also remain as its own
+   <code>source_note</code> (it currently resolves to 35 / 21 elements at once).</li>
+<li><code>Fasting Visit</code> typed <code>modality</code> rather than <code>condition</code> (§4).</li>
+<li>Whether <code>ED</code> should be reinstated as an <code>abbreviation</code> annotation (§5).</li>
+<li>Table 2's <code>track_label</code> "Prediabetes" — short by design; the source's own phrase is
+   "participants with prediabetes at randomization".</li>
+</ol>
+</body>
+</html>

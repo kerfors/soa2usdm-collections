@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT02291289 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT02291289 — SoA extraction uncertainty report</h1>
+<p>Source: <code>NCT02291289_soa.pdf</code> (Bevacizumab — F. Hoffmann-La Roche Ltd., Protocol MO29112, Version 9),
+26 PDF pages = document pages 169–194. Document page 194 is back matter beyond the declared SoA range
+(Appendix 6, FOLFOX regimens) and was not extracted. All page numbers below are DOCUMENT pages, taken
+from PAGEMAP.md; the printed footers on these pages happen to agree with the map but were not relied on.</p>
+<h2>1. Tables found and how each was classified</h2>
+<p>Five tables, one per protocol appendix:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Table</th>
+<th>Type</th>
+<th>track_label</th>
+<th>Pages</th>
+<th>Data cols</th>
+<th>Activities</th>
+<th>Annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Appendix 1 — Screening/Baseline and Induction, all patients</td>
+<td>main_soa</td>
+<td>—</td>
+<td>169–173</td>
+<td>6 (positions 2–7)</td>
+<td>21</td>
+<td>20</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Appendix 2 — Maintenance Phase (Cohort 1)</td>
+<td>track</td>
+<td>Cohort 1</td>
+<td>174–178</td>
+<td>4 (positions 2–5)</td>
+<td>25</td>
+<td>24</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Appendix 3 — Maintenance Phase (Cohort 2)</td>
+<td>track</td>
+<td>Cohort 2</td>
+<td>179–183</td>
+<td>4 (positions 2–5)</td>
+<td>24</td>
+<td>21</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Appendix 4 — Maintenance Phase (Cohort 3)</td>
+<td>track</td>
+<td>Cohort 3</td>
+<td>184–188</td>
+<td>4 (positions 2–5)</td>
+<td>22</td>
+<td>21</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Appendix 5 — Maintenance Phase (Cohort 4)</td>
+<td>track</td>
+<td>Cohort 4</td>
+<td>189–193</td>
+<td>4 (positions 2–5)</td>
+<td>26</td>
+<td>23</td>
+</tr>
+</tbody>
+</table>
+<p>Label columns: <strong>L = 1</strong> in every table (the activity-name column only). First data column position is
+therefore <strong>2</strong> in all five tables; no renumbering was applied.</p>
+<p><strong>Table 1 = main_soa.</strong> Rows are activities; it is the anchor grid the whole excerpt hangs off — every
+maintenance appendix times its first column relative to it (<code>"Within 3 weeks of completing Induction
+Treatment Phase"</code>).</p>
+<p><strong>Tables 2–5 = track, not domain and not continuation.</strong> They are not continuations (their column
+structure differs from Table 1: <code>"Prior to randomization"</code> / <code>"Maintenance Treatment Phase"</code> replace
+Screening/Baseline and Induction). They are not domains of each other even though Tables 2, 3 and 5 carry
+almost byte-identical column labels, because they schedule mutually exclusive populations: footnote d of
+each says patients are assigned to exactly one cohort — "these patients will be assigned to a maintenance
+treatment cohort" — and footnote e says patients "found ineligible for any cohort will undergo a Study
+Treatment Discontinuation Visit". Identical labels here mean the sponsor reused a layout, not that the
+same patients attend. Classifying them as domain would silently null the <code>population_track</code> of every
+column. The reasoning is also recorded in each file's <code>table_metadata.notes</code>.</p>
+<p><code>track_label</code> values are the source's own short population identifiers, taken from the appendix titles
+("… MAINTENANCE PHASE (COHORT 1)" → <code>Cohort 1</code>), not composed descriptions.</p>
+<h2>2. Activity rows per page across each declared range</h2>
+<ul>
+<li>Table 1: 169 → 12 rows, 170 → 7 rows, 171 → 2 rows. <strong>172 and 173 contribute no activity rows</strong> — they
+  are footnote-only pages carrying footnotes f–t of this table. Their inclusion in the page range is
+  deliberate (the annotations are part of the table).</li>
+<li>Table 2: 174 → 14, 175 → 10, 176 → 1. <strong>177 and 178 are footnote-only</strong> (footnotes k–x).</li>
+<li>Table 3: 179 → 14, 180 → 8, 181 → 2. <strong>182 and 183 are footnote-only</strong> (footnotes f–u).</li>
+<li>Table 4: 184 → 13, 185 → 9. <strong>186, 187 and 188 are footnote-only</strong> — this is the only table whose entire
+  footnote block a–u sits on text-layer pages with no footnote text printed on the grid pages.</li>
+<li>Table 5: 189 → 16, 190 → 8, 191 → 2. <strong>192 and 193 are footnote-only</strong> (remainder of footnote g, then h–w).</li>
+</ul>
+<p>No page in any declared range was skipped. There are no horizontally tiled tables in this document.</p>
+<h2>3. Image-based grid: method (§1a / §1d)</h2>
+<p>The grid pages carry <strong>no text layer at all</strong> — <code>pdftotext</code> returns 1 byte (a form feed) for pages 169–171,
+174–176, 179–181, 184–185 and 189–191, while the footnote pages return 2.4–5.1 kB. The grid was therefore
+recovered from the raster:</p>
+<ol>
+<li>Pages rendered at 200 dpi (<code>pdftoppm -r 200</code>); ink = grey &lt; 128.</li>
+<li><strong>Vertical rules</strong> = image columns black (&lt; 15 grey) over the table's height. Table 1: x = 190, 590, 750,
+   909, 1205, 1472, 1751, 2149 px → one label column plus six data columns. Tables 2–5: six rules → one
+   label column plus four data columns.</li>
+<li><strong>Horizontal rules</strong> = image rows with &gt; 50 % ink across the page width, read from the full table width
+   (no redaction bars occur in this document, so no column had to be excluded from the band read).</li>
+<li><strong>Marks</strong> = count of near-black pixels (&lt; 90 grey) inside each rule-bounded cell rectangle. A single
+   lowercase mark scores 49–66; an uppercase mark 72–75; any text cell scores ≥ 590. Empty cells score 0
+   with no intermediate values anywhere in the five tables, so the count threshold is unambiguous.</li>
+<li><strong>Per-row merge test</strong>: for every body row, each internal vertical rule was re-tested inside that row's
+   band. Exactly one internal rule is missing anywhere in the document (Table 1, see §4).</li>
+</ol>
+<p><strong>Detector validation against direct visual reads</strong> (§1a requires at least one dense and one sparse row):</p>
+<ul>
+<li>Dense, page 169 row <code>Concomitant medications</code> — detector: cols 2,3,4,5,6 marked, col 7 empty. Visual
+  read of a magnified crop: five <code>x</code> and an empty last cell. Match.</li>
+<li>Dense, page 170 row <code>Adverse events (including SAEs)</code> — detector: cols 2,3,4,6 single marks, col 5 text
+  (719 px), col 7 text (1076 px). Visual: <code>x</code>, <code>x</code>, <code>x</code>, <code>Every cycle</code>, <code>x</code>, <code>x (as applicable)</code>. Match.</li>
+<li>Sparse, page 169 row <code>Informed consent</code> — detector: col 2 only. Visual: one <code>x</code>, five empty cells. Match.</li>
+<li>Sparse, page 175 row <code>INR, aPTT (select patients)</code> — detector: col 3 only (2295 px of text). Visual:
+  <code>According to local standard of care</code>, three empty cells. Match.</li>
+</ul>
+<p><strong>No cell disagreed between the mechanical matrix and the visual read</strong> in any of the five tables. A
+spot-check of the resolved grids against the rendered pages is still recommended, since every value in
+these tables — marks and text alike — was read from pixels rather than from a text layer.</p>
+<h2>4. Merged cells and distributed marks</h2>
+<p>Header merges (Table 1 only; Tables 2–5 have no merged header cells):</p>
+<ul>
+<li>Row 1 (population band): columns 2:3 and 4:5 are merged and empty; columns 6:7 are merged and carry
+  <code>"Patients who have PD during or at end of Induction Treatment Phase or who refuse Maintenance
+  Treatment or who are not eligible for any study cohort"</code>.</li>
+<li>Row 2 (phase band): <code>"Screening / Baseline"</code> merged over 2:3, <code>"Induction Treatment Phase"</code> merged over
+  4:5, then single cells for columns 6 and 7.</li>
+</ul>
+<p>Body merge — exactly one in the whole document:</p>
+<ul>
+<li><strong>Table 1, <code>Study medication administration</code> (row 22, page 170)</strong>: the internal vertical rule between
+  columns 4 and 5 is absent in that row only (present in 100 % of the row's height everywhere else,
+  15 % here). The cell holds <code>x</code> on one line and <code>Administered every 2 weeks</code> beneath it. Transcribed as
+  <code>cell_value: "x Administered every 2 weeks"</code> on <strong>both</strong> columns 4 and 5 with <code>source_range: "4:5"</code>,
+  rather than collapsed onto the visually centred column.</li>
+</ul>
+<p>No arrows, no vertically merged marks, and no qualified marks needing column expansion occur anywhere.</p>
+<h2>5. Glyph case — the one genuinely uncertain read</h2>
+<p>Marks are lowercase <code>x</code> throughout except five cells that print a visibly larger glyph, transcribed as <code>X</code>:</p>
+<ul>
+<li>Table 3 (Cohort 2): <code>TSH, free or total T3, free or total T4 (Experimental Arm only)</code> col 4;
+  <code>Pulse oximetry (Experimental Arm only)</code> col 4; <code>HIV, HBV, HCV serology</code> col 2.</li>
+<li>Table 5 (Cohort 4): <code>LVEF</code> col 2; <code>Ophthalmology exam</code> col 2.</li>
+</ul>
+<p>Basis: at 200 dpi the ordinary marks measure 14–15 px tall × 11–12 px wide (49–66 near-black px); these
+five measure 17–18 × 14–15 px (72–75 px). At 600 dpi the ratio is 54×46 vs 46×37 with <strong>identical stroke
+weight</strong>, which fits a different character rather than a larger font size. Because there is no text layer,
+the case cannot be confirmed from character codes — this is a size-based inference and is the least
+certain call in the extraction. Note the internal inconsistency it exposes and that I did <strong>not</strong>
+normalise away: Cohort 2 prints <code>X</code> for TSH / pulse oximetry / serology while Cohort 4 prints lowercase
+<code>x</code> for the same three assessments, and Cohort 3 prints lowercase <code>x</code> for LVEF while Cohort 4 prints <code>X</code>.
+Verify these five cells against the page.</p>
+<h2>6. Synthesised values</h2>
+<p><strong>Property names.</strong> No table prints a label in the header row's own label cell — that cell is empty
+navy in all five tables. Every <code>property_name</code> is therefore synthesised, flagged with
+<code>property_name_source.synthesized: true</code> and <code>structure_method: "inferred_from_layout"</code>:</p>
+<ul>
+<li>Table 1: <code>Population qualifier</code> (row 1), <code>Study phase</code> (row 2), <code>Visit timing</code> (row 3).</li>
+<li>Tables 2–5: <code>Study phase</code> (row 1), <code>Visit timing</code> (row 2).</li>
+</ul>
+<p><strong>Annotation markers.</strong> None were synthesised. Every annotation in this document carries a printed
+letter marker, and every printed marker resolves to a printed footnote. There is no notes/comments
+column in any of the five tables.</p>
+<h2>7. Property-type calls (low-confidence)</h2>
+<ul>
+<li><code>Study phase</code> → <code>epoch</code>: the values are the protocol's own phase names, so this is safe.</li>
+<li><code>Visit timing</code> → <strong><code>other</code></strong>: the row mixes concepts in a single band — screening windows
+  (<code>"≤ 28 days"</code>, <code>"≤ 7 days"</code>), a cycle day (<code>"Day 1 Cycle 1"</code>), frequencies (<code>"Every 2 cycles (every 4
+  weeks)"</code>, <code>"Every 3 months"</code>) and a post-dose window (<code>"(≤ 30 days after last dose of study
+  treatment)"</code>). <code>window</code>, <code>study_day</code> and <code>timepoint</code> would each be right for part of the row and wrong
+  for the rest, so <code>other</code> is the honest classification. This is the main property-type judgement call.</li>
+<li>Table 1 row 1 → <code>condition</code> with <code>hierarchical_level: null</code>, per §3: it qualifies who attends columns
+  6–7 rather than telling column 6 from column 7.</li>
+<li>Hierarchical levels: Table 1 = epoch 1 / timing 2 (the null condition band is skipped in the count);
+  Tables 2–5 = epoch 1 / timing 2.</li>
+</ul>
+<h2>8. Annotations</h2>
+<p><strong>Types.</strong> All footnotes are explanatory except four bare pointers, typed <code>source_note</code> per §8: the
+footnote <code>"See Appendix 8."</code> in Table 2 (marker m), Table 3 (marker i), Table 4 (marker i) and Table 5
+(marker i). Everything else explains as well as points (e.g. Table 1 marker i: <code>"ECOG status assessed
+within 7 days prior to Day 1 of Cycle 1 (Induction Treatment Phase) for eligibility determination. See
+Appendix 8."</code>) and stays <code>footnote</code>. <code>by_type</code> is not degenerate — it is 20 / 23 / 20 / 20 / 22
+footnotes for Tables 1–5, plus exactly one <code>source_note</code> in each of Tables 2–5.</p>
+<p><strong>No abbreviation or legend annotations were emitted.</strong> The tables carry no abbreviation block and no
+in-grid legend; the only in-grid symbol is the mark itself, which the source never defines. Nothing was
+bound by <code>text_match</code> or <code>synthesized</code>.</p>
+<p><strong>Marker locations.</strong> Markers a, b and c are printed on header cells, so per §6 they are recorded as
+<code>schedule_cell</code> locations on the exact header column they sit on, not on the <code>schedule_property</code> row:</p>
+<ul>
+<li><code>a</code> on the <code>Maintenance Treatment Phase</code> / <code>Induction Treatment Phase</code> header cell (Table 1: both
+  columns 4 and 5, because that header cell is merged over 4:5);</li>
+<li><code>b</code> on the <code>Study Treatment Discontinuation Visit</code> header cell;</li>
+<li><code>c</code> on the <code>Post-Treatment Follow-Up Phase</code> header cell <strong>and</strong> on the two activity rows that cite it in
+  their labels, <code>Subsequent anti-cancer therapies (see [c])</code> and <code>Patient survival (see [c])</code> — one
+  annotation with three locations, not three annotations.</li>
+</ul>
+<p>Markers d onwards are printed on activity labels and are recorded as <code>activity_name</code> locations. Every
+marker in every <code>marker_locations</code> entry also appears in that row's / cell's <code>annotation_markers</code>
+(checked mechanically; zero mismatches). No annotation has empty <code>marker_locations</code>. No marker is used
+without a definition and no footnote is defined without a use, in any of the five tables.</p>
+<p><strong>Containment check.</strong> No annotation's text is contained in another's, within any table. (Across tables,
+several footnotes are near-duplicates — e.g. footnote e is worded identically in Tables 2, 3 and 5 — but
+they are separate tables and each is emitted once in its own file.)</p>
+<p><strong>Annotation text integrity.</strong> The text layer is <em>not</em> glyph-spread; nothing needed de-glyph
+reconstruction. Footnote wording was taken from the text layer wherever one exists. The footnotes printed
+on scanned grid pages were transcribed by eye and carry
+<code>annotation_text_source: {"method": "visual_transcription"}</code>:</p>
+<ul>
+<li>Table 1 a–e (page 171), Table 2 a–j (page 176), Table 3 a–e (page 181), Table 5 a–f (page 191).</li>
+<li>Table 4 has <strong>no</strong> visually transcribed footnotes.</li>
+<li><strong>Table 5 footnote g is a join</strong>: its opening runs to the bottom of scanned page 191 and continues on
+  text-layer page 192. The two halves were joined at "For subsequent infusions, vital" / "signs will be
+  collected within 60 minutes before the infusion", and the <code>annotation_text_source.note</code> records that.
+  This is the one annotation in the document whose text comes from two different reading methods.</li>
+<li>Footnotes read from a text layer carry no <code>annotation_text_source</code> (default). They are running
+  paragraphs beneath the table, not rule-bounded cells, but a direct text-layer read is still the
+  default method and none of the four enumerated alternatives describes it better.</li>
+</ul>
+<h2>9. Source oddities transcribed, not repaired</h2>
+<ul>
+<li><code>Physical examination[h]</code> (Table 1, page 169) has no space before its marker; <code>Cohort- specific informed
+  consent</code> (Tables 2–5) has a space <em>after</em> the hyphen. Both kept verbatim in <code>activity_name_source.cell_text</code>.</li>
+<li>Table 2 page 175 prints <code>Cycles 1, 2, 4, 6, 8, 10, 12,14 and every 2 cycles thereafter</code> — missing space
+  after "12," — where Tables 3, 4 and 5 print <code>12, 14</code>. Kept as printed.</li>
+<li>Table 5 page 190 prints <code>Experimental arm only</code> for LVEF and <code>Experimental Arm only</code> for the
+  ophthalmology exam in the same column. Kept as printed.</li>
+<li>Table 4 page 185 prints <code>Experimental arm only: Cycle 3, 6, 10, 14, 18, 22, 26 and every 4 cycles
+  thereafter</code> — singular, where the sibling tables use the plural, e.g. Table 5's <code>Experimental arm only:
+  Cycles 4, 10, 16, 22, 28, 34, 40 and every 6 cycles thereafter</code>. Kept as printed.</li>
+<li>Several activity cells carry a status sentence appended below the label, e.g. <code>Stool sample</code> followed by
+  <code>Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been
+  discontinued.</code> The full cell text is preserved in <code>activity_name_source.cell_text</code>; <code>activity_name</code> is
+  the procedure label alone. Reviewers who expect the status sentence in the name should look there.</li>
+<li>The header cells of Tables 1, 3 and 4 embed an appendix pointer, <code>Every 3 months until May 31, 2019 (see
+  Appendix 19)</code>. §6's inline-reference rule is written for activity labels; rather than invent a marker on
+  a header cell, the pointer was left inside the header cell value. Flagging it here in case downstream
+  wants it as a <code>source_note</code>.</li>
+<li>Table 1's <code>Metastatic tumour tissue for exploratory biomarker assessment</code> row prints
+  <code>No sample collection</code> alone in column 2 but <code>No sample collection Supplemental Biomarker Program
+  CLOSED</code> in column 5 — an asymmetry in the source, not a transcription slip.</li>
+</ul>
+<h2>10. Method provenance recorded (§1e)</h2>
+<ul>
+<li>Every <code>activity_schedule</code> cell: <code>method: "raster_pixel_detection"</code> for the bare marks (<code>x</code> / <code>X</code>),
+  <code>method: "visual_read"</code> for text-bearing cells. Every <code>schedule_grid</code> cell: <code>method: "visual_read"</code>.</li>
+<li>Every activity: <code>activity_name_source.method: "visual_transcription"</code> and
+  <code>indentation_method: "assumed_flat"</code> — all five tables are flat, with no section-header rows and no
+  visual indentation to read, so every activity is level 0 and every level-0 row legitimately carries marks.</li>
+<li>Every <code>schedule_property</code>: <code>structure_method: "inferred_from_layout"</code> (label cells empty; type and level
+  read off the band geometry and the printed values).</li>
+<li><code>annotation_text_source.method: "visual_transcription"</code> on the 27 footnotes listed in §8.</li>
+<li><strong>No <code>location_type: "unresolved"</code> anywhere, and no guessed targets</strong> — every marker in this document is
+  printed at a location that could be read directly.</li>
+</ul>
+<h2>11. What a reviewer should check first</h2>
+<ol>
+<li>The five <code>X</code> vs <code>x</code> cells in §5 — the only case call made from glyph size rather than character codes.</li>
+<li>The single merged cell, Table 1 <code>Study medication administration</code>, distributed across columns 4:5.</li>
+<li>The synthesised property names and the <code>other</code> property-type on the timing row (§6, §7).</li>
+<li>Table 1's row-1 population band recorded as <code>condition</code> with <code>hierarchical_level: null</code>.</li>
+<li>Any text cell in the five grids: all of it was read from pixels, none of it from a text layer.</li>
+</ol>
+</body>
+</html>

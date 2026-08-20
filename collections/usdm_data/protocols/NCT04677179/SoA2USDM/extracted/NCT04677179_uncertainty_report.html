@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT04677179 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT04677179 — SoA extraction uncertainty report</h1>
+<p>Study J1P-MC-KFAH. Prompt v3.7.2 §7, schema <code>soa-table-extraction</code> v1.0.
+Source: <code>NCT04677179_soa.pdf</code>, 30 PDF pages = document pages 17–46 (PAGEMAP.md,
+doc_page(pdf i) = 46 - (30 - i)). Four tables, extracted by four separate agents; this report is
+written from all four JSON files plus the PDF, so it also carries the cross-table checks in §5.</p>
+<p>All document-page numbers below are PAGEMAP document pages. The printed footers in this excerpt run
+one <strong>lower</strong> than the document page (document page 37 prints <code>36</code>, document page 42 prints <code>41</code>);
+no page number in the four JSON files was taken from a footer.</p>
+<hr />
+<h2>0. What the report author re-derived independently</h2>
+<p>Before summarising the four agents' own statements I re-derived four things from the PDF, so the
+numbers below are checked rather than repeated:</p>
+<ul>
+<li><strong>(a) Mark census.</strong> <code>pdftotext -bbox</code> on all 30 pages, counting every token whose text is exactly
+  <code>X</code>, then subtracting the <code>Fasting visit</code> header-row marks (that row reprints on every
+  continuation page and belongs to <code>schedule_grid</code>, not to the activity marks). No token matching
+  ^[Xx][*a-zA-Z0-9]?$ other than a bare <code>X</code> occurs anywhere in this document — there are no
+  footnoted marks such as Xa — and no lower-case <code>x</code> is used as a mark.</li>
+<li><strong>(b) Comment-column recount.</strong> 200 dpi render per page (<code>pdftoppm -r 200</code>), vertical rules from
+  column ink fraction, the two rightmost bounding the <code>Comment</code> column, horizontal rules taken
+  <strong>inside</strong> that column's x-range, then every text-layer token assigned to the band its centre falls
+  in (§1d). This yields the number of non-empty note cells per page independently of the extractions.
+  It failed on the three short final pages (documents 32, 42, 46 — the table there is only a few rows
+  tall, so a whole-page ink-fraction threshold finds no rules); those three pages have a clean text
+  layer and were read directly instead.</li>
+<li><strong>(c) Glyph-spread diagnosis</strong> per page, from the fraction of single-character tokens.</li>
+<li><strong>(d) Visual reads</strong> of rendered crops: document 20 (dense Table 1 page, cell-for-cell), documents
+  37 and 41 (the Stool-Samples redaction bar in both tiles of Table 3), document 43 (Table 4 top),
+  and the header blocks of documents 33 and 46.</li>
+</ul>
+<p><strong>Mark census result — all four tables reconcile exactly.</strong></p>
+<table>
+<thead>
+<tr>
+<th>doc</th>
+<th><code>X</code> tokens</th>
+<th>on Fasting row</th>
+<th>activity marks</th>
+<th>doc</th>
+<th><code>X</code> tokens</th>
+<th>on Fasting row</th>
+<th>activity marks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>17</td>
+<td>33</td>
+<td>2</td>
+<td>31</td>
+<td>32</td>
+<td>10</td>
+<td>1</td>
+<td>9</td>
+</tr>
+<tr>
+<td>18</td>
+<td>24</td>
+<td>2</td>
+<td>22</td>
+<td>33</td>
+<td>43</td>
+<td>1</td>
+<td>42</td>
+</tr>
+<tr>
+<td>19</td>
+<td>14</td>
+<td>2</td>
+<td>12</td>
+<td>34</td>
+<td>15</td>
+<td>1</td>
+<td>14</td>
+</tr>
+<tr>
+<td>20</td>
+<td>35</td>
+<td>2</td>
+<td>33</td>
+<td>35</td>
+<td>35</td>
+<td>1</td>
+<td>34</td>
+</tr>
+<tr>
+<td>21</td>
+<td>19</td>
+<td>2</td>
+<td>17</td>
+<td>36</td>
+<td>8</td>
+<td>1</td>
+<td>7</td>
+</tr>
+<tr>
+<td>22</td>
+<td>27</td>
+<td>2</td>
+<td>25</td>
+<td>37</td>
+<td>16</td>
+<td>1</td>
+<td>15</td>
+</tr>
+<tr>
+<td>23</td>
+<td>20</td>
+<td>2</td>
+<td>18</td>
+<td>38</td>
+<td>41</td>
+<td>1</td>
+<td>40</td>
+</tr>
+<tr>
+<td>24</td>
+<td>36</td>
+<td>1</td>
+<td>35</td>
+<td>39</td>
+<td>16</td>
+<td>1</td>
+<td>15</td>
+</tr>
+<tr>
+<td>25</td>
+<td>24</td>
+<td>1</td>
+<td>23</td>
+<td>40</td>
+<td>24</td>
+<td>1</td>
+<td>23</td>
+</tr>
+<tr>
+<td>26</td>
+<td>13</td>
+<td>1</td>
+<td>12</td>
+<td>41</td>
+<td>13</td>
+<td>1</td>
+<td>12</td>
+</tr>
+<tr>
+<td>27</td>
+<td>16</td>
+<td>1</td>
+<td>15</td>
+<td>42</td>
+<td>10</td>
+<td>1</td>
+<td>9</td>
+</tr>
+<tr>
+<td>28</td>
+<td>39</td>
+<td>1</td>
+<td>38</td>
+<td>43</td>
+<td>26</td>
+<td>0</td>
+<td>26</td>
+</tr>
+<tr>
+<td>29</td>
+<td>16</td>
+<td>1</td>
+<td>15</td>
+<td>44</td>
+<td>20</td>
+<td>0</td>
+<td>20</td>
+</tr>
+<tr>
+<td>30</td>
+<td>21</td>
+<td>1</td>
+<td>20</td>
+<td>45</td>
+<td>8</td>
+<td>0</td>
+<td>8</td>
+</tr>
+<tr>
+<td>31</td>
+<td>14</td>
+<td>1</td>
+<td>13</td>
+<td>46</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Table 1 (17–23): census 158 — JSON <code>activity_schedule</code> 158, and the <strong>per-page</strong> split agrees row
+  for row (17:31, 18:22, 19:12, 20:33, 21:17, 22:25, 23:18).</li>
+<li>Table 2 (24–32): tile A (24–27) 85, tile B (28–32) 95, total 180 — JSON has exactly 85 marks in
+  positions 2–11 and 95 in positions 12–21, total 180.</li>
+<li>Table 3 (33–42): tile A (33–37) 112, tile B (38–42) 99, total 211 — JSON has exactly 112 in
+  positions 2–11 and 99 in 12–21, total 211.</li>
+<li>Table 4 (43–46): 54 — JSON 54. Document 46 carries zero marks (see §4).</li>
+</ul>
+<p><strong>Comment-column recount result — all four annotation counts reconcile exactly.</strong> Details per table
+below.</p>
+<p><strong>Glyph-spread diagnosis.</strong> Letter-spaced pages: 18, 21, 22, 23, 24, 26, 27, 28, 30, 31, 33, 35, 36,
+37, 38, 40, 41, 43, 44, 45. Clean pages: 17, 19, 20, 25, 29, 32, 34, 39, 42, 46. <strong>Every one of the
+four agents' glyph-spread page lists matches this exactly</strong> (Table 1 claimed 18/21/22/23; Table 2
+"Doc 24/26/27/28/30/31 are glyph-spread; 25/29/32 clean"; Table 3 "document pages 34, 39 and 42 are
+clean, the other seven are letter-spaced"; Table 4 claimed 43–45 glyph, 46 clean). A representative
+line of the raw layer, document 26: <code>F asti n g s a m pl es ar e pr ef err e d, b ut if</code> —
+<code>p arti ci p a nt is n onf asti n g at ti m e of</code>.</p>
+<hr />
+<h2>1. Table 1 — <code>main_soa</code>, document pages 17–23</h2>
+<p><strong>Type.</strong> <code>main_soa</code>, and the discriminators are clean: it is the primary anchor grid (V1–V9,
+weeks −5 to 12, study days 1–85), nothing precedes it so it is not a <code>continuation</code>, no other table
+shares its columns so it is not <code>domain</code>, and it gives no finer timing for another table's activity
+so it is not <code>subsidiary</code>. It is also the only one of the four tables whose header block carries no
+population restriction sentence — Tables 2 and 3 print one, Table 4 is defined by its encounter
+columns. Header block on all seven pages, verbatim and byte-identical page to page (whitespace
+normalised): <code>For procedures at an ETV, see ETV in Table 4.</code> / <code>For procedures at an unscheduled
+visit, see V997 in Table 4.</code></p>
+<p><strong>Columns.</strong> L = 1 leading label column; first data column is position <strong>2</strong>. V1…V9 occupy
+positions 2–10 → <strong>9 data columns</strong>. The right-hand <code>Comment</code> column is source position 11 and is
+excluded from <code>schedule_grid</code>/<code>activity_schedule</code> per §6; each non-empty cell became a <code>footnote</code>.
+Physical column count on the page is therefore 11.</p>
+<p><strong>Activities: 63.</strong> Rows per page — <strong>17:12, 18:8, 19:6, 20:13, 21:7, 22:9, 23:8</strong>. Every page in the
+declared range contributed rows; there is no §4 exception to declare for this table.</p>
+<p><strong>Marks: 158.</strong> No merged marks, no arrows, no spanned text cells: every mark is a lone <code>X</code> in one
+column, and <code>source_range</code> is set nowhere in the file. The two-row redaction bar on document 23 is a
+merged <em>label</em> cell, not a merged mark — each of the two rows carries its own marks.</p>
+<p><strong>Mechanical mark-check.</strong> Declared method: raster rule-line cell geometry at 200 dpi plus bbox
+column-binning, cross-checked cell-for-cell against a near-black-pixel detector, zero disagreements.
+My independent census agrees at every page (§0), and my cell-for-cell visual read of document 20
+agrees on all 11 body rows: PGI-C [10], QIDS-SR16 [3,10], Clinician-Administered Questionnaires
+(Paper) [], PGA [2,10], C-SSRS [2], Self-Harm Supplement [2], Self-Harm Follow-Up [2],
+Laboratory Tests and Sample Collections [], Hematology and Clinical chemistry [2…10] (all nine),
+Lipid panel [3,10]. <strong>No cell where the mechanical matrix disagreed with the visual read.</strong></p>
+<p><strong>Row bands read from the Comment column, not the label column.</strong> Correct and important here: the
+label cells of the six redacted rows are solid black bars that read as horizontal rules and would
+have merged the two redacted rows on document 23 into one (§1d).</p>
+<p><strong>Synthesised.</strong> No <code>property_name</code> is synthesised — all five header rows have printed labels
+(<code>Visit number</code>, <code>Weeks from randomization</code>, <code>Study day</code>, <code>Visit interval tolerance (days)</code>,
+<code>Fasting visit</code>). <strong>All 32 annotation markers are synthesised</strong>: <code>hn1</code>, <code>sn1</code>, <code>sn2</code> on the header
+block (bound to <code>schedule_property</code> row 1, method <code>synthesized</code>) and <code>c1</code>–<code>c29</code> for the Comment-column
+notes (bound to their activity rows, method <code>synthesized</code>). No footnote marker of any kind is printed
+anywhere in this table.</p>
+<p><strong>Annotation-text integrity.</strong> 18 of the 32 annotations carry
+annotation_text_source.method = "deglyph_reconstruction" — exactly the notes that sit on the
+letter-spaced pages 18/21/22/23. My Comment-column recount finds <strong>30 non-empty note cells</strong> across
+the seven pages (17:5, 18:5, 19:2, 20:4, 21:5, 22:6, 23:3), of which two on document 22 carry
+identical text; 30 − 1 duplicate = <strong>29 distinct Comment notes + 3 header-block notes = 32</strong>, which is
+exactly the file's annotation count.</p>
+<p><em>Overlapping / contained annotation pairs — all three re-verified on the page, all three
+source-faithful, none is a split cell:</em></p>
+<ol>
+<li><strong><code>c9</code> ⊂ <code>c8</code></strong> (document 18). <code>c8</code> is the Physical examination cell ending <code>…including
+   peripheral lymph nodes. See Section 8.2.2.</code>; <code>c9</code> is the Symptom-directed row's own cell whose
+   whole content is <code>See Section 8.2.2.</code> In the document-18 text stream the two note texts are not
+   adjacent: the activity label <code>Symptom-directed physical examination, including assessment for
+   signs and symptoms of tuberculosis (TB), including peripheral lymph nodes</code> and that row's two
+   marks are interleaved between them, which is only possible if they are two cells on two
+   consecutive rows. <strong>Genuinely printed that way.</strong></li>
+<li><strong><code>c10</code> ⊂ <code>c11</code></strong> (documents 18 → 19). <code>c10</code> is the ECG cell, whole content <code>Locally performed.</code>;
+   <code>c11</code> is the Chest x-ray cell on the <em>next page</em>, ending <code>Lateral view may also be taken. Locally
+   performed.</code> Different pages, so not a split cell by construction. <strong>Genuinely printed that way.</strong></li>
+<li><strong><code>c16</code> ⊂ <code>c17</code></strong> (documents 20 → 21). <code>c16</code> is the Serum pregnancy cell, whole content <code>Perform
+   only for women of childbearing potential and women with a history of tubal ligation.</code>; <code>c17</code> is
+   the Urine pregnancy cell on the next page, which opens with that same sentence and continues <code>At
+   dosing visits which have pregnancy testing…</code>. Verified on both rendered pages. <strong>Genuinely printed
+   that way</strong> — this is the serum/urine pair the §8 checklist warns not to merge away.</li>
+</ol>
+<p><strong><code>c23</code> — one note, two locations.</strong> The text <code>Collect samples before dosing, if dosing is
+scheduled…</code> prints in two separate Comment cells on document 22 (the PK-samples row and the redacted
+row beneath it). My rule-line recount independently finds it twice on that page. Correctly deduped to
+one annotation with two <code>marker_locations</code> (§6), with <code>c23</code> present on both rows'
+<code>annotation_markers</code>.</p>
+<p><strong>Low-confidence calls.</strong></p>
+<ul>
+<li><strong><code>Fasting visit</code> modelled as a <code>schedule_property</code>, property_type: "modality",
+  hierarchical_level: null, structure_method: "inferred_from_layout".</strong> It is a bold row in a grey
+  band inside the reprinted header block, i.e. it is styled exactly like the grey section-header
+  activity rows (<code>Stool Samples</code>, <code>Randomization and Dosing</code>). Treating it as a property is
+  defensible and all four tables did so — but Table 1 is the only one that typed it <code>modality</code>
+  (Tables 2–4 typed it <code>condition</code>) and the only one that recorded a <code>structure_method</code>. See §5.</li>
+<li><strong>Six redacted rows</strong> (documents 18, 21, 22 ×2, 23 ×2), all carrying marks, transcribed as
+  activity_name: "CCI" and never repaired. The two on document 23 sit under <strong>one</strong> bar with <code>CCI</code>
+  printed once, so row 65 has cell_text: "" and activity_name_source.method:
+  "visual_transcription". Consistent with what the text layer shows (document 23 carries exactly one
+  <code>CCI</code> label).</li>
+<li><strong>The <code>c12</code> diary note is a flattened bullet list.</strong> The source prints it as a lead-in plus eight
+  bullet lines (<code>Check compliance for</code> / <code>Stool Frequency</code> / <code>Rectal Bleeding</code> / <code>Nocturnal Stools</code> /
+  <code>Bristol Stool Scale</code> / <code>Urgency NRS</code> / <code>Abdominal Pain NRS</code> / <code>Fatigue NRS, and</code> / <code>Patient Global
+  Rating of Severity (PGR-S).</code>). The extraction joins them with single spaces, giving <code>…Bristol Stool
+  Scale Urgency NRS Abdominal Pain NRS Fatigue NRS, and…</code>, which does not read as running prose. No
+  text was invented or dropped, but a resolver should not treat this as a sentence. The same
+  flattening appears in Tables 2 and 3 (§5).</li>
+</ul>
+<p><strong>Orphan risk: none.</strong> All 32 annotations have ≥1 <code>marker_locations</code> entry, and every marker in a
+location also appears in that row's <code>annotation_markers</code> (checked mechanically over all four files).
+The 15-term abbreviation block on document 23 yielded <strong>zero</strong> annotations, which is the §6 outcome:
+no term appears as a marker on a grid cell, a header cell or an activity label.</p>
+<p><strong>Method provenance (non-default).</strong> activity_name_source.method: <code>glyph_reconstruction</code> ×31,
+<code>visual_transcription</code> ×1 (row 65). indentation_method: "font_signal" ×63 (indentation here is
+carried by grey shading and bold, not whitespace). annotation_text_source.method:
+"deglyph_reconstruction" ×18. marker_locations[].method: "synthesized" ×33 (every location).
+schedule_property.structure_method: "inferred_from_layout" ×1 (Fasting visit). No cell-level
+<code>method</code> recorded — marks were read from the text layer and pixel-checked, which is the default.
+<strong>No location_type: "unresolved" anywhere.</strong></p>
+<hr />
+<h2>2. Table 2 — <code>track</code> "Responders", document pages 24–32</h2>
+<p><strong>Type.</strong> <code>track</code> with track_label: "Responders". Supported on the table's own face: <code>This schedule
+applies to study participants who are responders at Week 12.</code> prints under the title on all nine
+pages, and Table 3 prints the exact complement for nonresponders. The two tables carry numerically
+identical V10–V29 / weeks 14–52 / days 99–365 columns, which is precisely the reused-numbering trap
+in §2 — mutually exclusive populations make each a <code>track</code>, not <code>domain</code>.</p>
+<p><strong>Columns.</strong> Horizontally <strong>tiled</strong>: tile A = V10–V19 (documents 24–27), tile B = V20–V29 (documents
+28–32, title <code>Table 2 (continued). Schedule of activities for the Maintenance Treatment Period of
+Study J1P-MC-KFAH</code>, note the lower-case <em>activities</em>). Unioned into one 20-column logical table,
+positions 2–11 = V10–V19, 12–21 = V20–V29. L = 1, first data column 2. Each printed tile is 12
+physical columns (label + 10 visits + Comment). The <code>Comment</code> column has <strong>no</strong> <code>column_position</code> in
+the unioned model; the file records this divergence from the agreed structure explicitly rather than
+silently, which is the right call.</p>
+<p><strong>Activities: 40.</strong> Rows per page — <strong>24:10, 25:8, 26:6, 27:10, 28:1, 29:3, 30:0, 31:2, 32:0</strong>.</p>
+<p><strong>Declared §4 exception (correct).</strong> Documents <strong>30 and 32 contribute no activity rows</strong>, because
+every row printed there also prints in tile A and was first read there. They still supply marks:
+document 30 supplies 20 activity marks (the V21–V29 labs block: Hematology, Clinical chemistry,
+Lipid panel, Urinalysis, Urine pregnancy (local), the redacted row between them, HBV DNA) and
+document 32 supplies the nine V20–V28 <code>Dosing</code> marks plus the <code>No dosing at V29.</code> note. My census
+confirms 20 and 9 respectively. This is a declared tiling exception, not a skipped page.</p>
+<p><strong>Marks: 180</strong>, tile A 85 + tile B 95, matching the census exactly. No merged marks, no arrows, no
+<code>source_range</code> anywhere.</p>
+<p><strong>Per-tile row differences — verified on the page.</strong> Six rows print in tile B only, and I confirmed
+each by searching both tile spreads: <code>Review modified Mayo score (MMS)</code>, <code>Diary return</code>,
+<code>Clinician-Administered Questionnaires (Paper)</code>, <code>Physician's Global Assessment (PGA)</code>, <code>Endoscopy</code>,
+<code>Colon biopsy sample collection</code>. Zero rows are tile-A only. The endoscopy absence is explained in the
+source itself: the tile-A <code>Endoscopic Procedure</code> row carries the Comment <code>Not applicable for
+responders during the time period of V10 through V19</code> (printed with no closing full stop, and
+transcribed that way). All six tile-B-only rows carry marks only in positions 12–21, as they must.</p>
+<blockquote>
+<p><strong>Finding (notes vs data, Table 2).</strong> table_metadata.notes says <code>33 of the 40 body rows print in BOTH tiles…</code> and <code>Seven rows print in only one tile:</code> and
+then names <strong>six</strong>. The data are right (34 rows in both tiles, 6 tile-B-only — the JSON's own
+<code>source_page</code> distribution gives 6 rows on tile-B pages); the prose count is off by one. Prose
+only; no cell is affected.</p>
+<p><strong>Finding (notes vs data, Table 2).</strong> table_metadata.notes says <code>eight body rows are redacted to a black bar labelled 'CCI'…</code>. The file contains <strong>six</strong> such rows (row_positions
+14, 31, 34, 37, 42, 43), which is what the page shows: five <code>CCI</code> labels print in tile A and five in
+tile B, and one of those five in each tile is a two-row-tall bar. Six is correct and matches
+Tables 1, 3 and 4; the word "eight" is wrong. Prose only.</p>
+</blockquote>
+<p><strong>Merged label cell.</strong> Under <code>Stool Samples</code>, one two-row-tall bar covers rows 42 and 43; the file
+records <code>Both rows carry X at V15, V21 and V29</code> and the JSON has both rows at positions [7, 13, 21].
+Row 43 is given activity_name_source.method: "visual_transcription" but keeps cell_text: "CCI",
+where Tables 1 and 4 give the label-less row cell_text: "". Minor provenance inconsistency (§5).</p>
+<p><strong>Synthesised.</strong> No synthesised <code>property_name</code>. All 19 markers synthesised: <code>h1</code>–<code>h6</code> on the header
+block (all bound to <code>schedule_property</code> row 1) and <code>c1</code>–<code>c13</code> on activity rows. No printed markers.</p>
+<p><strong>Annotation-text integrity.</strong> 11 of 19 annotations carry <code>deglyph_reconstruction</code>. My Comment-column
+recount finds 12 note cells in tile A and 12 in tile B, collapsing to 12 distinct texts, plus
+<code>No dosing at V29.</code> on document 32 = 13 Comment notes, + 6 header-block notes = <strong>19</strong>, exactly the
+file's count.</p>
+<p><em>Overlapping pairs — both re-verified against the pages, both source-faithful:</em></p>
+<ol>
+<li><strong><code>h2</code> / <code>h3</code></strong> — <code>For procedures at an ETV, see ETV in Table 4.</code> (tile A, documents 24–27) versus
+   <code>For procedures at an early termination visit, see ETV in Table 4.</code> (tile B, documents 28–32). I
+   diffed the whitespace-stripped header block of document 24 against document 28 and of document 27
+   against document 32: the sponsor really does re-word this line in the continued spread. <strong>Genuinely
+   printed that way</strong> — a source variant pair, not one note split across rows.</li>
+<li><strong><code>h5</code> / <code>h6</code></strong> — the remote-visit note, identical except that tile A prints
+   <code>…or a combination thereof), if written approval…</code> and tile B prints <code>…or a combination thereof) if
+   written approval…</code>. Same diff, same conclusion. <strong>Genuinely printed that way.</strong></li>
+</ol>
+<p>Keeping both variants is source-faithful and is the safer of the two options, but a resolver will
+   see four near-duplicate header notes on one <code>schedule_property</code> row; they should be treated as two
+   notes with two printings, not four requirements.</p>
+<p><strong>Low-confidence calls.</strong></p>
+<ul>
+<li><code>Fasting visit</code> → <code>schedule_property</code>, property_type: "condition", no <code>structure_method</code>. Its two
+  marks (V15 at position 7, V29 at position 21) are in <code>schedule_grid</code>, not among the 180 activity
+  marks — correct, and confirmed against the page.</li>
+<li>This is the only file that emits <code>schedule_grid</code> cells with cell_value: "" for the unmarked
+  columns of the Fasting row (20 cells, 18 of them empty). Harmless but inconsistent with the other
+  three (§5).</li>
+<li><code>Genetics sample</code> (row 36) carries the <code>c10</code> note but <strong>no marks</strong> in either tile. That is what the
+  page shows (the note says the sample <code>can be obtained any time at or after V2</code>), not a dropped mark.</li>
+</ul>
+<p><strong>Orphan risk: none.</strong> All 19 annotations have locations; all markers are present on their rows.
+Abbreviation block on document 32 → zero annotations (§6).</p>
+<p><strong>Method provenance (non-default).</strong> <code>glyph_reconstruction</code> ×28, <code>visual_transcription</code> ×1 (row 43);
+indentation_method: "font_signal" ×40; <code>deglyph_reconstruction</code> ×11; marker_locations[].method:
+"synthesized" ×20 (every location). <strong>No unresolved locations.</strong></p>
+<hr />
+<h2>3. Table 3 — <code>track</code> "Nonresponders", document pages 33–42</h2>
+<p><strong>Type.</strong> <code>track</code> with track_label: "Nonresponders"; <code>This schedule applies to study participants
+who are nonresponders at Week 12.</code> prints under the title on all ten pages. Same reasoning as Table 2,
+mirrored.</p>
+<p><strong>Columns.</strong> Tiled: tile A = V10–V19 (documents 33–37), tile B = V20–V29 (documents 38–42), unioned
+to positions 2–21. L = 1, first data column 2, <code>Comment</code> excluded as a notes column. 12 physical
+columns per printed tile.</p>
+<p><strong>Activities: 40.</strong> Rows per page — <strong>33:11, 34:7, 35:7, 36:8, 37:6, 38:0, 39:1, 40:0, 41:0, 42:0</strong>.</p>
+<p><strong>Declared §4 exception (correct).</strong> Documents 38, 40, 41 and 42 contribute no rows; document 39
+contributes exactly one. Marks supplied by those pages: 40, 23, 12 and 9 respectively (document 42's
+nine are the V20–V28 <code>Dosing</code> marks), and document 39 supplies 15 marks while contributing its single
+row. Census agrees.</p>
+<p><strong>Marks: 211</strong>, tile A 112 + tile B 99. No merged marks, arrows or spanned text; the file states
+explicitly <code>Marks are single-cell throughout - no merged or arrow-spanned marks exist in this table,
+so no source_range is set anywhere.</code></p>
+<p><strong>Per-tile row difference — verified.</strong> <code>Diary return</code> (row 18) prints only in tile B (document 39),
+with a single mark at V29 (position 21). I confirmed by searching both spreads: tile A has no
+<code>Diary return</code> row, tile B has one. Every other body row prints in both tiles — including
+<code>Endoscopy</code>, <code>Colon biopsy sample collection</code>, <code>Review modified Mayo score (MMS)</code>,
+<code>Clinician-Administered Questionnaires (Paper)</code> and <code>Physician's Global Assessment (PGA)</code>, all of
+which are tile-B-only in Table 2. That asymmetry is real (see §5).</p>
+<p><strong>Mechanical mark-check.</strong> Declared: 200 dpi rule-line bands × bbox token binning, diffed against
+visual reads of rendered crops for named dense and sparse rows, <code>no disagreement was found</code>. My census
+agrees per tile. I additionally read the Stool-Samples block of documents 37 and 41 visually: two
+mark rows under one bar in <strong>both</strong> tiles, marks at V12/V16 (positions 4, 8) in tile A and V22/V29
+(positions 14, 21) in tile B — the file has rows 42 and 43 each at [4, 8, 14, 21], which matches.</p>
+<p><strong>Synthesised.</strong> No synthesised <code>property_name</code>. All 17 markers synthesised: <code>t1</code>, <code>t2</code>, <code>t3</code>, <code>pr2</code>,
+<code>pr3</code> on the header block, <code>pr1</code> and <code>n1</code>–<code>n11</code> on activity rows. <code>t2</code> (the V16 multi-day note) is
+bound to the V16 header cell — <code>schedule_cell</code> row 1, <code>column_position</code> 8 — by method: "text_match",
+which is the §6 header-cell treatment and is right: the note names V16 and the grid confirms V16 is
+position 8 (<code>Fasting visit</code> also marks V16 in this table).</p>
+<p><strong>Annotation-text integrity.</strong> 10 of 17 carry <code>deglyph_reconstruction</code>. My Comment-column recount
+finds 11 distinct note texts in tile A (33: four; 34: one; 35: two; 36: three distinct, one of them
+printed in two adjacent cells; 37: one) and the same 11 in tile B, plus <code>No dosing at V29.</code> on
+document 42 = 12 Comment notes, + 5 header-block notes = <strong>17</strong>, exactly the file's count.</p>
+<p><strong><code>n8</code> — one note, two locations.</strong> <code>Collect samples before dosing…</code> prints in two adjacent Comment
+cells on document 36 (PK-samples row and the redacted row below it) and again in two adjacent cells on
+document 41. Deduped to one annotation with two locations. <strong>Source-faithful repeat, not a split
+cell</strong> — verified: the rule-line recount finds the text twice on document 36 and twice on document 41,
+i.e. four printings of one note across two tiles of two rows.</p>
+<p>No containment pair exists in this table (checked mechanically: no annotation's text is a substring of
+another's, and no pair shares a run of ≥40 characters).</p>
+<blockquote>
+<p><strong>Finding (provenance gap, Table 3).</strong> The file states that no markers are printed in this table
+and that its markers were synthesised — but <strong>13 of its 18 <code>marker_locations</code> carry no <code>method</code>
+field at all</strong> (<code>pr1</code> and <code>n1</code>–<code>n11</code>, plus one more), where absent means "the default: a scope
+established by a printed marker" (§1e). Tables 1, 2 and 4 record method: "synthesized" on every
+such location. The bindings themselves are right (each marker also appears in its row's
+<code>annotation_markers</code>), so nothing resolves incorrectly; but the provenance is understated and a
+validator comparing tables will see Table 3 claiming printed markers that do not exist. <code>t1</code>, <code>t3</code>,
+<code>pr2</code>, <code>pr3</code> do carry <code>synthesized</code>, and <code>t2</code> carries <code>text_match</code>.</p>
+<p><strong>Finding (unflagged source variant, Table 3).</strong> The tile-A and tile-B header blocks differ, and one
+difference is not recorded. Tile A ends the remote-visit note <code>…on-site study visit occurring.</code>; tile B ends it <code>…on-site study visit occurring</code> with no full stop (documents
+38–42; verified by diffing the whitespace-stripped header blocks of documents 33 vs 38 and 37 vs
+42). <code>t3</code> carries the tile-A form only. This is the mirror image of Table 2's handling, where both
+variants were kept as <code>h5</code>/<code>h6</code> (§5). The other tile difference — the <code>V16 procedures may be conducted over more than 1 day…</code> note printing only in tile A — <strong>is</strong> correctly captured, as <code>t2</code>.</p>
+</blockquote>
+<p><strong>Low-confidence calls.</strong></p>
+<ul>
+<li><code>Fasting visit</code> → <code>schedule_property</code>, property_type: "condition"; its X marks are at V16
+  (position 8) and V29 (position 21). Verified visually on document 33; note this differs from
+  Table 2's V15/V29 — a genuine difference between the two tracks, not a transcription slip.</li>
+<li>Rows 6–9 (<code>Concomitant medications</code>, <code>Adverse events</code>, <code>Review modified Mayo score (MMS)</code>,
+  <code>Tobacco use</code>) are indentation_level: 0 <strong>and carry marks</strong>. §4 says level-0 rows are grouping
+  headers that carry no marks, with an exception for flat tables. This table is not flat (it has
+  eight mark-free grey section headers at level 0), so these four rows are level-0 rows with marks:
+  they precede the first shaded section header and have no parent. Table 4 made the opposite choice
+  for the same four rows (§5). Neither is wrong; the resolver needs to know they disagree.</li>
+<li>Six redacted <code>CCI</code> rows (14, 31, 34, 37, 42, 43), all carrying marks, transcribed as printed. Both
+  of rows 42/43 are recorded with cell_text: "CCI" and method: "glyph_reconstruction", but on
+  document 37 only <strong>one</strong> <code>CCI</code> label is printed, over a two-row-tall bar — I rendered the page to
+  confirm. Tables 1, 2 and 4 all recorded the second row of the equivalent bar as
+  <code>visual_transcription</code>. The row itself is real; only the provenance is optimistic (§5).</li>
+</ul>
+<p><strong>Orphan risk: none.</strong> Every annotation has ≥1 location and every marker is on its row. Abbreviation
+block on document 42 → zero annotations.</p>
+<p><strong>Method provenance (non-default).</strong> <code>glyph_reconstruction</code> ×32; indentation_method: "font_signal"
+×40; <code>deglyph_reconstruction</code> ×10; marker_locations[].method: <code>synthesized</code> ×4, <code>text_match</code> ×1,
+<strong>absent ×13</strong> (see the finding above). <strong>No unresolved locations.</strong></p>
+<hr />
+<h2>4. Table 4 — <code>track</code> "Early Termination / Unscheduled / Post-Treatment", document pages 43–46</h2>
+<p><strong>Type.</strong> <code>track</code>. The four encounter columns — ETV, V997, V801, V802 — exist in no other table in
+the excerpt; it is the shared destination for participants leaving any of Tables 1–3, so it is not
+<code>domain</code> (different columns, different attendance) and not <code>subsidiary</code> (it is not finer timing for
+one existing activity). <code>track_label</code> is four words and takes its wording from the table title
+(<code>Table 4. Schedule of Activities for Early Termination, Unscheduled Visits, and Post-Treatment
+Follow-Up Period</code>), which is what §2 asks for.</p>
+<p><strong>Columns.</strong> L = 1, first data column <strong>2</strong>: ETV=2, V997=3, V801=4, V802=5 → <strong>4 data columns</strong>.
+The <code>Comment</code> column is source position 6 and is excluded from the grid; six physical columns. Not
+tiled.</p>
+<p><strong>Activities: 39.</strong> Rows per page — <strong>43:15, 44:12, 45:10, 46:2</strong>. All four pages contributed rows.
+Document 46 contributes the <code>Randomization and Dosing</code> band and the <code>Dosing</code> row, and carries <strong>no
+marks at all</strong> — consistent with its own Comment cell, <code>No dosing at ETV, V997, or post-treatment
+follow-up visits.</code> So <code>Dosing</code> is a row with a note and zero marks; that is data, not an omission.</p>
+<p><strong>Marks: 54.</strong> No merged marks, arrows or vertical merges: every mark is a lone <code>X</code> in one column,
+and no <code>source_range</code> value is set (the key exists in the schedule objects but is never populated). My
+visual read of document 43 agrees cell for cell with the file: Concomitant medications [2,3,4,5],
+Adverse events [2,3,4,5], Review modified Mayo score (MMS) [2], Tobacco use [2], Physical
+Evaluation [], Weight [2,4], Vital signs [2,3,4,5], Symptom-directed physical examination
+[2,4,5].</p>
+<p><strong>Mechanical mark-check.</strong> Declared: bbox column-binning cross-checked cell-for-cell against
+near-black pixel detection (&lt;90) in raster row × column bands, <code>marked cells return 76-89 dark pixels
+and empty cells return 0</code>, zero disagreements. My independent census agrees per page (26/20/8/0).
+<strong>No disagreement between mechanical and visual reads.</strong></p>
+<p><strong>Synthesised.</strong> No synthesised <code>property_name</code>. All 16 markers synthesised, <code>n1</code>–<code>n16</code> in printed
+order. Two are bound by method: "text_match" to the header cell they name, which is the §6
+header-cell rule applied correctly: <code>n1</code> (<code>V802 is only for randomized participants who were positive
+for anti-HBc at screening. All other participants will have their final visit at V801 or ETV.</code>) to
+<code>schedule_cell</code> row 1 column 5 = V802, and <code>n2</code> (<code>V997: Additional study procedures can be performed
+at the discretion of the investigator.</code>) to row 1 column 3 = V997. Both column bindings are correct
+against the printed header. <code>n3</code> and <code>n4</code> are bound to the <code>Weeks from randomization</code> and
+<code>Fasting visit</code> property rows; the remaining 13 to activity rows with method: "synthesized".</p>
+<p><strong>Annotation-text integrity.</strong> 11 of 16 carry <code>deglyph_reconstruction</code> (documents 43–45), 5 carry
+<code>raster_band_cells</code> (the header/property-band notes and the document-46 dosing note). My rule-line
+recount over documents 43–45 finds 13 distinct note texts once the two notes that reprint on every
+page (<code>n3</code>, <code>n4</code>) are counted once and the note printed twice (<code>n12</code>) is counted once; + <code>n1</code>, <code>n2</code>
+from the header block + <code>n16</code> from document 46 = <strong>16</strong>, exactly the file's count.</p>
+<p><strong><code>n12</code> — one note, two locations.</strong> <code>Collect samples before dosing…</code> prints in the PK-samples
+Comment cell on document 44 and again in the redacted row's cell on document 45. My recount finds it
+on both pages. Deduped correctly.</p>
+<p><em>Overlapping pair — re-verified, source-faithful:</em></p>
+<ul>
+<li><strong><code>n14</code> (Endoscopy) / <code>n15</code> (Colon biopsy sample collection)</strong>, document 45. They share their
+  opening sentence (<code>Recommended at ETV based on judgment of the investigator and after discussion with the sponsor’s medical monitor.</code>) and their closing sentence (<code>If not performed at ETV, this will not be considered a protocol deviation.</code>), with <code>n15</code> inserting the lab-manual and
+  sigmoidoscopy sentences in between. Neither contains the other. In the document-45 text stream the
+  two passages are separated by the label <code>Endoscopy</code> and its mark, and the second is broken by the
+  label <code>Colon biopsy sample collection</code> and its mark — the row labels and marks interleave with the
+  note text, which proves two distinct rule-bounded cells rather than one note wrapped across rows.
+  The file also cites the rule lines (<code>y=342.2 / 394.6 / 486.4 pt</code>). <strong>Genuinely printed that way,
+  not a split note.</strong></li>
+</ul>
+<p><strong>Low-confidence calls.</strong></p>
+<ul>
+<li><strong>Indentation.</strong> Rows 6–9 are given indentation_level: 1 <code>because level 0 is reserved here for the
+  shaded/bold organizational rows that carry no marks</code>. Tables 1–3 give the same four rows level 0.
+  Both readings are defensible; they are not the same reading (§5).</li>
+<li><strong><code>n6</code> merges two paragraphs into one annotation.</strong> The Vital signs Comment cell on document 43
+  prints <code>Blood pressure, body temperature, and pulse rate. Vital signs should be measured after
+  participant has been sitting for at least 5 minutes.</code> and, on a new line, <code>V997: Vital signs
+  collection is optional.</code> I confirmed on the rendered page that these are one rule-bounded cell, so
+  one annotation is correct — but the second sentence is column-specific (V997) while the first is
+  not, and a resolver may want to split it.</li>
+<li><strong>Six redacted rows</strong> (14, 30, 33, 36, 41, 42). Rows 41/42 sit under one bar with <code>CCI</code> printed
+  once; row 42 has cell_text: "" and <code>visual_transcription</code>. The two-row reading is supported by the
+  Comment-column rules the file cites and by the text layer (document 45 prints three <code>CCI</code> labels for
+  four redacted rows).</li>
+<li><code>Fasting visit</code> → <code>schedule_property</code>, property_type: "condition", with <strong>no</strong> <code>schedule_grid</code>
+  cells at all — the row's only content is the Comment <code>No fasting in this period</code>, captured as <code>n4</code>.
+  Reasonable; note the other three tables emit grid cells for this row.</li>
+</ul>
+<p><strong>Orphan risk: none.</strong> All 16 annotations have locations; all markers are on their rows, including
+the two <code>schedule_cell</code> bindings. Abbreviation block on document 46 → zero annotations.</p>
+<p><strong>Method provenance (non-default).</strong> <code>glyph_reconstruction</code> ×36, <code>visual_transcription</code> ×1 (row 42);
+indentation_method: "font_signal" ×39; annotation_text_source.method: <code>deglyph_reconstruction</code>
+×11, <code>raster_band_cells</code> ×5; marker_locations[].method: <code>synthesized</code> ×15, <code>text_match</code> ×2. <strong>No
+unresolved locations.</strong></p>
+<hr />
+<h2>5. Cross-table checks</h2>
+<h3>5.1 Activities appearing in more than one table</h3>
+<p>35 distinct activity names appear in two or more of the four tables. <strong>Every one of them is spelled
+byte-identically in every table it appears in</strong> — checked mechanically by comparing the raw strings
+of all names that are equal after case/punctuation folding. That includes the awkward ones:
+<code>Symptom-directed physical examination, including assessment for signs and symptoms of tuberculosis
+(TB), including peripheral lymph nodes</code>, <code>Physician's Global Assessment (PGA)</code> (U+2019 apostrophe in
+all four), <code>QIDS-SR16</code>, <code>Review modified Mayo score (MMS)</code>, <code>Pharmacokinetic (PK) samples</code>,
+<code>12-lead electrocardiogram (ECG)</code>, <code>Urine pregnancy (local)</code>, <code>Clinician-Administered Questionnaires
+(Paper)</code>. No harmonisation is needed for the row set.</p>
+<p>Twenty-four names are unique to Table 1 (the screening-only rows: <code>Informed consent</code>, <code>Demographics</code>,
+<code>Height</code>, <code>Chest x-ray (posterior-anterior view)</code>, <code>Serum pregnancy</code>, <code>Follicle-stimulating hormone
+(FSH)</code>, <code>Tuberculosis (TB) test</code>, the HIV/HCV/HBV screening tests, <code>Stool culture</code>,
+<code>C. difficile testing</code>, <code>Randomization</code>, and so on). Tables 2, 3 and 4 introduce no name that does not
+also appear elsewhere.</p>
+<p><strong>Structural disagreements on shared rows</strong> (same row, different modelling):</p>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Table 1</th>
+<th>Table 2</th>
+<th>Table 3</th>
+<th>Table 4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Fasting visit</code> <code>property_type</code></td>
+<td><code>modality</code></td>
+<td><code>condition</code></td>
+<td><code>condition</code></td>
+<td><code>condition</code></td>
+</tr>
+<tr>
+<td><code>Fasting visit</code> <code>structure_method</code></td>
+<td><code>inferred_from_layout</code></td>
+<td>absent</td>
+<td>absent</td>
+<td>absent</td>
+</tr>
+<tr>
+<td><code>Fasting visit</code> grid cells</td>
+<td>2 (marked only)</td>
+<td>20 (18 empty strings)</td>
+<td>2 (marked only)</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Rows 6–9 (<code>Concomitant medications</code>, <code>Adverse events</code>, MMS, <code>Tobacco use</code>)</td>
+<td>level 0, with marks</td>
+<td>level 0, with marks</td>
+<td>level 0, with marks</td>
+<td><strong>level 1</strong></td>
+</tr>
+<tr>
+<td>Label-less row of a two-row redaction bar</td>
+<td>cell_text "" + <code>visual_transcription</code></td>
+<td>cell_text "CCI" + <code>visual_transcription</code></td>
+<td>cell_text "CCI" + <strong><code>glyph_reconstruction</code></strong></td>
+<td>cell_text "" + <code>visual_transcription</code></td>
+</tr>
+<tr>
+<td>marker_locations[].method on synthesised bindings</td>
+<td><code>synthesized</code> on all</td>
+<td><code>synthesized</code> on all</td>
+<td><strong>absent on 13 of 18</strong></td>
+<td><code>synthesized</code>/<code>text_match</code> on all</td>
+</tr>
+</tbody>
+</table>
+<p>None of these changes a mark or a row; all four are pickable by a resolver, and all four are listed
+here because a consolidated view will show them side by side.</p>
+<h3>5.2 Annotation markers reused across tables with different text</h3>
+<p><strong>Every synthesised marker in this study is table-local, and the same string means different things
+in different tables.</strong> This is the largest cross-table hazard in the set.</p>
+<ul>
+<li><code>c1</code>–<code>c13</code> exist in <strong>both</strong> Table 1 and Table 2 with <strong>completely different text</strong> in each. For
+  example <code>c5</code>: Table 1 = <code>For AESIs, additional data are collected (Section 8.3.6).</code>, Table 2 =
+  <code>Check compliance for Stool Frequency Rectal Bleeding…</code>. All thirteen collide.</li>
+<li><code>n1</code>–<code>n11</code> exist in <strong>both</strong> Table 3 and Table 4 with different text in each. For example <code>n1</code>:
+  Table 3 = <code>For AESIs, additional data are collected (Section 8.3.6).</code>, Table 4 = <code>V802 is only for
+  randomized participants who were positive for anti-HBc at screening…</code>.</li>
+<li>Conversely, <strong>one note text carries four different markers</strong>. <code>For AESIs, additional data are
+  collected (Section 8.3.6).</code> is <code>c5</code> (T1), <code>c1</code> (T2), <code>n1</code> (T3), <code>n5</code> (T4). <code>See Section 8.2.2.</code> is
+  <code>c9</code>, <code>c3</code>, <code>pr1</code>, <code>n7</code>. <code>Locally performed.</code> is <code>c10</code>, <code>c4</code>, <code>n3</code>, <code>n8</code>. <code>Only for participants who are positive for anti‑HBc at screening.</code> is <code>c22</code>, <code>c8</code>, <code>n7</code>, <code>n11</code>. <code>Collect samples before
+  dosing…</code> is <code>c23</code>, <code>c9</code>, <code>n8</code>, <code>n12</code>. <code>Blood sample for DNA pharmacogenetics can be obtained any
+  time at or after V2.</code> is <code>c24</code>, <code>c10</code>, <code>n9</code>, <code>n13</code>. Fifteen note texts in total are shared across
+  tables under different markers.</li>
+<li>The prefix schemes also differ: Table 1 uses <code>hn</code>/<code>sn</code>/<code>c</code>, Table 2 <code>h</code>/<code>c</code>, Table 3 <code>t</code>/<code>pr</code>/<code>n</code>,
+  Table 4 <code>n</code> only. Table 3 is the only one that uses the §6 <code>pr</code> convention (for <code>See Section
+  8.2.2.</code>), where the other three treat the same note as an ordinary Comment-column note.</li>
+</ul>
+<p>Since no marker is printed anywhere in this document, none of this is a transcription error — but
+markers must <strong>not</strong> be treated as study-wide identifiers downstream, and any consolidation that keys
+on marker strings will silently cross-link Table 1 to Table 2 and Table 3 to Table 4. §6 asks for
+consistent naming across the tables of one study; that was not achieved here, and it cannot be fixed
+by renaming without touching all four files together.</p>
+<h3>5.3 Wording variants of the "same" note across tables — all verified, all faithful</h3>
+<p>These look like transcription discrepancies and are not. Each was checked against the page:</p>
+<table>
+<thead>
+<tr>
+<th>Note</th>
+<th>Table 1 (documents 17–23)</th>
+<th>Tables 2/3/4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vital signs</td>
+<td><code>…has been sitting at least 5 minutes.</code> (document 18)</td>
+<td><code>…has been sitting for at least 5 minutes.</code> (documents 24, 28, 33, 38, 43)</td>
+</tr>
+<tr>
+<td>Lipid panel fasting</td>
+<td><code>…if participant is non fasting at time of collection…</code> (document 20, clean text layer)</td>
+<td><code>…nonfasting…</code> (documents 26, 30, 35, 40)</td>
+</tr>
+<tr>
+<td>Pregnancy testing</td>
+<td><code>…designated on the SoA, if local laws…</code> (document 21, comma)</td>
+<td>comma present in Table 2 (document 26), <strong>absent</strong> in Table 3 (document 35) and Table 4 (document 44)</td>
+</tr>
+<tr>
+<td><code>anti-HBc</code> hyphen</td>
+<td>ASCII <code>-</code> on documents 21, 23</td>
+<td><strong>U+2011 non-breaking hyphen</strong> on documents 22, 26, 30, 36, 40, 44; ASCII <code>-</code> again on documents 32, 42, 43, 45, 46 (and both forms occur on document 44)</td>
+</tr>
+</tbody>
+</table>
+<p>All four extractions transcribed what their page prints, including the U+2011, and Tables 2, 3 and 4
+flagged the hyphen. One caveat for the reviewer: the <code>non fasting</code> / <code>nonfasting</code> distinction is
+<strong>only</strong> securely readable on document 20, which has a clean text layer. On the letter-spaced pages
+the glyph clusters read <code>p arti ci p a nt is n onf asti n g at ti m e of</code> — the de-glyph decision
+there rests on cluster boundaries, not on a measurable space, and §1c's own warning applies. I regard
+<code>nonfasting</code> as well supported (the run <code>onf</code> is one cluster) but it is the single most fragile
+character-level call in the study.</p>
+<h3>5.4 Rows present in one table but conspicuously absent from a sibling</h3>
+<ul>
+<li><strong>Table 2 vs Table 3 (responders vs nonresponders, the directly comparable pair).</strong> At the unioned
+  level the two row sets are <strong>identical</strong>: same 40 names, same multiset, including the six redacted
+  <code>CCI</code> rows. Nothing is missing from either. The difference is <em>per tile</em>: in Table 2, <code>Review
+  modified Mayo score (MMS)</code>, <code>Diary return</code>, <code>Clinician-Administered Questionnaires (Paper)</code>,
+  <code>Physician's Global Assessment (PGA)</code>, <code>Endoscopy</code> and <code>Colon biopsy sample collection</code> print only
+  in the V20–V29 tile, while in Table 3 only <code>Diary return</code> is tile-restricted. I verified this
+  directly on both spreads of both tables. It is a real clinical difference (responders are not
+  scoped or scoped endoscopically during V10–V19, and the source says so in the
+  <code>Not applicable for responders during the time period of V10 through V19</code> comment), not a dropped
+  row — but it means Table 2 has six rows whose marks all live in positions 12–21, and any check that
+  expects marks in both halves will flag them.</li>
+<li><strong>Table 4 vs Tables 2/3.</strong> Table 4 carries every row that Tables 2 and 3 carry <strong>except
+  <code>Diary compliance check</code></strong>, and instead carries <code>Diary return</code>. Verified on the page: document 43
+  prints <code>Patient Diary (Electronic)</code> followed directly by <code>Diary return</code>, and the string
+  <code>Diary compliance</code> does not occur anywhere on documents 43–46. Source-faithful.</li>
+<li><strong>Table 1 vs the rest.</strong> Table 1's 24 unique rows are screening/baseline procedures and their
+  absence from Tables 2–4 is expected. Two are worth a resolver's attention because they are <em>near</em>
+  matches rather than absences: Table 1 has both <code>Physical examination</code> (full exam, row 22) and
+  <code>Symptom-directed physical examination…</code> (row 23), where Tables 2–4 have only the symptom-directed
+  row; and Table 1 has <code>Serum pregnancy</code> <strong>and</strong> <code>Urine pregnancy (local)</code>, where Tables 2–4 have only
+  the urine row. Both splits are visible on the page and are the origin of the <code>c16</code>/<code>c17</code> containment
+  pair.</li>
+<li><strong><code>Dosing</code> marks.</strong> Tables 1, 2 and 3 each carry a <code>Dosing</code> row with marks and a "no dosing at
+  <visit>" note (<code>No dosing at V3.</code> / <code>No dosing at V29.</code> / <code>No dosing at V29.</code>). Table 4's <code>Dosing</code>
+  row carries a note and <strong>zero</strong> marks. Consistent with <code>No dosing at ETV, V997, or post-treatment
+  follow-up visits.</code> — flagged here only because a zero-mark row in a 54-mark table is the kind of
+  thing an eye-check queries.</li>
+</ul>
+<h3>5.5 Study-wide conventions that were applied consistently (no action needed)</h3>
+<ul>
+<li>All four tables: L = 1, first data column position 2, <code>Comment</code> column excluded from the grid and
+  emitted as footnotes (§6). No table renumbered its data columns.</li>
+<li>All four: zero <code>abbreviation</code> and zero legend annotations, despite an abbreviation block on the
+  last page of each table. This is the §6 outcome and it was reached the same way four times. The
+  closest calls, for the record, are <code>ETV = early termination visit</code> (the string <code>ETV</code> <em>is</em> a header
+  cell value in Table 4) and <code>QIDS-SR16</code> (the string is an activity label in all four tables); all
+  four agents declined to bind them, which I agree with — a column label and a row label are not
+  markers on those cells.</li>
+<li>All four: extraction_status: "ready_for_resolution", <code>schema_name</code>/<code>schema_version</code> correct,
+  every annotation has ≥1 <code>marker_locations</code> entry, and <strong>every marker recorded in a location also
+  appears in that row's <code>annotation_markers</code></strong> (checked mechanically across all four files — zero
+  mismatches, zero orphan markers in the reverse direction).</li>
+<li>by_type is not degenerate in any table: 29 footnote / 3 source_note (T1), 15/4 (T2), 14/3 (T3),
+  15/1 (T4). Every bare-pointer note (<code>See Section 8.2.2.</code>, <code>For procedures at an ETV, see ETV in
+  Table 4.</code>, <code>For procedures at an unscheduled visit, see V997 in Table 4.</code>) is typed <code>source_note</code>
+  in every table; every note that points <em>and</em> explains (<code>For AESIs, additional data are collected
+  (Section 8.3.6).</code>) is typed <code>footnote</code> in every table.</li>
+<li>No table sets <code>source_range</code>, merged_cell_range, is_merged_cell or an arrow glyph anywhere.
+  Confirmed against the pages: this document contains no horizontally merged marks and no arrows. The
+  only merged cells in the whole excerpt are the label cells of the two-row redaction bars, which are
+  handled as described above.</li>
+</ul>
+<hr />
+<h2>6. Summary of items a reviewer should look at first</h2>
+<ol>
+<li><strong>Table 2 table_metadata.notes contains two wrong counts</strong> — <code>Seven rows print in only one tile</code>
+   (six are named and six exist) and <code>eight body rows are redacted</code> (six exist). Data are right, prose
+   is wrong; fix the prose, not the rows.</li>
+<li><strong>Table 3 omits <code>method</code> on 13 of its 18 <code>marker_locations</code></strong>, so synthesised bindings read as
+   printed-marker bindings. The other three tables record <code>synthesized</code> on every such location.</li>
+<li><strong>Marker strings collide across tables</strong> (<code>c1</code>–<code>c13</code> in Tables 1 and 2; <code>n1</code>–<code>n11</code> in Tables 3 and
+   4) and one note text carries up to four different markers. Do not key on markers across tables.</li>
+<li><strong>Table 3's tile-B header-block variant</strong> (<code>occurring</code> with no full stop) is not recorded, where
+   Table 2 kept its two equivalent variants as <code>h5</code>/<code>h6</code>.</li>
+<li><strong>Table 3 records both rows of the document-37 redaction bar as <code>glyph_reconstruction</code></strong>, but only
+   one <code>CCI</code> label is printed there; the second row's name was necessarily read visually.</li>
+<li><strong><code>Fasting visit</code> is typed <code>modality</code> in Table 1 and <code>condition</code> in Tables 2–4</strong>, and rows 6–9 are
+   level 0 in Tables 1–3 and level 1 in Table 4. Pick one of each before consolidation.</li>
+<li><strong><code>non fasting</code> vs <code>nonfasting</code></strong> is a genuine source variant, but the <code>nonfasting</code> side is only
+   readable through the glyph reconstruction; it is the study's most fragile character-level call.</li>
+</ol>
+</body>
+</html>

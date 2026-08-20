@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT03817853 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT03817853 — SoA extraction uncertainty report (prompt v3.7.3)</h1>
+<p>Source: <code>/root/ph3/blind/NCT03817853/NCT03817853_soa.pdf</code> (3 PDF pages = document pages 100–102 per PAGEMAP.md).
+Protocol identified in the page footer block as <code>100/Protocol MO40597, Version 5</code>.</p>
+<h2>1. Structure discovery — how many tables</h2>
+<p>The excerpt contains <strong>one</strong> SoA table. Document page 100 carries the entire grid under the title
+<code>Appendix 1</code> / <code>Schedule of Activities</code>; document pages 101 and 102 carry only the general note
+paragraph and footnotes a–z, aa, under the running header <code>Appendix 1: Schedule of Activities</code>.
+No second grid, no abbreviation <em>table</em>, no subsidiary timing table.</p>
+<h2>2. Per-table summary</h2>
+<table>
+<thead>
+<tr>
+<th>item</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>table_number / type</td>
+<td>1 / <code>main_soa</code></td>
+</tr>
+<tr>
+<td>page_start – page_end</td>
+<td>100 – 102</td>
+</tr>
+<tr>
+<td>leading label columns (L)</td>
+<td><strong>1</strong> — first data column = <strong>2</strong>, last = <strong>12</strong> (11 data columns; 12 columns total)</td>
+</tr>
+<tr>
+<td>schedule_property rows</td>
+<td>4 (epoch, period, cycle, study_day)</td>
+</tr>
+<tr>
+<td>schedule_grid cells</td>
+<td>31</td>
+</tr>
+<tr>
+<td>activities</td>
+<td>27 (26 physical body rows — see §4)</td>
+</tr>
+<tr>
+<td>marks (<code>activity_schedule</code>)</td>
+<td>89</td>
+</tr>
+<tr>
+<td>annotations</td>
+<td>28, all <code>footnote</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Classification.</strong> <code>main_soa</code> by the §2 discriminators: the rows are procedures performed on
+subjects (so not <code>reference</code>), there is no second table to be a continuation/domain/track of, and
+this is the primary anchor grid. The call is not in doubt.</p>
+<p><strong>Activity rows per page across the declared range.</strong>
+- page 100 — 27 activity rows (all of them).
+- page 101 — <strong>0 activity rows.</strong> The page is the first footnote page: the <code>Notes:</code> paragraph and
+  footnotes a–m. No grid rows print on it.
+- page 102 — <strong>0 activity rows.</strong> Second footnote page: footnotes n–z and aa.</p>
+<p>This is a declared exception under §4, not a skipped page: the table's body is entirely on page 100
+and pages 101–102 are the footnote apparatus of the same table, which is why they are inside
+<code>page_start</code>..<code>page_end</code>.</p>
+<h2>3. Column geometry (L = 1) — how it was established</h2>
+<p>The page has real vector content but the grid was resolved from the <strong>200 dpi raster rule lines</strong>
+(§1d), which is also what fixed the column count. Over the table's full height (y 282–1322 px) there
+are exactly <strong>13 full-height vertical rules</strong> at x = 196, 608.5, 711, 817, 884.5, 952, 1022.5,
+1140.5, 1337.5, 1436, 1672, 1770.5, 2009 px → one label column (196–608.5) plus 11 data columns.</p>
+<p>The label column carries an <strong>internal vertical rule at x = 372 px that exists only across the two
+study-drug rows</strong> (y 1090–1171 px); it is absent everywhere else, including the header. It is
+therefore a nested split inside one label cell, <strong>not</strong> a second table column, so L = 1 and the first
+data column is position 2. Recording this explicitly because if it had been read as a second label
+column every <code>column_position</code>, <code>source_range</code> and <code>merged_cell_range</code> in the file would shift by one
+with nothing else changing.</p>
+<p>Column map (position → header), composed from the four header rows:</p>
+<table>
+<thead>
+<tr>
+<th>pos</th>
+<th>header</th>
+<th>pos</th>
+<th>header</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>Screening, D–28 to D–1</td>
+<td>8</td>
+<td>Cycles 3–6/8, D1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Screening, D–7 to D–1</td>
+<td>9</td>
+<td>EOI</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Cycle 1, D1</td>
+<td>10</td>
+<td>Maintenance (every 8 weeks ± 10 days)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Cycle 1, D8</td>
+<td>11</td>
+<td>EOM</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Cycle 1, D15</td>
+<td>12</td>
+<td>Follow-up (3 months)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Cycle 2, D1</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>4. The "Study drug administration" merged label cell (main structural judgement)</h2>
+<p>The label cell <code>Study drug administration</code> is <strong>vertically merged across two body rows</strong> whose right
+sub-cells read <code>obinutuzumab r</code> and <code>chemotherapy s</code> (as recorded in
+<code>activity_name_source.cell_text</code>). The text layer confirms the vertical merge: binning tokens into
+the two row bands splits the parent label between them — the word <code>Study</code> and the word <code>drug</code> fall in
+the upper band, the word <code>administration</code> falls in the lower one, alongside the two sub-labels.</p>
+<p>I emitted <strong>three</strong> activity rows for these two physical rows:</p>
+<ul>
+<li>row 24 <code>Study drug administration</code>, <code>indentation_level: 0</code>, <strong>no marks</strong> (§4 organisational header);</li>
+<li>row 25 <code>obinutuzumab</code>, level 1, marks in columns 4, 5, 6 (marker <code>c</code>) and 7, 8, 10 (marker <code>d</code>);</li>
+<li>row 26 <code>chemotherapy</code>, level 1, marks in columns 4, 7, 8.</li>
+</ul>
+<p>Consequence to be aware of at review: the table has 26 physical body rows but 27 <code>activity</code> objects,
+and <code>row_position</code> from 24 onward is one higher than the physical row index. The alternative — two
+level-1 rows with no parent — would have dropped a printed label and left an orphaned hierarchy, so I
+chose to keep the label as a mark-free level-0 row and flag the offset here and in
+<code>table_metadata.notes</code>.</p>
+<h2>5. Merged cells and merged marks</h2>
+<p><strong>No mark or text was distributed across a span in the table body</strong> — every one of the 89 marks sits
+in its own rule-bounded cell. All merges in this table are in the header:</p>
+<table>
+<thead>
+<tr>
+<th>header row</th>
+<th>value</th>
+<th>span (<code>merged_cell_range</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>Screening</code></td>
+<td>2:3</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>Treatment</code></td>
+<td>4:11</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>Induction (6–8 cycles)</code></td>
+<td>4:8</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>Cycle 1</code></td>
+<td>4:6</td>
+</tr>
+</tbody>
+</table>
+<p><code>Treatment</code> spans columns 4–11 only: the raster band y 282–312 px has interior vertical rules at
+x = 817 and x = 1770 px, so it starts at the Cycle 1 D1 column and ends at EOM, excluding both
+Screening columns and Follow-up.</p>
+<p>Two header cells are <strong>vertically</strong> merged and the schema has no vertical merge, so each is recorded
+once, on the row where it starts: <code>Screening</code> (spans header rows 1–3) and <code>Follow-up (3 months)</code>
+(spans header rows 1–4). This is why header row 4 has no cell for columns 9–12.</p>
+<h2>6. Mechanical mark-check (§1b)</h2>
+<p>Method: <code>pdftotext -bbox</code> on page 100; each token assigned to the (row band × column band) rectangle
+its centre falls in, using the raster-recovered rule lines of §3 as the cell boundaries; mark tokens
+matched with <code>^[Xx][*a-zA-Z0-9]?$</code>.</p>
+<p>Result: the mechanical matrix and the visual read of the rendered page agree <strong>cell for cell — 89
+marks, zero disagreements</strong>; the set difference in both directions is empty. Mark glyph is lowercase
+<code>x</code> throughout, and it is transcribed that way — not normalised to upper case.</p>
+<p>Rows worth a spot-check at review because they are sparse in a way that looks like an omission but
+is what the page prints:</p>
+<ul>
+<li><code>Chemistry</code> has marks in 3, 5, 6, 7, 8, 9, 10, 11 — <strong>no mark in column 4 (Cycle 1 D1)</strong>, while
+  <code>Hematology</code> immediately above it does have column 4. Confirmed on the render and in the bbox
+  matrix; the missing mark is data.</li>
+<li><code>Patient-reported measures</code> has marks in 4, 7, 8, 9, 10, 11, 12 — no marks in columns 5 and 6
+  (Cycle 1 D8, D15), consistent with footnote <code>y</code>: "Before administration of treatment at Day 1 of
+  Cycles 1–6, at the end of induction, during maintenance, at end of maintenance, and at end of
+  study, patients will complete the MDASI."</li>
+<li><code>Provider-reported measures</code> carries exactly one mark, in column 8, and it is footnoted: the cell
+  prints <code>x</code> plus a superscript <code>x</code>. The footnote marker and the mark glyph are the same letter —
+  encoded as <code>cell_value: "x"</code> with <code>annotation_markers: "x"</code>. Worth a look because a naive read
+  could turn it into two marks or into no footnote.</li>
+</ul>
+<h2>7. Annotations</h2>
+<ul>
+<li>28 annotations, <strong>all <code>footnote</code></strong>. <code>by_type</code> is not degenerate in the forbidden sense (§8 says
+  all-<code>footnote</code> is normal); there is no notes/comments column in this table.</li>
+<li>None of the 27 lettered footnotes is a bare pointer, so none was typed <code>source_note</code>. The two that
+  come closest still explain as well as point — e.g. <code>b</code> ends "…depends on the chemotherapy chosen
+  for each patient (see Section 4.3.2.2 Combination chemotherapy)." and <code>s</code> ends "…or CVP (Days 1–5,
+  Cycles 1–8; 21-day cycles). See Section 4.3.2.2 Combination chemotherapy."</li>
+<li>No activity label carries an inline section/appendix reference, so no <code>pr…</code> source notes were
+  synthesised.</li>
+<li><strong>Containment check: no annotation's text is contained in another's.</strong> Verified mechanically over
+  all 28 texts.</li>
+<li>The text layer is <strong>not</strong> glyph-spread; no <code>deglyph_reconstruction</code> was needed and no
+  <code>annotation_text_source</code> method was recorded on any annotation. Footnote text was read from the
+  page 101–102 text layer, whose footnote block is a hanging-indent list (marker in column 0,
+  continuation lines indented), so each note is bounded by its own marker rather than by proximity.</li>
+<li><strong>Abbreviation block deliberately yields zero annotations.</strong> Page 100 ends with a 13-term block
+  beginning "(a)PTT=(activated) partial thromboplastin time; D=day; ECG=electrocardiogram;". Terms
+  such as <code>D</code>, <code>ECG</code>, <code>EOI</code>, <code>EOM</code>, <code>LVEF</code> do appear in header cells and activity labels, but only as
+  running text / cell content — none is printed as a <em>marker</em>. Binding them would require
+  <code>method: "text_match"</code>, which §6 and the §8 checklist forbid, and §6's rule that an unreferenced
+  abbreviation block should normally yield zero annotations applies directly, so the block was not
+  emitted. Flagging it because it is a
+  visible, deliberate omission: the block's content is on page 100 and is not represented anywhere in
+  the JSON.</li>
+</ul>
+<h3>Header-cell footnotes (§6)</h3>
+<p>Four markers print on header cells and were placed on the <code>schedule_grid</code> cell of the exact column(s)
+they sit on, not on the <code>schedule_property</code> row:</p>
+<table>
+<thead>
+<tr>
+<th>marker</th>
+<th>placed on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a</code></td>
+<td>header row 1, columns 2 and 3 (the merged <code>Screening</code> cell covers both)</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>header row 2, columns 4–8 (the merged <code>Induction (6–8 cycles)</code> cell)</td>
+</tr>
+<tr>
+<td><code>e</code></td>
+<td>header row 2, column 10 (<code>Maintenance</code>)</td>
+</tr>
+<tr>
+<td><code>aa</code></td>
+<td>header row 1, column 12 (<code>Follow-up (3 months)</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>For <code>a</code> and <code>b</code> the marker is printed once, on a horizontally merged cell; it is recorded on every
+column the merge covers, mirroring the §5 merged-mark rule. If a reviewer prefers one location per
+printed glyph, these are the four annotations to look at.</p>
+<h3>Cell-level footnotes</h3>
+<p><code>f</code> (row 5 col 2), <code>c</code> (row 25 cols 4,5,6), <code>d</code> (row 25 cols 7,8,10), <code>u</code> (row 28 cols 2,3,4 — also
+on the label), <code>w</code> (row 29 cols 2,3,4 — also on the label), <code>x</code> (row 30 col 8). All others are
+activity-label markers.</p>
+<h2>8. Synthesised values</h2>
+<p><strong>Synthesised <code>property_name</code> (3).</strong> The header's label column is empty for the top three bands; only
+the bottom band is labelled, and it prints <code>Day</code>.</p>
+<table>
+<thead>
+<tr>
+<th>row</th>
+<th>synthesised name</th>
+<th>evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>Study phase</code></td>
+<td>cells are <code>Screening</code> / <code>Treatment</code> / <code>Follow-up (3 months)</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>Treatment period</code></td>
+<td>cells are <code>Induction (6–8 cycles)</code> / <code>EOI</code> / <code>Maintenance…</code> / <code>EOM</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>Cycle</code></td>
+<td>cells are <code>Cycle 1</code> / <code>Cycle 2</code> / <code>Cycles 3–6/8</code></td>
+</tr>
+</tbody>
+</table>
+<p>Row 4 <code>Day</code> is <strong>not</strong> synthesised — it is printed in the label column
+(<code>property_name_source.cell_value: "Day"</code>).</p>
+<p><strong>Synthesised annotation marker (1).</strong> The <code>Notes:</code> paragraph at the top of page 101 is a general,
+unmarked table note: "Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done
+within ± 2 days of the scheduled visit date…". It has no printed marker and no single element to
+attach to. I synthesised marker <strong><code>n1</code></strong>, gave it one <code>marker_location</code> on <code>schedule_property</code> row 1
+with <code>method: "synthesized"</code>, and — so that <code>annotation_markers</code> and <code>marker_locations</code> agree as §6
+requires — also put <code>n1</code> in that property row's <code>annotation_markers</code>. See §10 for why this is the one
+binding in the file I am least sure about.</p>
+<h2>9. Low-confidence calls</h2>
+<ol>
+<li><strong><code>property_type</code> of header row 2 = <code>period</code>.</strong> The row mixes genuine sub-phases (<code>Induction
+   (6–8 cycles)</code>, <code>Maintenance (every 8 weeks ± 10 days)</code>) with two end-of-phase encounters (<code>EOI</code>,
+   <code>EOM</code>) that read more like visits. I typed the row by what dominates it and by its position under
+   the <code>Treatment</code> epoch. A reviewer could defend <code>epoch</code> or <code>visit</code> for this row; the reasoning is in
+   <code>property_comment</code> and <code>structure_method: "inferred_from_layout"</code> is set.</li>
+<li><strong>Hierarchical levels 1–4</strong> come from the rule-line stacking, not from printed labels, for rows 2
+   and 3 (<code>structure_method: "inferred_from_layout"</code>). Row 1 and row 4 are unambiguous.</li>
+<li><strong>L = 1 vs L = 2</strong> — see §3. Decided on rule-line geometry; the only thing that would argue for
+   L = 2 is the two-row-only internal divider.</li>
+<li><strong>27 activities vs 26 physical rows</strong> — see §4.</li>
+<li>No PDF/markdown comparison was possible: no protocol markdown accompanies this excerpt, so all
+   text is from the PDF text layer.</li>
+</ol>
+<h2>10. Orphan risk</h2>
+<ul>
+<li>Every annotation has ≥ 1 <code>marker_location</code>, and every marker in a <code>marker_location</code> also appears in
+  that row's <code>annotation_markers</code> (checked mechanically; zero mismatches). No <code>location_type:
+  "unresolved"</code> entries.</li>
+<li>Every marker used anywhere in the JSON has a definition printed in the source; there is no
+  referenced-but-undefined marker in this table.</li>
+<li><strong>The one soft binding is <code>n1</code>.</strong> Its location on <code>schedule_property</code> row 1 is a convention, not a
+  printed position: the note is table-scope. §6's Notes-column-header carve-out would have it carry
+  the synthesised location <em>without</em> the marker on the row; the general rule for unmarked notes, plus
+  the §8 checklist item that markers and locations must agree, would have it on the row. I chose the
+  latter so the note resolves rather than dangling, and I am flagging the disagreement here so the
+  reviewer can flip it if the corpus convention is the other one.</li>
+</ul>
+<h2>11. Method provenance (non-default methods recorded)</h2>
+<table>
+<thead>
+<tr>
+<th>where</th>
+<th>field</th>
+<th>value</th>
+<th>why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>schedule_properties</code> row 2</td>
+<td><code>structure_method</code></td>
+<td><code>inferred_from_layout</code></td>
+<td>type/level from banding geometry, label cell empty</td>
+</tr>
+<tr>
+<td><code>schedule_properties</code> row 3</td>
+<td><code>structure_method</code></td>
+<td><code>inferred_from_layout</code></td>
+<td>same</td>
+</tr>
+<tr>
+<td>annotation <code>n1</code></td>
+<td><code>marker_locations[0].method</code></td>
+<td><code>synthesized</code></td>
+<td>unmarked table-scope note</td>
+</tr>
+</tbody>
+</table>
+<p>Nothing else carries a non-default method: activity names and footnote text were read directly from
+the text layer, cell values and merge extents from <code>pdftotext -bbox</code> binned into rule-bounded cells,
+and indentation from the printed layout. No <code>proximity</code>, no <code>proximity_bounded</code>, no
+<code>visual_transcription</code>, no <code>unresolved</code>.</p>
+</body>
+</html>

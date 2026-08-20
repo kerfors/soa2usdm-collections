@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT03548987 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT03548987 — SoA extraction uncertainty report</h1>
+<p>Source: <code>/root/ph3/blind/NCT03548987/NCT03548987_soa.pdf</code> (4 PDF pages = document pages 8–11 per PAGEMAP).
+Prompt v3.7.2, schema <code>soa-table-extraction</code> v1.0. One output file:
+<code>NCT03548987_Table_01_extraction.json</code>.</p>
+<hr />
+<h2>0. Rotation — how it was established and handled</h2>
+<p><code>pdfinfo</code> reports <code>Page rot: 0</code> and a portrait letter page (612 × 792 pt), but the flowchart is
+printed rotated: in <code>pdftotext -bbox</code> every word box is ~9.5 pt wide and tens of points tall, and
+successive words of one line share an <code>xMin</code> while their <code>y</code> values <em>decrease</em>. Rotation was
+therefore fixed from the geometry, not assumed:</p>
+<ul>
+<li><strong>one table row = one band of PDF x</strong> (row order = increasing x, top of table to bottom);</li>
+<li><strong>one table column = one band of PDF y</strong> (column order = decreasing y, left of table to right);</li>
+<li>a rendered page must be turned by <code>Image.ROTATE_270</code> to read.</li>
+</ul>
+<p>Consequently the §1d rule-line recipe is transposed: on the 200 dpi render, <strong>vertical image rules
+are the table's row boundaries</strong> and <strong>horizontal image rules are the table's column boundaries</strong>.
+Both families were detected as pixel runs with ink fraction &gt; 0.4 and converted to points by
+dividing by 200/72. The 27 column boundaries came out byte-identical on all four pages
+(lowest 63.9 pt, highest 709.4 pt), which is itself a check that one grid runs across the whole excerpt.
+Every text-layer token was then assigned to the (row band × column band) cell its centre falls in.
+No text was read by eye; the rendered pages were used only to confirm the recovered bands and the
+merge spans.</p>
+<hr />
+<h2>1. Table inventory and classification</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>type</th>
+<th>pages (doc)</th>
+<th>label cols L</th>
+<th>first data col</th>
+<th>data cols</th>
+<th>header rows</th>
+<th>activities</th>
+<th>marks</th>
+<th>annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>main_soa</code></td>
+<td>8–11</td>
+<td>1</td>
+<td>2</td>
+<td>25 (positions 2–26)</td>
+<td>4</td>
+<td>69</td>
+<td>378</td>
+<td>33</td>
+</tr>
+</tbody>
+</table>
+<p><strong>One table, not four.</strong> The excerpt carries a single continuous flowchart introduced as
+"Flowchart" (section 2). It has no table number and no per-page title; the four-row header band
+("Visit(V), Phone (P)", "Timing of Visit (Weeks)", "Visit Window (Days)" plus the unlabelled study-period
+band) simply reprints at the top of each page while the activity rows continue. It is therefore
+modelled as one table with <code>page_start</code> 8 / <code>page_end</code> 11, and the reprinted header rows are
+de-duplicated to <code>schedule_property</code> rows 1–4 (§1b). The alternative — one <code>main_soa</code> plus three
+<code>continuation</code> tables — was rejected because the source gives no independent table identity to
+split on.</p>
+<p><strong>Why <code>main_soa</code>:</strong> rows are procedures performed on subjects (so not <code>reference</code>); it is the only
+grid in the excerpt, so there is no parent to be a <code>continuation</code>/<code>domain</code> of and no second column
+structure to be <code>subsidiary</code> to; and it schedules one undivided population across
+Screening → Run-in → Randomisation → Maintenance → End of treatment / End of trial, so there is no
+mutually-exclusive population split that would make it a <code>track</code>. <code>track_label</code> is correctly absent.</p>
+<p><strong>Activity rows per page (whole declared range covered — no page contributed zero):</strong></p>
+<table>
+<thead>
+<tr>
+<th>doc page</th>
+<th>PDF page</th>
+<th>activity rows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td>1</td>
+<td>17</td>
+</tr>
+<tr>
+<td>9</td>
+<td>2</td>
+<td>19</td>
+</tr>
+<tr>
+<td>10</td>
+<td>3</td>
+<td>19</td>
+</tr>
+<tr>
+<td>11</td>
+<td>4</td>
+<td>14</td>
+</tr>
+</tbody>
+</table>
+<p>Page 11 also carries the four footnote definitions below the grid; those became annotations, not rows.
+The table is not horizontally tiled — all 25 data columns appear on every page — so the §4 tiling
+exception does not apply here.</p>
+<hr />
+<h2>2. Column model</h2>
+<p><code>L = 1</code> leading label column (the activity-name / property-label column), so <strong>the first data
+column is position 2</strong> and the 25 data columns occupy positions 2–26. There is no notes/comments
+column and no protocol-reference column: the section references are printed inline inside the
+activity labels (see §5 below).</p>
+<p>Column identity, for the record: 2 = V1 (week −1), 3 = V2 (0), 4 = P3 (2) … 13 = V12 (20, randomisation),
+14 = V13 (24) … 24 = P23 (64), 25 = V24 (68, end of treatment), 26 = V25 (75, end of trial).</p>
+<p><strong><code>V20P21V22P23</code> — one text token, four columns.</strong> In the visit row, poppler returns the four
+labels for weeks 52/56/60/64 as the single token "V20P21V22P23" spanning y 137–194 pt, because the
+glyphs abut with no space. The rule-line scan of that row band shows <em>all</em> internal column
+boundaries present (137.5 / 151.2 / 165.6 / 179.3 / 194.0), i.e. four separate cells, and the week
+row prints 52, 56, 60, 64 as four separate tokens in exactly those bands. The token was therefore
+split in printed order into V20 → col 21, P21 → col 22, V22 → col 23, P23 → col 24, and confirmed
+against the rendered page. This is a token-splitting decision, not a merge decision — flagged here
+because no count-based check can see it.</p>
+<p><strong><code>Rando-</code> / <code>misation</code>.</strong> The randomisation epoch cell is printed on two lines with a soft hyphen;
+<code>cell_value</code> is de-hyphenated to <code>Randomisation</code>. Same treatment for the wrapped activity label
+"Stanford Presenteeism Scale (SPS-" + "6)" → <code>Stanford Presenteeism Scale (SPS-6)</code>.</p>
+<hr />
+<h2>3. Merged cells and merged marks</h2>
+<p>Merge spans were resolved per row from the rule-line geometry, by testing each row band for the
+presence of every one of the 26 column boundaries.</p>
+<ul>
+<li><strong>Only the study-period (epoch) header row has merges.</strong> Missing internal boundaries there give:</li>
+<li><code>Run-in</code> → merged across columns <strong>3:12</strong> (V2 … P11)</li>
+<li><code>Maintenance period</code> → merged across columns <strong>14:24</strong> (V13 … P23)</li>
+<li><code>Screening</code> (col 2), <code>Randomisation</code> (col 13), <code>End of treatment</code> (col 25) and <code>End of trial</code>
+    (col 26) are single cells — <code>Screening</code> in particular covers <strong>V1 only</strong>, not V1+V2.
+  Each covered position carries <code>is_merged_cell: true</code> and <code>merged_cell_range</code> in numeric
+  <code>"first:last"</code> form.</li>
+<li><strong>No body row has a merged mark.</strong> All 69 activity rows returned the complete set of 25 internal
+  column boundaries, so every <code>X</code> sits in a single-column cell. No <code>source_range</code> is set anywhere in
+  <code>activity_schedule</code>, and no mark was distributed. There are no arrows, no vertically-merged marks,
+  no qualified marks and no spanning text cells of the see-instructions kind in this table.</li>
+</ul>
+<hr />
+<h2>4. Mechanical mark-check</h2>
+<p>Two independent passes over the same recovered cell rectangles:</p>
+<ol>
+<li><strong>bbox column-binning (§1b, primary).</strong> <code>pdftotext -bbox</code> tokens matched against
+   <code>^[Xx][*a-zA-Z0-9]?$</code> and assigned to the cell their centre falls in.</li>
+<li><strong>raster near-black-pixel count (independent check).</strong> On the 200 dpi render, a cell was called
+   marked when it contained more than 20 pixels below intensity 90, using an absolute count, not a
+   fraction.</li>
+</ol>
+<p><strong>Result: 69 body rows compared, 378 marks, zero disagreeing cells.</strong> No cell needed a visual
+tie-break. Every mark in this table is a literal capital <code>X</code>; no <code>x</code>, <code>✓</code>, <code>•</code> or arrow occurs, and
+no mark carries an annotation marker, so <code>annotation_markers</code> is empty on every <code>activity_schedule</code>
+entry.</p>
+<p>Spot-checks read directly off the rendered pages and agreeing with both passes:
+<code>First date on trial product</code> carries its single X under <strong>P3 (col 4)</strong>, not under V2;
+<code>Criteria for discontinuation (8.1)</code> runs V2 → P23 (cols 3–24) and stops before V24/V25;
+<code>Trial product compliance (7.1, 7.6)</code> starts at P3 (col 4), one column later than
+<code>Concomitant medication (7.7)</code> which starts at V1 (col 2).</p>
+<hr />
+<h2>5. Annotations</h2>
+<p>33 annotations: <strong>4 <code>footnote</code></strong> (the printed a/b/c/d block on document page 11) and
+<strong>29 <code>source_note</code></strong> (deduplicated inline protocol cross-references).</p>
+<p><strong>Footnotes</strong> — text taken from the text layer of page 11, each bound to the activity row(s) whose
+label carries the printed superscript:</p>
+<table>
+<thead>
+<tr>
+<th>marker</th>
+<th>rows</th>
+<th>text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td>6</td>
+<td>"Demography consists of date of birth, sex, ethnicity, and race (according to local regulation)"</td>
+</tr>
+<tr>
+<td>b</td>
+<td>7, 15, 49</td>
+<td>"For all female subjects"</td>
+</tr>
+<tr>
+<td>c</td>
+<td>11</td>
+<td>"If subjects not fulfil randomisation criteria see Section 6.3.2"</td>
+</tr>
+<tr>
+<td>d</td>
+<td>19</td>
+<td>"Smoking is defined as smoking at least one cigarette or equivalent daily"</td>
+</tr>
+</tbody>
+</table>
+<p>Marker b binds three rows: <code>Childbearing potential</code>, <code>History of Breast Neoplasm</code> and
+<code>Breast neoplasms follow-up</code>. Superscript position was taken from the glyph's own y-offset inside
+the label cell (e.g. in "Breast neoplasms follow-up (9.4)" the <code>b</code> glyph sits between "follow-up"
+and "(9.4)", so <code>cell_text</code> is <code>Breast neoplasms follow-upb (9.4)</code>).</p>
+<p>Footnote c is typed <code>footnote</code>, not <code>source_note</code>, because it states a condition as well as
+pointing ("If subjects not fulfil randomisation criteria see …").</p>
+<p><strong>Source notes — synthesised markers <code>pr1</code> … <code>pr29</code>.</strong> Almost every activity label in this protocol
+ends in an inline, hyperlinked protocol reference — "Inclusion criteria (6.1)",
+"Vital Signs (6.4.2, 9.4.3)", "Pregnancy test (9.4.5, Appendix 5)", "Trial product compliance (7.1, 7.6)".
+Per §6 these were stripped out of <code>activity_name</code> (retained verbatim in
+<code>activity_name_source.cell_text</code>), split when one parenthesis carries several references, and
+emitted as one <code>source_note</code> per <strong>distinct</strong> reference with a synthesised marker added to every
+citing row's <code>annotation_markers</code>. <code>annotation_text</code> is the reference exactly as printed inside the
+parentheses, without the parentheses, so that deduplication is exact: <code>6.1</code>, <code>9.4</code>, <code>Appendix 2</code>, …</p>
+<p>Marker order is printed order of first occurrence: pr1 = Appendix 3, pr2 = Appendix 5, pr3 = 6.1,
+pr4 = 6.2, pr5 = 6.3.1, pr6 = 6.3.2, pr7 = 9.4, pr8 = 9, pr9 = 7.7, pr10 = 7.1, pr11 = 7.6,
+pr12 = 9.1.1, pr13 = Appendix 2, pr14 = 6.4.2, pr15 = 9.4.3, pr16 = 9.1.2, pr17 = 9.4.2,
+pr18 = 9.4.5, pr19 = 9.4.4, pr20 = 9.2, pr21 = Appendix 4, pr22 = 9.2.9, pr23 = Appendix 6,
+pr24 = 9.4.1, pr25 = 7.5, pr26 = 8.1, pr27 = 7.1.2, pr28 = 7.1.1, pr29 = 6.4.1.
+The most-cited are pr7 (<code>9.4</code>, 8 rows), pr8 (<code>9</code>, 6 rows), pr10 (<code>7.1</code>, 3 rows) and pr13
+(<code>Appendix 2</code>, 3 rows).</p>
+<p>Parentheticals that are <strong>instrument acronyms, not references</strong>, were deliberately kept inside
+<code>activity_name</code>: <code>Short Form-36 (SF-36)</code>, <code>Weight Related Sign and Symptom Measure (WRSSM)</code>,
+<code>Patient Global Impression of Severity (PGI-S)</code>, <code>Patient Global Impression of Change (PGI-C)</code>,
+<code>Stanford Presenteeism Scale (SPS-6)</code>, <code>Patient Health Questionnaire – 9 (PHQ-9)</code>,
+<code>Columbia Suicide Severity Rating Scale (C-SSRS)</code>.</p>
+<p><strong>No <code>legend</code> and no <code>abbreviation</code> annotations.</strong> The table prints no legend defining <code>X</code> and no
+abbreviation block, so there is nothing to emit; per §6 no abbreviation was manufactured from terms
+occurring only in running text.</p>
+<p><strong><code>by_type</code> distribution</strong> is 29 <code>source_note</code> / 4 <code>footnote</code> — not degenerate, but heavily skewed to
+<code>source_note</code>. That is what the source is: this protocol hyperlinks a section number into nearly
+every activity label, and there is no notes/comments column to yield footnotes.</p>
+<p><strong>Containment pairs (§8).</strong> 19 pairs where one <code>annotation_text</code> is a substring of another were
+found and re-verified against the pages. <strong>All are source-faithful, none is a split note cell:</strong>
+they are the trivial prefix relations between genuinely distinct section numbers (<code>9</code> ⊂ <code>9.4</code> ⊂ <code>9.4.3</code>,
+<code>7.1</code> ⊂ <code>7.1.1</code>, <code>9.2</code> ⊂ <code>9.2.9</code>, …) plus <code>6.3.2</code> ⊂ the footnote c sentence
+"If subjects not fulfil randomisation criteria see Section 6.3.2", where footnote c is a printed
+footnote and <code>6.3.2</code> is the separate inline reference on the "Randomisation criteria and randomisation"
+label. Nothing was merged, truncated or dropped.</p>
+<p><strong>Orphan risk: none.</strong> All 33 annotations have ≥ 1 <code>marker_locations</code> entry, every location is an
+<code>activity_name</code> on a row that also carries that marker in its <code>annotation_markers</code>, and no marker is
+<code>unresolved</code>. No marker appears in the grid whose definition is missing from the source.</p>
+<hr />
+<h2>6. Synthesised values</h2>
+<ul>
+<li><strong><code>property_name</code> for header row 1</strong> — the study-period band's label cell is empty in the source
+  (the leftmost column of that row is blank), while the row clearly carries period names spanning
+  columns. Synthesised as <code>Study period</code>, with
+  <code>property_name_source.cell_value: ""</code> and <code>synthesized: true</code>.</li>
+<li><strong>Annotation markers pr1–pr29</strong> — the inline references carry no printed marker; markers were
+  synthesised per §6 and each location carries <code>method: "synthesized"</code>.</li>
+<li>Nothing else was synthesised. No <code>unresolved</code> locations, no <code>proximity</code>/<code>text_match</code> bindings.</li>
+</ul>
+<hr />
+<h2>7. Low-confidence calls and judgement</h2>
+<ol>
+<li><strong><code>Visit Window (Days)</code> given <code>hierarchical_level: 4</code>.</strong> §3 says a header row needs a level when
+   removing it would make two columns indistinguishable; strictly, removing the window row leaves
+   every column still distinguishable by its visit label, which argues for <code>null</code>. It was given
+   level 4 because it is a full-width structural band in the stacked header (epoch → visit → week →
+   window), and dropping it out of the hierarchy would misrepresent the presentation. Reviewers who
+   prefer the strict reading should change it to <code>null</code>; no other field depends on it.</li>
+<li><strong>Indentation is a three-level model.</strong> Two signals agree and were used together: leading
+   whitespace in the text layer (flush labels start at y = 706.66 pt, indented ones at 695.82 pt),
+   and cell shading measured from the render (three clean tones — modal grey 170 for the all-caps
+   section bands, 200 for ordinary rows, 241 for indented children). Level 0 = the five all-caps
+   shaded bands (<code>SUBJECT RELATED INFORMATION AND ASSESSMENTS</code>, <code>EFFICACY</code>, <code>SAFETY</code>,
+   <code>TRIAL MATERIAL</code>, <code>REMINDERS</code>), level 1 = ordinary activity rows, level 2 = indented children.
+   The level-0 call comes from shading rather than whitespace, so those five rows carry
+   <code>activity_name_source.indentation_method: "font_signal"</code>; levels 1 and 2 come from whitespace and
+   record no method. All five level-0 rows carry zero marks, as §4 requires. Note that the level-1
+   group parents <code>Body measurements</code>, <code>Vital Signs</code> (twice), <code>Clinical Outcome Assessments</code> (twice)
+   and <code>Administration of trial product</code> also carry zero marks, their children carrying them instead.</li>
+<li><strong><code>Vital Signs</code> and <code>Clinical Outcome Assessments</code> each appear twice</strong> (rows 34 and 53; rows 37
+   and 55), once under EFFICACY and once under SAFETY, with different section references
+   (<code>(6.4.2, 9.4.3)</code> both times for Vital Signs; <code>(9.1.2)</code> vs <code>(9.4.1)</code> for Clinical Outcome
+   Assessments). These are two distinct printed rows and are kept as two activities each — not
+   de-duplicated. Downstream consolidation should expect the repeat.</li>
+<li><strong><code>cell_text</code> whitespace and line wraps.</strong> The text layer contains no space glyphs; leading
+   indentation in <code>cell_text</code> reproduces <code>pdftotext -layout</code>'s rendering of the measured 10.8 pt
+   indent, and cells that wrap over two printed lines are joined with a single space
+   (e.g. <code>Administration of trial product (7.1, 7.5)</code>, printed as "Administration of trial product (7.1," /
+   "7.5)"). <code>activity_name</code> is the cleaned form in every case.</li>
+<li><strong><code>First date on trial product</code> at P3.</strong> Its single mark sits in column 4 (P3, week 2), a phone
+   contact, rather than at V2 where run-in starts. Both mechanical passes and a direct look at the
+   rendered page 10 agree. Transcribed as printed; not repaired.</li>
+<li><strong>No protocol markdown was available</strong>, so there is no PDF/markdown text comparison to report.
+   All text is from the PDF text layer, which is clean (not glyph-spread: words come back as whole
+   words, e.g. "Informed consent and Demography", so no §1c reconstruction was needed anywhere,
+   including annotation text).</li>
+</ol>
+<hr />
+<h2>8. Source defects observed</h2>
+<ul>
+<li><strong>Redaction bar outside the table.</strong> Every one of the four pages carries a solid black rectangle in
+  the top margin, above the page header line that carries the trial ID and well clear of the grid
+  (it sits at PDF x ≈ 31 pt, whereas the table starts at x ≈ 144 pt). It conceals no activity row, no
+  column and no footnote — the row-boundary scan for every page was taken from within the table
+  proper, so the §1d failure mode in which a redaction bar is mistaken for a horizontal rule did not arise. Nothing was
+  reconstructed from underneath it.</li>
+<li><strong>Footer page numbers disagree with the document pages</strong>, as PAGEMAP warns: the printed footers read
+  "8 of 94" … "11 of 94" while the PAGEMAP document pages are 8–11. They happen to coincide here, but
+  the PAGEMAP values were used throughout regardless.</li>
+<li><strong>Grammatical defect in footnote c</strong> — "If subjects not fulfil randomisation criteria see Section 6.3.2"
+  is transcribed exactly as printed and was not repaired.</li>
+</ul>
+<hr />
+<h2>9. Method provenance recorded in the data (§1e)</h2>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>value</th>
+<th>where</th>
+<th>why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>activity_name_source.indentation_method</code></td>
+<td><code>font_signal</code></td>
+<td>5 rows (row_position 5, 25, 43, 58, 64)</td>
+<td>level 0 derived from the all-caps + dark-shading band signal, not from whitespace</td>
+</tr>
+<tr>
+<td><code>marker_locations[].method</code></td>
+<td><code>synthesized</code></td>
+<td>every location of pr1–pr29 (29 annotations)</td>
+<td>the inline references carry no printed marker</td>
+</tr>
+<tr>
+<td><code>property_name_source.synthesized</code></td>
+<td><code>true</code></td>
+<td>schedule_property row 1</td>
+<td>the study-period band's label cell is empty</td>
+</tr>
+</tbody>
+</table>
+<p>No <code>annotation_text_source.method</code> was recorded: all annotation text came from rule-line-bounded
+text-layer cells (the footnote block on page 11 and the activity label cells). No
+<code>activity_schedule</code>/<code>schedule_grid</code> <code>method</code> was recorded: all values came from the bbox text layer,
+with the raster detector used only as a cross-check, not as the source of any value. No
+<code>schedule_property.structure_method</code> was recorded: <code>property_type</code> and <code>hierarchical_level</code> follow
+the printed header labels, except for row 1 whose type (<code>epoch</code>) follows from its printed values
+(Screening / Run-in / Randomisation / Maintenance period / End of treatment / End of trial) — this is
+noted in its <code>property_comment</code>.</p>
+<p><strong>Recommended human spot-check:</strong> the four columns V20/P21/V22/P23 (positions 21–24), where the
+visit labels were split out of one text token; and the epoch row's two merge spans, 3:12 and 14:24.</p>
+</body>
+</html>

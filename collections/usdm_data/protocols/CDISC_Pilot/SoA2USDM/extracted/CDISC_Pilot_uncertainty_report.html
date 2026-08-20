@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CDISC_Pilot — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>CDISC_Pilot — SoA extraction uncertainty report (prompt v3.7.2)</h1>
+<p>Source: <code>/root/ph3/blind/CDISC_Pilot/CDISC_Pilot_soa.pdf</code> (2 PDF pages = document pages 53–54 per PAGEMAP.md).
+Deliverable: <code>CDISC_Pilot_Table_01_extraction.json</code> (one table).</p>
+<hr />
+<h2>1. How many tables, and why one</h2>
+<p>The excerpt prints <strong>one logical SoA table as two horizontally tiled column blocks</strong> (§5), not two tables.</p>
+<ul>
+<li>Page 53 is headed <code>Protocol Attachment LZZT.1</code> / <code>Schedule of Events for Protocol H2Q-MC-LZZT(c)</code>
+  and carries VISIT columns 1–8. Page 54 is headed
+  <code>Schedule of Events for Protocol H2Q-MC-LZZT(c) (concluded)</code> and carries VISIT 9, 10, 11, 12, 13, ET, RT.</li>
+<li><strong>The body rows repeat exactly.</strong> All 28 printed body row bands appear on both pages, in the same order,
+  with the same labels — <code>Informed consent</code>, <code>Patient number assigned</code>, … <code>Adverse events</code>. Page 54 does not
+  continue the row list; it re-prints it under a different column block. That is the tiled-wide-table pattern,
+  so the tiles were merged by activity name and the <strong>union</strong> of marks taken.</li>
+<li>It is therefore <em>not</em> <code>continuation</code> (the taxonomy requires identical column headers with rows continuing —
+  here the columns differ and the rows repeat), <em>not</em> <code>domain</code> (no second activity category), <em>not</em> <code>track</code>
+  (same participants, one continuous timeline), <em>not</em> <code>subsidiary</code>, <em>not</em> <code>reference</code>.</li>
+<li><code>table_type: main_soa</code> — the rows are procedures performed on subjects and this is the anchor grid.</li>
+</ul>
+<p><strong>Page coverage (§4).</strong> Declared range 53–54. Every activity carries <code>source_page: 53</code> — 30 rows from page 53,
+<strong>0 rows from page 54</strong>. This is the declared tiled-table exception, not a skipped page. Page 54 supplied no
+rows but did supply all marks in columns 11–17, specifically for these activity rows:</p>
+<table>
+<thead>
+<tr>
+<th>activity (row_position)</th>
+<th>marks page 54 supplied (column_position)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Physical examination (7)</td>
+<td>15, 16</td>
+</tr>
+<tr>
+<td>Vital signs/Temperature (13)</td>
+<td>11–17</td>
+</tr>
+<tr>
+<td>ECG (16)</td>
+<td>11–16</td>
+</tr>
+<tr>
+<td>Concomitant Medications (19)</td>
+<td>11–17</td>
+</tr>
+<tr>
+<td>Laboratory (Chem/Hemat): (20)</td>
+<td>11–16</td>
+</tr>
+<tr>
+<td>Laboratory (Urinalysis) (21)</td>
+<td>11, 14, 16</td>
+</tr>
+<tr>
+<td>Plasma Specimen (Xanomeline) (22)</td>
+<td>11, 13, 16</td>
+</tr>
+<tr>
+<td>Study drug record (24)</td>
+<td>11–16</td>
+</tr>
+<tr>
+<td>TTS Acceptability Survey (27)</td>
+<td>15, 16 — <strong>this row's only marks in the whole table</strong></td>
+</tr>
+<tr>
+<td>ADAS-Cog (28), CIBIC+ (29), DAD (30)</td>
+<td>12, 14, 16, 17 each</td>
+</tr>
+<tr>
+<td>NPI-X (31)</td>
+<td>11, 12, 13 (each <code>X</code> + marker <code>b</code>), 14, 15, 16, 17</td>
+</tr>
+<tr>
+<td>Adverse events (32)</td>
+<td>11–17</td>
+</tr>
+</tbody>
+</table>
+<p><code>TTS Acceptability Survey</code> is the row that proves the union rule matters: on page 53 its band is completely
+empty, so a tile-A-only read would have delivered an activity with no schedule at all.</p>
+<h2>2. Column model — L = 2, first data column = 3</h2>
+<p>Raster rule-line recovery (§1d, 200 dpi, ink &lt; 50% grey) gives, on page 53, eleven vertical rules at
+x = 121.1, 238.1, 274.5, 305.8, 337.5, 368.8, 400.5, 431.8, 463.5, 494.8, 526.5 pt → ten columns; on page 54,
+ten rules at 129.4, 237.1, 270.2, 305.5, 340.7, 376.4, 411.7, 447.3, 482.6, 518.2 pt → nine columns.</p>
+<ul>
+<li><strong>Label column 1</strong> = the activity-name column (<code>ACTIVITY</code> is printed in it, on the second header row).</li>
+<li><strong>Label column 2</strong> = the narrow column carrying the header rows' own labels, <code>VISIT</code> and <code>WEEK</code>.</li>
+<li>Both are excluded from <code>schedule_grid</code> / <code>activity_schedule</code>; <strong>the first data column is position 3</strong> and
+  nothing was renumbered. Tile A = positions 3–10, tile B = positions 11–17. Fifteen data columns total.</li>
+</ul>
+<p><strong>Position 8 is a real but entirely empty column — flagged.</strong> On page 53 there is a rule-bounded column
+between the VISIT 5 column (centre 416.2 pt) and the VISIT 7 column (centre 479.2 pt), spanning
+431.8–463.5 pt. It carries <strong>no VISIT value, no WEEK value and no mark in any of the 28 body rows</strong>. The
+printed VISIT sequence on page 53 is consequently 1, 2, 3, 4, 5, blank, 7, 8 and the WEEK sequence
+-2, -.3, 0, 2, 4, blank, 6, 8 — i.e. <strong>Visit 6 is absent from the source</strong>. I have transcribed the blank column
+as a data column with empty <code>cell_value</code> in both header rows rather than deleting it, so that VISIT 7 and
+VISIT 8 keep their printed positions (9 and 10). I have <strong>not</strong> inferred a Visit 6, a week value for it, or
+any mark in it. A reviewer should confirm this is the intended reading of position 8; the alternative
+(drop the column and renumber 7→8, 8→9) would shift every downstream position by one.</p>
+<h2>3. Mechanical mark-check (§1b) — bbox column-binning, no disagreements</h2>
+<p>Method: <code>pdftotext -bbox</code> on both pages; column x-centres fixed from the <strong>header</strong> VISIT/WEEK labels and
+cross-checked against the raster vertical rules above; row bands taken from raster horizontal rules read
+inside the <strong>activity-name column</strong> (a text column, per §1d); every token assigned to the (band, column)
+its centre falls in; mark tokens matched as <code>X</code>, <code>Xa</code>, <code>Xb</code>, <code>P</code> (the trailing superscript tokenises
+separately here, so an <code>== 'X'</code> filter would not have dropped anything, but the binning does not rely on that).</p>
+<p>The resulting matrix was diffed cell-for-cell against a direct visual read of both rendered pages.
+<strong>139 marks, zero disagreements</strong> — the mechanical matrix and the visual read agree on every cell, including
+the sparse rows (<code>Apo E genotyping</code> → column 6 only; <code>Patient randomized</code> → column 5 only;
+<code>Laboratory (Urinalysis)</code> → 3, 6, 11, 14, 16) and the dense rows (<code>Vital signs/Temperature</code>,
+<code>Adverse events</code> → all 7 columns in each tile).</p>
+<ul>
+<li>No cell values other than <code>X</code> and <code>P</code> occur in the grid.</li>
+<li><code>P</code> is kept as a <code>cell_value</code> (legend-defined in-grid scheduling mark, §5), not converted to an annotation.</li>
+<li>Glyph case: every mark is upper-case <code>X</code>; no <code>x</code>, <code>✓</code>, <code>•</code> or arrow occurs. Nothing was normalised.</li>
+</ul>
+<h2>4. Merged marks, spans, arrows</h2>
+<p><strong>None.</strong> No mark, text cell or arrow in this table spans more than one column, and no mark is centred across
+two activity rows. No <code>source_range</code> and no <code>merged_cell_range</code> is set anywhere in the extraction, and no
+<code>is_merged_cell</code> is true. The two header rows are one value per column throughout.</p>
+<h2>5. The one structural judgement call — <code>Study drug record</code> / <code>Medications dispensed</code> / <code>Medications returned</code></h2>
+<p>These three lines sit inside <strong>one rule-bounded row band</strong> (page 53: 500.2–539.8 pt; page 54: 446.8–486.5 pt)
+with <strong>no internal horizontal rule</strong> — verified on a magnified crop of the rendered page as well as by the
+raster line detector. The <code>X</code> glyphs in that band are printed on the <strong>first</strong> line only, aligned with
+<code>Study drug record</code>.</p>
+<p>I transcribed them as <strong>three activities</strong> (<code>row_position</code> 24, 25, 26), with the marks recorded on row 24 only,
+so rows 25 and 26 carry no marks anywhere in the table.</p>
+<p>Reasoning, and the counter-argument, both stated so a reviewer can overturn it cheaply:
+- <em>For three rows:</em> they are three grammatically complete, distinct procedure names, not a wrapped phrase.
+  Merging them would produce a single compound <code>activity_name</code> no downstream consumer could map, and would
+  silently assert that <code>Medications returned</code> occurs at Visit 3 — which the source does not mark.
+- <em>Against:</em> this table does normally draw a rule between distinct activities (<code>Ambulatory ECG placed</code> and
+  <code>Ambulatory ECG removed</code> each get their own band), and multi-line cells elsewhere in this table <em>are</em>
+  single wrapped activities — <code>CT Scan (if not within</code> / <code>last year and patient passes</code> / <code>all other screens)</code>
+  occupies one 3-line band, and <code>Plasma Specimen</code> / <code>(Xanomeline)</code> one 2-line band. Both of those I treated
+  as one activity each. So the band-per-activity convention is not applied consistently by the source.</p>
+<p>If a reviewer prefers the literal band reading, rows 24–26 collapse to one activity and the activity count
+drops from 30 to 28; no mark changes.</p>
+<h2>6. Activities — counts and hierarchy</h2>
+<ul>
+<li>28 printed row bands → <strong>30 activities</strong> (the drug-accountability band expanded to 3, above).</li>
+<li><strong>Flat table:</strong> every activity label in both tiles begins at the same x (125.94 pt on page 53), so every
+  <code>indentation_level</code> is 0 and there are no organizational/section-header rows. This is the §4 flat-table
+  exception where every level-0 row carries its own marks. <code>indentation_method</code> is left absent because the
+  level came from the text layer's own left-edge geometry, not from a font signal or an assumption.</li>
+<li>No non-activity rows were created: the repeated <code>ACTIVITY</code> / <code>VISIT</code> / <code>WEEK</code> label band on page 54 is
+  header, not an activity, and there is no notes/instruction column and no instruction-overflow row.</li>
+</ul>
+<p><strong>Source inconsistency, transcribed not repaired:</strong> page 53 prints <code>Hemoglobin A1C</code> (subscript <code>1C</code>,
+upper-case C) and page 54 prints <code>Hemoglobin A1c</code> (lower-case c) for the same row. I took the tile-A
+spelling <code>Hemoglobin A1C</code> for <code>activity_name</code> and did not silently harmonise the two; the difference is
+noted here as a source defect.</p>
+<h2>7. Annotations — 8, all with printed locations</h2>
+<p>Footnote blocks are ordinary text-layer text under each grid; <code>annotation_text</code> was read from that text layer
+(default method — no <code>annotation_text_source</code> recorded anywhere). Both pages print their own block and the
+overlapping notes were <strong>deduplicated by text</strong> into one annotation each.</p>
+<table>
+<thead>
+<tr>
+<th>marker</th>
+<th>type</th>
+<th>locations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X</code></td>
+<td>legend</td>
+<td>130 <code>schedule_cell</code> locations — every cell whose value is a plain <code>X</code></td>
+</tr>
+<tr>
+<td><code>a</code></td>
+<td>footnote</td>
+<td>1 <code>schedule_cell</code> — <code>Hemoglobin A1C</code> × column 3</td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>footnote</td>
+<td>4 <code>schedule_cell</code> — <code>NPI-X</code> × columns 10, 11, 12, 13</td>
+</tr>
+<tr>
+<td><code>P</code></td>
+<td>legend</td>
+<td>4 <code>schedule_cell</code> — column 3 of <code>ADAS-Cog</code>, <code>CIBIC+</code>, <code>DAD</code>, <code>NPI-X</code></td>
+</tr>
+<tr>
+<td><code>CT</code></td>
+<td>abbreviation</td>
+<td>1 <code>activity_name</code> — the <code>CT Scan …</code> row</td>
+</tr>
+<tr>
+<td><code>ECG</code></td>
+<td>abbreviation</td>
+<td>3 <code>activity_name</code> — <code>Ambulatory ECG placed</code>, <code>Ambulatory ECG removed</code>, <code>ECG</code></td>
+</tr>
+<tr>
+<td><code>ET</code></td>
+<td>abbreviation</td>
+<td>header cell, row 1 column 16</td>
+</tr>
+<tr>
+<td><code>RT</code></td>
+<td>abbreviation</td>
+<td>header cell, row 1 column 17</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>No synthesised markers.</strong> Every marker is printed in the source: <code>X</code> and <code>P</code> as in-grid marks, <code>a</code> and <code>b</code>
+  as the superscripts on <code>Xa</code> / <code>Xb</code>, and <code>CT</code> / <code>ECG</code> / <code>ET</code> / <code>RT</code> as the literal terms printed in an
+  activity label or a header cell.</li>
+<li><strong>No synthesised <code>property_name</code> values</strong> — <code>VISIT</code> and <code>WEEK</code> are printed in label column 2.</li>
+<li><strong>No orphans</strong>: every annotation has ≥ 1 <code>marker_location</code>, and every marker in a <code>marker_locations</code> entry
+  also appears in that element's <code>annotation_markers</code> (checked mechanically — 0 failures).</li>
+<li><strong>No <code>unresolved</code> locations</strong> and <strong>no non-default <code>method</code></strong> on any location, cell, activity or property.
+  The raster was used only to recover rule-line geometry (column and row boundaries); all text and all cell
+  contents came from the text layer, so the default provenance applies throughout (§1e).</li>
+</ul>
+<h3>7a. Abbreviation calls — the borderline one</h3>
+<p>§6 forbids a standalone abbreviation list bound by <code>text_match</code> or <code>synthesized</code>. I emitted four abbreviation
+annotations, and each is bound by a <strong>printed</strong> occurrence, not by word overlap:</p>
+<ul>
+<li><code>ET</code> and <code>RT</code> are unambiguous — they are printed as the VISIT-row header cells of columns 16 and 17
+  (<code>ET = Early</code> … <code>Termination; RT = Retrieval</code>), and are the only expansion of those two column labels.</li>
+<li><code>CT</code> and <code>ECG</code> are the borderline pair: they are printed inside activity labels (<code>CT Scan (if not within</code>,
+  <code>Ambulatory ECG placed</code>, <code>ECG</code>). I read that as §6's "the term printed as a marker in … an activity label"
+  rather than the forbidden "term merely occurring inside running text", and recorded no <code>method</code> on the
+  locations because the term genuinely is printed there. A reviewer who disagrees should drop these two
+  annotations; nothing else in the extraction depends on them.</li>
+</ul>
+<h3>7b. <code>ET</code> / <code>RT</code> location typing — schema tension, flagged</h3>
+<p>The <code>ET</code> and <code>RT</code> markers sit in <strong>header grid cells</strong>, and §6 is explicit that a per-column header marker must
+attach to that column's <code>schedule_grid</code> cell rather than to the <code>schedule_property</code> row, so the footnote keeps
+which column it governs. <code>location_type</code> has no <code>schedule_grid</code> member, so I used
+<code>location_type: "schedule_property"</code> <strong>with</strong> <code>row_position: 1</code> and <code>column_position: 16</code> / <code>17</code>, and put the
+marker on the <code>schedule_grid</code> cell's <code>annotation_markers</code> (not on the <code>schedule_property</code>'s). The schema's own
+prose says to omit <code>column_position</code> for <code>schedule_property</code>; I kept it because dropping it would collapse the
+abbreviation onto the whole VISIT row and lose the column. Flagged so the choice is visible.</p>
+<h3>7c. <code>X</code> legend fan-out</h3>
+<p>Per §6's worked example ("a legend <code>X</code>/<code>P</code> used as an in-grid mark → <code>legend</code> with <code>marker_locations</code> on the
+cells that use it") the <code>X</code> legend carries 130 cell locations, and the marker-agreement rule then requires
+<code>annotation_markers: "X"</code> on each of those 130 cells whose <code>cell_value</code> is already <code>"X"</code>. This is
+self-referential but is what the two rules jointly demand; recorded here in case a reviewer wants the legend
+scoped to the table instead. Cells that print <code>Xa</code> / <code>Xb</code> were bound to <code>a</code> / <code>b</code> only, not additionally to
+<code>X</code>, so each qualified mark resolves to its own footnote.</p>
+<h3>7d. Annotation text overlap — re-verified, source-faithful</h3>
+<p>The §7/§8 containment check flags these; all were re-checked against the printed pages and <strong>none is a split
+note cell</strong>:</p>
+<ul>
+<li><code>X = Performed at this visit.</code> shares the long run <code>= Performed at this visit</code> with
+  <code>Xa = Performed at this visit if patient is an insulin-dependent diabetic.</code> and with
+  <code>Xb = Performed at this visit and via telephone interview 2 weeks following this visit.</code> These are <strong>three
+  separate printed legend lines</strong> on page 53 defining three distinct symbols — source-faithful, not one cell
+  split across rows. Nothing was merged, truncated or dropped.</li>
+<li>Page 54 re-prints <code>X = Performed at this visit.</code> and the <code>Xb</code> line verbatim; deduplicated to one annotation
+  each, per §6.</li>
+<li>Page 54's abbreviation line contains page 53's as a prefix (<code>Abbreviations: CT = computed tomography; ECG =
+  electrocardiogram</code> … <code>; ET = Early</code> / <code>Termination; RT = Retrieval</code>). Source-faithful — the concluded tile
+  simply adds the two extra column labels. Because I split the block per term, no containment pair survives in
+  the delivered JSON.</li>
+<li>One wording note: the page-53 <code>P</code> legend runs across three printed lines
+  (<code>P = Practice only - It is recommended that a sampling of the CIBIC+, ADAS-Cog, DAD,</code> /
+  <code>and NPI-X be administered at Visit 1. Data from this sampling would not be</code> /
+  <code>considered as study data and would not be collected.</code>). I joined them with single spaces. The rendered page
+  shows a wider gap after <code>Visit 1.</code> than the text layer records; I used the text layer's single space rather
+  than inventing a double space. The text layer is <strong>not</strong> glyph-spread (§1c) — words are whole tokens — so no
+  field was reconstructed.</li>
+</ul>
+<h2>8. Schedule properties</h2>
+<p>Two header rows, both with printed labels in column 2:</p>
+<ul>
+<li>row 1 <code>VISIT</code>, <code>property_type: visit</code>, <code>hierarchical_level: 1</code> — values are visit identifiers
+  (<code>1</code>…<code>13</code>, <code>ET</code>, <code>RT</code>), not days or weeks.</li>
+<li>row 2 <code>WEEK</code>, <code>property_type: week</code>, <code>hierarchical_level: 2</code> — values are week numbers
+  (<code>-2</code>, <code>-.3</code>, <code>0</code>, <code>2</code>, <code>4</code>, <code>6</code>, <code>8</code>, <code>12</code>, <code>16</code>, <code>20</code>, <code>24</code>, <code>26</code>).</li>
+</ul>
+<p>Both levels are needed: without the WEEK row, columns 16 and 17 (<code>ET</code>, <code>RT</code>) would still be distinguishable,
+but without the VISIT row several week values could not be told apart from one another across tiles.
+The week value for VISIT 2 is transcribed exactly as printed, <code>-.3</code> — the source does not write it with a leading zero. The <code>ET</code> and <code>RT</code> columns carry
+<strong>no</strong> WEEK value, and position 8 carries neither; those cells are emitted with empty <code>cell_value</code> rather than
+being filled in. <code>structure_method</code> is not set — both <code>property_type</code> and <code>hierarchical_level</code> come from the
+printed labels and the printed row order.</p>
+<p>Note the second header row shares its printed line with the activity-column heading <code>ACTIVITY</code>; <code>ACTIVITY</code> is
+the label column's own heading and was not modelled as a schedule property or an activity.</p>
+<h2>9. Summary of low-confidence calls, in priority order</h2>
+<ol>
+<li><code>Study drug record</code> / <code>Medications dispensed</code> / <code>Medications returned</code> split into three activities from one
+   rule-bounded band (§5 above). Highest-impact call; 30 vs 28 activities.</li>
+<li>Empty rule-bounded column retained as data position 8, with Visit 6 absent from the source (§2).</li>
+<li><code>CT</code> and <code>ECG</code> emitted as abbreviation annotations bound to activity labels (§7a).</li>
+<li><code>ET</code> / <code>RT</code> marker locations typed <code>schedule_property</code> with a <code>column_position</code> (§7b).</li>
+<li><code>X</code> legend carrying 130 cell locations and a self-referential <code>annotation_markers</code> on each (§7c).</li>
+<li><code>Hemoglobin A1C</code> (page 53) vs <code>Hemoglobin A1c</code> (page 54) — transcribed as printed, not harmonised (§6).</li>
+</ol>
+<p>No page was skipped, no mark was inferred, no footnote text was fabricated, and no marker was left orphaned.</p>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT05051579 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT05051579 (J2A-MC-GZGI(a)) — SoA extraction uncertainty report</h1>
+<p>Layer 1, single pass, PDF_TO_JSON_PROMPT v3.7.3, schema <code>soa-table-extraction</code> 1.0.
+Source: <code>NCT05051579_soa.pdf</code>, 6 PDF pages = document pages 13–18 per <code>PAGEMAP.md</code>.
+The printed footers read 12–17, i.e. exactly one lower than the document page, as PAGEMAP warned; no
+page number was taken from a footer.</p>
+<p>Output: one file, <code>NCT05051579_Table_01_extraction.json</code>. Schema validation passed with 0 errors
+(<code>jsonschema.Draft7Validator</code>, run programmatically, not eyeballed).</p>
+<hr />
+<h2>Decisions needed (4)</h2>
+<p>Open calls a reviewer should confirm or overturn. Each was made deliberately and is defensible; each
+could reasonably go the other way. Nothing below is a suspected error — errors would be in §3 or §8.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>doc p.17, rows 67–68 — PK sample</td>
+<td><code>"Predose"</code> / <code>"Postdose"</code> read as row labels; names composed as <code>"Pharmacokinetic (PK) sample - Predose/Postdose"</code>; <strong>no column-2 mark emitted</strong></td>
+<td>treat the two cells as a merged text <code>cell_value</code> over columns 2:3 with <code>source_range</code></td>
+<td>§5.2</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>doc p.16, <code>n12</code>, rows 49–51</td>
+<td>bound to <strong>three</strong> rows: FSH (geometry) + LH and Estradiol (<code>text_match</code>, the note names all three analytes)</td>
+<td>strict geometric reading — FSH only; drop the two <code>text_match</code> locations and the <code>n12</code> marker from rows 50–51</td>
+<td>§6</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>doc p.13, <code>n1</code></td>
+<td>intro paragraph printed <strong>above</strong> the table's top rule kept as a table-scope <code>footnote</code> on schedule_property row 1</td>
+<td>drop it — it is section prose, not a table cell</td>
+<td>§5.4</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>header band, property row 6</td>
+<td><code>Fasting Visit</code> typed <code>modality</code>, <code>hierarchical_level: null</code></td>
+<td><code>condition</code></td>
+<td>§5.6</td>
+</tr>
+</tbody>
+</table>
+<p>Also medium-confidence, lower stakes: property row 2 typed <code>period</code> and property row 5 given
+<code>hierarchical_level: 5</code> (§5.6).</p>
+<p>On D2, a smaller point independent of which way it goes: the FSH location is labelled
+<code>method: "proximity"</code>, but the binding comes from the note cell sitting inside the FSH row's own
+rule-line box, which is what <code>"synthesized"</code> describes. It is the only <code>proximity</code> in the file, so it
+is the only location the validator flags for page verification. Relabelling it is a one-value
+correction.</p>
+<h2>Recorded, not open (4)</h2>
+<p>Calls made under an explicit rule, with the rule named in the section — listed so a reviewer knows
+they were considered, not overlooked.</p>
+<ul>
+<li>The 12 merged instruction blocks became <code>footnote</code> annotations, not activity rows and not merged
+  text cells (§5.1, §4 + §6).</li>
+<li>The 22-term abbreviations block yielded <strong>zero</strong> annotations, <code>ET</code> included (§5.3, §6 + §8).</li>
+<li><code>n2</code> bound to the 16 covered header cells rather than the <code>schedule_property</code> row; the grey
+  dose-escalation shading deliberately <strong>not</strong> modelled as a property (§5.5).</li>
+<li>Indentation read from the shaded grouping bands, <code>indentation_method: "visual_estimate"</code> on all 70
+  activities (§5.7).</li>
+</ul>
+<hr />
+<h2>1. Per-table summary</h2>
+<p><strong>Table 1 — <code>main_soa</code></strong> — "Schedule of Activities (SoA)" (Section 1.3), document pages 13–18.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>table_type</td>
+<td><code>main_soa</code></td>
+</tr>
+<tr>
+<td>physical columns</td>
+<td>21</td>
+</tr>
+<tr>
+<td>label columns <code>L</code></td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>first data column position</td>
+<td><strong>2</strong>; data columns run <strong>2–21</strong></td>
+</tr>
+<tr>
+<td>schedule_property rows</td>
+<td>6</td>
+</tr>
+<tr>
+<td>schedule_grid cells</td>
+<td>98</td>
+</tr>
+<tr>
+<td>activities</td>
+<td>70 (9 section-header rows at indentation 0 + 61 activity rows at indentation 1)</td>
+</tr>
+<tr>
+<td>activity_schedule marks</td>
+<td>372 (all literal <code>X</code>)</td>
+</tr>
+<tr>
+<td>annotations</td>
+<td>14 (all <code>footnote</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3>Why <code>main_soa</code>, and why one table and not six</h3>
+<p>Rows are procedures performed on participants, so the <code>reference</code> test fails immediately. This is
+the protocol's only schedule grid and its primary anchor, so <code>main_soa</code>.</p>
+<p>The grid runs over six pages under a header band that reprints in full at the top of each page. The
+source gives the overflow <strong>no table number, caption or title of its own</strong> — it is one printed table
+whose rows simply run onto the next page. Per the taxonomy ("Ask what the source numbered, not where
+the paper ran out") that is ONE table spanning pages 13–18, not a chain of <code>continuation</code> tables. The
+reprinted header band was de-duplicated to a single set of six <code>schedule_property</code> rows, and the
+reprinted <code>Fasting Visit</code> row was counted once (it is a header row, not an activity — see §5 below).
+This is not a horizontally tiled table: every page carries the <em>same</em> columns and <em>different</em> rows.</p>
+<h3>Activity rows per page (all six declared pages contribute)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">doc page</th>
+<th style="text-align: right;">activity rows</th>
+<th style="text-align: right;">of which section headers</th>
+<th style="text-align: right;">marks contributed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">2 (Administrative, Physical Evaluation)</td>
+<td style="text-align: right;">79</td>
+</tr>
+<tr>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1 (Participant Education)</td>
+<td style="text-align: right;">61</td>
+</tr>
+<tr>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">3 (Participant Administration Log, Patient-Reported Outcomes, Clinician-Administered Assessments (Paper))</td>
+<td style="text-align: right;">57</td>
+</tr>
+<tr>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">1 (Laboratory Tests and Sample Collections)</td>
+<td style="text-align: right;">71</td>
+</tr>
+<tr>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">38</td>
+</tr>
+<tr>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">2 (Stored Samples, Randomization and Dosing)</td>
+<td style="text-align: right;">66</td>
+</tr>
+<tr>
+<td style="text-align: right;"><strong>total</strong></td>
+<td style="text-align: right;"><strong>70</strong></td>
+<td style="text-align: right;"><strong>9</strong></td>
+<td style="text-align: right;"><strong>372</strong></td>
+</tr>
+</tbody>
+</table>
+<p>No page in the declared range contributed zero rows, so the §4 page-coverage check passes with no
+exception to declare.</p>
+<hr />
+<h2>2. Column model (§5) — how <code>L</code> was fixed</h2>
+<p>The vector layer carries real rule lines. 22 distinct vertical rules were recovered at
+x = 63.1, 163.9, 217.4, 248.6, 274.3, 300.0, 325.7, 351.6, 377.3, 403.0, 428.6, 454.3, 480.0, 505.7,
+531.4, 557.0, 582.7, 608.4, 634.3, 660.2, 685.9, 728.9 pt — identical on all six pages — giving
+<strong>21 columns</strong>.</p>
+<p>Column 1 (63.1–163.9) is the activity-name column and also carries the header rows' own labels
+("Visit Number", "Week Relative to Randomization", …). There is no Protocol-Reference column and no
+Procedure-Category column, so <strong><code>L</code> = 1</strong> and the data columns are <strong>2–21</strong>, not renumbered:</p>
+<table>
+<thead>
+<tr>
+<th>position</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>…</th>
+<th>19</th>
+<th>20</th>
+<th>21</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>visit</td>
+<td>1 (Screening)</td>
+<td>2 (Lead-In)</td>
+<td>3</td>
+<td>4</td>
+<td>…</td>
+<td>18</td>
+<td>ET</td>
+<td>801</td>
+</tr>
+</tbody>
+</table>
+<p>Marks were binned to these rule-line bands, <strong>not</strong> to header glyph centres, so a mark can never be
+attributed to a neighbouring visit by a rounding accident.</p>
+<hr />
+<h2>3. Mechanical mark-check (§1b) and the diff against the visual read</h2>
+<p>Method: <strong>bbox column-binning against rule-line geometry</strong> (text-layer table, §1b — pdfplumber not
+used).</p>
+<ol>
+<li><code>pdftotext -bbox</code> plus PyMuPDF word boxes for every token on all six pages.</li>
+<li>Mark tokens matched with <code>^[Xx][*a-zA-Z0-9]?$</code> (the footnoted-mark-safe pattern). <strong>No token in
+   this document matched anything other than a bare <code>X</code></strong> — there are no superscripted marks
+   anywhere in the grid, so nothing was at risk of being dropped by a naive <code>== 'X'</code> filter.</li>
+<li>Each mark box binned by x-centre to one of the 21 rule-line column bands.</li>
+<li>Mark tokens clustered into rows by y (4 pt tolerance), in printed order per page.</li>
+<li>Merged spans resolved from the per-row vertical-rule segments (see §4 below), not from glyph
+   position.</li>
+<li>The resulting page → row → column-set sequence was diffed cell-for-cell against my visual read of
+   the 150 dpi renders and against the delivered JSON.</li>
+</ol>
+<p><strong>Result: 67 mark rows compared (61 activity rows + the 6 reprints of the Fasting Visit header row),
+0 disagreements.</strong> Every column set in <code>activity_schedule</code> reproduces the mechanically derived set
+exactly, in the same page order.</p>
+<p>Two observations from the check, neither an error:</p>
+<ul>
+<li>On page 13 the <strong>Weight</strong> row has the mark pattern <code>{2, 4…21}</code> — byte-identical to the reprinted
+  <strong>Fasting Visit</strong> header row. A de-duplicator keyed on the mark pattern alone would silently delete
+  one of them. De-duplication here was keyed on row identity (label text + row band), not on the
+  pattern, so both survive.</li>
+<li>The header band is textually identical on all six pages (verified token-for-token); nothing in it
+  varies page to page, so collapsing it to one set of six property rows loses nothing.</li>
+</ul>
+<hr />
+<h2>4. Merged cells and distributed values</h2>
+<p><strong>No body mark is merged.</strong> For every activity row the vertical rules are present at all 20 internal
+column boundaries, confirmed from the rule-line segment lists. So there is no mark to distribute, no
+<code>source_range</code> is set anywhere in <code>activity_schedule</code>, and no arrow or vertically-merged mark exists
+in this table.</p>
+<p>Merges occur only in the header band and in the instruction bands:</p>
+<table>
+<thead>
+<tr>
+<th>what</th>
+<th>rule-line span</th>
+<th>encoding</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Study Period I Screening/Lead-in"</td>
+<td>63.1–248.6 pt = label column + columns 2–3</td>
+<td>2 grid cells, <code>merged_cell_range</code> <code>"2:3"</code> (the label column is excluded from the range per §5)</td>
+</tr>
+<tr>
+<td>"Study Period II Treatment Period" (+ its two sentences)</td>
+<td>248.6–660.5 pt = columns 4–19</td>
+<td>16 grid cells, <code>merged_cell_range</code> <code>"4:19"</code></td>
+</tr>
+<tr>
+<td>unlabelled period cell over ET</td>
+<td>column 20</td>
+<td>empty, not emitted</td>
+</tr>
+<tr>
+<td>"Study Period III Safety Follow-Up"</td>
+<td>column 21</td>
+<td>1 grid cell, not merged</td>
+</tr>
+<tr>
+<td>row 2 (Screening / Lead-In), empty cell over columns 4–19</td>
+<td>merged, empty</td>
+<td>not emitted (empty)</td>
+</tr>
+<tr>
+<td>instruction bands under Vital signs, Symptom-directed PE, 12-Lead ECG, Return ABPM device, Record ABPM measurements, Explain diet…, Discuss diet…, Dispense study drug administration log, Participant Survey, FSH/LH/Estradiol, PK sample</td>
+<td>163.9–728.9 pt = columns <strong>2–21</strong></td>
+<td>footnote annotations, see §6</td>
+</tr>
+<tr>
+<td>instruction band under Dispense study intervention capsules</td>
+<td>248.6–634.3 pt = columns <strong>4–18</strong> only</td>
+<td>footnote annotation <code>n14</code></td>
+</tr>
+</tbody>
+</table>
+<p>The capsules block is the one instruction band that does <strong>not</strong> span the whole grid: its cell stops
+at the column 18 / 19 boundary, with a separate merged empty cell over columns 19–21. That was read
+off the rule lines (the horizontal rule at y=338.4 exists only over x 634.6–728.6), not guessed from
+where the text stops.</p>
+<hr />
+<h2>5. The judgement calls, stated plainly</h2>
+<h3>5.1 The merged instruction blocks — annotation, not activity row, not merged text cell</h3>
+<p><em>Example: "One bottle of capsules is to be dispensed at Visit 3 and at Visit 4. …" under
+</em><em>Dispense study intervention capsules</em><em> on page 18.</em></p>
+<p>Twelve such blocks exist. Each sits in its own sub-band directly beneath its activity's mark row,
+inside the same row group; the activity's label cell in column 1 spans both sub-bands, and the
+instruction cell is merged across the data columns.</p>
+<p>They are <strong>not activity rows</strong>: §4 says explicitly not to create activity rows for
+"instruction-overflow rows that only carry footnote text", and none of these bands names a procedure
+performed on a subject — they explain the row above.</p>
+<p>They are <strong>not merged text cells in the grid</strong> (§5's "See instructions" case): a merged text cell
+carries a <em>scheduling</em> value that says the activity happens at those columns. These blocks schedule
+nothing — "May be performed based on participant needs", "The site pharmacy should clearly label
+which bottle to take first" — and encoding them as 18 or 20 identical <code>activity_schedule</code> values
+would assert an occurrence at every visit that the source does not assert.</p>
+<p>They are <strong>annotations</strong> under §6's Notes/Instructions rule: each is one rule-line-bounded note cell
+→ exactly one <code>footnote</code> annotation, its text bounded by the cell's own rules (never by proximity),
+with a synthesised marker bound to the activity it sits under. <code>annotation_text_source.method</code> is
+absent on all of them, because all were read from a rule-line-bounded text-layer cell — the default.</p>
+<h3>5.2 The PK "Predose" / "Postdose" sub-labels (lowest-confidence call)</h3>
+<p>On page 17 the label cell <strong>"Pharmacokinetic (PK) sample"</strong> is vertically merged over two grid rows.
+The sub-labels <strong>Predose</strong> and <strong>Postdose</strong> are printed not in the label column but in
+<strong>column 2 — the Screening column</strong> (rule-bounded 163.9–217.4 pt, verified on a 260 dpi crop).</p>
+<p>This is a source quirk, not a second label column: column 2 schedules every other row in the table
+(it carries Visit Number "1", Week "-2", a Fasting Visit <code>X</code> and 34 activity marks), so <code>L</code> stays 1.</p>
+<p>Decision: two activities, <code>row_position</code> 67 and 68, named
+<code>"Pharmacokinetic (PK) sample - Predose"</code> and <code>"Pharmacokinetic (PK) sample - Postdose"</code>, with
+<code>activity_name_source.cell_text</code> recording both source cells as
+<code>"Pharmacokinetic (PK) sample | Predose"</code> / <code>"… | Postdose"</code>. <strong>No <code>activity_schedule</code> entry was
+emitted at column 2 for either row</strong>, because those two cells hold a row label, not a mark —
+transcribing "Predose" as a column-2 cell value would assert a PK sample at the Screening visit
+(Week −2), which the protocol does not schedule.</p>
+<p>These are the only two <code>activity_name</code> values in the file that are not verbatim source strings.
+Alternatives considered and rejected: naming them "Predose"/"Postdose" (drops "PK", useless
+downstream); emitting a third, unprinted parent row (fabricates a row position). Flagged as the
+single call most worth a human look.</p>
+<p>The mark sets are internally corroborated: postdose marks land on columns 7, 9, 13, 16 = Weeks 4, 8,
+16, 26, exactly the four windows named in note <code>n13</code>, plus ET.</p>
+<h3>5.3 The abbreviations block yields zero annotations</h3>
+<p>The block under the table defines 22 terms (ABPM, AEs, BP, C-SSRS, CKD-EPI, ECG, eGFR, ET, FSH,
+HbA1c, HBC, HCV, IWQOL-Lite CT, IWRS, PGIS for Physical Activity, PHQ-9, PK, SF-36v2 acute form, PR,
+TXP, UACR, Wks).</p>
+<p>Per §6, an abbreviation's marker is the term <strong>printed as a marker</strong> in a grid cell, header cell or
+activity label — not the term occurring inside running text. Every one of these terms occurs only as
+running text inside an activity label ("Adverse events (AEs)", "eGFR (CKD-EPI)") or inside a header
+string ("2 Wks Post End of TXP"). Binding any of them would be a <code>text_match</code> or <code>synthesized</code>
+location, which §6/§8 forbid as the standalone list in disguise. <strong>No <code>abbreviation</code> annotation was
+emitted.</strong></p>
+<p>Closest edge case: <strong>ET</strong>, which is printed alone as the Visit Number value of column 20. It is a
+visit code occupying a data cell, not a marker attached to a cell, so it was dropped with the rest.
+This is a deliberate call; if a downstream reviewer wants the ET expansion it should come from the
+protocol glossary, not from this table.</p>
+<p>Note the source itself has a typo the extraction preserves by not touching it: the block reads
+<strong>"HBC = hepatitis B virus"</strong> while the activity row reads "Hepatitis B Virus (HBV) screening tests".
+Since no abbreviation annotation was emitted, nothing in the JSON propagates the typo.</p>
+<h3>5.4 The intro paragraph above the table (<code>n1</code>)</h3>
+<p>"The Schedule of Activities described below should be followed for all participants enrolled in Study
+GZGI. However, … please refer to Section 10.11 (Appendix 11) for additional guidance."</p>
+<p>This is section prose printed <strong>above</strong> the table's top rule, not inside a table cell. It was
+captured anyway, as a table-scope <code>footnote</code> with one <code>schedule_property</code> location on row 1
+(<code>method: "synthesized"</code>), following §6's convention for a note with no modelled element to attach
+to. It is typed <code>footnote</code> and not <code>source_note</code> because it both explains (who the schedule applies
+to) and points; §8's bare-pointer rule only reclassifies notes that do nothing but point.
+Reasonable reviewers could drop this one; it is the second-most debatable call in the file.</p>
+<h3>5.5 The Study Period II header-cell note (<code>n2</code>)</h3>
+<p>The "Study Period II / Treatment Period" header cell contains two extra sentences: "For early
+terminations that occur before the last visit in treatment period, see the activities listed for ET
+in this table. Shaded columns represent the dose escalation period Weeks 0-16."</p>
+<p><code>cell_value</code> for those 16 grid cells was set to the heading part only, <code>"Study Period II Treatment
+Period"</code>, and the two sentences were emitted as <strong>one</strong> annotation (<code>n2</code>) — one cell, one annotation,
+per §6 — bound to all <strong>16 covered header cells</strong> (row 1, columns 4–19, <code>location_type:
+"schedule_cell"</code>, <code>method: "synthesized"</code>), with <code>annotation_markers: "n2"</code> written onto each of
+those 16 <code>schedule_grid</code> cells. Binding it to the <code>schedule_property</code> row instead would have scoped
+it to the whole header row including Screening/Lead-in and Visit 801, which the printed cell does not
+cover.</p>
+<p>The second sentence is effectively a shading legend. <strong>The grey shading itself was NOT modelled</strong> as
+a schedule property: nothing in the source labels a "dose escalation" band as a header row, and
+inventing one would be inference. For the record, the shaded columns are 4–13 (Visits 3–12, Weeks
+0–16), consistent with the sentence.</p>
+<h3>5.6 <code>property_type</code> and <code>hierarchical_level</code> calls</h3>
+<table>
+<thead>
+<tr>
+<th>row</th>
+<th>property_name</th>
+<th>type</th>
+<th>level</th>
+<th>confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Study Period</td>
+<td><code>epoch</code></td>
+<td>1</td>
+<td>high — Screening/Treatment/Follow-Up is the textbook epoch row</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Screening/Lead-In Period</td>
+<td><code>period</code></td>
+<td>2</td>
+<td>medium — sub-divides Study Period I into two named sub-phases</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Visit Number</td>
+<td><code>visit</code></td>
+<td>3</td>
+<td>high</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Week Relative to Randomization</td>
+<td><code>week</code></td>
+<td>4</td>
+<td>high</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Allowable Interval Tolerance (days)</td>
+<td><code>window</code></td>
+<td>5</td>
+<td>high on type; level 5 is a judgement — it qualifies each column's timing rather than distinguishing columns</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Fasting Visit</td>
+<td><code>modality</code></td>
+<td><code>null</code></td>
+<td><strong>lowest confidence in the header band</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fasting Visit</strong> was typed <code>modality</code> (visit type/attribute — fasting vs non-fasting) rather than
+<code>condition</code> (which the schema defines as <em>conditional timing</em>, and §3 illustrates with a population/
+eligibility qualifier band; fasting is neither). <code>hierarchical_level</code> is <code>null</code> because removing the
+row leaves no two columns indistinguishable — Visit Number already separates all 20. A reviewer who
+prefers <code>condition</code> here would not be unreasonable.</p>
+<p>It is treated as a <strong>schedule_property, not an activity</strong>: it sits inside the blue shaded, bold
+header band above the first section-header row, its label is bold like the other header labels, and
+it reprints with the header on every page. It is <em>not</em> counted among the 70 activities and its 19
+marks live in <code>schedule_grid</code>, not <code>activity_schedule</code>.</p>
+<h3>5.7 Indentation</h3>
+<p>The label column carries <strong>no leading whitespace at all</strong> — hierarchy is expressed purely by
+full-width, bold, centred, shaded grouping bands. Every activity therefore has
+<code>activity_name_source.indentation_method: "visual_estimate"</code> (§1e): 0 for the nine grouping bands, 1
+for everything else. No grandchild level exists. All nine level-0 rows carry zero marks, as §4
+requires; the table is not flat, so the flat-table exception does not apply.</p>
+<hr />
+<h2>6. Synthesised values</h2>
+<p><strong>Synthesised <code>property_name</code> (2):</strong></p>
+<ul>
+<li>Row 1 → <code>"Study Period"</code>. The row's leftmost cell is part of the merged "Study Period I
+  Screening/Lead-in" cell; there is no separate label cell. <code>synthesized: true</code>,
+  <code>structure_method: "inferred_from_layout"</code>.</li>
+<li>Row 2 → <code>"Screening/Lead-In Period"</code>. Label cell (column 1) is genuinely empty; the name was built
+  from the row's own two values, "Screening" and "Lead-In". <code>synthesized: true</code>,
+  <code>structure_method: "inferred_from_layout"</code>.</li>
+</ul>
+<p>Rows 3–6 take their names verbatim from printed label cells and carry no <code>structure_method</code>.</p>
+<p><strong>Synthesised annotation markers (14).</strong> The source prints <strong>no footnote markers anywhere</strong> — not on
+a cell, not on a label, not on a header. Every note is an unmarked merged text block. Markers <code>n1</code>
+… <code>n14</code> were synthesised in printed document order:</p>
+<table>
+<thead>
+<tr>
+<th>marker</th>
+<th>bound to</th>
+<th>doc page</th>
+<th>location method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n1</td>
+<td>schedule_property row 1 (table scope)</td>
+<td>13</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n2</td>
+<td>schedule_grid row 1, columns 4–19</td>
+<td>13 (reprints on 14–18)</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n3</td>
+<td>Vital signs (2 sitting BP and PR measurements)</td>
+<td>14</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n4</td>
+<td>Symptom-directed physical examination</td>
+<td>14</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n5</td>
+<td>12-Lead ECG</td>
+<td>14</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n6</td>
+<td>Return ABPM device</td>
+<td>14</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n7</td>
+<td>Record ABPM measurements</td>
+<td>14</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n8</td>
+<td>Explain diet and physical activity plan</td>
+<td>14</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n9</td>
+<td>Discuss diet and physical activity progress</td>
+<td>15</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n10</td>
+<td>Dispense study drug administration log, instruct in use</td>
+<td>15</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n11</td>
+<td>Participant Survey</td>
+<td>15</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n12</td>
+<td>Follicle-stimulating hormone (FSH) / Luteinizing hormone (LH) / Estradiol</td>
+<td>16</td>
+<td><strong>proximity</strong> (FSH) + <strong>text_match</strong> (LH, Estradiol)</td>
+</tr>
+<tr>
+<td>n13</td>
+<td>PK sample – Predose and PK sample – Postdose</td>
+<td>17</td>
+<td>synthesized</td>
+</tr>
+<tr>
+<td>n14</td>
+<td>Dispense study intervention capsules</td>
+<td>18</td>
+<td>synthesized</td>
+</tr>
+</tbody>
+</table>
+<p>Every marker in every <code>marker_locations</code> entry was also written onto that row's / cell's
+<code>annotation_markers</code>, verified programmatically over all 14 annotations and all 32 locations — 0
+failures. This matters because <code>resolve</code> binds through the row's <code>annotation_markers</code>, not through
+<code>marker_locations</code>.</p>
+<p><strong><code>n12</code> is the only note whose scope is a judgement.</strong> Its cell sits in its own band <strong>below</strong> the
+FSH row with an empty label cell, and its text names three analytes: "Collect serum estradiol, FSH,
+and LH in women whose menopausal status needs to be determined…". Geometrically it touches only the
+FSH row (→ <code>method: "proximity"</code>). Textually it plainly governs the LH and Estradiol rows two and
+three rows below (→ <code>method: "text_match"</code> on both). Both bindings are recorded honestly rather than
+collapsed to one. If a reviewer prefers a strict geometric reading, drop the two <code>text_match</code>
+locations and the <code>n12</code> marker from rows 50 and 51.</p>
+<p><strong>No <code>unresolved</code> locations were needed.</strong> Every marker's target was determinable.</p>
+<hr />
+<h2>7. Annotation text integrity</h2>
+<ul>
+<li><strong>The text layer is NOT glyph-spread.</strong> Tokens are whole words with normal inter-word gaps; no
+  <code>deglyph_reconstruction</code> was needed and no field was reconstructed. All 14 <code>annotation_text</code>
+  values, all 70 <code>activity_name</code> values and all 98 <code>schedule_grid</code> values were read directly from the
+  text layer.</li>
+<li><strong>Verbatim check:</strong> each of the 14 <code>annotation_text</code> strings was matched programmatically as a
+  whitespace-normalised substring of the concatenated six-page text layer. <strong>14/14 matched.</strong> Each
+  starts at its cell's first word and ends at its last.</li>
+<li><strong>Containment pairs: none.</strong> No annotation's text is contained in another's, checked
+  programmatically over all 182 ordered pairs. So the §8 re-verification for split note cells has
+  nothing to adjudicate — there is no split-vs-source-faithful call to make in this document.</li>
+<li><strong>Notes bounded by rule lines, never by proximity.</strong> Every note's extent came from its cell's own
+  vertical/horizontal rule segments. <code>annotation_text_source</code> is absent on all 14 annotations, i.e.
+  the default method (rule-line-bounded text-layer cell). <strong>No note is <code>proximity_bounded</code>.</strong></li>
+<li>Two values were cleaned of line-wrap artifacts and so are not verbatim substrings of the raw text
+  layer, deliberately: <code>"Study Period III Safety Follow-Up"</code> (prints as "Follow-⏎Up") and
+  <code>"Lead-In"</code> (prints as "Lead⏎-In"). Both are hyphenation across a line break inside one cell.</li>
+</ul>
+<hr />
+<h2>8. Orphan risk</h2>
+<p>None. All 14 annotations carry ≥1 <code>marker_locations</code> entry (32 locations total), every one of which
+is mirrored in the target element's <code>annotation_markers</code>. No marker appears in the source whose
+definition is missing (the source prints no markers at all), so §6's referenced-but-undefined case
+does not arise. No redaction, no illegible region, no page that might conceal rows: all six pages
+render cleanly and their rule-line grids are complete and identical in column geometry.</p>
+<hr />
+<h2>9. Method provenance — every non-default method recorded</h2>
+<table>
+<thead>
+<tr>
+<th>field</th>
+<th>value</th>
+<th>where</th>
+<th>why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>activity_name_source.indentation_method</code></td>
+<td><code>visual_estimate</code></td>
+<td>all 70 activities</td>
+<td>the label column has no leading whitespace; hierarchy comes from full-width shaded grouping bands on the rendered page</td>
+</tr>
+<tr>
+<td><code>schedule_property.structure_method</code></td>
+<td><code>inferred_from_layout</code></td>
+<td>rows 1 and 2</td>
+<td>their <code>property_type</code>/<code>hierarchical_level</code> come from merge geometry and row order, not from a printed label</td>
+</tr>
+<tr>
+<td><code>marker_locations[].method</code></td>
+<td><code>synthesized</code></td>
+<td>29 of 32 locations</td>
+<td>the source prints no footnote markers; every note binding is by convention</td>
+</tr>
+<tr>
+<td><code>marker_locations[].method</code></td>
+<td><code>proximity</code></td>
+<td><code>n12</code> → FSH (row 49)</td>
+<td>note cell sits directly beneath the FSH row band, no printed marker</td>
+</tr>
+<tr>
+<td><code>marker_locations[].method</code></td>
+<td><code>text_match</code></td>
+<td><code>n12</code> → LH (row 50), Estradiol (row 51)</td>
+<td>bound by the note naming those analytes</td>
+</tr>
+<tr>
+<td><code>activity_schedule[].method</code> / <code>schedule_grid[].method</code></td>
+<td><em>absent</em></td>
+<td>all 372 + 98 cells</td>
+<td>default: pdftotext/bbox coordinate read of the text layer</td>
+</tr>
+<tr>
+<td><code>annotation_text_source</code></td>
+<td><em>absent</em></td>
+<td>all 14</td>
+<td>default: rule-line-bounded text-layer cell</td>
+</tr>
+<tr>
+<td><code>activity_name_source.method</code></td>
+<td><em>absent</em></td>
+<td>all 70</td>
+<td>default: direct text-layer read</td>
+</tr>
+<tr>
+<td><code>location_type: "unresolved"</code></td>
+<td><em>none</em></td>
+<td>—</td>
+<td>every target was determinable</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>10. §8 delivery checklist, run literally</h2>
+<table>
+<thead>
+<tr>
+<th>check</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>schema_name</code> = <code>soa-table-extraction</code></td>
+<td>pass</td>
+</tr>
+<tr>
+<td><code>schema_version</code> = <code>1.0</code></td>
+<td>pass</td>
+</tr>
+<tr>
+<td><code>extraction_status</code> = <code>ready_for_resolution</code></td>
+<td>pass</td>
+</tr>
+<tr>
+<td>every <code>property_comment</code> meaningful</td>
+<td>pass — all 6 state row content and type reasoning</td>
+</tr>
+<tr>
+<td>every <code>cell_value</code> clean of markers</td>
+<td>pass — all 372 marks are bare <code>X</code>; source prints no markers</td>
+</tr>
+<tr>
+<td>every annotation has ≥1 <code>marker_locations</code></td>
+<td>pass — 14/14, 32 locations</td>
+</tr>
+<tr>
+<td>containment pairs re-verified against the page</td>
+<td>pass — none exist</td>
+</tr>
+<tr>
+<td>annotation text complete against its source cell</td>
+<td>pass — 14/14 verbatim substring match, no letter-spacing</td>
+</tr>
+<tr>
+<td><code>by_type</code> not degenerate</td>
+<td>pass — 14 annotations (&lt; 20), all <code>footnote</code>; §8: all-<code>footnote</code> is normal, and none is a notes-column artefact</td>
+</tr>
+<tr>
+<td>no <code>abbreviation</code> bound only by <code>text_match</code>/<code>synthesized</code></td>
+<td>pass — zero <code>abbreviation</code> annotations</td>
+</tr>
+<tr>
+<td>bare pointers typed <code>source_note</code></td>
+<td>pass — no annotation is a bare pointer; <code>n1</code>, <code>n3</code>, <code>n5</code> point <em>and</em> explain, so they stay <code>footnote</code></td>
+</tr>
+<tr>
+<td>every page in <code>page_start</code>..<code>page_end</code> contributed activity rows</td>
+<td>pass — 13:12, 14:10, 15:11, 16:16, 17:13, 18:8</td>
+</tr>
+<tr>
+<td>every <code>marker_locations</code> marker also in the row's <code>annotation_markers</code></td>
+<td>pass — verified programmatically, 0 failures</td>
+</tr>
+<tr>
+<td>merged marks distributed with <code>source_range</code></td>
+<td>n/a — no merged body marks exist; header merges carry <code>merged_cell_range</code> <code>"2:3"</code> / <code>"4:19"</code>, numeric, never A1</td>
+</tr>
+<tr>
+<td><code>track_label</code> set for <code>track</code> tables only</td>
+<td>pass — not a track, field absent</td>
+</tr>
+<tr>
+<td><code>method</code> provenance recorded, no guessed targets</td>
+<td>pass — see §9</td>
+</tr>
+<tr>
+<td>schema validation</td>
+<td>pass — 0 errors, <code>jsonschema.Draft7Validator</code></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

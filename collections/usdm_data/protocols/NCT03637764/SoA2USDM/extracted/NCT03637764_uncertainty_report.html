@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NCT03637764 — SoA Extraction Uncertainty Report</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+           max-width: 960px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+    h1 { color: #1F4788; border-bottom: 2px solid #1F4788; padding-bottom: 8px; font-size: 22px; }
+    h2 { color: #2E75B6; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 32px; font-size: 17px; }
+    h3 { color: #444; margin-top: 24px; font-size: 14px; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 12px; }
+    th { background: #f0f0f0; padding: 8px 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; }
+    td { padding: 6px 10px; border: 1px solid #eee; vertical-align: top; }
+    tr:hover { background: #f8f9fa; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 12px; }
+    pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+    pre code { background: none; padding: 0; }
+    blockquote { border-left: 3px solid #6a1b9a; margin: 16px 0; padding: 8px 16px; background: #faf5fc; color: #555; }
+    strong { color: #222; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    .back { font-size: 12px; margin-bottom: 20px; }
+    .back a { color: #1F4788; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+    <div class="back"><a href="../../../index.html">← Back to collection index</a></div>
+    <h1>NCT03637764 — SoA extraction uncertainty report</h1>
+<p>Source: <code>/root/ph3/blind/NCT03637764/NCT03637764_soa.pdf</code> (7 PDF pages = document pages 18–24 per
+PAGEMAP.md). Prompt v3.7.3, schema soa-table-extraction v1.0.
+Output: <code>/root/ph3/staging/NCT03637764/NCT03637764_Table_01_extraction.json</code>.</p>
+<p>All page numbers below are DOCUMENT pages from PAGEMAP.md. The printed footers of this excerpt run
+one page LOWER than the document page (PDF page 1 prints "Page 18" in the footer and is document
+page 18 — here footer and document page happen to agree, but PAGEMAP was used throughout and no
+footer was read as a page number).</p>
+<hr />
+<h2>1. How many tables the excerpt contains, and the scope decision for pages 22–24</h2>
+<p><strong>One table extracted.</strong> Document pages 18–21 carry Section 1.3, titled
+"SCHEDULE OF ACTIVITIES (SOA)" — a single activity × timepoint grid whose three-row header block is
+reprinted verbatim at the top of each of the four pages while the body rows simply continue.</p>
+<p>Document pages 22–24 lie beyond the declared SoA range (18–21) and are flagged as such in
+PAGEMAP.md. They carry two further grids:</p>
+<ul>
+<li>pages 22–23 — "PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART" (grid on p22, its footnotes a–j and
+  abbreviation block on p23);</li>
+<li>page 24 — "EXPLORATORY BIOMARKER FLOW CHART".</li>
+</ul>
+<p><strong>Decision: out of scope — not extracted as tables, and not folded into the main table as
+annotations.</strong> Reasoning, stated so a reviewer can overturn it cheaply:</p>
+<ul>
+<li>PAGEMAP.md declares the SoA range as 18–21 and marks 22–24 as back matter carried for context.
+  That declaration is authoritative for this run.</li>
+<li>Nothing on pages 22–24 is a note <em>about</em> the main SoA. The main SoA's own marker set is a, b, c
+  and <strong>all three definitions are printed inside pages 18–21</strong> ("A cycle is 21 days",
+  "Women of child bearing potential must have a negative serum pregnancy test result within 7 days
+  prior to first IMP administration.", "evaluation not applicable for Cohort E"). The lettered
+  footnotes on pages 22–23 (a–j) and the note on page 24 belong to those charts' own grids and would
+  be orphans if attached to Table 01.</li>
+<li>The main SoA's <em>own</em> cells already carry the cross-reference to them:
+  "See Pharmacokinetics and immunogenicity Flow Chart" (rows PK and ADA) and
+  "See Biomarker Flow Chart" (row Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood
+  Draw). Those are transcribed as distributed merged cell values in <code>activity_schedule</code>, so the
+  pointer survives in the data without importing the charts.</li>
+</ul>
+<p><strong>If a reviewer wants them in</strong>, they are two <code>subsidiary</code> tables, not tracks: each gives finer
+timing (per-sample, per-cycle) for activities that already exist as single rows in Table 01 (PK, ADA,
+and the biomarker/biopsy row). They would be Table 02 (pages 22–23, sample-ID × cycle/day grid with
+"Sample RNT (h)" and "Sample time window" rows) and Table 03 (page 24, biomarker sample × phase grid
+with its own right-hand Notes column). No part of Table 01 depends on that choice.</p>
+<p><strong>One table, not four.</strong> The four pages could equally have been emitted as a parent plus three
+<code>continuation</code> tables. I emitted one table with <code>page_start</code> 18 / <code>page_end</code> 21 because the footnote
+markers and their definitions sit on <em>different</em> pages (marker <code>a</code> on every page's header, defined on
+every page's Notes column; marker <code>c</code> used on pages 18, 19 and 20 but defined only on page 20), and
+splitting would have left markers on pages whose definitions live elsewhere. Recorded in
+<code>table_metadata.notes</code>.</p>
+<hr />
+<h2>2. Table 01 — shape and page coverage</h2>
+<table>
+<thead>
+<tr>
+<th>item</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>table_type</code></td>
+<td><code>main_soa</code> — primary anchor grid of the protocol (Section 1.3); every other schedule content in the excerpt refers back to it</td>
+</tr>
+<tr>
+<td>pages</td>
+<td>18–21</td>
+</tr>
+<tr>
+<td>label columns (L)</td>
+<td><strong>1</strong> (the "Evaluation" column) → <strong>first data column = position 2</strong></td>
+</tr>
+<tr>
+<td>schedule columns</td>
+<td><strong>10</strong> (positions 2–11)</td>
+</tr>
+<tr>
+<td>Notes column</td>
+<td>source column <strong>12</strong> — a right-hand notes column, excluded from <code>schedule_grid</code> / <code>activity_schedule</code> per §6; its contents are emitted as annotations</td>
+</tr>
+<tr>
+<td>header rows</td>
+<td>3 (<code>schedule_properties</code> rows 1–3)</td>
+</tr>
+<tr>
+<td>activities</td>
+<td><strong>29</strong> (<code>row_position</code> 4–32; header rows occupy 1–3)</td>
+</tr>
+<tr>
+<td><code>activity_schedule</code> cells</td>
+<td>159</td>
+</tr>
+<tr>
+<td>annotations</td>
+<td>11 (5 <code>footnote</code>, 6 <code>source_note</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Activity rows per page across the declared range</strong> — every page contributes:</p>
+<table>
+<thead>
+<tr>
+<th>document page</th>
+<th>activity rows</th>
+<th>row_positions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>18</td>
+<td>6</td>
+<td>4–9</td>
+</tr>
+<tr>
+<td>19</td>
+<td>7</td>
+<td>10–16</td>
+</tr>
+<tr>
+<td>20</td>
+<td>9</td>
+<td>17–25</td>
+</tr>
+<tr>
+<td>21</td>
+<td>7</td>
+<td>26–32</td>
+</tr>
+</tbody>
+</table>
+<p>No page in 18–21 contributed zero rows. The table is not horizontally tiled; the header block
+reprints on each page and was de-duplicated (counted once, as rows 1–3).</p>
+<p>Two of the 29 rows are organizational, full-width bold banner rows carrying no marks:
+"Laboratory Assessments" (row 11) and "Disease Assessment" (row 20).</p>
+<hr />
+<h2>3. Merged marks and merged text — every distributed cell and its span</h2>
+<p>Spans were taken from per-row rule-line geometry, never from where the glyph sits. <code>source_range</code>
+values are numeric column positions in the table's own numbering.</p>
+<p><strong>Screening columns 2:3.</strong> The two screening columns ("D-28 to D-15", "D-14 to D-1") are merged in
+some body rows and separate in others — this varies row by row and is the single most error-prone
+feature of this table. Rows where the internal rule at x≈182.3 pt is <strong>absent</strong> (merged, mark
+distributed to both columns 2 and 3, <code>source_range</code> <code>"2:3"</code>):</p>
+<ul>
+<li>row 4 Informed consent/ Inclusion and exclusion criteria — <code>X</code></li>
+<li>row 5 Demography, Medical/Surgical and Disease History — <code>X</code></li>
+<li>row 7 Height (at baseline only) /Weight/ ECOG (HCC,SCCHN,EOC) or Karnofsky PS (GBM) — <code>X</code></li>
+<li>row 8 Vital Signs — <code>X</code></li>
+<li>row 9 Resting O2 saturation for SCCHN — <code>X</code></li>
+<li>row 10 12-Lead ECG — <code>X</code></li>
+<li>row 18 Serology HBV and HCV (for HCC only) — <code>X</code></li>
+<li>row 21 CT/MRI (for HCC, SCCHN, and EOC) — <code>X</code></li>
+<li>row 26 AE/SAE Assessment — <code>X</code></li>
+<li>row 27 Prior/Concomitant Medication — "X (within 14 days prior to first dose)"</li>
+</ul>
+<p>Rows where the rule is <strong>present</strong> and the mark therefore sits in column 3 only (column 2 is a
+separate, empty and usually grey-shaded cell): row 6 Physical examination
+("X (&lt;7days prior to first dose)"), row 12 Pregnancy test ("X (within 7 days prior to first dose)"),
+rows 13 Blood Chemistry, 14 Hematology, 15 Coagulation(GBM), 16 Coagulation (for HCC, SCCHN, and
+EOC), 17 Blood Typing Interference Test, 19 Urinalysis, 22 Brain MRI ("X (within 14 days prior to
+first dose)"). Row 23 AFP (for HCC) / CA125 (for EOC) has both screening cells separate and empty.</p>
+<p><strong>Other distributed cells:</strong></p>
+<table>
+<thead>
+<tr>
+<th>row</th>
+<th>activity</th>
+<th>value</th>
+<th>span</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td>12-Lead ECG</td>
+<td>"As clinically indicated"</td>
+<td>7:8</td>
+</tr>
+<tr>
+<td>16</td>
+<td>Coagulation (for HCC, SCCHN, and EOC)</td>
+<td>"As clinically indicated"</td>
+<td>7:8</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Urinalysis (at baseline and if required) /urine dipstick</td>
+<td>"As clinically indicated"</td>
+<td>5:7</td>
+</tr>
+<tr>
+<td>21</td>
+<td>CT/MRI (for HCC, SCCHN, and EOC)</td>
+<td>"X (until PD is confirmed if no PD documented &amp; confirmed)"</td>
+<td>10:11</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Brain MRI (for GBM only)</td>
+<td>same</td>
+<td>10:11</td>
+</tr>
+<tr>
+<td>23</td>
+<td>AFP (for HCC) / CA125 (for EOC)</td>
+<td>same</td>
+<td>10:11</td>
+</tr>
+<tr>
+<td>26</td>
+<td>AE/SAE Assessment</td>
+<td>"Continuously throughout period"</td>
+<td>4:8</td>
+</tr>
+<tr>
+<td>26</td>
+<td>AE/SAE Assessment</td>
+<td>"X (ongoing related AEs, ongoing SAEs at EOT and new related AE/SAEs)"</td>
+<td>9:11</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Prior/Concomitant Medication</td>
+<td>"Continuously throughout period"</td>
+<td>4:8</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Prior/Concomitant Medication</td>
+<td>"X (related to AE/SAEs listed above)"</td>
+<td>9:11</td>
+</tr>
+<tr>
+<td>28</td>
+<td>PK</td>
+<td>"See Pharmacokinetics and immunogenicity Flow Chart"</td>
+<td>2:11</td>
+</tr>
+<tr>
+<td>29</td>
+<td>ADA</td>
+<td>"See Pharmacokinetics and immunogenicity Flow Chart"</td>
+<td>2:11</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood Draw</td>
+<td>"See Biomarker Flow Chart"</td>
+<td>2:11</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Merged header cells</strong> (<code>merged_cell_range</code> on each covered position, row 1 = phase band, row 2 =
+cycle/period band): "Screening (up to 28 days before Day 1)" 2:3 · "Treatment Phase" 4:7 ·
+"Post Treatment Follow-up Phase" 9:11 · "Cycle 1" 4:6 · "Safety follow-up Period" 9:10.
+"End of Treatment (EOT)" (col 8), "Cycle 2 and Beyond" (col 7) and "Survival follow-up" (col 11) are
+single-column cells.</p>
+<p><strong>Two spans a reviewer should look at:</strong></p>
+<ol>
+<li><strong>Rows 28–30 (PK, ADA, Tumor Biopsy…) physically span source columns 2 through 12</strong> — the printed
+   cell swallows the Notes column as well. Since column 12 is not a schedule column, I set
+   <code>source_range</code> to <code>"2:11"</code> and emitted the ten schedule cells. The alternative (a range ending at 12) would
+   point at a column that does not exist in this table's grid. Flagged rather than silently chosen.</li>
+<li><strong>Rows 10 and 16 merge column 7 (D1 ± 2, "Cycle 2 and Beyond") with column 8 (EOT)</strong> for
+   "As clinically indicated". That merge is unusual semantically but the rule line between them is
+   genuinely absent in those two rows and present in every neighbouring row; confirmed against the
+   rendered page.</li>
+</ol>
+<p><strong>Vertical merge in the header.</strong> The row-1 "Screening (up to 28 days before Day 1)" cell extends
+down over the row-2 band (no rule at y≈194.8 pt in columns 2–3), and column 1's "Evaluation" cell
+spans all three header rows. The schema has no vertical merge for header cells, so each value is
+recorded once, on the row where it is printed; row 2 columns 2–3 and row 2 column 8 are therefore
+absent from <code>schedule_grid</code> rather than carrying a repeated value. Noted in <code>table_metadata.notes</code>.</p>
+<hr />
+<h2>4. Synthesised names and markers</h2>
+<p><strong>Synthesised <code>property_name</code> (3).</strong> The header block's label column carries only "Evaluation",
+merged vertically across all three header rows, so no header row has its own printed label:</p>
+<ul>
+<li>row 1 → "Study Phase" (<code>epoch</code>)</li>
+<li>row 2 → "Cycle / Follow-up Period" (<code>period</code>)</li>
+<li>row 3 → "Study Day" (<code>study_day</code>)</li>
+</ul>
+<p>Each carries <code>property_name_source.synthesized: true</code> with <code>cell_value: ""</code>.</p>
+<p><strong>Synthesised annotation markers (8), <code>n1</code>–<code>n8</code> in printed order.</strong> The right-hand Notes column
+prints its notes with no marker of any kind, so each distinct note got a synthesised marker, added to
+the citing activity's <code>annotation_markers</code> and linked by a <code>marker_locations</code> entry with
+<code>method: "synthesized"</code>:</p>
+<table>
+<thead>
+<tr>
+<th>marker</th>
+<th>text</th>
+<th>type</th>
+<th>bound to (row_position)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>n1</td>
+<td>"Informed Consent: Informed consent may be signed prior to D -28."</td>
+<td>footnote</td>
+<td>4</td>
+</tr>
+<tr>
+<td>n2</td>
+<td>"Section 8.2.1"</td>
+<td>source_note</td>
+<td>6, 7</td>
+</tr>
+<tr>
+<td>n3</td>
+<td>"See Section 8.2.2"</td>
+<td>source_note</td>
+<td>8, 9</td>
+</tr>
+<tr>
+<td>n4</td>
+<td>"See Section 8.2.3"</td>
+<td>source_note</td>
+<td>10</td>
+</tr>
+<tr>
+<td>n5</td>
+<td>"See Section 10.3 Table 12"</td>
+<td>source_note</td>
+<td>13</td>
+</tr>
+<tr>
+<td>n6</td>
+<td>"Section 10.3"</td>
+<td>source_note</td>
+<td>14, 15, 16, 18, 19</td>
+</tr>
+<tr>
+<td>n7</td>
+<td>"Section 10.3 Before each transfusion."</td>
+<td>footnote</td>
+<td>17</td>
+</tr>
+<tr>
+<td>n8</td>
+<td>"Section 8.1"</td>
+<td>source_note</td>
+<td>21, 22, 23</td>
+</tr>
+</tbody>
+</table>
+<p>Deduplicated by text: "Section 10.3" is one annotation with five locations, not five annotations.</p>
+<p>The three <strong>printed</strong> markers keep their own letters and are bound where the marker is actually
+printed: <code>a</code> on the four <code>schedule_grid</code> cells of the merged "Treatment Phase" header cell (row 1,
+columns 4–7); <code>b</code> on the activity label "Pregnancy test (WOCBP only)b" (row 12); <code>c</code> on 16
+<code>schedule_cell</code> positions — columns 5 and 6 (D8, D15) of rows 6, 7, 8, 9, 13, 14, 15 and 24.</p>
+<hr />
+<h2>5. Mechanical mark-check</h2>
+<p>Method: text-layer bbox read (§1b) with cell geometry recovered from the raster (§1d), applied
+uniformly to all four pages.</p>
+<ol>
+<li><code>pdftotext -bbox</code> for every token's box; <code>pdftoppm -r 200 -gray</code> renders for the rules.</li>
+<li>Column boundaries fixed once from the header day-row rules: 13 vertical rules at x ≈ 73.8, 152.5,
+   182.3, 218.7, 252.9, 282.4, 311.9, 470.7, 535.9, 603.5, 661.1, 731.7, 790.6 pt → 12 source
+   columns (1 label + 10 schedule + 1 Notes). Identical on all four pages.</li>
+<li>Row bands from the horizontal rules read in the <strong>label column</strong> (a text column, never a shaded
+   one), then applied across the row.</li>
+<li>Per-row merge resolution: for each row band, the vertical rules actually present were re-detected
+   inside that band; a missing internal boundary = merged cell, and the value was distributed across
+   every covered column.</li>
+<li>Each cell's text was then taken from the tokens whose centres fall inside the cell rectangle,
+   ordered by line then x.</li>
+</ol>
+<p><strong>Tolerance defect found and fixed during the run.</strong> The vertical rules are not pixel-identical
+between rows: the same boundary is drawn at 218.7 pt in some rows and 220.1 pt in others (likewise
+252.9 / 252.2). A ±0.7 pt match window reported those rows as <em>merged</em> — e.g. it claimed columns 3
+and 4 were merged on the Blood Chemistry row, which would have collapsed two separate <code>X</code> marks into
+one span. Widening the window to ±3 pt removed the artefact; the corrected geometry was then checked
+against the rendered page. Reviewers repeating this check should use the wider tolerance.</p>
+<p><strong>Diff against the visual read: no disagreements.</strong> After the tolerance fix, the mechanical matrix
+was re-derived from scratch by a second independent pass and compared cell-for-cell with the
+delivered JSON: 159 cells on both sides, zero differences in value, span or cell-level marker.
+Rendered crops were read by eye for: page 18 screening block (rows 4–9), page 18 rows 7–9 full width,
+page 19 screening block (rows 10–16), page 19 right-hand columns of row 12, page 20 label column and
+screening block (rows 17–25), page 20 columns 10–11 of rows 21–23, page 21 full width (rows 26–30).
+All agreed with the mechanical read, including the row-by-row 2:3 merge pattern in section 3 above.</p>
+<p><strong>Grey shading.</strong> Many cells are grey-filled to mean not-applicable-at-this-timepoint (e.g. column
+4/D1 on the Physical examination row, columns 9–11 on the Resting O2 saturation for SCCHN row). Per
+§1 this is formatting, not content: those cells stay empty and no mark was invented for them.
+Conversely no mark was dropped because a cell was white.</p>
+<p><strong>A missing mark that is data, not an omission.</strong> Row 6 Physical examination has marks in columns 3,
+5, 6, 7, 8, 9, 10 but <strong>none in column 4 (D1 ±1)</strong> — that cell is grey-shaded in the source, while
+the neighbouring rows 7, 8 and 9 all carry an <code>X</code> there. Transcribed as printed.</p>
+<hr />
+<h2>6. Annotation text integrity</h2>
+<ul>
+<li>The text layer is <strong>not</strong> glyph-spread; words come back whole, so no §1c reconstruction was needed
+  for activity names, header labels or annotation text.</li>
+<li>One word-wrap rejoin was applied: footnote <code>b</code> prints "administra" / "tion." on two lines with no
+  hyphen; the delivered text reads "Women of child bearing potential must have a negative serum pregnancy test result within 7 days prior to first IMP administration." This is the source's own
+  word, re-joined, not an edit.</li>
+<li><strong>Containment pairs — checked against the page, both source-faithful:</strong></li>
+<li>"Section 10.3" (n6) is contained in "Section 10.3 Before each transfusion." (n7) and in
+    "See Section 10.3 Table 12" (n5). These are <strong>three distinct printed cells</strong>, not one note split
+    across rows: n6 is the whole content of the Notes cell on the Hematology, Coagulation(GBM),
+    Coagulation (for HCC, SCCHN, and EOC), Serology and Urinalysis rows; n7 is the whole content of
+    the Blood Typing Interference Test Notes cell, which prints "Section 10.3" on its first line and
+    "Before each transfusion." underneath, inside one rule-bounded cell; n5 is the whole content of
+    the Blood Chemistry Notes cell. Each was bounded by its own horizontal rules, not by proximity.
+    Do not merge them.</li>
+<li>"See Section 8.2.2" (n3) and "See Section 8.2.3" (n4) are not a containment pair, only similar.</li>
+<li>Every note's extent was fixed from the Notes column's rule-line geometry; <strong>no note used
+  <code>proximity_bounded</code></strong>, so no <code>annotation_text_source</code> block appears anywhere in the file.</li>
+<li>Source oddity, transcribed verbatim and NOT repaired: rows 21, 22 and 23 carry
+  "X (until PD is confirmed if no PD documented &amp; confirmed)" in the merged columns 10–11 cell. The
+  wording is internally odd (it reads as though "documented" and "confirmed" have been transposed),
+  but that is exactly what is printed on page 20 in all three rows; verified on the rendered page.</li>
+</ul>
+<hr />
+<h2>7. Low-confidence calls</h2>
+<ol>
+<li><strong><code>property_type</code> of header row 2 → <code>period</code>.</strong> The row mixes treatment cycles ("Cycle 1",
+   "Cycle 2 and Beyond") with named follow-up periods ("Safety follow-up Period",
+   "Survival follow-up") in one band. <code>cycle</code> would fit the left half only, so the row is typed
+   <code>period</code> (sub-phases) and the mix is spelled out in <code>property_comment</code>. Reasonable alternative:
+   <code>cycle</code>.</li>
+<li><strong>Header row 3 → <code>study_day</code>, windows not separated.</strong> Each cell carries its own window inline —
+   "D1 (±1)", "D8 (± 1)", "30 (±7) days after last IMPs admin" — and the source has no separate
+   window row, so no <code>window</code> property was synthesised.</li>
+<li><strong>Indentation (<code>indentation_method: "font_signal"</code> on all 29 activities).</strong> The label column has
+   no whitespace indentation at all; the only hierarchy signals are the two full-width <strong>bold</strong>
+   banner rows. Assignment: banner rows "Laboratory Assessments" (11) and "Disease Assessment" (20)
+   → level 0; the rows beneath each banner → level 1 (12–19 and 21–23); everything else → level 0.
+   The judgement call is where the "Disease Assessment" section <strong>ends</strong>: rows 24
+   "Isatuximab Administration" and 25 "Atezolizumab Administration" are printed <strong>bold</strong> like the
+   banners (unlike the plain-text rows 21–23) and are IMP administration rather than disease
+   assessment, so they and everything after them are treated as level 0. There is no printed
+   end-of-section rule; a reviewer could equally read rows 24–32 as flat siblings of everything else,
+   which is what they are in the delivered file.</li>
+<li><strong><code>source_note</code> vs <code>footnote</code> in the Notes column.</strong> Bare pointers ("Section 8.2.1",
+   "See Section 8.2.2", "See Section 8.2.3", "See Section 10.3 Table 12", "Section 10.3",
+   "Section 8.1") are typed <code>source_note</code> per §8. Two notes point <em>and</em> instruct and are typed
+   <code>footnote</code>: "Section 10.3 Before each transfusion." (n7) and
+   "Informed Consent: Informed consent may be signed prior to D -28." (n1). n7 is the borderline one.</li>
+<li><strong>In-grid cross-references left as cell values.</strong> "See Pharmacokinetics and immunogenicity Flow
+   Chart" and "See Biomarker Flow Chart" are scheduling content occupying the grid across a merged
+   span (§5), so they are <code>activity_schedule</code> values, not <code>source_note</code> annotations. They are not
+   double-encoded as annotations; if the resolved layer wants them as pointers, they are recoverable
+   from the cell text.</li>
+<li><strong>Marker <code>a</code> distributed across the merged header cell.</strong> The glyph is printed once, after
+   "Treatment Phase", but the cell spans columns 4–7, so the marker was placed on all four covered
+   <code>schedule_grid</code> cells rather than on the column the glyph happens to sit over.</li>
+<li><strong>No markdown was available</strong> for this protocol, so there is no PDF/markdown text comparison to
+   report; all text comes from the PDF text layer.</li>
+<li>Minor transcription kept as printed: "Coagulation(GBM)" (no space), "D8 (± 1)" versus "D15 (±1)"
+   (inconsistent spacing inside the window), "X (&lt;7days prior to first dose)" (no space after "&lt;").</li>
+</ol>
+<hr />
+<h2>8. Orphan risk and method provenance</h2>
+<ul>
+<li><strong>Orphans: none.</strong> All 11 annotations have ≥1 <code>marker_locations</code> entry (37 locations in total), and
+  every marker in every location also appears in that row's / cell's <code>annotation_markers</code> — verified
+  mechanically against the delivered JSON.</li>
+<li><strong>No <code>unresolved</code> locations.</strong> Nothing in this table required a guessed target.</li>
+<li><strong>No <code>abbreviation</code> annotations.</strong> Pages 18–21 carry no abbreviation block; the one in the excerpt
+  (page 23) belongs to the PK flow chart, which is out of scope. Nothing was bound by <code>text_match</code>.</li>
+<li><strong>Non-default methods recorded in the data:</strong></li>
+<li><code>activity_name_source.indentation_method: "font_signal"</code> — all 29 activities (hierarchy from
+    bold/full-width banner rows, not from whitespace).</li>
+<li><code>marker_locations[].method: "synthesized"</code> — the 12 locations of the eight Notes-column notes
+    n1–n8 (the source prints no marker for them).</li>
+<li>No <code>annotation_text_source.method</code> anywhere (all note text read from rule-line-bounded
+    text-layer cells).</li>
+<li>No <code>method</code> on <code>schedule_grid</code> / <code>activity_schedule</code> cells: all cell <em>values</em> came from the
+    text-layer bbox read (the default). Only the cell <em>boundaries and merge spans</em> came from
+    raster-recovered rule lines, which is the §1b/§1d procedure for a text-layer table rather than a
+    pixel detection of content, so no <code>raster_pixel_detection</code> flag was set. Stated here so the two
+    sources of truth are on the record.</li>
+<li><code>property_name_source.synthesized: true</code> — the three header rows (section 4 above). No
+    <code>structure_method</code> was set: <code>property_type</code> comes from the printed header values and
+    <code>hierarchical_level</code> from the printed stacking order.</li>
+</ul>
+<h2>9. Recommended spot-checks for the reviewer</h2>
+<ol>
+<li>The row-by-row 2:3 screening merge pattern in section 3 — it is the only place in this table where
+   an identical-looking <code>X</code> means one column in some rows and two in others.</li>
+<li>Rows 10 and 16, span 7:8 for "As clinically indicated" (merge across the Cycle-2 and EOT columns).</li>
+<li>Rows 28–30, <code>source_range</code> <code>"2:11"</code> where the printed cell actually runs to source column 12.</li>
+<li>The scope call on document pages 22–24 (section 1), if the corpus wants the PK and biomarker flow
+   charts extracted as subsidiary tables.</li>
+</ol>
+</body>
+</html>
