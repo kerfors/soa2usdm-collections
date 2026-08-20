@@ -1,0 +1,4080 @@
+{
+  "schema_name": "soa-table-extraction",
+  "schema_version": "1.0",
+  "extraction_metadata": {
+    "extracted_at": "2026-08-20T00:00:00Z",
+    "extractor": "Claude-Opus-5 (SoA2USDM Layer 1, PDF_TO_JSON_PROMPT v3.7.3)",
+    "source_document": {
+      "filename": "NCT05051579_soa.pdf",
+      "document_type": "protocol",
+      "document_version": "J2A-MC-GZGI(a)"
+    },
+    "extraction_status": "ready_for_resolution",
+    "extraction_notes": "Single printed SoA table, Section 1.3 of protocol J2A-MC-GZGI(a), document pages 13-18 (printed footers read 12-17, one lower; PAGEMAP.md is authoritative). Header band (Study Period / Screening-Lead-In / Visit Number / Week Relative to Randomization / Allowable Interval Tolerance / Fasting Visit) reprints at the top of every page and was de-duplicated to six schedule_property rows. Column model: 21 physical columns, L=1 label column, data columns 2-21 (Visits 1-18, ET, 801). Marks were re-derived mechanically from the pdftotext/PyMuPDF text-layer bboxes binned to the 21 rule-line column bands, and diffed against a visual read of 150 dpi renders. Full-width instruction text blocks printed beneath an activity's mark row were captured as footnote annotations (prompt Section 4: instruction-overflow rows are not activities), each with a synthesised marker n1-n14. The abbreviations block under the table yielded zero annotations: no term in it is printed as a marker on a grid cell, header cell or activity label (prompt Section 6)."
+  },
+  "table_metadata": {
+    "table_number": 1,
+    "table_type": "main_soa",
+    "table_title": "Schedule of Activities (SoA)",
+    "table_purpose": "Primary schedule of activities for Study J2A-MC-GZGI(a): Screening/Lead-in (Study Period I), Treatment Period Visits 3-18 plus early termination (Study Period II), and the Safety Follow-Up visit 801 (Study Period III).",
+    "page_start": 13,
+    "page_end": 18,
+    "notes": "Classified main_soa: rows are procedures performed on participants and this is the protocol's only, primary anchor grid. The page breaks at document pages 14-18 fall inside one printed table with a reprinted header band and no separate table number or caption, so per the table-type definitions this is ONE table spanning pages 13-18, not a chain of 'continuation' tables. Column geometry read from the vector rule lines: 22 vertical rules -> 21 columns; column 1 is the activity-label column (L=1) and data columns run 2-21. The 'Pharmacokinetic (PK) sample' label cell is vertically merged over two grid rows whose sub-labels 'Predose' and 'Postdose' are printed in the Screening column (column 2); those two cells are row labels, not schedule marks, so no activity_schedule entry was emitted at column 2 for rows 67-68 and the sub-label was folded into activity_name."
+  },
+  "schedule_properties": [
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "property_name": "Study Period",
+      "property_name_source": {
+        "row_position": 1,
+        "column_position": 1,
+        "cell_value": "Study Period I Screening/Lead-in",
+        "synthesized": true
+      },
+      "property_type": "epoch",
+      "property_comment": "Top header band naming the three major study periods: 'Study Period I Screening/Lead-in' merged over the Screening and Lead-In columns, 'Study Period II Treatment Period' merged over Visits 3-18, an unlabelled cell over the ET column, and 'Study Period III Safety Follow-Up' over Visit 801. Values are major study phases, so property_type=epoch.",
+      "hierarchical_level": 1,
+      "structure_method": "inferred_from_layout",
+      "annotation_markers": "n1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "property_name": "Screening/Lead-In Period",
+      "property_name_source": {
+        "row_position": 2,
+        "column_position": 1,
+        "cell_value": "",
+        "synthesized": true
+      },
+      "property_type": "period",
+      "property_comment": "Second header band. Its label cell (column 1) is empty; the row prints 'Screening' over the Visit 1 column and 'Lead-In' over the Visit 2 column, sub-dividing Study Period I. Sub-phase labels, so property_type=period. Name synthesised from the row's own cell values.",
+      "hierarchical_level": 2,
+      "structure_method": "inferred_from_layout"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "property_name": "Visit Number",
+      "property_name_source": {
+        "row_position": 3,
+        "column_position": 1,
+        "cell_value": "Visit Number"
+      },
+      "property_type": "visit",
+      "property_comment": "Visit identifiers for each schedule column: 1-18 for the scheduled visits, 'ET' for the early-termination visit and '801' for the safety follow-up visit. Named visit identifiers, so property_type=visit.",
+      "hierarchical_level": 3
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "property_name": "Week Relative to Randomization",
+      "property_name_source": {
+        "row_position": 4,
+        "column_position": 1,
+        "cell_value": "Week Relative to Randomization"
+      },
+      "property_type": "week",
+      "property_comment": "Study week of each visit relative to randomization (-2, -1, 0, 1, 2, 4 ... 36), '-' for the ET column and '2 Wks Post End of TXP' for Visit 801. Week numbers, so property_type=week.",
+      "hierarchical_level": 4
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "property_name": "Allowable Interval Tolerance (days)",
+      "property_name_source": {
+        "row_position": 5,
+        "column_position": 1,
+        "cell_value": "Allowable Interval Tolerance (days)"
+      },
+      "property_type": "window",
+      "property_comment": "Permitted visit window in days for each column ('-' where no window applies, '±3' elsewhere). Visit windows, so property_type=window.",
+      "hierarchical_level": 5
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "property_name": "Fasting Visit",
+      "property_name_source": {
+        "row_position": 6,
+        "column_position": 1,
+        "cell_value": "Fasting Visit"
+      },
+      "property_type": "modality",
+      "property_comment": "Marks with 'X' which visits are fasting visits (every column except the Lead-In visit). This is an attribute/type of the visit rather than a timing concept, so property_type=modality. hierarchical_level is null: removing the row leaves every column still distinguishable by Visit Number.",
+      "hierarchical_level": null
+    }
+  ],
+  "schedule_grid": [
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 2,
+      "cell_value": "Study Period I Screening/Lead-in",
+      "merged_cell_range": "2:3",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 3,
+      "cell_value": "Study Period I Screening/Lead-in",
+      "merged_cell_range": "2:3",
+      "is_merged_cell": true
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 4,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 5,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 6,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 7,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 8,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 9,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 10,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 11,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 12,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 13,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 14,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 15,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 16,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 17,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 18,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 19,
+      "cell_value": "Study Period II Treatment Period",
+      "merged_cell_range": "4:19",
+      "is_merged_cell": true,
+      "annotation_markers": "n2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 1,
+      "column_position": 21,
+      "cell_value": "Study Period III Safety Follow-Up"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 2,
+      "cell_value": "Screening"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 3,
+      "cell_value": "Lead-In"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 2,
+      "cell_value": "1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 2,
+      "cell_value": "-2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 3,
+      "cell_value": "2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 3,
+      "cell_value": "-1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 4,
+      "cell_value": "3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 4,
+      "cell_value": "0"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 5,
+      "cell_value": "4"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 5,
+      "cell_value": "1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 6,
+      "cell_value": "5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 6,
+      "cell_value": "2"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 7,
+      "cell_value": "6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 7,
+      "cell_value": "4"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 8,
+      "cell_value": "7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 8,
+      "cell_value": "6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 9,
+      "cell_value": "8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 9,
+      "cell_value": "8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 10,
+      "cell_value": "9"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 10,
+      "cell_value": "10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 11,
+      "cell_value": "10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 11,
+      "cell_value": "12"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 12,
+      "cell_value": "11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 12,
+      "cell_value": "13"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 13,
+      "cell_value": "12"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 13,
+      "cell_value": "16"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 14,
+      "cell_value": "13"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 14,
+      "cell_value": "20"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 15,
+      "cell_value": "14"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 15,
+      "cell_value": "24"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 16,
+      "cell_value": "15"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 16,
+      "cell_value": "26"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 17,
+      "cell_value": "16"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 17,
+      "cell_value": "28"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 18,
+      "cell_value": "17"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 18,
+      "cell_value": "32"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 19,
+      "cell_value": "18"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 19,
+      "cell_value": "36"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 20,
+      "cell_value": "ET"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 20,
+      "cell_value": "-"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 21,
+      "cell_value": "801"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 21,
+      "cell_value": "2 Wks Post End of TXP"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 4,
+      "cell_value": "-"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 5,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 6,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 7,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 8,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 9,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 10,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 11,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 12,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 13,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 14,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 15,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 16,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 17,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 18,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 19,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 20,
+      "cell_value": "-"
+    },
+    {
+      "table_number": 1,
+      "row_position": 5,
+      "column_position": 21,
+      "cell_value": "±3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 6,
+      "column_position": 21,
+      "cell_value": "X"
+    }
+  ],
+  "activities": [
+    {
+      "table_number": 1,
+      "row_position": 7,
+      "source_page": 13,
+      "activity_name": "Administrative",
+      "activity_name_source": {
+        "cell_text": "Administrative",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 8,
+      "source_page": 13,
+      "activity_name": "Informed consent",
+      "activity_name_source": {
+        "cell_text": "Informed consent",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "source_page": 13,
+      "activity_name": "Inclusion and exclusion criteria review",
+      "activity_name_source": {
+        "cell_text": "Inclusion and exclusion criteria review",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "source_page": 13,
+      "activity_name": "Demographics",
+      "activity_name_source": {
+        "cell_text": "Demographics",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "source_page": 13,
+      "activity_name": "Preexisting conditions and medical history",
+      "activity_name_source": {
+        "cell_text": "Preexisting conditions and medical history",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "source_page": 13,
+      "activity_name": "Concomitant medications",
+      "activity_name_source": {
+        "cell_text": "Concomitant medications",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "source_page": 13,
+      "activity_name": "Substance use (alcohol, caffeine, tobacco use)",
+      "activity_name_source": {
+        "cell_text": "Substance use (alcohol, caffeine, tobacco use)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "source_page": 13,
+      "activity_name": "Adverse events (AEs)",
+      "activity_name_source": {
+        "cell_text": "Adverse events (AEs)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 15,
+      "source_page": 13,
+      "activity_name": "Physical Evaluation",
+      "activity_name_source": {
+        "cell_text": "Physical Evaluation",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "source_page": 13,
+      "activity_name": "Height",
+      "activity_name_source": {
+        "cell_text": "Height",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "source_page": 13,
+      "activity_name": "Weight",
+      "activity_name_source": {
+        "cell_text": "Weight",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "source_page": 13,
+      "activity_name": "Waist circumference",
+      "activity_name_source": {
+        "cell_text": "Waist circumference",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "source_page": 14,
+      "activity_name": "Vital signs (2 sitting BP and PR measurements)",
+      "activity_name_source": {
+        "cell_text": "Vital signs (2 sitting BP and PR measurements)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n3"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "source_page": 14,
+      "activity_name": "Physical examination",
+      "activity_name_source": {
+        "cell_text": "Physical examination",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "source_page": 14,
+      "activity_name": "Symptom-directed physical examination",
+      "activity_name_source": {
+        "cell_text": "Symptom-directed physical examination",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n4"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "source_page": 14,
+      "activity_name": "12-Lead ECG",
+      "activity_name_source": {
+        "cell_text": "12-Lead ECG",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n5"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "source_page": 14,
+      "activity_name": "ABPM training",
+      "activity_name_source": {
+        "cell_text": "ABPM training",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "source_page": 14,
+      "activity_name": "Initiate ABPM device",
+      "activity_name_source": {
+        "cell_text": "Initiate ABPM device",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 25,
+      "source_page": 14,
+      "activity_name": "Return ABPM device",
+      "activity_name_source": {
+        "cell_text": "Return ABPM device",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n6"
+    },
+    {
+      "table_number": 1,
+      "row_position": 26,
+      "source_page": 14,
+      "activity_name": "Record ABPM measurements",
+      "activity_name_source": {
+        "cell_text": "Record ABPM measurements",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n7"
+    },
+    {
+      "table_number": 1,
+      "row_position": 27,
+      "source_page": 14,
+      "activity_name": "Participant Education",
+      "activity_name_source": {
+        "cell_text": "Participant Education",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "source_page": 14,
+      "activity_name": "Explain diet and physical activity plan",
+      "activity_name_source": {
+        "cell_text": "Explain diet and physical activity plan",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "source_page": 15,
+      "activity_name": "Discuss diet and physical activity progress",
+      "activity_name_source": {
+        "cell_text": "Discuss diet and physical activity progress",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n9"
+    },
+    {
+      "table_number": 1,
+      "row_position": 30,
+      "source_page": 15,
+      "activity_name": "Participant Administration Log",
+      "activity_name_source": {
+        "cell_text": "Participant Administration Log",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "source_page": 15,
+      "activity_name": "Dispense study drug administration log, instruct in use",
+      "activity_name_source": {
+        "cell_text": "Dispense study drug administration log, instruct in use",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n10"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "source_page": 15,
+      "activity_name": "Study drug administration log return and review",
+      "activity_name_source": {
+        "cell_text": "Study drug administration log return and review",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 33,
+      "source_page": 15,
+      "activity_name": "Patient-Reported Outcomes",
+      "activity_name_source": {
+        "cell_text": "Patient-Reported Outcomes",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 34,
+      "source_page": 15,
+      "activity_name": "SF-36v2 acute form",
+      "activity_name_source": {
+        "cell_text": "SF-36v2 acute form",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 35,
+      "source_page": 15,
+      "activity_name": "IWQOL-Lite CT",
+      "activity_name_source": {
+        "cell_text": "IWQOL-Lite CT",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 36,
+      "source_page": 15,
+      "activity_name": "PGIS for Physical Activity",
+      "activity_name_source": {
+        "cell_text": "PGIS for Physical Activity",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 37,
+      "source_page": 15,
+      "activity_name": "Participant Survey",
+      "activity_name_source": {
+        "cell_text": "Participant Survey",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n11"
+    },
+    {
+      "table_number": 1,
+      "row_position": 38,
+      "source_page": 15,
+      "activity_name": "Clinician-Administered Assessments (Paper)",
+      "activity_name_source": {
+        "cell_text": "Clinician-Administered Assessments (Paper)",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "source_page": 15,
+      "activity_name": "Patient Health Questionnaire-9 (PHQ-9)",
+      "activity_name_source": {
+        "cell_text": "Patient Health Questionnaire-9 (PHQ-9)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 40,
+      "source_page": 16,
+      "activity_name": "C-SSRS screening/baseline",
+      "activity_name_source": {
+        "cell_text": "C-SSRS screening/baseline",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "source_page": 16,
+      "activity_name": "C-SSRS since last visit",
+      "activity_name_source": {
+        "cell_text": "C-SSRS since last visit",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 42,
+      "source_page": 16,
+      "activity_name": "Laboratory Tests and Sample Collections",
+      "activity_name_source": {
+        "cell_text": "Laboratory Tests and Sample Collections",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "source_page": 16,
+      "activity_name": "Hematology",
+      "activity_name_source": {
+        "cell_text": "Hematology",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "source_page": 16,
+      "activity_name": "Hemoglobin A1c (HbA1c)",
+      "activity_name_source": {
+        "cell_text": "Hemoglobin A1c (HbA1c)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "source_page": 16,
+      "activity_name": "Clinical chemistry",
+      "activity_name_source": {
+        "cell_text": "Clinical chemistry",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "source_page": 16,
+      "activity_name": "Lipid panel",
+      "activity_name_source": {
+        "cell_text": "Lipid panel",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 47,
+      "source_page": 16,
+      "activity_name": "Urinalysis",
+      "activity_name_source": {
+        "cell_text": "Urinalysis",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 48,
+      "source_page": 16,
+      "activity_name": "Serum pregnancy",
+      "activity_name_source": {
+        "cell_text": "Serum pregnancy",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 49,
+      "source_page": 16,
+      "activity_name": "Follicle-stimulating hormone (FSH)",
+      "activity_name_source": {
+        "cell_text": "Follicle-stimulating hormone (FSH)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n12"
+    },
+    {
+      "table_number": 1,
+      "row_position": 50,
+      "source_page": 16,
+      "activity_name": "Luteinizing hormone (LH)",
+      "activity_name_source": {
+        "cell_text": "Luteinizing hormone (LH)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n12"
+    },
+    {
+      "table_number": 1,
+      "row_position": 51,
+      "source_page": 16,
+      "activity_name": "Estradiol",
+      "activity_name_source": {
+        "cell_text": "Estradiol",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n12"
+    },
+    {
+      "table_number": 1,
+      "row_position": 52,
+      "source_page": 16,
+      "activity_name": "Glucagon",
+      "activity_name_source": {
+        "cell_text": "Glucagon",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 53,
+      "source_page": 16,
+      "activity_name": "C-peptide",
+      "activity_name_source": {
+        "cell_text": "C-peptide",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "source_page": 16,
+      "activity_name": "Calcitonin",
+      "activity_name_source": {
+        "cell_text": "Calcitonin",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "source_page": 16,
+      "activity_name": "Pancreatic amylase",
+      "activity_name_source": {
+        "cell_text": "Pancreatic amylase",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "source_page": 17,
+      "activity_name": "Lipase",
+      "activity_name_source": {
+        "cell_text": "Lipase",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 57,
+      "source_page": 17,
+      "activity_name": "HIV screening tests",
+      "activity_name_source": {
+        "cell_text": "HIV screening tests",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 58,
+      "source_page": 17,
+      "activity_name": "Hepatitis C Virus (HCV) screening tests",
+      "activity_name_source": {
+        "cell_text": "Hepatitis C Virus (HCV) screening tests",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 59,
+      "source_page": 17,
+      "activity_name": "Hepatitis B Virus (HBV) screening tests",
+      "activity_name_source": {
+        "cell_text": "Hepatitis B Virus (HBV) screening tests",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 60,
+      "source_page": 17,
+      "activity_name": "Pro-C3",
+      "activity_name_source": {
+        "cell_text": "Pro-C3",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 61,
+      "source_page": 17,
+      "activity_name": "High sensitivity CRP",
+      "activity_name_source": {
+        "cell_text": "High sensitivity CRP",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 62,
+      "source_page": 17,
+      "activity_name": "Apo B and Apo C3",
+      "activity_name_source": {
+        "cell_text": "Apo B and Apo C3",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 63,
+      "source_page": 17,
+      "activity_name": "Leptin",
+      "activity_name_source": {
+        "cell_text": "Leptin",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 64,
+      "source_page": 17,
+      "activity_name": "Cytokeratin 18",
+      "activity_name_source": {
+        "cell_text": "Cytokeratin 18",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 65,
+      "source_page": 17,
+      "activity_name": "eGFR (CKD-EPI)",
+      "activity_name_source": {
+        "cell_text": "eGFR (CKD-EPI)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 66,
+      "source_page": 17,
+      "activity_name": "Urinary albumin/creatinine ratio (UACR)",
+      "activity_name_source": {
+        "cell_text": "Urinary albumin/creatinine ratio (UACR)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 67,
+      "source_page": 17,
+      "activity_name": "Pharmacokinetic (PK) sample - Predose",
+      "activity_name_source": {
+        "cell_text": "Pharmacokinetic (PK) sample | Predose",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n13"
+    },
+    {
+      "table_number": 1,
+      "row_position": 68,
+      "source_page": 17,
+      "activity_name": "Pharmacokinetic (PK) sample - Postdose",
+      "activity_name_source": {
+        "cell_text": "Pharmacokinetic (PK) sample | Postdose",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n13"
+    },
+    {
+      "table_number": 1,
+      "row_position": 69,
+      "source_page": 18,
+      "activity_name": "Stored Samples",
+      "activity_name_source": {
+        "cell_text": "Stored Samples",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 70,
+      "source_page": 18,
+      "activity_name": "Exploratory biomarker samples",
+      "activity_name_source": {
+        "cell_text": "Exploratory biomarker samples",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 71,
+      "source_page": 18,
+      "activity_name": "Randomization and Dosing",
+      "activity_name_source": {
+        "cell_text": "Randomization and Dosing",
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "source_page": 18,
+      "activity_name": "IWRS",
+      "activity_name_source": {
+        "cell_text": "IWRS",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 73,
+      "source_page": 18,
+      "activity_name": "Randomization",
+      "activity_name_source": {
+        "cell_text": "Randomization",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "source_page": 18,
+      "activity_name": "Dispense study intervention capsules",
+      "activity_name_source": {
+        "cell_text": "Dispense study intervention capsules",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      },
+      "annotation_markers": "n14"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "source_page": 18,
+      "activity_name": "Participant returns unused study drug",
+      "activity_name_source": {
+        "cell_text": "Participant returns unused study drug",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "source_page": 18,
+      "activity_name": "Assess drug compliance",
+      "activity_name_source": {
+        "cell_text": "Assess drug compliance",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
+      }
+    }
+  ],
+  "activity_schedule": [
+    {
+      "table_number": 1,
+      "row_position": 8,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 9,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 10,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 11,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 12,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 13,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 14,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 16,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 17,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 18,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 19,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 20,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 21,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 22,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 23,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 24,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 25,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 25,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 26,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 26,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 28,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 29,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 31,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 32,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 34,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 34,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 34,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 34,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 34,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 35,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 35,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 35,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 35,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 35,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 36,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 36,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 36,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 36,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 36,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 37,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 37,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 39,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 40,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 41,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 43,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 44,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 45,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 46,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 47,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 47,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 47,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 47,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 47,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 48,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 49,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 50,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 51,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 52,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 52,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 53,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 53,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 54,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 55,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 56,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 57,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 58,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 59,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 60,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 60,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 60,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 61,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 61,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 62,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 62,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 63,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 63,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 64,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 64,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 65,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 65,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 65,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 65,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 66,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 66,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 66,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 66,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 67,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 67,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 67,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 67,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 67,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 68,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 68,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 68,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 68,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 68,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 70,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 70,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 70,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 70,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 70,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 2,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 3,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 12,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 16,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 20,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 72,
+      "column_position": 21,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 73,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 4,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 74,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 75,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 5,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 6,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 7,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 8,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 9,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 10,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 11,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 13,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 14,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 15,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 17,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 18,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 19,
+      "cell_value": "X"
+    },
+    {
+      "table_number": 1,
+      "row_position": 76,
+      "column_position": 20,
+      "cell_value": "X"
+    }
+  ],
+  "annotations": [
+    {
+      "annotation_marker": "n1",
+      "annotation_type": "footnote",
+      "annotation_text": "The Schedule of Activities described below should be followed for all participants enrolled in Study GZGI. However, for those participants whose participation in this study is affected by exceptional circumstances, such as pandemics or natural disasters, please refer to Section 10.11 (Appendix 11) for additional guidance.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n2",
+      "annotation_type": "footnote",
+      "annotation_text": "For early terminations that occur before the last visit in treatment period, see the activities listed for ET in this table. Shaded columns represent the dose escalation period Weeks 0-16.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 4,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 5,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 6,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 7,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 8,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 9,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 10,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 11,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 12,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 13,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 14,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 15,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 16,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 17,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 18,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 19,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n3",
+      "annotation_type": "footnote",
+      "annotation_text": "Vital signs include pulse rate, blood pressure, and temperature. Vital sign measurements should be collected after participant has been sitting for at least 5 minutes and before obtaining an ECG tracing and before collection of blood samples for laboratory testing (see Section 10.7).",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 19,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n4",
+      "annotation_type": "footnote",
+      "annotation_text": "As indicated based on participant status and standard of care. May be performed by qualified personnel per local regulations.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 21,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n5",
+      "annotation_type": "footnote",
+      "annotation_text": "Single central ECGs will be performed at screening and early termination. Central ECGs should be collected in triplicate at all other visits. ECG should be collected prior to collection of blood samples, including PK samples. ECG measurements should be obtained per the instructions in Section 8.2.3.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 22,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n6",
+      "annotation_type": "footnote",
+      "annotation_text": "Participants should return the ABPM device at the conclusion of the 24- to 27-hour monitoring period.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 25,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n7",
+      "annotation_type": "footnote",
+      "annotation_text": "At the time participant visit data are uploaded by the site, the ABPM Data Validity Report will be generated and should be reviewed to ensure ≥70% of readings are valid. If <70% of readings are valid, the 24-hour monitoring session should be repeated within the visit window.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 26,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n8",
+      "annotation_type": "footnote",
+      "annotation_text": "May be performed more frequently based on usual site practices and participant needs.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 28,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n9",
+      "annotation_type": "footnote",
+      "annotation_text": "May be performed based on participant needs.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 29,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n10",
+      "annotation_type": "footnote",
+      "annotation_text": "The date and time of all dose administrations will be recorded in the log by the participant the day prior to a study visit, but may be recorded more frequently depending on site usual practice.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 31,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n11",
+      "annotation_type": "footnote",
+      "annotation_text": "The Participant Survey should be administered at early termination if it occurs before 26 weeks.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 37,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n12",
+      "annotation_type": "footnote",
+      "annotation_text": "Collect serum estradiol, FSH, and LH in women whose menopausal status needs to be determined. For participants known to be either premenopausal or postmenopausal, these tests do not need to be collected.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 49,
+          "method": "proximity"
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 50,
+          "method": "text_match"
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 51,
+          "method": "text_match"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n13",
+      "annotation_type": "footnote",
+      "annotation_text": "PK predose sample should be collected predose (~up to 1 hour predose). PK postdose sample time windows: 3-6 hours postdose (Week 4); 6-12 hours postdose (Week 8), 1-3 hours postdose (Week 16), 3-6 hours postdose (Week 26). Participants may need to return to clinical site for additional PK-specific visits to provide postdose PK samples.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 67,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 68,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "n14",
+      "annotation_type": "footnote",
+      "annotation_text": "One bottle of capsules is to be dispensed at Visit 3 and at Visit 4. Two bottles of capsules are to be dispensed at Visits 5-9 (during the rest of the dose escalation period). The site pharmacy should clearly label which bottle to take first. At Visits 10-17, 4 bottles of capsules should be dispensed.",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 74,
+          "method": "synthesized"
+        }
+      ]
+    }
+  ]
+}
