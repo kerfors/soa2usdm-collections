@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>NCT05051579 · SoA extraction review</title>
+<style>
+:root{--blue:#1F4788;--blue2:#2E75B6;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--bg:#f5f7fa;
+ --ok:#2e7d32;--warn:#c77700;--bad:#c62828;--sel:#ffb300;--note:#6a1b9a;--alt:#0277bd;--fold:#00695c}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--blue);color:#fff;padding:14px 22px}
+header h1{margin:0;font-size:20px;font-weight:600}
+header .sub{opacity:.85;font-size:13px;margin-top:3px}
+.crumb{font-size:12px;padding:8px 22px;background:#fff;border-bottom:1px solid var(--line);color:var(--muted)}
+.crumb a{color:var(--blue2);text-decoration:none}.crumb b{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:14px 22px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tile .v{font-size:22px;font-weight:600;margin:2px 0}
+.tile .d{font-size:12px;color:var(--muted)}
+.tile.ok .v{color:var(--ok)}.tile.warn .v{color:var(--warn)}.tile.bad .v{color:var(--bad)}
+main{display:grid;grid-template-columns:minmax(0,52%) minmax(0,1fr);gap:14px;padding:0 22px 14px;align-items:start}
+#right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.panel h2{font-size:13px;margin:0;padding:9px 12px;border-bottom:1px solid var(--line);background:#fafbfc;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.panel h2 .sp{flex:1}
+.tabs button,.layers label{font:inherit;font-size:12px}
+.tabs button{border:1px solid var(--line);background:#fff;padding:3px 9px;border-radius:4px;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--blue2);color:#fff;border-color:var(--blue2)}
+.tabs button.tbl{border-color:var(--blue);color:var(--blue);font-weight:600}
+.tabs button.tbl.on{background:var(--blue);color:#fff}
+.layers label{margin-left:8px;cursor:pointer;user-select:none}
+#pagewrap{position:relative;overflow:auto;height:calc(100vh - 250px);background:#e9ecef;padding:10px}
+#pagebox{position:relative;margin:0 auto;box-shadow:0 1px 4px rgba(0,0,0,.25);background:#fff}
+#pagebox img{display:block;width:100%;height:auto}
+#overlay{position:absolute;inset:0;width:100%;height:100%}
+.band{fill:transparent;stroke:transparent;cursor:pointer}
+.band:hover{fill:rgba(46,117,182,.12)}
+.band.matched{stroke:rgba(46,117,182,.55);stroke-width:.6}
+.band.unmatched{fill:rgba(199,119,0,.18);stroke:rgba(199,119,0,.8);stroke-width:.8}
+.band.header{stroke:rgba(95,107,122,.5);stroke-width:.5;stroke-dasharray:2 2}
+.band.sel{fill:rgba(255,179,0,.28)!important;stroke:var(--sel)!important;stroke-width:1.4!important}
+.band.note{fill:rgba(106,27,154,.18)!important;stroke:var(--note)!important;stroke-width:1.2!important}
+.band.alt{fill:rgba(2,119,189,.22)!important;stroke:var(--alt)!important;stroke-width:1.4!important;stroke-dasharray:3 2}
+.band.fold{fill:rgba(0,105,92,.2)!important;stroke:var(--fold)!important;stroke-width:1.4!important}
+.cellbad{fill:rgba(198,40,40,.35);stroke:var(--bad);stroke-width:.6;pointer-events:none}
+.hidden{display:none}
+#side{display:flex;flex-direction:column;height:44vh}
+#side .body{overflow:auto;padding:10px 12px;font-size:13px}
+.dec{border:1px solid var(--line);border-radius:6px;padding:9px 10px;margin-bottom:9px;cursor:pointer}
+.dec:hover{border-color:var(--blue2)}
+.dec.on{border-color:var(--sel);box-shadow:0 0 0 2px rgba(255,179,0,.35)}
+.dec.done{opacity:.7;border-style:dashed}
+.dec .t{font-weight:600}
+.dec .w{font-size:11px;color:var(--muted);margin:2px 0 6px}
+.dec .c{margin:4px 0}.dec .c b{color:var(--blue)}.dec .a b{color:var(--alt)}
+.dec .btns{margin-top:7px;display:flex;gap:6px;align-items:center}
+.dec .btns button{font:inherit;font-size:12px;padding:3px 9px;border-radius:4px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.dec .btns button.keep.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.dec .btns button.alt.on{background:var(--alt);color:#fff;border-color:var(--alt)}
+.pill{display:inline-block;font-size:10px;padding:0 6px;border-radius:9px;border:1px solid;margin-left:6px;vertical-align:1px}
+.pill.high{color:var(--bad);border-color:var(--bad)}.pill.medium{color:var(--warn);border-color:var(--warn)}.pill.low{color:var(--muted);border-color:var(--line)}
+.pill.done{color:var(--ok);border-color:var(--ok)}.pill.cons{color:var(--fold);border-color:var(--fold)}
+.small{font-size:12px;color:var(--muted)}
+ul.plain{padding-left:18px;margin:6px 0}
+.notecard{border-left:3px solid var(--note);padding:6px 9px;margin:6px 0;background:#faf7fc;cursor:pointer;border-radius:0 4px 4px 0}
+.notecard.on{background:#efe6f5}
+.notecard .m{font-weight:600;color:var(--note)}
+.notecard .rows{font-size:11px;color:var(--muted)}
+.foldcard{border-left:3px solid var(--fold);padding:6px 9px;margin:6px 0;background:#f1f8f7;border-radius:0 4px 4px 0}
+.foldcard.on{background:#d9efec}
+.foldcard .src{cursor:pointer;color:var(--blue2)}
+.foldcard .src:hover{text-decoration:underline}
+#tablewrap{overflow:auto;height:calc(56vh - 264px);min-height:220px}
+table.soa{border-collapse:collapse;font-size:12px;width:100%;background:#fff}
+table.soa th,table.soa td{border:1px solid var(--line);padding:2px 6px;white-space:nowrap}
+table.soa thead th{position:sticky;top:0;background:#fafbfc;z-index:2;font-weight:600}
+table.soa thead tr:nth-child(2) th{top:24px;font-weight:400;color:var(--muted)}
+table.soa td.name{min-width:280px;white-space:normal}
+table.soa td.mark{text-align:center;width:26px}
+table.soa tr.act{cursor:pointer}
+table.soa tr.act:hover td{background:#eef4fb}
+table.soa tr.sel td{background:#fff3d6!important}
+table.soa tr.note td{background:#f1e7f7!important}
+table.soa tr.alt td{background:#e1f2fb!important}
+table.soa tr.fold td{background:#d9efec!important}
+table.soa tr.hdr td{background:#e9eef5;font-weight:600}
+table.soa tr.sect td.name{font-weight:600;background:#f3f5f8}
+table.soa td.mark.bad{background:#fde0e0;color:var(--bad);font-weight:600}
+.badge{display:inline-block;font-size:10px;padding:0 5px;border-radius:9px;margin-left:5px;vertical-align:1px;border:1px solid}
+.badge.nf{color:var(--warn);border-color:var(--warn)}
+.badge.cm{color:var(--muted);border-color:var(--line)}
+.badge.bad{color:var(--bad);border-color:var(--bad)}
+.badge.fold{color:var(--fold);border-color:var(--fold);cursor:pointer}
+.badge.red{color:#fff;background:var(--muted);border-color:var(--muted)}
+sup.mk{color:var(--note);font-size:9px;cursor:pointer;margin-left:2px}
+#draft{width:100%;height:180px;font:11px/1.35 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:4px;padding:6px;margin-top:6px}
+#reviewer{font:inherit;font-size:12px;padding:3px 6px;border:1px solid var(--line);border-radius:4px;width:100%}
+footer{padding:8px 22px 20px;font-size:11px;color:var(--muted)}
+</style></head><body>
+<header>
+ <h1>NCT05051579 — review of the SoA extraction</h1>
+ <div class="sub">misc_studies · 1 table · document pages 13–18 · generated 2026-08-22T13:10:01+00:00</div>
+</header>
+<div class="crumb"><a href="../../../index.html">misc_studies</a> › <b>NCT05051579</b> › Review &nbsp;·&nbsp; <a href="NCT05051579_uncertainty_report.html">extraction report</a> · <a href="../consolidated/NCT05051579_consolidated.html">consolidated</a></div>
+
+<div class="tiles" id="tiles"></div>
+
+<main>
+ <section class="panel">
+  <h2><span class="tabs" id="tabletabs"></span><span class="tabs" id="pagetabs"></span>
+   <span class="sp"></span>
+   <span class="layers">
+    <label><input type="checkbox" id="lyRows" checked> rows</label>
+    <label><input type="checkbox" id="lyMarks" checked> mark check</label>
+    <label><input type="checkbox" id="lyHdr"> header rows</label>
+   </span>
+  </h2>
+  <div id="pagewrap"><div id="pagebox"><img id="pageimg" alt="source page"><svg id="overlay"></svg></div></div>
+ </section>
+
+ <div id="right">
+ <aside class="panel" id="side">
+  <h2><span class="tabs" id="sidetabs">
+   <button class="on" data-t="dec">Decisions (<span id="ndec"></span>)</button>
+   <button data-t="notes">Notes (<span id="nnotes"></span>)</button>
+   <button data-t="check">Checks</button>
+   <button data-t="across">Across tables (<span id="nacross"></span>)</button>
+  </span></h2>
+  <div class="body">
+   <div id="tab-dec"></div>
+   <div id="tab-notes" class="hidden"></div>
+   <div id="tab-check" class="hidden"></div>
+   <div id="tab-across" class="hidden"></div>
+  </div>
+ </aside>
+  <div class="panel" id="tablewrap"><table class="soa" id="soa"></table></div>
+ </div>
+</main>
+
+<footer>Page images in <code>NCT05051579_review_pages/</code>. Generated from the pipeline's own files: page geometry from the rule-line band detector, row matching as in the row audit, marks from the page text layer compared with the extraction, decisions from the extraction's review items, cross-table relations from consolidation. Selecting a row on the page or in the table highlights it in the other. This page writes nothing: a decision only drafts an entry for the protocol's corrections sidecar.</footer>
+
+<script>
+const D = {"protocol_id": "NCT05051579", "collection": "misc_studies", "collection_title": "misc_studies", "generated_at": "2026-08-22T13:10:01+00:00", "pdf": "NCT05051579_soa.pdf", "image_dir": "NCT05051579_review_pages", "tables": [{"number": 1, "title": "Schedule of Activities (SoA)", "type": "main_soa", "doc_pages": [13, 18], "sidecar": "NCT05051579_Table_01_corrections.json", "data_cols": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "visit_hdr": {"2": "1", "3": "2", "4": "3", "5": "4", "6": "5", "7": "6", "8": "7", "9": "8", "10": "9", "11": "10", "12": "11", "13": "12", "14": "13", "15": "14", "16": "15", "17": "16", "18": "17", "19": "18", "20": "ET", "21": "801"}, "week_hdr": {"2": "-2", "3": "-1", "4": "0", "5": "1", "6": "2", "7": "4", "8": "6", "9": "8", "10": "10", "11": "12", "12": "13", "13": "16", "14": "20", "15": "24", "16": "26", "17": "28", "18": "32", "19": "36", "20": "-", "21": "2 Wks Post End of TXP"}, "props": [{"row": 1, "name": "Study Period", "type": "epoch"}, {"row": 2, "name": "Screening/Lead-In Period", "type": "period"}, {"row": 3, "name": "Visit Number", "type": "visit"}, {"row": 4, "name": "Week Relative to Randomization", "type": "week"}, {"row": 5, "name": "Allowable Interval Tolerance (days)", "type": "window"}, {"row": 6, "name": "Fasting Visit", "type": "modality"}], "activities": [{"row": 7, "name": "Administrative", "indent": 0, "doc_page": 13, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 8, "name": "Informed consent", "indent": 1, "doc_page": 13, "markers": [], "marks": [2], "band": [1, 7], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 9, "name": "Inclusion and exclusion criteria review", "indent": 1, "doc_page": 13, "markers": [], "marks": [2, 4], "band": [1, 8], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 10, "name": "Demographics", "indent": 1, "doc_page": 13, "markers": [], "marks": [2], "band": [1, 9], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 11, "name": "Preexisting conditions and medical history", "indent": 1, "doc_page": 13, "markers": [], "marks": [2, 4], "band": [1, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 12, "name": "Concomitant medications", "indent": 1, "doc_page": 13, "markers": [], "marks": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [1, 11], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 13, "name": "Substance use (alcohol, caffeine, tobacco use)", "indent": 1, "doc_page": 13, "markers": [], "marks": [2], "band": [1, 12], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 14, "name": "Adverse events (AEs)", "indent": 1, "doc_page": 13, "markers": [], "marks": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [1, 13], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 15, "name": "Physical Evaluation", "indent": 0, "doc_page": 13, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 16, "name": "Height", "indent": 1, "doc_page": 13, "markers": [], "marks": [2], "band": [1, 15], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 17, "name": "Weight", "indent": 1, "doc_page": 13, "markers": [], "marks": [2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [1, 16], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 18, "name": "Waist circumference", "indent": 1, "doc_page": 13, "markers": [], "marks": [2, 4, 7, 9, 11, 13, 14, 16, 18, 19, 20, 21], "band": [1, 17], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 19, "name": "Vital signs (2 sitting BP and PR measurements)", "indent": 1, "doc_page": 14, "markers": ["n3"], "marks": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [2, 6], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 20, "name": "Physical examination", "indent": 1, "doc_page": 14, "markers": [], "marks": [2], "band": [2, 7], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 21, "name": "Symptom-directed physical examination", "indent": 1, "doc_page": 14, "markers": ["n4"], "marks": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [2, 8], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 22, "name": "12-Lead ECG", "indent": 1, "doc_page": 14, "markers": ["n5"], "marks": [2, 4, 7, 9, 11, 14, 16, 19, 20], "band": [2, 9], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 23, "name": "ABPM training", "indent": 1, "doc_page": 14, "markers": [], "marks": [3, 16], "band": [2, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 24, "name": "Initiate ABPM device", "indent": 1, "doc_page": 14, "markers": [], "marks": [3, 16], "band": [2, 11], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 25, "name": "Return ABPM device", "indent": 1, "doc_page": 14, "markers": ["n6"], "marks": [3, 16], "band": [2, 12], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 26, "name": "Record ABPM measurements", "indent": 1, "doc_page": 14, "markers": ["n7"], "marks": [3, 16], "band": [2, 13], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 27, "name": "Participant Education", "indent": 0, "doc_page": 14, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 28, "name": "Explain diet and physical activity plan", "indent": 1, "doc_page": 14, "markers": ["n8"], "marks": [2, 3, 4, 8, 12], "band": [2, 15], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 29, "name": "Discuss diet and physical activity progress", "indent": 1, "doc_page": 15, "markers": ["n9"], "marks": [5, 7, 11, 15, 19], "band": [3, 6], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 30, "name": "Participant Administration Log", "indent": 0, "doc_page": 15, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 31, "name": "Dispense study drug administration log, instruct in use", "indent": 1, "doc_page": 15, "markers": ["n10"], "marks": [4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18], "band": [3, 8], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 32, "name": "Study drug administration log return and review", "indent": 1, "doc_page": 15, "markers": [], "marks": [5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20], "band": [3, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 33, "name": "Patient-Reported Outcomes", "indent": 0, "doc_page": 15, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 34, "name": "SF-36v2 acute form", "indent": 1, "doc_page": 15, "markers": [], "marks": [4, 13, 16, 19, 20], "band": [3, 12], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 35, "name": "IWQOL-Lite CT", "indent": 1, "doc_page": 15, "markers": [], "marks": [4, 13, 16, 19, 20], "band": [3, 13], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 36, "name": "PGIS for Physical Activity", "indent": 1, "doc_page": 15, "markers": [], "marks": [4, 13, 16, 19, 20], "band": [3, 14], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 37, "name": "Participant Survey", "indent": 1, "doc_page": 15, "markers": ["n11"], "marks": [16, 20], "band": [3, 15], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 38, "name": "Clinician-Administered Assessments (Paper)", "indent": 0, "doc_page": 15, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 39, "name": "Patient Health Questionnaire-9 (PHQ-9)", "indent": 1, "doc_page": 15, "markers": [], "marks": [2, 4, 13, 16, 19, 20, 21], "band": [3, 17], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 40, "name": "C-SSRS screening/baseline", "indent": 1, "doc_page": 16, "markers": [], "marks": [2], "band": [4, 6], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 41, "name": "C-SSRS since last visit", "indent": 1, "doc_page": 16, "markers": [], "marks": [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [4, 7], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 42, "name": "Laboratory Tests and Sample Collections", "indent": 0, "doc_page": 16, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 43, "name": "Hematology", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 4, 11, 16, 19, 20], "band": [4, 9], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 44, "name": "Hemoglobin A1c (HbA1c)", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 4, 11, 16, 19, 20], "band": [4, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 45, "name": "Clinical chemistry", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 4, 7, 11, 16, 19, 20, 21], "band": [4, 11], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 46, "name": "Lipid panel", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 4, 7, 11, 16, 19, 20], "band": [4, 12], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 47, "name": "Urinalysis", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 11, 16, 19, 20], "band": [4, 13], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 48, "name": "Serum pregnancy", "indent": 1, "doc_page": 16, "markers": [], "marks": [2], "band": [4, 14], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 49, "name": "Follicle-stimulating hormone (FSH)", "indent": 1, "doc_page": 16, "markers": ["n12"], "marks": [2], "band": [4, 15], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 50, "name": "Luteinizing hormone (LH)", "indent": 1, "doc_page": 16, "markers": ["n12"], "marks": [2], "band": [4, 16], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 51, "name": "Estradiol", "indent": 1, "doc_page": 16, "markers": ["n12"], "marks": [2], "band": [4, 17], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 52, "name": "Glucagon", "indent": 1, "doc_page": 16, "markers": [], "marks": [4, 16], "band": [4, 18], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 53, "name": "C-peptide", "indent": 1, "doc_page": 16, "markers": [], "marks": [4, 16], "band": [4, 19], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 54, "name": "Calcitonin", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 4, 11, 16, 19, 20], "band": [4, 20], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 55, "name": "Pancreatic amylase", "indent": 1, "doc_page": 16, "markers": [], "marks": [2, 4, 11, 16, 19, 20], "band": [4, 21], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 56, "name": "Lipase", "indent": 1, "doc_page": 17, "markers": [], "marks": [2, 4, 11, 16, 19, 20], "band": [5, 6], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 57, "name": "HIV screening tests", "indent": 1, "doc_page": 17, "markers": [], "marks": [2], "band": [5, 7], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 58, "name": "Hepatitis C Virus (HCV) screening tests", "indent": 1, "doc_page": 17, "markers": [], "marks": [2], "band": [5, 8], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 59, "name": "Hepatitis B Virus (HBV) screening tests", "indent": 1, "doc_page": 17, "markers": [], "marks": [2], "band": [5, 9], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 60, "name": "Pro-C3", "indent": 1, "doc_page": 17, "markers": [], "marks": [4, 16, 19], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 61, "name": "High sensitivity CRP", "indent": 1, "doc_page": 17, "markers": [], "marks": [4, 19], "band": [5, 11], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 62, "name": "Apo B and Apo C3", "indent": 1, "doc_page": 17, "markers": [], "marks": [4, 19], "band": [5, 12], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 63, "name": "Leptin", "indent": 1, "doc_page": 17, "markers": [], "marks": [4, 19], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 64, "name": "Cytokeratin 18", "indent": 1, "doc_page": 17, "markers": [], "marks": [4, 19], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 65, "name": "eGFR (CKD-EPI)", "indent": 1, "doc_page": 17, "markers": [], "marks": [2, 11, 16, 19], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 66, "name": "Urinary albumin/creatinine ratio (UACR)", "indent": 1, "doc_page": 17, "markers": [], "marks": [2, 11, 16, 19], "band": [5, 16], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 67, "name": "Pharmacokinetic (PK) sample - Predose", "indent": 1, "doc_page": 17, "markers": ["n13"], "marks": [4, 9, 11, 14, 19], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 68, "name": "Pharmacokinetic (PK) sample - Postdose", "indent": 1, "doc_page": 17, "markers": ["n13"], "marks": [7, 9, 13, 16, 20], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 69, "name": "Stored Samples", "indent": 0, "doc_page": 18, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 70, "name": "Exploratory biomarker samples", "indent": 1, "doc_page": 18, "markers": [], "marks": [4, 7, 13, 16, 19], "band": [6, 7], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 71, "name": "Randomization and Dosing", "indent": 0, "doc_page": 18, "markers": [], "marks": [], "band": [null, null], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 72, "name": "IWRS", "indent": 1, "doc_page": 18, "markers": [], "marks": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "band": [6, 9], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 73, "name": "Randomization", "indent": 1, "doc_page": 18, "markers": [], "marks": [4], "band": [6, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 74, "name": "Dispense study intervention capsules", "indent": 1, "doc_page": 18, "markers": ["n14"], "marks": [4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18], "band": [6, 11], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 75, "name": "Participant returns unused study drug", "indent": 1, "doc_page": 18, "markers": [], "marks": [5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19], "band": [6, 13], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 76, "name": "Assess drug compliance", "indent": 1, "doc_page": 18, "markers": [], "marks": [5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20], "band": [6, 14], "is_header": false, "is_redacted": false, "name_composed": false}], "annotations": [{"marker": "n1", "type": "footnote", "text": "The Schedule of Activities described below should be followed for all participants enrolled in Study GZGI. However, for those participants whose participation in this study is affected by exceptional circumstances, such as pandemics or natural disasters, please refer to Section 10.11 (Appendix 11) for additional guidance.", "rows": [], "prop_rows": [{"row": 1, "col": null, "method": "synthesized", "type": "schedule_property"}], "other": []}, {"marker": "n2", "type": "footnote", "text": "For early terminations that occur before the last visit in treatment period, see the activities listed for ET in this table. Shaded columns represent the dose escalation period Weeks 0-16.", "rows": [], "prop_rows": [], "other": [{"row": 1, "col": 4, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 5, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 6, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 7, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 8, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 9, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 10, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 11, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 12, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 13, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 14, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 15, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 16, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 17, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 18, "method": "synthesized", "type": "schedule_cell"}, {"row": 1, "col": 19, "method": "synthesized", "type": "schedule_cell"}]}, {"marker": "n3", "type": "footnote", "text": "Vital signs include pulse rate, blood pressure, and temperature. Vital sign measurements should be collected after participant has been sitting for at least 5 minutes and before obtaining an ECG tracing and before collection of blood samples for laboratory testing (see Section 10.7).", "rows": [{"row": 19, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n4", "type": "footnote", "text": "As indicated based on participant status and standard of care. May be performed by qualified personnel per local regulations.", "rows": [{"row": 21, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n5", "type": "footnote", "text": "Single central ECGs will be performed at screening and early termination. Central ECGs should be collected in triplicate at all other visits. ECG should be collected prior to collection of blood samples, including PK samples. ECG measurements should be obtained per the instructions in Section 8.2.3.", "rows": [{"row": 22, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n6", "type": "footnote", "text": "Participants should return the ABPM device at the conclusion of the 24- to 27-hour monitoring period.", "rows": [{"row": 25, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n7", "type": "footnote", "text": "At the time participant visit data are uploaded by the site, the ABPM Data Validity Report will be generated and should be reviewed to ensure ≥70% of readings are valid. If <70% of readings are valid, the 24-hour monitoring session should be repeated within the visit window.", "rows": [{"row": 26, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n8", "type": "footnote", "text": "May be performed more frequently based on usual site practices and participant needs.", "rows": [{"row": 28, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n9", "type": "footnote", "text": "May be performed based on participant needs.", "rows": [{"row": 29, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n10", "type": "footnote", "text": "The date and time of all dose administrations will be recorded in the log by the participant the day prior to a study visit, but may be recorded more frequently depending on site usual practice.", "rows": [{"row": 31, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n11", "type": "footnote", "text": "The Participant Survey should be administered at early termination if it occurs before 26 weeks.", "rows": [{"row": 37, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n12", "type": "footnote", "text": "Collect serum estradiol, FSH, and LH in women whose menopausal status needs to be determined. For participants known to be either premenopausal or postmenopausal, these tests do not need to be collected.", "rows": [{"row": 49, "col": null, "method": "synthesized", "type": "activity_name"}, {"row": 50, "col": null, "method": "text_match", "type": "activity_name"}, {"row": 51, "col": null, "method": "text_match", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n13", "type": "footnote", "text": "PK predose sample should be collected predose (~up to 1 hour predose). PK postdose sample time windows: 3-6 hours postdose (Week 4); 6-12 hours postdose (Week 8), 1-3 hours postdose (Week 16), 3-6 hours postdose (Week 26). Participants may need to return to clinical site for additional PK-specific visits to provide postdose PK samples.", "rows": [{"row": 67, "col": null, "method": "synthesized", "type": "activity_name"}, {"row": 68, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "n14", "type": "footnote", "text": "One bottle of capsules is to be dispensed at Visit 3 and at Visit 4. Two bottles of capsules are to be dispensed at Visits 5-9 (during the rest of the dose escalation period). The site pharmacy should clearly label which bottle to take first. At Visits 10-17, 4 bottles of capsules should be dispensed.", "rows": [{"row": 74, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}], "pages": [{"pdf_page": 1, "doc_page": 13, "width_pt": 792.0, "height_pt": 612.0, "columns": [[63.0, 163.8], [163.8, 217.1], [217.4, 248.4], [248.4, 274.0], [274.3, 299.9], [299.9, 325.4], [325.4, 351.4], [351.4, 376.9], [377.3, 402.8], [402.8, 428.4], [428.4, 454.0], [454.3, 479.9], [479.9, 505.4], [505.4, 531.0], [531.4, 556.9], [556.9, 582.5], [582.5, 608.0], [608.4, 634.0], [634.3, 659.9], [660.2, 685.4], [686.2, 728.6]], "col_map": [null, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "col_method": "header", "bands": [{"i": 0, "y0": 148.0, "y1": 221.8, "text": "Study Period IScreening/Lead-in", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 1, "y0": 221.8, "y1": 247.3, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 2, "y0": 247.3, "y1": 258.5, "text": "Visit Number", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 258.5, "y1": 295.6, "text": "WeekRelativetoRandomization", "kind": "header", "row": null, "status": "header"}, {"i": 4, "y0": 295.6, "y1": 317.9, "text": "Allowable IntervalTolerance(days)", "kind": "header", "row": null, "status": "header"}, {"i": 5, "y0": 317.9, "y1": 330.8, "text": "FastingVisit", "kind": "header", "row": null, "status": "header"}, {"i": 6, "y0": 330.8, "y1": 342.4, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 7, "y0": 342.4, "y1": 355.0, "text": "Informedconsent", "kind": "activity", "row": 8, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 355.0, "y1": 377.3, "text": "Inclusionandexclusioncriteriareview", "kind": "activity", "row": 9, "status": "matched", "mark_diff": []}, {"i": 9, "y0": 377.3, "y1": 389.9, "text": "Demographics", "kind": "activity", "row": 10, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 389.9, "y1": 412.6, "text": "Preexistingconditionsandmedicalhistory", "kind": "activity", "row": 11, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 412.6, "y1": 434.9, "text": "Concomitantmedications", "kind": "activity", "row": 12, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 434.9, "y1": 457.6, "text": "Substanceuse(alcohol,caffeine,tobaccouse)", "kind": "activity", "row": 13, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 457.6, "y1": 470.2, "text": "Adverseevents(AEs)", "kind": "activity", "row": 14, "status": "matched", "mark_diff": []}, {"i": 14, "y0": 470.2, "y1": 481.7, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 15, "y0": 481.7, "y1": 494.3, "text": "Height", "kind": "activity", "row": 16, "status": "matched", "mark_diff": []}, {"i": 16, "y0": 494.3, "y1": 507.2, "text": "Weight", "kind": "activity", "row": 17, "status": "matched", "mark_diff": []}, {"i": 17, "y0": 507.2, "y1": 519.8, "text": "Waistcircumference", "kind": "activity", "row": 18, "status": "matched", "mark_diff": []}], "img": "NCT05051579_review_pages/p01.png"}, {"pdf_page": 2, "doc_page": 14, "width_pt": 792.0, "height_pt": 612.0, "columns": [[63.0, 163.8], [163.8, 217.1], [217.4, 248.4], [248.4, 274.0], [274.3, 299.9], [299.9, 325.4], [325.4, 351.4], [351.4, 376.9], [377.3, 402.8], [402.8, 428.4], [428.4, 454.0], [454.3, 479.9], [479.9, 505.4], [505.4, 531.0], [531.4, 556.9], [556.9, 582.5], [582.5, 608.0], [608.4, 634.0], [634.3, 659.9], [660.2, 685.4], [686.2, 728.6]], "col_map": [null, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "col_method": "header", "bands": [{"i": 0, "y0": 72.0, "y1": 145.8, "text": "Study Period IScreening/Lead-in", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 1, "y0": 145.8, "y1": 171.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 2, "y0": 171.0, "y1": 182.5, "text": "Visit Number", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 182.5, "y1": 219.2, "text": "WeekRelativetoRandomization", "kind": "header", "row": null, "status": "header"}, {"i": 4, "y0": 219.2, "y1": 241.9, "text": "Allowable IntervalTolerance(days)", "kind": "header", "row": null, "status": "header"}, {"i": 5, "y0": 241.9, "y1": 254.5, "text": "FastingVisit", "kind": "header", "row": null, "status": "header"}, {"i": 6, "y0": 254.5, "y1": 315.7, "text": "Vitalsigns (2sittingBPandPR measurements)", "kind": "activity", "row": 19, "status": "matched", "mark_diff": []}, {"i": 7, "y0": 315.7, "y1": 328.7, "text": "Physicalexamination", "kind": "activity", "row": 20, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 328.7, "y1": 352.4, "text": "Symptom-directedphysicalexamination", "kind": "activity", "row": 21, "status": "matched", "mark_diff": []}, {"i": 9, "y0": 352.4, "y1": 387.7, "text": "12-LeadECG", "kind": "activity", "row": 22, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 387.7, "y1": 410.0, "text": "ABPMtraining", "kind": "activity", "row": 23, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 410.0, "y1": 423.0, "text": "InitiateABPMdevice", "kind": "activity", "row": 24, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 423.0, "y1": 448.2, "text": "ReturnABPMdevice", "kind": "activity", "row": 25, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 448.2, "y1": 483.1, "text": "RecordABPMmeasurements", "kind": "activity", "row": 26, "status": "matched", "mark_diff": []}, {"i": 14, "y0": 483.1, "y1": 495.7, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 15, "y0": 495.7, "y1": 520.2, "text": "Explaindietand physicalactivityplan", "kind": "activity", "row": 28, "status": "matched", "mark_diff": []}], "img": "NCT05051579_review_pages/p02.png"}, {"pdf_page": 3, "doc_page": 15, "width_pt": 792.0, "height_pt": 612.0, "columns": [[63.0, 163.8], [163.8, 217.1], [217.4, 248.4], [248.4, 274.0], [274.3, 299.9], [299.9, 325.4], [325.4, 351.4], [351.4, 376.9], [377.3, 402.8], [402.8, 428.4], [428.4, 454.0], [454.3, 479.9], [479.9, 505.4], [505.4, 531.0], [531.4, 556.9], [556.9, 582.5], [582.5, 608.0], [608.4, 634.0], [634.3, 659.9], [660.2, 685.4], [686.2, 728.6]], "col_map": [null, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "col_method": "header", "bands": [{"i": 0, "y0": 72.0, "y1": 145.8, "text": "Study Period IScreening/Lead-in", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 1, "y0": 145.8, "y1": 171.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 2, "y0": 171.0, "y1": 182.5, "text": "Visit Number", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 182.5, "y1": 219.2, "text": "WeekRelativetoRandomization", "kind": "header", "row": null, "status": "header"}, {"i": 4, "y0": 219.2, "y1": 241.9, "text": "Allowable IntervalTolerance(days)", "kind": "header", "row": null, "status": "header"}, {"i": 5, "y0": 241.9, "y1": 254.5, "text": "FastingVisit", "kind": "header", "row": null, "status": "header"}, {"i": 6, "y0": 254.5, "y1": 293.4, "text": "Discussdietandphysical activityprogress", "kind": "activity", "row": 29, "status": "matched", "mark_diff": []}, {"i": 7, "y0": 293.4, "y1": 304.9, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 8, "y0": 304.9, "y1": 317.5, "text": "Dispensestudydrugadministrationlog,instructinuse", "kind": "activity", "row": 31, "status": "matched", "mark_diff": []}, {"i": 9, "y0": 317.5, "y1": 352.1, "text": "Dispensestudydrugadministrationlog,instructinuse", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 10, "y0": 352.1, "y1": 385.6, "text": "Studydrugadministrationlogreturnandreview", "kind": "activity", "row": 32, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 385.6, "y1": 400.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 12, "y0": 400.0, "y1": 414.4, "text": "SF-36v2acuteform", "kind": "activity", "row": 34, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 414.4, "y1": 431.6, "text": "IWQOL-Lite CT", "kind": "activity", "row": 35, "status": "matched", "mark_diff": []}, {"i": 14, "y0": 431.6, "y1": 454.0, "text": "PGISforPhysicalActivity", "kind": "activity", "row": 36, "status": "matched", "mark_diff": []}, {"i": 15, "y0": 454.0, "y1": 488.9, "text": "Participant Survey", "kind": "activity", "row": 37, "status": "matched", "mark_diff": []}, {"i": 16, "y0": 488.9, "y1": 500.8, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 17, "y0": 500.8, "y1": 523.8, "text": "PatientHealthQuestionnaire-9(PHQ-9)", "kind": "activity", "row": 39, "status": "matched", "mark_diff": []}], "img": "NCT05051579_review_pages/p03.png"}, {"pdf_page": 4, "doc_page": 16, "width_pt": 792.0, "height_pt": 612.0, "columns": [[63.0, 163.8], [163.8, 217.1], [217.4, 248.4], [248.4, 274.0], [274.3, 299.9], [299.9, 325.4], [325.4, 351.4], [351.4, 376.9], [377.3, 402.8], [402.8, 428.4], [428.4, 454.0], [454.3, 479.9], [479.9, 505.4], [505.4, 531.0], [531.4, 556.9], [556.9, 582.5], [582.5, 608.0], [608.4, 634.0], [634.3, 659.9], [660.2, 685.4], [686.2, 728.6]], "col_map": [null, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "col_method": "header", "bands": [{"i": 0, "y0": 72.0, "y1": 145.8, "text": "Study Period IScreening/Lead-in", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 1, "y0": 145.8, "y1": 171.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 2, "y0": 171.0, "y1": 182.5, "text": "Visit Number", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 182.5, "y1": 219.2, "text": "WeekRelativetoRandomization", "kind": "header", "row": null, "status": "header"}, {"i": 4, "y0": 219.2, "y1": 241.9, "text": "Allowable IntervalTolerance(days)", "kind": "header", "row": null, "status": "header"}, {"i": 5, "y0": 241.9, "y1": 254.5, "text": "FastingVisit", "kind": "header", "row": null, "status": "header"}, {"i": 6, "y0": 254.5, "y1": 277.6, "text": "C-SSRSscreening/baseline", "kind": "activity", "row": 40, "status": "matched", "mark_diff": []}, {"i": 7, "y0": 277.6, "y1": 290.5, "text": "C-SSRSsincelastvisit", "kind": "activity", "row": 41, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 290.5, "y1": 302.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 9, "y0": 302.0, "y1": 314.6, "text": "Hematology", "kind": "activity", "row": 43, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 314.6, "y1": 337.3, "text": "HemoglobinA1c(HbA1c)", "kind": "activity", "row": 44, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 337.3, "y1": 350.3, "text": "Clinicalchemistry", "kind": "activity", "row": 45, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 350.3, "y1": 363.2, "text": "Lipidpanel", "kind": "activity", "row": 46, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 363.2, "y1": 378.4, "text": "Urinalysis", "kind": "activity", "row": 47, "status": "matched", "mark_diff": []}, {"i": 14, "y0": 378.4, "y1": 391.0, "text": "Serumpregnancy", "kind": "activity", "row": 48, "status": "matched", "mark_diff": []}, {"i": 15, "y0": 391.0, "y1": 441.4, "text": "Follicle-stimulatinghormone(FSH)", "kind": "activity", "row": 49, "status": "matched", "mark_diff": []}, {"i": 16, "y0": 441.4, "y1": 464.0, "text": "Luteinizing hormone(LH)", "kind": "activity", "row": 50, "status": "matched", "mark_diff": []}, {"i": 17, "y0": 464.0, "y1": 476.6, "text": "Estradiol", "kind": "activity", "row": 51, "status": "matched", "mark_diff": []}, {"i": 18, "y0": 476.6, "y1": 489.2, "text": "Glucagon", "kind": "activity", "row": 52, "status": "matched", "mark_diff": []}, {"i": 19, "y0": 489.2, "y1": 502.2, "text": "C-peptide", "kind": "activity", "row": 53, "status": "matched", "mark_diff": []}, {"i": 20, "y0": 502.2, "y1": 514.8, "text": "Calcitonin", "kind": "activity", "row": 54, "status": "matched", "mark_diff": []}, {"i": 21, "y0": 514.8, "y1": 527.4, "text": "Pancreatic amylase", "kind": "activity", "row": 55, "status": "matched", "mark_diff": []}], "img": "NCT05051579_review_pages/p04.png"}, {"pdf_page": 5, "doc_page": 17, "width_pt": 792.0, "height_pt": 612.0, "columns": [[63.0, 163.8], [163.8, 217.1], [217.4, 248.4], [248.4, 274.0], [274.3, 299.9], [299.9, 325.4], [325.4, 351.4], [351.4, 376.9], [377.3, 402.8], [402.8, 428.4], [428.4, 454.0], [454.3, 479.9], [479.9, 505.4], [505.4, 531.0], [531.4, 556.9], [556.9, 582.5], [582.5, 608.0], [608.4, 634.0], [634.3, 659.9], [660.2, 685.4], [686.2, 728.6]], "col_map": [null, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "col_method": "header", "bands": [{"i": 0, "y0": 72.0, "y1": 145.8, "text": "Study Period IScreening/Lead-in", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 1, "y0": 145.8, "y1": 171.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 2, "y0": 171.0, "y1": 182.5, "text": "Visit Number", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 182.5, "y1": 219.2, "text": "WeekRelativetoRandomization", "kind": "header", "row": null, "status": "header"}, {"i": 4, "y0": 219.2, "y1": 241.9, "text": "Allowable IntervalTolerance(days)", "kind": "header", "row": null, "status": "header"}, {"i": 5, "y0": 241.9, "y1": 254.5, "text": "FastingVisit", "kind": "header", "row": null, "status": "header"}, {"i": 6, "y0": 254.5, "y1": 267.5, "text": "Lipase", "kind": "activity", "row": 56, "status": "matched", "mark_diff": []}, {"i": 7, "y0": 267.5, "y1": 281.2, "text": "HIVscreeningtests", "kind": "activity", "row": 57, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 281.2, "y1": 303.5, "text": "HepatitisCVirus(HCV)screeningtests", "kind": "activity", "row": 58, "status": "matched", "mark_diff": []}, {"i": 9, "y0": 303.5, "y1": 326.2, "text": "HepatitisBVirus(HBV)screeningtests", "kind": "activity", "row": 59, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 326.2, "y1": 340.2, "text": "", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 11, "y0": 340.2, "y1": 353.9, "text": "HighsensitivityCRP", "kind": "activity", "row": 61, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 353.9, "y1": 367.9, "text": "ApoBandApoC3", "kind": "activity", "row": 62, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 367.9, "y1": 382.0, "text": "", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 14, "y0": 382.0, "y1": 395.6, "text": "", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 15, "y0": 395.6, "y1": 409.7, "text": "", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 16, "y0": 409.7, "y1": 443.2, "text": "Urinaryalbumin/creatinineratio(UACR)", "kind": "activity", "row": 66, "status": "matched", "mark_diff": []}, {"i": 17, "y0": 443.2, "y1": 457.2, "text": "", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 18, "y0": 457.2, "y1": 515.5, "text": "", "kind": "activity", "row": null, "status": "unmatched"}], "img": "NCT05051579_review_pages/p05.png"}, {"pdf_page": 6, "doc_page": 18, "width_pt": 792.0, "height_pt": 612.0, "columns": [[63.0, 163.8], [163.8, 217.1], [217.4, 248.4], [248.4, 274.0], [274.3, 299.9], [299.9, 325.4], [325.4, 351.4], [351.4, 376.9], [377.3, 402.8], [402.8, 428.4], [428.4, 454.0], [454.3, 479.9], [479.9, 505.4], [505.4, 531.0], [531.4, 556.9], [556.9, 582.5], [582.5, 608.0], [608.4, 634.0], [634.3, 659.9], [660.2, 685.4], [686.2, 728.6]], "col_map": [null, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], "col_method": "header", "bands": [{"i": 0, "y0": 72.0, "y1": 145.8, "text": "Study Period IScreening/Lead-in", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 1, "y0": 145.8, "y1": 171.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 2, "y0": 171.0, "y1": 182.5, "text": "Visit Number", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 182.5, "y1": 219.2, "text": "WeekRelativetoRandomization", "kind": "header", "row": null, "status": "header"}, {"i": 4, "y0": 219.2, "y1": 241.9, "text": "Allowable IntervalTolerance(days)", "kind": "header", "row": null, "status": "header"}, {"i": 5, "y0": 241.9, "y1": 254.5, "text": "FastingVisit", "kind": "header", "row": null, "status": "header"}, {"i": 6, "y0": 254.5, "y1": 266.0, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 7, "y0": 266.0, "y1": 288.4, "text": "Exploratorybiomarkersamples", "kind": "activity", "row": 70, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 288.4, "y1": 299.9, "text": "", "kind": "activity", "row": null, "status": "blank"}, {"i": 9, "y0": 299.9, "y1": 312.8, "text": "IWRS", "kind": "activity", "row": 72, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 312.8, "y1": 325.4, "text": "Randomization", "kind": "activity", "row": 73, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 325.4, "y1": 338.0, "text": "Dispensestudyinterventioncapsules", "kind": "activity", "row": 74, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 338.0, "y1": 375.1, "text": "Dispensestudyinterventioncapsules", "kind": "activity", "row": null, "status": "unmatched"}, {"i": 13, "y0": 375.1, "y1": 397.4, "text": "Participantreturnsunusedstudydrug", "kind": "activity", "row": 75, "status": "matched", "mark_diff": []}, {"i": 14, "y0": 397.4, "y1": 410.0, "text": "Assessdrugcompliance", "kind": "activity", "row": 76, "status": "matched", "mark_diff": []}], "img": "NCT05051579_review_pages/p06.png"}], "review_items": [{"id": "D1", "severity": "high", "location": {"page": 17, "row_positions": [67, 68]}, "call_made": "\"Predose\" and \"Postdose\" under \"Pharmacokinetic (PK) sample\" were read as two row labels and the names composed as \"Pharmacokinetic (PK) sample - Predose\" / \"- Postdose\"; no mark was recorded in the Screening column for either.", "alternative": "One activity \"Pharmacokinetic (PK) sample\", with \"Predose\" / \"Postdose\" recorded as text in the merged Screening+Lead-In cell (source_range 2:3).", "report_section": "5.2"}, {"id": "D2", "severity": "high", "location": {"page": 16, "row_positions": [49, 50, 51], "annotation_marker": "n12"}, "call_made": "Note 12 (menopausal status) applied to three rows: FSH, because the note sits inside the FSH row's box, and LH and Estradiol because the note names all three analytes.", "alternative": "FSH only - the strict geometric reading; LH and Estradiol then read as unconditional at Screening.", "report_section": "6"}, {"id": "D3", "severity": "medium", "location": {"page": 13, "row_position": 1, "annotation_marker": "n1"}, "call_made": "The introductory paragraph printed above the table's top rule was kept as a table-wide note (n1) on header row 1.", "alternative": "Drop it - it is section prose, not part of the table.", "report_section": "5.4"}, {"id": "D4", "severity": "medium", "location": {"page": 13, "row_position": 6}, "call_made": "The \"Fasting Visit\" header row is typed modality (how the visit is conducted), with no hierarchical level.", "alternative": "Type it condition (a requirement on the participant).", "report_section": "5.6"}], "applied": [{"id": "corr-001", "op": "set", "target": "annotations", "reason": "The FSH binding (row 49) comes from the note cell sitting inside the FSH row's own rule-line box with no printed marker, which is what 'synthesized' describes; 'proximity' (nearest-row geometry) was the wrong method label. Scope decision D2 (FSH only vs FSH+LH+Estradiol) is NOT changed by this correction.", "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)", "at": "2026-08-22T12:00:00+02:00", "review_item": null}, {"id": "corr-002", "op": "add", "target": "review_items", "reason": "Backfill of decision D1 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.", "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)", "at": "2026-08-22T14:00:00+02:00", "review_item": null}, {"id": "corr-003", "op": "add", "target": "review_items", "reason": "Backfill of decision D2 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.", "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)", "at": "2026-08-22T14:00:00+02:00", "review_item": null}, {"id": "corr-004", "op": "add", "target": "review_items", "reason": "Backfill of decision D3 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.", "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)", "at": "2026-08-22T14:00:00+02:00", "review_item": null}, {"id": "corr-005", "op": "add", "target": "review_items", "reason": "Backfill of decision D4 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.", "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)", "at": "2026-08-22T14:00:00+02:00", "review_item": null}], "checks": {"on_page_not_extracted": [], "extracted_not_on_page": [7, 15, 27, 30, 33, 38, 42, 60, 63, 64, 65, 67, 68, 69, 71], "audit_note": null, "mark_disagreements": [], "marks": 372, "page_marks": 372}}], "decided": {}, "review_status": {"total": 4, "open": 4, "decided": 0}, "across": {"folds": [], "review_queue": [], "stats": {"exact": 0, "fuzzy_auto": 0, "fuzzy_cross_parent": 0, "fuzzy_review": 0, "new": 70}}};
+const S = {t:0, page:0, selRow:null, selProp:null, noteRows:[], altRows:[], foldRows:[], choice:{}};
+const T = () => D.tables[S.t];
+const byRow = () => { const m={}; T().activities.forEach(a=>m[a.row]=a); return m; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rowLabel = (r, t) => { const tb = t===undefined ? T() : D.tables.find(x=>x.number===t); const a = tb && tb.activities.find(a=>a.row===r); return a ? a.name : ('row '+r); };
+const scrollRowIntoView = tr => { const w=document.getElementById('tablewrap'); w.scrollTo({top:Math.max(0,tr.offsetTop-w.clientHeight/2),behavior:'smooth'}); };
+const tableIndex = num => D.tables.findIndex(t=>t.number===num);
+
+// ---------- tiles (protocol level)
+(function(){
+ const acts = D.tables.reduce((n,t)=>n+t.activities.length,0), marks = D.tables.reduce((n,t)=>n+t.checks.marks,0);
+ const notes = D.tables.reduce((n,t)=>n+t.annotations.length,0);
+ const missed = D.tables.reduce((n,t)=>n+t.checks.on_page_not_extracted.length,0);
+ const unplaced = D.tables.reduce((n,t)=>n+t.checks.extracted_not_on_page.length,0);
+ const badRows = new Set(); D.tables.forEach(t=>t.checks.mark_disagreements.forEach(d=>badRows.add(t.number+':'+d.row)));
+ const badCells = D.tables.reduce((n,t)=>n+t.checks.mark_disagreements.length,0);
+ const rs = D.review_status, rq = D.across.review_queue.length;
+ document.getElementById('tiles').innerHTML = [
+  ['', 'Extracted', `${acts} activities`, `${D.tables.length} table${D.tables.length!==1?'s':''} · ${marks} marks · ${notes} notes`],
+  [missed?'bad':'ok', 'Printed rows missed', missed, missed ? 'row bands on the pages with no extracted row' : 'every printed row the checker could read is extracted'],
+  [unplaced?'warn':'ok', 'Rows the checker could not place', unplaced, 'extracted rows with no matching page band (section headings, composed names, packed rows)'],
+  [badRows.size?'warn':'ok', 'Mark check', badRows.size ? `${badRows.size} row${badRows.size!==1?'s':''}` : 'agrees', badRows.size ? `${badCells} cells differ between page text and extraction — open the row to judge` : 'page text and extraction agree on every mark'],
+  [rs.open||rq?'warn':'ok', 'Decisions open', (rs.open+rq), `${rs.decided} of ${rs.total} extraction calls decided · ${rq} consolidation match${rq!==1?'es':''} to review`],
+ ].map(([c,k,v,d])=>`<div class="tile ${c}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
+})();
+
+// ---------- table + page tabs
+function buildTabs(){
+ const tt=document.getElementById('tabletabs'); tt.innerHTML='';
+ D.tables.forEach((t,i)=>{ const b=document.createElement('button'); b.className='tbl'+(i===S.t?' on':''); b.textContent='Table '+t.number; b.title=t.title; b.onclick=()=>showTable(i); tt.appendChild(b); });
+ const pt=document.getElementById('pagetabs'); pt.innerHTML='';
+ T().pages.forEach((p,i)=>{ const b=document.createElement('button'); b.className=i===S.page?'on':''; b.textContent='p.'+p.doc_page; b.onclick=()=>showPage(i); pt.appendChild(b); });
+}
+function showTable(i){ S.t=i; S.page=0; S.selRow=null; S.selProp=null; S.noteRows=[]; S.altRows=[]; S.foldRows=[]; buildTabs(); buildTable(); buildDecisions(); buildNotes(); buildChecks(); showPage(0); }
+
+function showPage(i){
+ S.page=i; const p=T().pages[i]; if(!p) return;
+ [...document.getElementById('pagetabs').children].forEach((b,j)=>b.classList.toggle('on',j===i));
+ document.getElementById('pageimg').src=p.img;
+ const svg=document.getElementById('overlay');
+ svg.setAttribute('viewBox',`0 0 ${p.width_pt} ${p.height_pt}`); svg.setAttribute('preserveAspectRatio','none');
+ if(!p.columns.length){ svg.innerHTML=''; return; }
+ const x0=p.columns[0][0], x1=p.columns[p.columns.length-1][1];
+ const showRows=document.getElementById('lyRows').checked, showMarks=document.getElementById('lyMarks').checked, showHdr=document.getElementById('lyHdr').checked;
+ let h='';
+ p.bands.forEach(b=>{
+  const cls=['band', b.kind==='header'?'header':(b.status==='matched'?'matched':(b.status==='unmatched'?'unmatched':'blank'))];
+  const hl = b.row!==null && (b.row===S.selRow||S.noteRows.includes(b.row)||S.altRows.includes(b.row)||S.foldRows.includes(b.row));
+  if(b.row!==null && b.row===S.selRow) cls.push('sel');
+  if(b.row!==null && S.foldRows.includes(b.row)) cls.push('fold');
+  if(b.row!==null && S.noteRows.includes(b.row)) cls.push('note');
+  if(b.row!==null && S.altRows.includes(b.row)) cls.push('alt');
+  if(b.kind==='header' && S.selProp===b.i+1) cls.push('sel');
+  const hide = (!showRows && !hl && !(b.kind==='header'&&S.selProp===b.i+1)) || (b.kind==='header' && !showHdr && S.selProp!==b.i+1);
+  h+=`<rect class="${cls.join(' ')}" data-i="${b.i}" x="${x0}" y="${b.y0}" width="${x1-x0}" height="${b.y1-b.y0}"${hide?' style="stroke:transparent;fill:transparent"':''}><title>${esc(b.text||'(no label text)')}${b.row!==null?' → '+esc(rowLabel(b.row)):(b.status==='unmatched'?' — not matched to an extracted row':'')}</title></rect>`;
+  if(showMarks && b.mark_diff && b.mark_diff.length) b.mark_diff.forEach(c=>{ const col=p.columns[c-1]; if(col) h+=`<rect class="cellbad" x="${col[0]}" y="${b.y0}" width="${col[1]-col[0]}" height="${b.y1-b.y0}"/>`; });
+ });
+ svg.innerHTML=h;
+ svg.querySelectorAll('.band').forEach(r=>r.onclick=()=>{ const b=p.bands[+r.dataset.i]; if(b.row!==null) selectRow(b.row,true); else if(b.kind==='header') selectProp(b.i+1); });
+}
+['lyRows','lyMarks','lyHdr'].forEach(id=>document.getElementById(id).onchange=()=>showPage(S.page));
+
+function clearHighlights(){ document.querySelectorAll('#soa tr.sel,#soa tr.note,#soa tr.alt,#soa tr.fold').forEach(t=>t.classList.remove('sel','note','alt','fold')); }
+function selectRow(r, fromPage){
+ S.selRow=r; S.selProp=null;
+ const a=byRow()[r];
+ if(a && a.band[0]!==null){ const pi=T().pages.findIndex(p=>p.pdf_page===a.band[0]); showPage(pi>=0?pi:S.page); if(!fromPage) scrollToBand(a.band[1]); } else showPage(S.page);
+ document.querySelectorAll('#soa tr.sel').forEach(t=>t.classList.remove('sel'));
+ const tr=document.querySelector(`#soa tr[data-row="${r}"]`); if(tr){ tr.classList.add('sel'); if(fromPage) scrollRowIntoView(tr); }
+}
+function selectProp(pr){ S.selProp=pr; S.selRow=null; showPage(S.page); document.querySelectorAll('#soa tr.sel').forEach(t=>t.classList.remove('sel')); const tr=document.querySelector(`#soa tr[data-prop="${pr}"]`); if(tr) tr.classList.add('sel'); }
+function scrollToBand(i){ const p=T().pages[S.page], b=p.bands[i]; if(!b) return; const wrap=document.getElementById('pagewrap'), img=document.getElementById('pageimg'); const y=(b.y0/p.height_pt)*img.clientHeight; wrap.scrollTo({top:Math.max(0,y-wrap.clientHeight/2+10),behavior:'smooth'}); }
+function gotoRow(tableNum, row, cls){
+ const ti=tableIndex(tableNum); if(ti<0) return;
+ if(ti!==S.t) showTable(ti);
+ S.foldRows=cls==='fold'?[row]:[]; selectRow(row,false);
+ const tr=document.querySelector(`#soa tr[data-row="${row}"]`); if(tr){ scrollRowIntoView(tr); if(cls) tr.classList.add(cls); }
+ showPage(S.page);
+}
+
+// ---------- table pane
+function buildTable(){
+ const t=T(), el=document.getElementById('soa'), cols=t.data_cols;
+ const foldsByRow={}; D.across.folds.forEach(f=>f.sources.forEach(s=>{ if(s.table===t.number) (foldsByRow[s.row]=foldsByRow[s.row]||[]).push(f); }));
+ const badByRow={}; t.checks.mark_disagreements.forEach(d=>{(badByRow[d.row]=badByRow[d.row]||[]).push(d.col)});
+ let h='<thead><tr><th>Activity</th>'+cols.map(c=>`<th>${esc(t.visit_hdr[c]||'')}</th>`).join('')+'</tr>';
+ h+='<tr><th class="small">'+(t.week_hdr && Object.keys(t.week_hdr).length?'week':'')+'</th>'+cols.map(c=>`<th>${esc(t.week_hdr[c]||'')}</th>`).join('')+'</tr></thead><tbody>';
+ t.props.forEach(p=>{ h+=`<tr class="hdr" data-prop="${p.row}"><td class="name">${esc(p.name)} <span class="badge cm">header · ${esc(p.type)}</span></td><td colspan="${cols.length}" class="small">header row ${p.row}</td></tr>`; });
+ t.activities.forEach(a=>{
+  const marks=new Set(a.marks), bad=new Set(badByRow[a.row]||[]);
+  const badges=[];
+  if(a.is_redacted) badges.push('<span class="badge red" title="activity name redacted in the public protocol">redacted</span>');
+  if(a.band[0]===null) badges.push('<span class="badge nf" title="the page checker could not find this row in any rule-line band">not placed on page</span>');
+  if(a.name_composed) badges.push('<span class="badge cm" title="the name was composed from more than one printed cell">composed name</span>');
+  if(bad.size) badges.push(`<span class="badge bad">${bad.size} marks differ</span>`);
+  (foldsByRow[a.row]||[]).forEach(f=>{ const others=f.sources.filter(s=>!(s.table===t.number&&s.row===a.row)); badges.push(`<span class="badge fold" data-x="${f.xact_id}" title="${esc(f.status)} — same activity as: ${esc(others.map(o=>'Table '+o.table+' row '+o.row).join(', '))}">${f.status==='exact'?'also in':'matched to'} ${others.map(o=>'T'+o.table).join(' ')}</span>`); });
+  const sups=a.markers.map(m=>`<sup class="mk" data-m="${esc(m)}" title="note ${esc(m)}">${esc(m)}</sup>`).join('');
+  h+=`<tr class="act${a.is_header?' sect':''}" data-row="${a.row}"><td class="name" style="padding-left:${a.indent*18+4}px">${esc(a.name)}${sups}${badges.join('')}${a.doc_page?`<span class="small" style="float:right">p.${a.doc_page}</span>`:''}</td>`;
+  cols.forEach(c=>{ h+=`<td class="mark${bad.has(c)?' bad':''}">${marks.has(c)?'✕':''}</td>`; });
+  h+='</tr>';
+ });
+ el.innerHTML=h+'</tbody>';
+ el.querySelectorAll('tr.act').forEach(tr=>tr.onclick=e=>{ if(e.target.classList.contains('mk')||e.target.classList.contains('fold')) return; S.noteRows=[];S.altRows=[];S.foldRows=[]; clearHighlights(); selectRow(+tr.dataset.row,false); });
+ el.querySelectorAll('tr.hdr').forEach(tr=>tr.onclick=()=>selectProp(+tr.dataset.prop));
+ el.querySelectorAll('sup.mk').forEach(s=>s.onclick=e=>{e.stopPropagation(); showNote(s.dataset.m); switchTab('notes');});
+ el.querySelectorAll('.badge.fold').forEach(b=>b.onclick=e=>{e.stopPropagation(); showFold(b.dataset.x); switchTab('across');});
+}
+
+// ---------- side tabs
+function switchTab(n){ document.querySelectorAll('#sidetabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===n)); ['dec','notes','check','across'].forEach(k=>document.getElementById('tab-'+k).classList.toggle('hidden',k!==n)); }
+document.querySelectorAll('#sidetabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+
+// ---------- decisions (review_items of the current table + consolidation's review_queue)
+function buildDecisions(){
+ const t=T(), el=document.getElementById('tab-dec');
+ const items=t.review_items, rq=D.across.review_queue;
+ document.getElementById('ndec').textContent = D.review_status.open + rq.length;
+ let h='';
+ if(!items.length && !t.applied.length) h+=`<p class="small">This table carries no review items${D.review_status.total?'':' — the extraction predates the field (prompt v3.8.0), so its open calls, if any, are only in the extraction report'}.</p>`;
+ else h+='<p class="small">Calls the extractor made that could reasonably go the other way. Click one to see it on the page (call in purple, alternative rows in blue where the call names them). Choosing drafts a sidecar entry below; nothing is saved from here.</p>';
+ items.forEach(d=>{
+  const done=D.decided[d.id];
+  const where=[`document page ${d.location.page}`, d.location.row_position?`row ${d.location.row_position}`:'', d.location.row_positions?`rows ${d.location.row_positions.join(', ')}`:'', d.location.annotation_marker?`note ${d.location.annotation_marker}`:''].filter(Boolean).join(' · ');
+  h+=`<div class="dec${done?' done':''}" data-id="${d.id}"><div class="t">${d.id} <span class="pill ${d.severity}">${d.severity}</span>${done?`<span class="pill done">decided · ${esc(done)}</span>`:''}</div><div class="w">${esc(where)} · report §${esc(d.report_section)}</div>
+   <div class="c"><b>Call made:</b> ${esc(d.call_made)}</div><div class="c a"><b>Alternative:</b> ${esc(d.alternative)}</div>
+   ${done?'':`<div class="btns"><button class="keep" data-id="${d.id}" data-c="keep">keep the call</button><button class="alt" data-id="${d.id}" data-c="alt">take the alternative</button></div>`}</div>`;
+ });
+ rq.forEach((q,i)=>{
+  h+=`<div class="dec" data-q="${i}"><div class="t">Consolidation match <span class="pill cons">from consolidation</span></div><div class="w">${esc(q.xact_id)} · similarity ${Number(q.confidence).toFixed(2)}</div>
+   <div class="c"><b>Call made:</b> "${esc(q.new_name)}" was treated as the same activity as "${esc(q.existing_name)}".</div><div class="c a"><b>Alternative:</b> keep them as two activities.</div>
+   <div class="small">Consolidation has no sidecar yet — record this in the protocol's review notes for now.</div></div>`;
+ });
+ if(t.applied.length) h+=`<h3 style="font-size:13px;margin:14px 0 4px">Corrections applied to this table (${t.applied.length})</h3><ul class="plain small">${t.applied.map(a=>`<li><b>${esc(a.id)}</b> ${esc(a.op)} ${esc(a.target)}${a.review_item?` → ${esc(a.review_item)}`:''} — ${esc(a.reason)} <i>(${esc(a.by)}, ${esc(a.at.slice(0,10))})</i></li>`).join('')}</ul>`;
+ h+=`<h3 style="font-size:13px;margin:14px 0 4px">Draft for <code>${esc(t.sidecar||'the corrections sidecar')}</code></h3><input id="reviewer" placeholder="your name, as it should appear in the sidecar" value="${esc(S.reviewer||'')}"><textarea id="draft" readonly placeholder="Choose 'keep the call' or 'take the alternative' above to draft sidecar entries here. 'Keep' drafts a complete confirm entry; 'alternative' drafts the entry skeleton with the review item and its location filled in."></textarea>`;
+ el.innerHTML=h;
+ el.querySelectorAll('.dec[data-id]').forEach(c=>c.onclick=e=>{ if(e.target.tagName==='BUTTON') return; showDecision(c.dataset.id); });
+ el.querySelectorAll('.dec[data-q]').forEach(c=>c.onclick=()=>showQueue(+c.dataset.q));
+ el.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{ S.choice[b.dataset.id]=b.dataset.c; el.querySelectorAll(`.btns button[data-id="${b.dataset.id}"]`).forEach(x=>x.classList.toggle('on',x===b)); showDecision(b.dataset.id); renderDraft(); });
+ document.getElementById('reviewer').oninput=e=>{ S.reviewer=e.target.value; renderDraft(); };
+ renderDraft();
+}
+function showDecision(id){
+ const t=T(), d=t.review_items.find(x=>x.id===id); if(!d) return;
+ document.querySelectorAll('.dec').forEach(c=>c.classList.toggle('on',c.dataset.id===id));
+ const rows=d.location.row_positions||(d.location.row_position?[d.location.row_position]:[]);
+ const m=byRow();
+ S.noteRows=rows.filter(r=>m[r]); S.altRows=[]; S.foldRows=[]; S.selRow=null; S.selProp=null;
+ clearHighlights();
+ S.noteRows.forEach(r=>{ const tr=document.querySelector(`#soa tr[data-row="${r}"]`); if(tr) tr.classList.add('note'); });
+ if(!S.noteRows.length && d.location.row_position && t.props.some(p=>p.row===d.location.row_position)){ S.selProp=d.location.row_position; const tr=document.querySelector(`#soa tr[data-prop="${S.selProp}"]`); if(tr) tr.classList.add('sel'); }
+ if(!rows.length && d.location.annotation_marker){ const a=t.annotations.find(x=>x.marker===d.location.annotation_marker); if(a){ S.noteRows=a.rows.map(r=>r.row).filter(r=>r!=null); if(a.prop_rows.length) S.selProp=a.prop_rows[0].row; } }
+ const first=S.noteRows.map(r=>m[r]).find(a=>a&&a.band[0]!==null);
+ const pi = first ? t.pages.findIndex(p=>p.pdf_page===first.band[0]) : t.pages.findIndex(p=>p.doc_page===d.location.page);
+ showPage(pi>=0?pi:S.page);
+ if(first) scrollToBand(first.band[1]); else document.getElementById('pagewrap').scrollTo({top:0,behavior:'smooth'});
+ const tr=document.querySelector('#soa tr.note,#soa tr.sel'); if(tr) scrollRowIntoView(tr);
+}
+function showQueue(i){
+ const q=D.across.review_queue[i]; const f=D.across.folds.find(x=>x.xact_id===q.xact_id);
+ document.querySelectorAll('.dec').forEach(c=>c.classList.toggle('on',c.dataset.q==i));
+ if(f) showFold(f.xact_id, true);
+}
+function renderDraft(){
+ const t=T(), el=document.getElementById('draft'); if(!el) return;
+ const now=new Date().toISOString().slice(0,19)+'Z', by=S.reviewer||'<reviewer>';
+ const entries=[]; let n=t.applied.length;
+ t.review_items.forEach(d=>{
+  const ch=S.choice[d.id]; if(!ch) return; n+=1; const id='corr-'+String(n).padStart(3,'0');
+  if(ch==='keep') entries.push({id, target:'annotations', op:'confirm', review_item:d.id, reason:'<why the call stands>', source_ref:{page:d.location.page}, by, at:now});
+  else {
+   const match={}; if(d.location.annotation_marker) match.annotation_marker=d.location.annotation_marker; else if(d.location.row_position) match.row_position=d.location.row_position;
+   entries.push({id, target: d.location.annotation_marker?'annotations':'activities', op:'set', match, set:{'<field>':'<value>'}, review_item:d.id, reason:'<why the alternative is right>', source_ref:{page:d.location.page}, by, at:now});
+  }
+ });
+ el.value = entries.length ? JSON.stringify(entries,null,2) : '';
+}
+
+// ---------- notes
+function buildNotes(){
+ const t=T(), el=document.getElementById('tab-notes');
+ document.getElementById('nnotes').textContent=t.annotations.length;
+ let h='<p class="small">Footnotes and instruction blocks bound to rows. Click one to see which rows it governs. An asterisk marks a binding the extractor inferred rather than read from a printed marker; "by name" means the note names the row rather than marking it.</p>';
+ t.annotations.forEach(a=>{
+  const rows=a.rows.map(r=>`${esc(rowLabel(r.row))}${r.method==='text_match'?' (by name)':(r.method&&r.method!=='proximity'?'*':'')}`);
+  const props=a.prop_rows.map(r=>`header row ${r.row}*`);
+  const other=a.other.map(r=>`${esc(r.type)}${r.row?' row '+r.row:''}${r.col?' col '+r.col:''}`);
+  h+=`<div class="notecard" data-m="${esc(a.marker)}"><span class="m">${esc(a.marker)}</span> <span class="small">${esc(a.type)}</span> <span class="rows">→ ${[...rows,...props,...other].join('; ')||'no row'}</span><div>${esc(a.text)}</div></div>`;
+ });
+ el.innerHTML=h;
+ el.querySelectorAll('.notecard').forEach(c=>c.onclick=()=>showNote(c.dataset.m));
+}
+function showNote(m){
+ const t=T(), a=t.annotations.find(x=>x.marker===m); if(!a) return;
+ document.querySelectorAll('.notecard').forEach(c=>c.classList.toggle('on',c.dataset.m===m));
+ document.querySelectorAll('.dec').forEach(c=>c.classList.remove('on'));
+ S.noteRows=a.rows.map(r=>r.row).filter(r=>r!=null); S.altRows=[]; S.foldRows=[]; S.selRow=null; S.selProp=a.prop_rows.length?a.prop_rows[0].row:null;
+ clearHighlights();
+ S.noteRows.forEach(r=>{const tr=document.querySelector(`#soa tr[data-row="${r}"]`); if(tr) tr.classList.add('note');});
+ const bm=byRow(), first=S.noteRows.map(r=>bm[r]).find(x=>x&&x.band[0]!==null);
+ if(first){ const pi=t.pages.findIndex(p=>p.pdf_page===first.band[0]); showPage(pi>=0?pi:S.page); scrollToBand(first.band[1]); const tr=document.querySelector(`#soa tr[data-row="${first.row}"]`); if(tr) scrollRowIntoView(tr); } else showPage(S.page);
+}
+
+// ---------- checks
+function buildChecks(){
+ const t=T(), c=t.checks, el=document.getElementById('tab-check'), m=byRow();
+ const badByRow={}; c.mark_disagreements.forEach(d=>{(badByRow[d.row]=badByRow[d.row]||[]).push(d)});
+ let h=`<p class="small">Independent checks for Table ${t.number}, re-derived from the PDF — not the extractor's own report.</p>`;
+ if(c.audit_note) h+=`<p class="small"><b>Row audit note:</b> ${esc(c.audit_note)}</p>`;
+ h+=`<h3 style="font-size:13px;margin:8px 0 4px">Printed rows not extracted (${c.on_page_not_extracted.length})</h3>`;
+ h+=c.on_page_not_extracted.length? `<ul class="plain">${c.on_page_not_extracted.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="small">None — every row band with a label the checker could read matches an extracted row.</p>';
+ h+=`<h3 style="font-size:13px;margin:12px 0 4px">Extracted rows the checker could not place (${c.extracted_not_on_page.length})</h3><p class="small">Usually section headings printed as full-width shaded bands, names composed from two cells, or tightly packed rows the band detector merged. Click to locate in the table.</p><ul class="plain">${c.extracted_not_on_page.map(r=>`<li><a href="#" data-row="${r}">${esc(rowLabel(r))}</a>${m[r]&&m[r].doc_page?` <span class="small">p.${m[r].doc_page}</span>`:''}</li>`).join('')}</ul>`;
+ const nb=Object.keys(badByRow).length;
+ h+=`<h3 style="font-size:13px;margin:12px 0 4px">Mark check (${nb} row${nb!==1?'s':''})</h3><p class="small">Every ✕ in the page's text layer, binned into the detected row band and column, compared with the extracted marks. A difference is either an extraction error or a band drawn at the wrong rule — look at the page before deciding.</p>`;
+ Object.entries(badByRow).forEach(([r,ds])=>{ h+=`<div><a href="#" data-row="${r}">${esc(rowLabel(+r))}</a>: ${ds.length} cells — ${ds.filter(d=>d.on_page).length} on page only, ${ds.filter(d=>d.extracted).length} extracted only</div>`; });
+ if(!nb) h+='<p class="small">No differences.</p>';
+ h+=`<p class="small" style="margin-top:12px">${c.marks} extracted marks in this table. Column identity per page: ${t.pages.map(p=>`p.${p.doc_page} ${p.col_method==='header'?'read from the header row':p.col_method==='position'?'by position':'<b>could not be read — marks unchecked</b>'}`).join('; ')}.</p>`;
+ el.innerHTML=h;
+ el.querySelectorAll('a[data-row]').forEach(a=>a.onclick=e=>{e.preventDefault(); S.noteRows=[];S.altRows=[];S.foldRows=[]; clearHighlights(); selectRow(+a.dataset.row,false); const tr=document.querySelector(`#soa tr[data-row="${a.dataset.row}"]`); if(tr) scrollRowIntoView(tr);});
+}
+
+// ---------- across tables (protocol level)
+(function(){
+ const el=document.getElementById('tab-across'), A=D.across;
+ const nonexact=A.folds.filter(f=>f.status!=='exact'), exact=A.folds.filter(f=>f.status==='exact');
+ document.getElementById('nacross').textContent=A.folds.length;
+ const st=A.stats||{};
+ let h=`<p class="small">Rows consolidation treated as the same activity across tables. Exact name matches are collapsed below; anything matched on similarity is listed first. Click a source to see that row on its page.</p>`;
+ if(!A.folds.length) h+='<p class="small">Single-table protocol, or no activity appears in more than one table.</p>';
+ const card=f=>`<div class="foldcard" data-x="${f.xact_id}"><b>${esc(f.name)}</b> <span class="pill cons">${esc(f.status)}${f.status!=='exact'?' · '+Number(f.confidence).toFixed(2):''}</span>${f.variations.length>1?`<div class="small">printed as: ${f.variations.map(esc).join(' / ')}</div>`:''}<div class="small">${f.sources.map(s=>`<span class="src" data-t="${s.table}" data-r="${s.row}">Table ${s.table} row ${s.row}</span>`).join(' · ')}</div></div>`;
+ if(nonexact.length) h+=`<h3 style="font-size:13px;margin:8px 0 4px">Matched on similarity (${nonexact.length})</h3>`+nonexact.map(card).join('');
+ if(exact.length) h+=`<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600;font-size:13px">Same name in more than one table (${exact.length})</summary>${exact.map(card).join('')}</details>`;
+ if(Object.keys(st).length) h+=`<p class="small" style="margin-top:12px">Consolidation counts: ${Object.entries(st).map(([k,v])=>`${esc(k)} ${v}`).join(' · ')}.</p>`;
+ el.innerHTML=h;
+ el.querySelectorAll('.src').forEach(s=>s.onclick=e=>{ e.stopPropagation(); gotoRow(+s.dataset.t,+s.dataset.r,'fold'); });
+ el.querySelectorAll('.foldcard').forEach(c=>c.onclick=()=>showFold(c.dataset.x));
+})();
+function showFold(x, jump){
+ const f=D.across.folds.find(y=>y.xact_id===x); if(!f) return;
+ document.querySelectorAll('.foldcard').forEach(c=>c.classList.toggle('on',c.dataset.x===x));
+ const here=f.sources.filter(s=>s.table===T().number);
+ if(here.length && !jump){ S.foldRows=here.map(s=>s.row); S.noteRows=[]; S.altRows=[]; S.selRow=null; clearHighlights(); here.forEach(s=>{const tr=document.querySelector(`#soa tr[data-row="${s.row}"]`); if(tr) tr.classList.add('fold');}); const m=byRow(), a=m[here[0].row]; if(a&&a.band[0]!==null){ const pi=T().pages.findIndex(p=>p.pdf_page===a.band[0]); showPage(pi>=0?pi:S.page); scrollToBand(a.band[1]); } else showPage(S.page); const tr=document.querySelector('#soa tr.fold'); if(tr) scrollRowIntoView(tr); }
+ else gotoRow(f.sources[0].table, f.sources[0].row, 'fold');
+}
+
+showTable(0);
+</script>
+</body></html>
