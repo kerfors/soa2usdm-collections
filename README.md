@@ -6,7 +6,7 @@ Rendered visualizations are published via **GitHub Pages**: [kerfors.github.io/s
 
 ## What's here — and what isn't
 
-This repo holds the **derived** artifacts of the pipeline: extraction JSON (raw + verified), resolved JSON, consolidated JSON, and the generated HTML views, one folder per protocol.
+This repo holds the **derived** artifacts of the pipeline: extraction JSON (raw + verified), resolved JSON, consolidated JSON, the generated HTML views, and the pre-rendered source page images (`{NCT}_soa_pages/` — each page stamped with its document page number, the evidence surface the review page draws on), one folder per protocol.
 
 It does **not** hold the source protocol PDFs. Those are fetched on demand from ClinicalTrials.gov using the manifest, and are `.gitignore`d so they are never committed. There is a single source of truth for the protocol documents — ClinicalTrials.gov — and this repo points at it rather than redistributing it.
 
@@ -38,8 +38,9 @@ This repo starts fresh: the manifest and folder scaffold are here; the derived o
    ```
 
 2. In `soa2usdm`, run `notebooks/00_download_extract.ipynb` with `COLLECTION = "usdm_data"` to fetch a protocol PDF, slice out its SoA pages, and scaffold the protocol folder here.
-3. Run Layer 1 extraction (the single-pass `PDF_TO_JSON_PROMPT.md` by default, or the two-conversation Excel path — see the `soa2usdm` prompts and workflow guide), then `01_batch.ipynb` for corrections, resolution, consolidation, and visualization.
-4. Regenerate the Pages index and commit the derived outputs (not the PDFs).
+3. In `soa2usdm`, run `python3 tools/page_map.py --collection usdm_data --write --render` to confirm the PDF-page → document-page map and pre-render the stamped page images (`{NCT}_soa_pages/`) the review page consumes. The stamped number is the document page — the page's sequence position in the protocol PDF; printed page footers are not used.
+4. Run Layer 1 extraction (the single-pass `PDF_TO_JSON_PROMPT.md` by default, or the two-conversation Excel path — see the `soa2usdm` prompts and workflow guide), then `01_batch.ipynb` for corrections, resolution, consolidation, and visualization.
+5. Regenerate the Pages index and commit the derived outputs (not the PDFs).
 
 The pipeline discovers this collection automatically at `../soa2usdm-collections/collections/`, or wherever `SOA2USDM_COLLECTIONS` points.
 
