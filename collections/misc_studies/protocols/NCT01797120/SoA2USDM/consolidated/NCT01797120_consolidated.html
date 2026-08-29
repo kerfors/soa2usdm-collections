@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCT01797120 · Consolidated SoA · misc_studies</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1800px; margin: 0 auto;
+        }
+        
+        
+    .pnav { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+            padding: 8px 16px; margin-bottom: 14px; font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #666; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .pnav a { color: #1F4788; text-decoration: none; }
+    .pnav a:hover { text-decoration: underline; }
+    .pnav-sep { color: #999; margin: 0 4px; }
+    .pnav-cur { font-weight: 600; color: #333; }
+    .pnav-sib { margin-top: 4px; }
+    .pnav-grp { color: #888; font-size: 11px; }
+
+
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 22px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 14px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 12px 15px; color: #444; font-size: 11px; border-bottom: 1px solid #eee; background: #f9f9f9; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top; word-wrap: break-word;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .prop-comparison th.table-col { text-align: center; min-width: 320px; }
+        .prop-comparison .track-small { font-size: 9px; font-weight: normal; color: #666; }
+        .prop-comparison .level-cell { font-weight: bold; text-align: center; width: 60px; font-size: 11px; }
+        .prop-comparison .prop-data { text-align: left; vertical-align: top; padding: 10px 12px !important; }
+        .prop-comparison .prop-empty { text-align: center; color: #ccc; background: #fafafa; font-size: 11px; }
+        .prop-cell-content { }
+        .prop-cell-content .prop-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; }
+        .prop-cell-content .prop-type { font-size: 10px; opacity: 0.85; margin-bottom: 6px; }
+        .prop-cell-content .prop-comment { font-size: 10px; opacity: 0.9; font-style: normal; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 6px; margin-top: 4px; }
+        
+        .title-full { max-width: 600px; }
+        .purpose-text { font-size: 9px; color: #666; font-style: italic; }
+        
+        .conclusion-col { min-width: 120px; text-align: center; }
+        .conclusion-cell { text-align: center; font-size: 11px; background: #fafafa; padding: 10px !important; }
+        .conc-match { color: #28a745; font-weight: bold; }
+        .conc-similar { color: #17a2b8; font-weight: bold; }
+        .conc-differ { color: #dc3545; font-weight: bold; }
+        .conc-partial { color: #fd7e14; font-weight: bold; }
+        .conc-empty { color: #ccc; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .bool { font-size: 10px; }
+        .text-full { max-width: 400px; }
+        .variations { font-size: 9px; color: #666; font-style: italic; }
+        .track-label { padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .scope-acts { color: #C65911; }
+        .scope-cols { color: #17a2b8; font-style: italic; }
+        .scope-props { color: #7030A0; font-style: italic; }
+        .scope-cells { color: #538135; }
+        .scope-table { color: #999; font-style: italic; }
+        
+        .section {
+            background: white; border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .section-title {
+            color: white; padding: 12px 20px; font-size: 13px; font-weight: bold;
+            cursor: pointer; user-select: none;
+        }
+        .section-title:hover { filter: brightness(1.1); }
+        .section-title .toggle-icon { 
+            display: inline-block; transition: transform 0.2s; margin-right: 8px; 
+        }
+        .collapsible-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .collapsible-section.collapsed .grid-container { display: none; }
+        .grid-container { overflow-x: auto; padding: 10px; }
+        
+        .table-border { border-left: 3px solid #333 !important; }
+        
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        .grid-table th { background: #f0f0f0; font-weight: bold; font-size: 9px; }
+        .grid-table th.activity-header { text-align: left; }
+        
+        .frozen-col1 {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            min-width: 340px;
+            max-width: 340px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+        }
+        .frozen-col2 {
+            position: sticky;
+            left: 340px;
+            z-index: 2;
+            min-width: 60px;
+            max-width: 60px;
+            background: #f0f0f0;
+            border-right: 2px solid #999 !important;
+            text-align: center;
+        }
+        .grid-table th.frozen-col1,
+        .grid-table th.frozen-col2 {
+            z-index: 3;
+        }
+        .frozen-col2::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -6px;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+            pointer-events: none;
+        }
+        
+        .activity-name { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .activity-name.section-header { font-weight: bold; }
+        .activity-name.child { padding-left: 15px; }
+        
+        .legend {
+            background: white; border-radius: 8px; padding: 12px 20px;
+            margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-color { width: 16px; height: 12px; border-radius: 2px; border: 1px solid #ddd; }
+        .legend-section { font-weight: bold; color: #666; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">misc_studies</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT01797120" title="This protocol's row on the collection index">NCT01797120</a><span class="pnav-sep">›</span><span class="pnav-cur">Consolidated SoA</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT01797120_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT01797120_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-cur">consolidated</span> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT01797120_uncertainty_report.html">extraction log</a></div></nav>
+    <div class="header">
+        <h1>NCT01797120 - Consolidated Schedule of Activities</h1>
+        <div class="sub">study-schedule-consolidated v1.0 | Layer 3</div>
+        <div class="meta">1 tables | 20 activities (0% compression) | 8 columns</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+    </div>
+    
+    <div class="legend">
+        <span class="legend-section">Activities:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#d4edda;"></div>Multi-table exact</div>
+        <div class="legend-item"><div class="legend-color" style="background:#cce5ff;"></div>Multi-table fuzzy</div>
+        <div class="legend-item"><div class="legend-color" style="background:#e1bee7;"></div>Cross-parent</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f0f0f0;"></div>Single table</div>
+        <span class="legend-section">|</span>
+        <span class="legend-section">Cells:</span>
+        <div class="legend-item"><div class="legend-color" style="background:#BDD7EE;"></div>Common</div>
+        
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
+            <span class="comp-desc">Process information</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-08-29T20:23:38.646055+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">20</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">20</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 20</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Source Tables</span>
+            <span class="comp-desc">1 tables</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>table</th><th>type</th><th>track</th><th>title / purpose</th><th>acts</th><th>cols</th><th>props</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">T1</td>
+            <td class="type">main_soa</td>
+            <td></td>
+            <td class="title-full">Study Parameters<br/><span class='purpose-text'>Single overall study schedule: screening (Pre-Study), Induction Phase cycle visits, End of Induction/End of Treatment, Continuation Phase, and Follow-Up Off Therapy.</span></td>
+            <td class="trace">20</td>
+            <td class="trace">8</td>
+            <td class="trace">2</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Activities</span>
+            <span class="comp-desc">20 activities</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>header</th>
+                </tr></thead>
+                <tbody><tr style="background: #f0f0f0;">
+            <td class="id">xact-001</td>
+            <td class="text-full">Eligibility Assessment</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-002</td>
+            <td class="text-full">Informed Consent</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-003</td>
+            <td class="text-full">Medical History &amp; Assessment of Baseline Signs and Symptoms</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-004</td>
+            <td class="text-full">Physical Exam</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-005</td>
+            <td class="text-full">Concomitant Meds</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-006</td>
+            <td class="text-full">Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-007</td>
+            <td class="text-full">ECOG Performance Status</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-008</td>
+            <td class="text-full">Adverse Events Assessments</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-009</td>
+            <td class="text-full">Imaging Scans</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-010</td>
+            <td class="text-full">PT with INR</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-011</td>
+            <td class="text-full">Urinalysis</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-012</td>
+            <td class="text-full">CBC with differentials, Platelets</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-013</td>
+            <td class="text-full">Serum Creatinine, Electrolytes (K, Na, Cl, CO2), Ca, BUN, Albumin, Total Protein, Phosphorus, AST (SGOT), ALT (SGPT), Alkaline Phosphatase, Total Bilirubin, Magnesium, Uric Acid.</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-014</td>
+            <td class="text-full">Fasting Glucose</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-015</td>
+            <td class="text-full">Fasting serum Lipid Profile (triglycerides, total cholesterol, HDL and LDL)</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-016</td>
+            <td class="text-full">HBV-DNA, HbsAg, HBsAb, HBcAb, HCV-RNA-PCR</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-017</td>
+            <td class="text-full">HBV DNA</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-018</td>
+            <td class="text-full">HCV RNA-PCR</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-019</td>
+            <td class="text-full">Study Drug Compliance (Pill Diary)</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr><tr style="background: #f0f0f0;">
+            <td class="id">xact-020</td>
+            <td class="text-full">PFTs with DLCO as medically indicated</td>
+            <td class="trace"></td>
+            <td class="type">new</td>
+            <td class="trace">1</td>
+            <td class="trace">T1</td>
+            <td class="bool">false</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Unified Annotations</span>
+            <span class="comp-desc">19 annotations (0% dedup from 19)</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (18)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #fff;">
+                <td class="id">xannot-001</td>
+                <td class="trace">T1:a</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="≤ 4 weeks of randomization; if assessments required ≤ 7 days of Cycle 1 Day 1 (C1D1), they do not need to be repeated (includes labs).">≤ 4 weeks of randomization; if assessments required ≤ 7 days of Cycle 1 Day 1 (C1D1), they do not need to be repeated...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Eligibility Assessment | Medical History &amp; Assessment of Baseline Signs and Symptoms | Physical Exam (+11)</span> <span class="scope-cells" title="Specific cells">14 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-002</td>
+                <td class="trace">T1:b</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="≤ 7 days prior to the start of C1D1.">≤ 7 days prior to the start of C1D1.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Physical Exam | Concomitant Meds | Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight (+6)</span> <span class="scope-cells" title="Specific cells">9 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-003</td>
+                <td class="trace">T1:c</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="+/- 72 hour window allowed prior to D1 of each subsequent cycle after the first cycle for scheduled therapy/tests/visits. Delay due to holidays, weekends, bad weather or other unforeseen circumstances will be permitted.">+/- 72 hour window allowed prior to D1 of each subsequent cycle after the first cycle for scheduled therapy/tests/vis...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Physical Exam | Concomitant Meds | Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight (+4)</span> <span class="scope-cells" title="Specific cells">7 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-004</td>
+                <td class="trace">T1:d</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="In the event of grade 3 or 4 hematologic toxicity, CBC with differential and platelet count will be obtained every 1-3 days until there is evidence of hematologic recovery.">In the event of grade 3 or 4 hematologic toxicity, CBC with differential and platelet count will be obtained every 1-...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">CBC with differentials, Platelets</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-005</td>
+                <td class="trace">T1:e</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="+/- 72 hours prior to Cycle 2 Day 1 then approximately every 12 weeks during treatment (and more frequently as clinically indicated), and at end of treatment.">+/- 72 hours prior to Cycle 2 Day 1 then approximately every 12 weeks during treatment (and more frequently as clinic...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Fasting Glucose | Fasting serum Lipid Profile (triglycerides, total cholesterol, HDL and LDL)</span> <span class="scope-cells" title="Specific cells">6 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-006</td>
+                <td class="trace">T1:f</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="All patients should be screened for hepatitis risk factors and any past illnesses of hepatitis B and hepatitis C infection (see Section 7.1.1). All patients with a positive medical history per Section 7.1.1 need hepatitis testing as noted on above table. It is highly recommended that patients positive for HBV-DNA or HBsAg are treated prophylactically with an antiviral (e.g., Lamivudine) for 1-2 weeks prior to receiving study drug (see Table 5-3). The antiviral treatment should continue throughout the entire study period and for at least 4 weeks after the last dose of everolimus.">All patients should be screened for hepatitis risk factors and any past illnesses of hepatitis B and hepatitis C infe...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">HBV-DNA, HbsAg, HBsAb, HBcAb, HCV-RNA-PCR | HBV DNA | HCV RNA-PCR</span> <span class="scope-cells" title="Specific cells">5 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-007</td>
+                <td class="trace">T1:g</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Patients on antiviral prophylaxis treatment or positive HBV antibodies should be tested for HBV-DNA ≤ 7 days prior to the start of C1D1 and +/- 72 hrs prior to D1 of each subsequent cycle to monitor for reactivation. See Table 5-4 for reactivation instructions.">Patients on antiviral prophylaxis treatment or positive HBV antibodies should be tested for HBV-DNA ≤ 7 days prior to...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">HBV DNA</span> <span class="scope-cells" title="Specific cells">2 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-008</td>
+                <td class="trace">T1:h</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Patients with positive HCV RNA-PCR results at screening and/or a history of past infection (even if treated and considered ‘cured’) should have HCV RNA-PCR testing performed on ≤ 7 days prior to the start of C1D1 and +/- 72 hrs prior to D1 of each subsequent cycle to monitor for flare. Everolimus must be discontinued if HCV flare is confirmed according to the guidance in Table 5-5.">Patients with positive HCV RNA-PCR results at screening and/or a history of past infection (even if treated and consi...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">HCV RNA-PCR</span> <span class="scope-cells" title="Specific cells">2 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-009</td>
+                <td class="trace">T1:i</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Tumor measurements may be made using physical examination, CT Scans or MRI. Tumor assessments will be performed every 12 weeks, +/- 1 week (every 3 months). Imaging will include chest and abdomen. Bone Scans and Brain CT/MRI may be performed as clinically indicated. Scans do not have to be repeated once disease progression is documented.">Tumor measurements may be made using physical examination, CT Scans or MRI. Tumor assessments will be performed every...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Imaging Scans</span> <span class="scope-cells" title="Specific cells">5 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-010</td>
+                <td class="trace">T1:j</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Adverse events related to fulvestrant and/or everolimus/placebo will be followed for 30 days after the last dose of study therapy (fulvestrant and/or everolimus/placebo) or until ≤ grade 1 or if the grade is &gt;1, the event must be permanent and stable. Please note- Serious adverse events &gt;30 days after last dose of fulvestrant and/or everolimus/placebo are not reported unless the event may be related to everolimus/placebo.">Adverse events related to fulvestrant and/or everolimus/placebo will be followed for 30 days after the last dose of s...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Adverse Events Assessments</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-011</td>
+                <td class="trace">T1:k</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="CBC and chemistry may be used to assess ongoing toxicity but are not required in the Continuation Phase for patients who receive fulvestrant alone. Patients who continue fulvestrant with everolimus should periodically have CBC, chemistries, fasting glucose, fasting lipids, HBV DNA, HCV RNA-PCR per labeling guidelines.">CBC and chemistry may be used to assess ongoing toxicity but are not required in the Continuation Phase for patients ...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">CBC with differentials, Platelets | Serum Creatinine, Electrolytes (K, Na, Cl, CO2), Ca, BUN, Albumin, Total Protein, Phosphorus, AST (SGOT), ALT (SGPT), Alkaline Phosphatase, Total Bilirubin, Magnesium, Uric Acid. | Fasting Glucose (+3)</span> <span class="scope-cells" title="Specific cells">6 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-012</td>
+                <td class="trace">T1:l</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Study Drug Compliance (Pill Diary) for those patients who receive everolimus in the Continuation Phase.">Study Drug Compliance (Pill Diary) for those patients who receive everolimus in the Continuation Phase.</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Study Drug Compliance (Pill Diary)</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-013</td>
+                <td class="trace">T1:m</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="All patients including those that discontinue protocol therapy will be followed for 3 years from the time of randomization. Patients that have not progressed during the Induction or Continuation Phase will continue to have imaging scans completed every 12 weeks, +/- 1 week (every 3 months) until documented progression.">All patients including those that discontinue protocol therapy will be followed for 3 years from the time of randomiz...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Imaging Scans</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-014</td>
+                <td class="trace">T1:n</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="PFTs with DLCO as medically indicated only, (PFTs are not otherwise required during course of study).">PFTs with DLCO as medically indicated only, (PFTs are not otherwise required during course of study).</td>
+                <td class="trace"><span class="scope-acts" title="Activities">PFTs with DLCO as medically indicated</span></td>
+            </tr><tr style="background: #fff;">
+                <td class="id">xannot-015</td>
+                <td class="trace">T1:o</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Follow every 3 months for disease progression and survival. Initiation of any new systemic therapy will also be documented.">Follow every 3 months for disease progression and survival. Initiation of any new systemic therapy will also be docum...</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Imaging Scans</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
+            </tr><tr style="background: #f3e8f8;">
+                <td class="id">xannot-016</td>
+                <td class="trace">T1:*</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Cycle 1, Day 1 is defined as the first day on which fulvestrant is given in combination with placebo/everolimus (the second fulvestrant dose is given on day 15 of the first cycle only). Day 1 of each additional cycle is defined as the day in which fulvestrant is given in combination with everolimus/placebo.">Cycle 1, Day 1 is defined as the first day on which fulvestrant is given in combination with placebo/everolimus (the ...</td>
+                <td class="trace"><span class="scope-cols" title="Timeline columns: 2 total">Cycle 1 Day 1 | Day 1 Each Subsequent Cycle</span></td>
+            </tr><tr style="background: #f3e8f8;">
+                <td class="id">xannot-017</td>
+                <td class="trace">T1:^</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="End of Induction/End of Treatment should be performed within 30 days of last dose of fulvestrant.">End of Induction/End of Treatment should be performed within 30 days of last dose of fulvestrant.</td>
+                <td class="trace"><span class="scope-cols" title="Timeline columns: 1 total">End of Induction Phase &lt;OR&gt; End of Treatment Section 5.6</span></td>
+            </tr><tr style="background: #f3e8f8;">
+                <td class="id">xannot-018</td>
+                <td class="trace">T1:£</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="Continuation Phase: Patients in the Continuation Phase should continue to receive fulvestrant alone (if originally randomized to placebo) or in combination with everolimus (if originally randomized to everolimus) at the same dose and schedule (+/- 1 week window for scheduled therapy/tests/visits; delays due to holidays, weekends, bad weather or other unforeseen circumstances will be permitted) until disease progression or unacceptable toxicity.">Continuation Phase: Patients in the Continuation Phase should continue to receive fulvestrant alone (if originally ra...</td>
+                <td class="trace"><span class="scope-cols" title="Timeline columns: 1 total">Continuation Phase (until progression or unacceptable toxicity)</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #BF8F00;">Source Note (1)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
+                    </tr></thead>
+                    <tbody><tr style="background: #fff;">
+                <td class="id">xannot-019</td>
+                <td class="trace">T1:pr1</td>
+                <td class="trace">1</td>
+                <td class="text-full" title="see Appendix C">see Appendix C</td>
+                <td class="trace"><span class="scope-acts" title="Activities">Concomitant Meds</span></td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="section collapsible-section">
+        <div class="section-title" style="background: #1F4788;" onclick="toggleGrid(this)">
+            <span class="toggle-icon">▼</span> Main Schedule (8 columns)
+        </div>
+        <div class="grid-container">
+            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th></tr><tr><th class="frozen-col1" style="background: #375623; color: white; text-align: left; font-size: 9px;">Study Phase<br/><span style="font-size: 8px; opacity: 0.8;">[epoch] L1</span></th><th class="frozen-col2" style="background: #375623;"></th><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">End of Induction Phase &lt;OR&gt; End of Treatment Section 5.6</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Continuation Phase (until progression or unacceptable toxicity)</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Follow-Up Off Therapy (every 3 months for total of 3 yrs from date of randomization)</td></tr><tr><th class="frozen-col1" style="background: #548235; color: white; text-align: left; font-size: 9px;">Procedure<br/><span style="font-size: 8px; opacity: 0.8;">[visit] L2</span></th><th class="frozen-col2" style="background: #548235;"></th><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Pre-Study</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Cycle 1 Day 1</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Cycle 1 Day 15</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Day 1 Each Subsequent Cycle</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Every 12 weeks</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Eligibility Assessment">Eligibility Assessment</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Informed Consent">Informed Consent</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Medical History &amp; Assessment of Baseline Signs and Symptoms">Medical History &amp; Assessment of Baseline Signs and Symptoms</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Physical Exam">Physical Exam</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Concomitant Meds">Concomitant Meds</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight">Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X (includes Ht)</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::ECOG Performance Status">ECOG Performance Status</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Adverse Events Assessments">Adverse Events Assessments</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Imaging Scans">Imaging Scans</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::PT with INR">PT with INR</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Urinalysis">Urinalysis</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::CBC with differentials, Platelets">CBC with differentials, Platelets</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Serum Creatinine, Electrolytes (K, Na, Cl, CO2), Ca, BUN, Albumin, Total Protein, Phosphorus, AST (SGOT), ALT (SGPT), Alkaline Phosphatase, Total Bilirubin, Magnesium, Uric Acid.">Serum Creatinine, Electrolytes (K, Na, Cl, CO2), Ca, BUN, Albumin, Total Protein, Phosphorus, AST (SGOT), ALT (SGPT), Alkaline Phosphatase, Total Bilirubin, Magnesium, Uric Acid.</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Fasting Glucose">Fasting Glucose</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Fasting serum Lipid Profile (triglycerides, total cholesterol, HDL and LDL)">Fasting serum Lipid Profile (triglycerides, total cholesterol, HDL and LDL)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::HBV-DNA, HbsAg, HBsAb, HBcAb, HCV-RNA-PCR">HBV-DNA, HbsAg, HBsAb, HBcAb, HCV-RNA-PCR</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::HBV DNA">HBV DNA</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::HCV RNA-PCR">HCV RNA-PCR</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Study Drug Compliance (Pill Diary)">Study Drug Compliance (Pill Diary)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">X</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::PFTs with DLCO as medically indicated">PFTs with DLCO as medically indicated</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr></table>
+        </div>
+    </div>
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function toggleGrid(title) {
+            const section = title.closest('.collapsible-section');
+            section.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with component sections collapsed, grids expanded
+        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+    </script>
+</body>
+</html>
