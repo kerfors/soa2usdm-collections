@@ -1,0 +1,77 @@
+{
+  "schema_name": "soa-table-corrections",
+  "schema_version": "1.0",
+  "target_extraction": "NCT01797120_Table_01_extraction.json",
+  "corrections": [
+    {
+      "id": "corr-001",
+      "target": "annotations",
+      "op": "confirm",
+      "review_item": "D2",
+      "reason": "The banner is printed above the table's top rule, outside the ruled frame; it is a directive about treatment start, not an annotation of any table element. table_metadata.notes is the right home for it.",
+      "source_ref": { "page": 69 },
+      "by": "Kerstin Forsberg",
+      "at": "2026-08-30T08:01:31Z"
+    },
+    {
+      "id": "corr-002",
+      "target": "schedule_grid",
+      "op": "set",
+      "match": { "row_position": 1, "column_position": 7 },
+      "set": {
+        "cell_value": "End of Induction Phase <OR> End of Treatment",
+        "annotation_markers": "^,pr2"
+      },
+      "review_item": "D3",
+      "reason": "The inline-reference rule (strip cross-references out of labels into source_notes) applies to header cells as to activity labels: 'Section 5.6' is a pure cross-reference, not part of the column's name. The printed value stays in the raw extraction.",
+      "source_ref": { "page": 69 },
+      "by": "Kerstin Forsberg",
+      "at": "2026-08-30T08:01:31Z"
+    },
+    {
+      "id": "corr-003",
+      "target": "annotations",
+      "op": "add",
+      "set": {
+        "annotation_marker": "pr2",
+        "annotation_type": "source_note",
+        "annotation_text": "Section 5.6",
+        "marker_locations": [
+          { "table_number": 1, "location_type": "schedule_cell", "row_position": 1, "column_position": 7, "method": "synthesized" }
+        ]
+      },
+      "review_item": "D3",
+      "reason": "Companion to corr-002: the stripped 'Section 5.6' reference emitted as a source_note with synthesized marker pr2, bound to the column-7 header cell it was printed in.",
+      "source_ref": { "page": 69 },
+      "by": "Kerstin Forsberg",
+      "at": "2026-08-30T08:01:31Z"
+    },
+    {
+      "id": "corr-004",
+      "target": "schedule_properties",
+      "op": "set",
+      "match": { "row_position": 2 },
+      "set": {
+        "property_type": "timepoint",
+        "property_comment": "Second header row. Its column-1 label cell prints 'Procedure' (labelling the activity column); the data cells carry Pre-Study, Cycle 1 Day 1, Cycle 1 Day 15, Day 1 Each Subsequent Cycle, Every 12 weeks. These are cycle-day timing points and a frequency rather than protocol-named visits, hence property_type timepoint (decision D4). Columns 7-9 have no value in this row because their header cells are vertically merged across header rows 1-2 and are recorded on row 1."
+      },
+      "review_item": "D4",
+      "reason": "The row's values are cycle-day timing points (Cycle 1 Day 1, Cycle 1 Day 15, Day 1 Each Subsequent Cycle) plus a frequency ('Every 12 weeks'), not protocol-named visits; timepoint describes them better than visit.",
+      "source_ref": { "page": 69 },
+      "by": "Kerstin Forsberg",
+      "at": "2026-08-30T08:20:00Z"
+    },
+    {
+      "id": "corr-005",
+      "target": "schedule_properties",
+      "op": "set",
+      "match": { "row_position": 2 },
+      "set": { "property_name": "Visit / Occasion" },
+      "review_item": "D5",
+      "reason": "'Procedure' labels the activity column, not the row's schedule values; synthesized descriptive name per the report's suggestion. The printed label remains in property_name_source.cell_value.",
+      "source_ref": { "page": 69 },
+      "by": "Kerstin Forsberg",
+      "at": "2026-08-30T08:01:31Z"
+    }
+  ]
+}
