@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>NCT03402841 · Review · usdm_data</title>
+<style>
+:root{--blue:#1F4788;--blue2:#2E75B6;--ink:#1f2933;--muted:#5f6b7a;--line:#d9dee5;--bg:#f5f7fa;
+ --ok:#2e7d32;--warn:#c77700;--bad:#c62828;--sel:#ffb300;--note:#6a1b9a;--alt:#0277bd;--fold:#00695c}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.45 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--blue);color:#fff;padding:14px 22px}
+header h1{margin:0;font-size:20px;font-weight:600}
+header .sub{opacity:.85;font-size:13px;margin-top:3px}
+.pnav{font-size:12px;padding:8px 22px;background:#fff;border-bottom:1px solid var(--line);color:var(--muted)}
+.pnav a{color:var(--blue2);text-decoration:none}.pnav a:hover{text-decoration:underline}
+.pnav-cur{font-weight:600;color:var(--ink)}.pnav-sep{color:#9aa4af;margin:0 4px}
+.pnav-sib{margin-top:3px}.pnav-grp{font-size:11px;color:#8a94a0}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding:14px 22px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.tile .k{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tile .v{font-size:22px;font-weight:600;margin:2px 0}
+.tile .d{font-size:12px;color:var(--muted)}
+.tile.ok .v{color:var(--ok)}.tile.warn .v{color:var(--warn)}.tile.bad .v{color:var(--bad)}
+main{display:grid;grid-template-columns:minmax(0,52%) minmax(0,1fr);gap:14px;padding:0 22px 14px;align-items:start}
+#right{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.panel h2{font-size:13px;margin:0;padding:9px 12px;border-bottom:1px solid var(--line);background:#fafbfc;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.panel h2 .sp{flex:1}
+.tabs button,.layers label{font:inherit;font-size:12px}
+.tabs button{border:1px solid var(--line);background:#fff;padding:3px 9px;border-radius:4px;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--blue2);color:#fff;border-color:var(--blue2)}
+.tabs button.tbl{border-color:var(--blue);color:var(--blue);font-weight:600}
+.tabs button.tbl.on{background:var(--blue);color:#fff}
+.layers label{margin-left:8px;cursor:pointer;user-select:none}
+#pagewrap{position:relative;overflow:auto;height:calc(100vh - 250px);background:#e9ecef;padding:10px}
+#pagebox{position:relative;margin:0 auto;box-shadow:0 1px 4px rgba(0,0,0,.25);background:#fff}
+#pagebox img{display:block;width:100%;height:auto}
+#overlay{position:absolute;inset:0;width:100%;height:100%}
+.band{fill:transparent;stroke:transparent;cursor:pointer}
+.band:hover{fill:rgba(46,117,182,.12)}
+.band.matched{stroke:rgba(46,117,182,.55);stroke-width:.6}
+.band.unmatched{fill:rgba(199,119,0,.18);stroke:rgba(199,119,0,.8);stroke-width:.8}
+.band.header{stroke:rgba(95,107,122,.5);stroke-width:.5;stroke-dasharray:2 2}
+.band.sel{fill:rgba(255,179,0,.28)!important;stroke:var(--sel)!important;stroke-width:1.4!important}
+.band.note{fill:rgba(106,27,154,.18)!important;stroke:var(--note)!important;stroke-width:1.2!important}
+.band.alt{fill:rgba(2,119,189,.22)!important;stroke:var(--alt)!important;stroke-width:1.4!important;stroke-dasharray:3 2}
+.band.fold{fill:rgba(0,105,92,.2)!important;stroke:var(--fold)!important;stroke-width:1.4!important}
+.cellbad{fill:rgba(198,40,40,.35);stroke:var(--bad);stroke-width:.6;pointer-events:none}
+.hidden{display:none}
+#side{display:flex;flex-direction:column;height:44vh}
+#side .body{overflow:auto;padding:10px 12px;font-size:13px}
+.dec{border:1px solid var(--line);border-radius:6px;padding:9px 10px;margin-bottom:9px;cursor:pointer}
+.dec:hover{border-color:var(--blue2)}
+.dec.on{border-color:var(--sel);box-shadow:0 0 0 2px rgba(255,179,0,.35)}
+.dec.done{opacity:.7;border-style:dashed}
+.dec .t{font-weight:600}
+.dec .w{font-size:11px;color:var(--muted);margin:2px 0 6px}
+.dec .c{margin:4px 0}.dec .c b{color:var(--blue)}.dec .a b{color:var(--alt)}
+.dec .btns{margin-top:7px;display:flex;gap:6px;align-items:center}
+.dec .btns button{font:inherit;font-size:12px;padding:3px 9px;border-radius:4px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.dec .btns button.keep.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.dec .btns button.alt.on{background:var(--alt);color:#fff;border-color:var(--alt)}
+.pill{display:inline-block;font-size:10px;padding:0 6px;border-radius:9px;border:1px solid;margin-left:6px;vertical-align:1px}
+.pill.high{color:var(--bad);border-color:var(--bad)}.pill.medium{color:var(--warn);border-color:var(--warn)}.pill.low{color:var(--muted);border-color:var(--line)}
+.pill.done{color:var(--ok);border-color:var(--ok)}.pill.cons{color:var(--fold);border-color:var(--fold)}
+.small{font-size:12px;color:var(--muted)}
+ul.plain{padding-left:18px;margin:6px 0}
+.notecard{border-left:3px solid var(--note);padding:6px 9px;margin:6px 0;background:#faf7fc;cursor:pointer;border-radius:0 4px 4px 0}
+.notecard.on{background:#efe6f5}
+.notecard .m{font-weight:600;color:var(--note)}
+.notecard .rows{font-size:11px;color:var(--muted)}
+.foldcard{border-left:3px solid var(--fold);padding:6px 9px;margin:6px 0;background:#f1f8f7;border-radius:0 4px 4px 0}
+.foldcard.on{background:#d9efec}
+.foldcard .src{cursor:pointer;color:var(--blue2)}
+.foldcard .src:hover{text-decoration:underline}
+#tablewrap{overflow:auto;height:calc(56vh - 264px);min-height:220px}
+table.soa{border-collapse:collapse;font-size:12px;width:100%;background:#fff}
+table.soa th,table.soa td{border:1px solid var(--line);padding:2px 6px;white-space:nowrap}
+table.soa thead th{position:sticky;top:0;background:#fafbfc;z-index:2;font-weight:600}
+table.soa thead tr:nth-child(2) th{top:24px;font-weight:400;color:var(--muted)}
+table.soa td.name{min-width:280px;white-space:normal}
+table.soa td.mark{text-align:center;width:26px}
+table.soa tr.act{cursor:pointer}
+table.soa tr.act:hover td{background:#eef4fb}
+table.soa tr.sel td{background:#fff3d6!important}
+table.soa tr.note td{background:#f1e7f7!important}
+table.soa tr.alt td{background:#e1f2fb!important}
+table.soa tr.fold td{background:#d9efec!important}
+table.soa tr.hdr td{background:#e9eef5;font-weight:600}
+table.soa tr.sect td.name{font-weight:600;background:#f3f5f8}
+table.soa td.mark.bad{background:#fde0e0;color:var(--bad);font-weight:600}
+.badge{display:inline-block;font-size:10px;padding:0 5px;border-radius:9px;margin-left:5px;vertical-align:1px;border:1px solid}
+.badge.nf{color:var(--warn);border-color:var(--warn)}
+.badge.cm{color:var(--muted);border-color:var(--line)}
+.badge.bad{color:var(--bad);border-color:var(--bad)}
+.badge.fold{color:var(--fold);border-color:var(--fold);cursor:pointer}
+.badge.red{color:#fff;background:var(--muted);border-color:var(--muted)}
+sup.mk{color:var(--note);font-size:9px;cursor:pointer;margin-left:2px}
+#draft{width:100%;height:180px;font:11px/1.35 ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line);border-radius:4px;padding:6px;margin-top:6px}
+#reviewer{font:inherit;font-size:12px;padding:3px 6px;border:1px solid var(--line);border-radius:4px;width:100%}
+footer{padding:8px 22px 20px;font-size:11px;color:var(--muted)}
+</style></head><body>
+<header>
+ <h1>NCT03402841 — review of the SoA extraction</h1>
+ <div class="sub">usdm_data · 2 tables · document pages 40–44 · generated 2026-09-02T10:15:00+00:00</div>
+</header>
+<nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03402841" title="This protocol's row on the collection index">NCT03402841</a><span class="pnav-sep">›</span><span class="pnav-cur">Review</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT03402841_Table_01_extraction_viewer.html">T1</a> <a href="../../SoA2USDM/extracted/NCT03402841_Table_02_extraction_viewer.html">T2</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03402841_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT03402841_Table_02_resolved.html">T2</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03402841_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <span class="pnav-cur">review</span> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03402841_uncertainty_report.html">extraction log</a></div></nav>
+
+<div class="tiles" id="tiles"></div>
+
+<main>
+ <section class="panel">
+  <h2><span class="tabs" id="tabletabs"></span><span class="tabs" id="pagetabs"></span>
+   <span class="sp"></span>
+   <span class="layers">
+    <label><input type="checkbox" id="lyRows" checked> rows</label>
+    <label><input type="checkbox" id="lyMarks" checked> mark check</label>
+    <label><input type="checkbox" id="lyHdr"> header rows</label>
+   </span>
+  </h2>
+  <div id="pagewrap"><div id="pagebox"><img id="pageimg" alt="source page"><svg id="overlay"></svg></div></div>
+ </section>
+
+ <div id="right">
+ <aside class="panel" id="side">
+  <h2><span class="tabs" id="sidetabs">
+   <button class="on" data-t="dec">Decisions (<span id="ndec"></span>)</button>
+   <button data-t="notes">Notes (<span id="nnotes"></span>)</button>
+   <button data-t="check">Checks</button>
+   <button data-t="across">Across tables (<span id="nacross"></span>)</button>
+  </span></h2>
+  <div class="body">
+   <div id="tab-dec"></div>
+   <div id="tab-notes" class="hidden"></div>
+   <div id="tab-check" class="hidden"></div>
+   <div id="tab-across" class="hidden"></div>
+  </div>
+ </aside>
+  <div class="panel" id="tablewrap"><table class="soa" id="soa"></table></div>
+ </div>
+</main>
+
+<footer>Page images in <code>NCT03402841_soa_pages/</code>, rendered at ingest by <code>tools/page_map.py --render</code>; the caption strip below each page is synthetic, the page bitmap above it is verbatim. Page numbers (p.NN) are document pages — the page's sequence position in the source protocol PDF; printed page footers are unreliable in this corpus and are not used. Generated from the pipeline's own files: page geometry from the rule-line band detector, row matching as in the row audit, marks from the page text layer compared with the extraction, decisions from the extraction's review items, cross-table relations from consolidation. Selecting a row on the page or in the table highlights it in the other. This page writes nothing: a decision only drafts an entry for the protocol's corrections sidecar.</footer>
+
+<script>
+const D = {"protocol_id": "NCT03402841", "collection": "usdm_data", "collection_title": "usdm_data", "generated_at": "2026-09-02T10:15:00+00:00", "pdf": "NCT03402841_soa.pdf", "image_dir": "../../NCT03402841_soa_pages", "tables": [{"number": 1, "title": "Study Schedule – Screening (Visit 1)", "type": "main_soa", "doc_pages": [40, 41], "sidecar": "NCT03402841_Table_01_corrections.json", "data_cols": [2, 3], "visit_hdr": {"2": "Before screening period", "3": "-28 to -1"}, "week_hdr": {}, "props": [{"row": 1, "name": "Day", "type": "study_day"}], "activities": [{"row": 2, "name": "Informed consent", "indent": 0, "doc_page": 40, "markers": [], "marks": [2], "band": [1, 1], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 3, "name": "IVRS/IWRS unique patient number obtained", "indent": 0, "doc_page": 40, "markers": [], "marks": [2], "band": [1, 2], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 4, "name": "Demographics", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 3], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 5, "name": "Medical and surgical history", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 4], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 6, "name": "Prior cancer therapies including radiotherapy, best response to prior chemotherapy regimen", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 5], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 7, "name": "History of blood transfusions", "indent": 0, "doc_page": 40, "markers": ["a"], "marks": [3], "band": [1, 6], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 8, "name": "Inclusion/exclusion criteria", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 7], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 9, "name": "ECOG performance status", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 8], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 10, "name": "Physical examination", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 9], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 11, "name": "Vital signs (includes blood pressure, pulse and temperature), body weight", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 12, "name": "Haematology / clinical chemistry", "indent": 0, "doc_page": 40, "markers": ["b", "f"], "marks": [3], "band": [1, 11], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 13, "name": "Urinalysis", "indent": 0, "doc_page": 40, "markers": [], "marks": [3], "band": [1, 12], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 14, "name": "Pregnancy test for women of childbearing potential", "indent": 0, "doc_page": 40, "markers": ["c"], "marks": [3], "band": [1, 13], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 15, "name": "Confirmed as having non-Germline BRCA Mutated ovarian cancer", "indent": 0, "doc_page": 40, "markers": ["d"], "marks": [2], "band": [1, 14], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 16, "name": "Tumour assessment", "indent": 0, "doc_page": 41, "markers": ["e", "note1"], "marks": [3], "band": [2, 1], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 17, "name": "AEs (from time of consent)", "indent": 0, "doc_page": 41, "markers": [], "marks": [3], "band": [2, 2], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 18, "name": "Concomitant medications", "indent": 0, "doc_page": 41, "markers": [], "marks": [3], "band": [2, 3], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 19, "name": "Archival or fresh tumour biopsy sample for post treatment analysis confirmation of HRD status", "indent": 0, "doc_page": 41, "markers": ["g"], "marks": [2, 3], "band": [2, 4], "is_header": false, "is_redacted": false, "name_composed": true}], "annotations": [{"marker": "a", "type": "footnote", "text": "Include history of blood transfusion within previous 120 days from start of study treatment and the reasons, e.g., bleeding or myelosuppression.", "rows": [{"row": 7, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "b", "type": "footnote", "text": "Coagulation test should be performed if clinically indicated. For a list of all required laboratory tests please refer to Section 5.2.1.", "rows": [{"row": 12, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "c", "type": "footnote", "text": "Women of childbearing potential must have a negative urine or serum pregnancy test within 28 days prior to starting treatment and a confirmatory test before treatment on Day 1. If results are positive, the patient is ineligible/must be discontinued from the study.", "rows": [{"row": 14, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "d", "type": "footnote", "text": "Patients must be non-germline BRCA mutated to be enrolled into the study. Patients for whom their gBRCA status is already known should be consented to the study within 28 days prior to Day 1 of study treatment. Patients who do not know their mutation status will need BRCA1/2 mutation screening (see Section 4.1.1 and Appendix F).", "rows": [{"row": 15, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "e", "type": "footnote", "text": "Includes CA-125 measurement where required (Refer to Inclusion Criterion 6). RECIST assessment should be performed no more than 28 days before the start of study treatment, and ideally should be performed as close as possible to the start of study treatment.", "rows": [{"row": 16, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "note1", "type": "footnote", "text": "Note: MRI/ CT scan more than 28 days prior to Day 1 may be acceptable, please consult with AstraZeneca.", "rows": [{"row": 16, "col": null, "method": "synthesized", "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "f", "type": "footnote", "text": "These measurements may be repeated within the screening period if abnormalities are found which are the only reason for screen failing the patient and which can reasonably be expected to have return to the acceptable range", "rows": [{"row": 12, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "g", "type": "footnote", "text": "All patients are required to submit either an archival tumour sample, or a fresh biopsy if an archival sample is not available, for retrospective testing of their genetic status. If archival tissue, the presence of adequate tissue needs to be confirmed prior to screening, but it will not be shipped to the central lab before Day1. If fresh, the biopsy should be taken after the baseline scan has been performed. Samples should be submitted as paraffin blocks, alternatively, sections mounted on glass slides prepared from the block can be provided. Please refer to the laboratory manual for further details regarding tissue collection, shipping and storage.", "rows": [{"row": 19, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}], "pages": [{"pdf_page": 1, "doc_page": 40, "width_pt": 612.0, "height_pt": 792.0, "columns": [[85.0, 442.4], [442.4, 497.9], [497.9, 550.8]], "col_map": [null, 2, 3], "col_method": "header", "unreadable": null, "bands": [{"i": 0, "y0": 389.9, "y1": 434.9, "text": "Day", "kind": "header", "row": null, "status": "header"}, {"i": 1, "y0": 434.9, "y1": 454.0, "text": "Informed consent", "kind": "activity", "row": 2, "status": "matched", "mark_diff": []}, {"i": 2, "y0": 454.0, "y1": 473.4, "text": "IVRS/IWRS unique patient number obtained", "kind": "activity", "row": 3, "status": "matched", "mark_diff": []}, {"i": 3, "y0": 473.4, "y1": 492.1, "text": "Demographics", "kind": "activity", "row": 4, "status": "matched", "mark_diff": []}, {"i": 4, "y0": 492.1, "y1": 511.6, "text": "Medical and surgical history", "kind": "activity", "row": 5, "status": "matched", "mark_diff": []}, {"i": 5, "y0": 511.6, "y1": 543.2, "text": "Prior cancer therapies including radiotherapy, best response to priorchemotherapy regimen", "kind": "activity", "row": 6, "status": "matched", "mark_diff": []}, {"i": 6, "y0": 543.2, "y1": 562.3, "text": "History of blood transfusions", "kind": "activity", "row": 7, "status": "matched", "mark_diff": []}, {"i": 7, "y0": 562.3, "y1": 581.4, "text": "Inclusion/exclusion criteria", "kind": "activity", "row": 8, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 581.4, "y1": 600.8, "text": "ECOG performance status", "kind": "activity", "row": 9, "status": "matched", "mark_diff": []}, {"i": 9, "y0": 600.8, "y1": 619.9, "text": "Physical examination", "kind": "activity", "row": 10, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 619.9, "y1": 639.0, "text": "Vital signs (includes blood pressure, pulse and temperature), body weight", "kind": "activity", "row": 11, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 639.0, "y1": 658.1, "text": "Haematology / clinical chemistry", "kind": "activity", "row": 12, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 658.1, "y1": 677.2, "text": "Urinalysis", "kind": "activity", "row": 13, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 677.2, "y1": 696.6, "text": "Pregnancy test for women of childbearing potential", "kind": "activity", "row": 14, "status": "matched", "mark_diff": []}, {"i": 14, "y0": 696.6, "y1": 715.7, "text": "Confirmed as having non-Germline BRCA Mutated ovarian cancer", "kind": "activity", "row": 15, "status": "matched", "mark_diff": []}], "img": "../../NCT03402841_soa_pages/p01.png", "page_frac": 0.9775}, {"pdf_page": 2, "doc_page": 41, "width_pt": 612.0, "height_pt": 792.0, "columns": [[85.0, 442.4], [442.4, 497.9], [497.9, 550.8]], "col_map": [null, 2, 3], "col_method": "header", "unreadable": null, "bands": [{"i": 0, "y0": 85.3, "y1": 130.7, "text": "Day", "kind": "header", "row": null, "status": "header"}, {"i": 1, "y0": 130.7, "y1": 149.8, "text": "Tumour assessment", "kind": "activity", "row": 16, "status": "matched", "mark_diff": []}, {"i": 2, "y0": 149.8, "y1": 168.8, "text": "AEs (from time of consent)", "kind": "activity", "row": 17, "status": "matched", "mark_diff": []}, {"i": 3, "y0": 168.8, "y1": 187.9, "text": "Concomitant medications", "kind": "activity", "row": 18, "status": "matched", "mark_diff": []}, {"i": 4, "y0": 187.9, "y1": 220.0, "text": "Archival or fresh tumour biopsy sample for post treatment analysisconfirmation of HRD status", "kind": "activity", "row": 19, "status": "matched", "mark_diff": []}], "img": "../../NCT03402841_soa_pages/p02.png", "page_frac": 0.9775}], "review_items": [], "applied": [], "checks": {"on_page_not_extracted": [], "extracted_not_on_page": [], "audit_note": null, "mark_disagreements": [], "marks": 19, "page_marks": 19, "unreadable_pages": [], "rows_checked": true, "marks_checked": true}}, {"number": 2, "title": "Study Plan Detailing the Procedures", "type": "main_soa", "doc_pages": [42, 44], "sidecar": "NCT03402841_Table_02_corrections.json", "data_cols": [2, 3, 4, 5, 6, 7, 8], "visit_hdr": {"2": "2", "3": "3", "4": "Visit No. 4 and subsequent tumour assessment visits", "5": "Visit No. 5 and subsequent safety visits (For the first 12 months only)", "6": "Study treatment discontinued", "7": "Follow up 30 days after last dose of study medication", "8": "Long-term follow up"}, "week_hdr": {}, "props": [{"row": 1, "name": "Visit Number or type", "type": "visit"}, {"row": 2, "name": "Day", "type": "study_day"}, {"row": 3, "name": "Visit Window", "type": "window"}], "activities": [{"row": 4, "name": "Physical examination", "indent": 0, "doc_page": 42, "markers": ["c"], "marks": [2], "band": [3, 3], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 5, "name": "Vital signs, body weight (includes blood pressure, pulse and temperature)", "indent": 0, "doc_page": 42, "markers": ["c"], "marks": [2], "band": [3, 4], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 6, "name": "ECOG performance status", "indent": 0, "doc_page": 42, "markers": [], "marks": [2, 4, 6], "band": [3, 5], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 7, "name": "Haematology / clinical chemistry", "indent": 0, "doc_page": 42, "markers": ["d"], "marks": [2, 3, 4, 5, 6, 7], "band": [3, 6], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 8, "name": "Urinalysis", "indent": 0, "doc_page": 42, "markers": ["c"], "marks": [2], "band": [3, 7], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 9, "name": "Pregnancy test", "indent": 0, "doc_page": 42, "markers": ["e"], "marks": [2, 3, 4, 5, 7], "band": [3, 8], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 10, "name": "Tumour assessment", "indent": 0, "doc_page": 42, "markers": ["f"], "marks": [4], "band": [3, 9], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 11, "name": "Blood sample for ctDNA", "indent": 0, "doc_page": 42, "markers": [], "marks": [2, 6], "band": [3, 10], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 12, "name": "Blood sample for restrospective gBRCA test", "indent": 0, "doc_page": 42, "markers": ["g"], "marks": [2], "band": [3, 11], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 13, "name": "AEs", "indent": 0, "doc_page": 42, "markers": ["h"], "marks": [2, 3, 4, 5, 6, 7], "band": [3, 12], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 14, "name": "FACT-O and EQ-5D-5L questionnaires", "indent": 0, "doc_page": 42, "markers": [], "marks": [2, 3, 4, 6, 7], "band": [3, 13], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 15, "name": "Concomitant medications including blood transfusions", "indent": 0, "doc_page": 43, "markers": [], "marks": [2, 3, 4, 5, 6, 7], "band": [4, 3], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 16, "name": "Olaparib dispensed/returned", "indent": 0, "doc_page": 43, "markers": [], "marks": [2, 3, 4, 6], "band": [4, 4], "is_header": false, "is_redacted": false, "name_composed": false}, {"row": 17, "name": "Subsequent cancer therapy following discontinuation of study treatment", "indent": 0, "doc_page": 43, "markers": ["k"], "marks": [7, 8], "band": [4, 5], "is_header": false, "is_redacted": false, "name_composed": true}, {"row": 18, "name": "Time to subsequent therapy and Survival", "indent": 0, "doc_page": 43, "markers": ["l"], "marks": [8], "band": [4, 6], "is_header": false, "is_redacted": false, "name_composed": true}], "annotations": [{"marker": "a", "type": "footnote", "text": "From Visit 3 onwards, visits will take place on the first day of each 4-week visit period, relative to the date of the first olaparib dose (if the patient has not progressed and is still on treatment). Where the visit does not coincide with tumour assessment visits, these safety visits will only be for laboratory and pregnancy testing and recording of ECOG status, AEs and concomitant medication including transfusions. Where these visits coincide with tumour assessments, the assessment visit schedule will be performed", "rows": [], "prop_rows": [], "other": [{"row": 1, "col": 5, "method": null, "type": "schedule_cell"}, {"row": 2, "col": 4, "method": null, "type": "schedule_cell"}]}, {"marker": "b", "type": "footnote", "text": "If assessed within 7 days before first dose and meets the stated eligibility criteria (if applicable), it does not need to be repeated on Day 1 of study treatment unless Investigator believes that it is likely to have changed significantly.", "rows": [], "prop_rows": [], "other": [{"row": 4, "col": 2, "method": null, "type": "schedule_cell"}, {"row": 5, "col": 2, "method": null, "type": "schedule_cell"}, {"row": 7, "col": 2, "method": null, "type": "schedule_cell"}, {"row": 8, "col": 2, "method": null, "type": "schedule_cell"}]}, {"marker": "c", "type": "footnote", "text": "To be additionally performed if clinically indicated at any other time.", "rows": [{"row": 4, "col": null, "method": null, "type": "activity_name"}, {"row": 5, "col": null, "method": null, "type": "activity_name"}, {"row": 8, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "d", "type": "footnote", "text": "All samples should be taken prior to first dose. Coagulation test should be performed if clinically indicated. For a list of all required laboratory tests please refer to Section 5.2.1.", "rows": [{"row": 7, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "e", "type": "footnote", "text": "Pregnancy tests on blood or urine samples will be performed for women of childbearing potential within 28 days prior to the start of study treatment, on Day 1 of the study prior to commencing treatment, at the time points shown in Table 2 during study treatment and at the 30-day follow-up visit. If results are positive the patient is ineligible/must be discontinued from study treatment immediately.", "rows": [{"row": 9, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "f", "type": "footnote", "text": "Visit 4 onwards: Subsequent tumour assessments will be conducted every 8 weeks (±7 days) for the first 12 months and then every 12 weeks (± 7 days) until documented disease progression.", "rows": [{"row": 10, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "g", "type": "footnote", "text": "Unless patient was tested at Myriad as part of screening. All patients are required to provide a 9 ml blood sample for confirmation of gBRCA status. Please refer to the laboratory manual for further details regarding blood sample collection,shipping and storage.", "rows": [{"row": 12, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "h", "type": "footnote", "text": "All ongoing AEs/SAEs and any new AEs/SAEs identified during the 30 calendar days follow-up period after last dose of study medication must be followed to resolution.", "rows": [{"row": 13, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "j", "type": "footnote", "text": "+/- 2 days visit window allowed for the dispensing. Sufficient study treatment should be dispensed for at least each treatment period plus overage; however, additional treatment can be dispensed to patients to last longer if required.", "rows": [], "prop_rows": [], "other": [{"row": 16, "col": 3, "method": null, "type": "schedule_cell"}, {"row": 16, "col": 4, "method": null, "type": "schedule_cell"}]}, {"marker": "k", "type": "footnote", "text": "Start date of the first anticancer treatments (including, but not limited to, chemotherapy and targeted agents), following discontinuation from study treatment must be recorded.", "rows": [{"row": 17, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}, {"marker": "l", "type": "footnote", "text": "Patient will be followed (can be by phone or email) regularly until start of subsequent therapy; survival will be followed at approximately 12 weekly intervals thereafter.", "rows": [{"row": 18, "col": null, "method": null, "type": "activity_name"}], "prop_rows": [], "other": []}], "pages": [{"pdf_page": 3, "doc_page": 42, "width_pt": 792.0, "height_pt": 612.0, "columns": [[72.0, 211.0], [211.0, 236.5], [236.5, 264.6], [265.0, 389.5], [389.5, 504.0], [504.0, 589.3], [589.3, 688.3], [688.3, 759.2]], "col_map": [null, 2, 3, 4, null, 6, 7, 8], "col_method": "header", "unreadable": null, "bands": [{"i": 0, "y0": 105.5, "y1": 161.6, "text": "Visit Number or type", "kind": "header", "row": null, "status": "header"}, {"i": 1, "y0": 161.6, "y1": 240.1, "text": "Day", "kind": "header", "row": null, "status": "header"}, {"i": 2, "y0": 240.1, "y1": 258.1, "text": "Visit Window", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 258.1, "y1": 276.1, "text": "Physical examination", "kind": "activity", "row": 4, "status": "matched", "mark_diff": []}, {"i": 4, "y0": 276.1, "y1": 317.2, "text": "Vital signs, body weight(includes blood pressure, pulseand temperature)", "kind": "activity", "row": 5, "status": "matched", "mark_diff": []}, {"i": 5, "y0": 317.2, "y1": 335.2, "text": "ECOG performance status", "kind": "activity", "row": 6, "status": "matched", "mark_diff": []}, {"i": 6, "y0": 335.2, "y1": 364.7, "text": "Haematology / clinicalchemistry", "kind": "activity", "row": 7, "status": "matched", "mark_diff": []}, {"i": 7, "y0": 364.7, "y1": 382.7, "text": "Urinalysis", "kind": "activity", "row": 8, "status": "matched", "mark_diff": []}, {"i": 8, "y0": 382.7, "y1": 400.7, "text": "Pregnancy test", "kind": "activity", "row": 9, "status": "matched", "mark_diff": []}, {"i": 9, "y0": 400.7, "y1": 418.7, "text": "Tumour assessment", "kind": "activity", "row": 10, "status": "matched", "mark_diff": []}, {"i": 10, "y0": 418.7, "y1": 436.7, "text": "Blood sample for ctDNA", "kind": "activity", "row": 11, "status": "matched", "mark_diff": []}, {"i": 11, "y0": 436.7, "y1": 466.2, "text": "Blood sample for restrospectivegBRCA test", "kind": "activity", "row": 12, "status": "matched", "mark_diff": []}, {"i": 12, "y0": 466.2, "y1": 484.2, "text": "AEs", "kind": "activity", "row": 13, "status": "matched", "mark_diff": []}, {"i": 13, "y0": 484.2, "y1": 513.7, "text": "FACT-O and EQ-5D-5Lquestionnaires", "kind": "activity", "row": 14, "status": "matched", "mark_diff": []}], "img": "../../NCT03402841_soa_pages/p03.png", "page_frac": 0.9711}, {"pdf_page": 4, "doc_page": 43, "width_pt": 792.0, "height_pt": 612.0, "columns": [[72.0, 211.0], [211.0, 236.5], [236.5, 264.6], [265.0, 389.5], [389.5, 504.0], [504.0, 589.3], [589.3, 688.3], [688.3, 759.2]], "col_map": [null, 2, 3, 4, null, 6, 7, 8], "col_method": "header", "unreadable": null, "bands": [{"i": 0, "y0": 85.3, "y1": 141.5, "text": "Visit Number or type", "kind": "header", "row": null, "status": "header"}, {"i": 1, "y0": 141.5, "y1": 220.0, "text": "Day", "kind": "header", "row": null, "status": "header"}, {"i": 2, "y0": 220.0, "y1": 238.0, "text": "Visit Window", "kind": "header", "row": null, "status": "header"}, {"i": 3, "y0": 238.0, "y1": 267.5, "text": "Concomitant medicationsincluding blood transfusions", "kind": "activity", "row": 15, "status": "matched", "mark_diff": []}, {"i": 4, "y0": 267.5, "y1": 285.5, "text": "Olaparib dispensed/returned", "kind": "activity", "row": 16, "status": "matched", "mark_diff": []}, {"i": 5, "y0": 285.5, "y1": 326.5, "text": "Subsequent cancer therapyfollowing discontinuation ofstudy treatment", "kind": "activity", "row": 17, "status": "matched", "mark_diff": []}, {"i": 6, "y0": 326.5, "y1": 356.0, "text": "Time to subsequent therapy andSurvival", "kind": "activity", "row": 18, "status": "matched", "mark_diff": []}], "img": "../../NCT03402841_soa_pages/p04.png", "page_frac": 0.9711}, {"pdf_page": 5, "doc_page": 44, "width_pt": 792.0, "height_pt": 612.0, "columns": [], "col_map": [], "col_method": "none", "unreadable": "no rule-line grid detected", "bands": [], "img": "../../NCT03402841_soa_pages/p05.png", "page_frac": 0.9711}], "review_items": [], "applied": [], "checks": {"on_page_not_extracted": [], "extracted_not_on_page": [], "audit_note": null, "mark_disagreements": [], "marks": 45, "page_marks": 45, "unreadable_pages": [{"doc_page": 44, "reason": "no rule-line grid detected"}], "rows_checked": true, "marks_checked": true}}], "decided": {}, "review_status": {"total": 0, "open": 0, "decided": 0}, "across": {"folds": [], "review_queue": [], "stats": {"exact": 0, "fuzzy_auto": 0, "fuzzy_cross_parent": 0, "fuzzy_review": 0, "new": 33}}};
+const S = {t:0, page:0, selRow:null, selProp:null, noteRows:[], altRows:[], foldRows:[], choice:{}};
+const T = () => D.tables[S.t];
+const byRow = () => { const m={}; T().activities.forEach(a=>m[a.row]=a); return m; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rowLabel = (r, t) => { const tb = t===undefined ? T() : D.tables.find(x=>x.number===t); const a = tb && tb.activities.find(a=>a.row===r); return a ? a.name : ('row '+r); };
+const scrollRowIntoView = tr => { const w=document.getElementById('tablewrap'); w.scrollTo({top:Math.max(0,tr.offsetTop-w.clientHeight/2),behavior:'smooth'}); };
+const tableIndex = num => D.tables.findIndex(t=>t.number===num);
+
+// ---------- tiles (protocol level)
+(function(){
+ const acts = D.tables.reduce((n,t)=>n+t.activities.length,0), marks = D.tables.reduce((n,t)=>n+t.checks.marks,0);
+ const notes = D.tables.reduce((n,t)=>n+t.annotations.length,0);
+ const missed = D.tables.reduce((n,t)=>n+t.checks.on_page_not_extracted.length,0);
+ const unplaced = D.tables.reduce((n,t)=>n+t.checks.extracted_not_on_page.length,0);
+ const badRows = new Set(); D.tables.forEach(t=>t.checks.mark_disagreements.forEach(d=>badRows.add(t.number+':'+d.row)));
+ const badCells = D.tables.reduce((n,t)=>n+t.checks.mark_disagreements.length,0);
+ const rs = D.review_status, rq = D.across.review_queue.length;
+ // A check that saw no readable page is not a pass: say "not checked" and why.
+ const rowsUnchecked = D.tables.filter(t=>!t.checks.rows_checked), marksUnchecked = D.tables.filter(t=>!t.checks.marks_checked);
+ const reasons = (ts, marks) => [...new Set(ts.flatMap(t=>t.checks.unreadable_pages.map(u=>u.reason.split(' — ')[0]).concat(marks&&t.checks.rows_checked?['column headers could not be read']:[])))].join('; ');
+ const partial = (ts, base, marks) => ts.length ? `${base} · ${ts.map(t=>'Table '+t.number).join(', ')} not checked: ${reasons(ts, marks)}` : base;
+ const rowsTile = rowsUnchecked.length===D.tables.length
+   ? ['', 'Printed rows missed', 'not checked', reasons(rowsUnchecked)]
+   : [missed?'bad':(rowsUnchecked.length?'warn':'ok'), 'Printed rows missed', missed, partial(rowsUnchecked, missed ? 'row bands on the pages with no extracted row' : 'every printed row the checker could read is extracted')];
+ const marksTile = marksUnchecked.length===D.tables.length
+   ? ['', 'Mark check', 'not checked', reasons(marksUnchecked, true)]
+   : [badRows.size||marksUnchecked.length?'warn':'ok', 'Mark check', badRows.size ? `${badRows.size} row${badRows.size!==1?'s':''}` : 'agrees', partial(marksUnchecked, badRows.size ? `${badCells} cells differ between page text and extraction — open the row to judge` : 'page text and extraction agree on every mark', true)];
+ document.getElementById('tiles').innerHTML = [
+  ['', 'Extracted', `${acts} activities`, `${D.tables.length} table${D.tables.length!==1?'s':''} · ${marks} marks · ${notes} notes`],
+  rowsTile,
+  [unplaced?'warn':'ok', 'Rows the checker could not place', unplaced, 'extracted rows with no matching page band (section headings, composed names, packed rows)'],
+  marksTile,
+  [rs.open||rq?'warn':'ok', 'Decisions open', (rs.open+rq), `${rs.decided} of ${rs.total} extraction calls decided · ${rq} consolidation match${rq!==1?'es':''} to review`],
+ ].map(([c,k,v,d])=>`<div class="tile ${c}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
+})();
+
+// ---------- table + page tabs
+function buildTabs(){
+ const tt=document.getElementById('tabletabs'); tt.innerHTML='';
+ D.tables.forEach((t,i)=>{ const b=document.createElement('button'); b.className='tbl'+(i===S.t?' on':''); b.textContent='Table '+t.number; b.title=t.title; b.onclick=()=>showTable(i); tt.appendChild(b); });
+ const pt=document.getElementById('pagetabs'); pt.innerHTML='';
+ T().pages.forEach((p,i)=>{ const b=document.createElement('button'); b.className=i===S.page?'on':''; b.textContent='p.'+p.doc_page; b.title='document page '+p.doc_page+' — sequence position in the source protocol PDF (printed page footers are not used)'; b.onclick=()=>showPage(i); pt.appendChild(b); });
+}
+function showTable(i){ S.t=i; S.page=0; S.selRow=null; S.selProp=null; S.noteRows=[]; S.altRows=[]; S.foldRows=[]; buildTabs(); buildTable(); buildDecisions(); buildNotes(); buildChecks(); showPage(0); }
+
+function showPage(i){
+ S.page=i; const p=T().pages[i]; if(!p) return;
+ [...document.getElementById('pagetabs').children].forEach((b,j)=>b.classList.toggle('on',j===i));
+ document.getElementById('pageimg').src=p.img;
+ const svg=document.getElementById('overlay');
+ // The image carries a caption strip below the page bitmap; the overlay must map onto the page region only.
+ svg.style.height=(p.page_frac*100)+'%';
+ svg.setAttribute('viewBox',`0 0 ${p.width_pt} ${p.height_pt}`); svg.setAttribute('preserveAspectRatio','none');
+ if(!p.columns.length){ svg.innerHTML=''; return; }
+ const x0=p.columns[0][0], x1=p.columns[p.columns.length-1][1];
+ const showRows=document.getElementById('lyRows').checked, showMarks=document.getElementById('lyMarks').checked, showHdr=document.getElementById('lyHdr').checked;
+ let h='';
+ p.bands.forEach(b=>{
+  const cls=['band', b.kind==='header'?'header':(b.status==='matched'?'matched':(b.status==='unmatched'?'unmatched':'blank'))];
+  const hl = b.row!==null && (b.row===S.selRow||S.noteRows.includes(b.row)||S.altRows.includes(b.row)||S.foldRows.includes(b.row));
+  if(b.row!==null && b.row===S.selRow) cls.push('sel');
+  if(b.row!==null && S.foldRows.includes(b.row)) cls.push('fold');
+  if(b.row!==null && S.noteRows.includes(b.row)) cls.push('note');
+  if(b.row!==null && S.altRows.includes(b.row)) cls.push('alt');
+  if(b.kind==='header' && S.selProp===b.i+1) cls.push('sel');
+  const hide = (!showRows && !hl && !(b.kind==='header'&&S.selProp===b.i+1)) || (b.kind==='header' && !showHdr && S.selProp!==b.i+1);
+  h+=`<rect class="${cls.join(' ')}" data-i="${b.i}" x="${x0}" y="${b.y0}" width="${x1-x0}" height="${b.y1-b.y0}"${hide?' style="stroke:transparent;fill:transparent"':''}><title>${esc(b.text||'(no label text)')}${b.row!==null?' → '+esc(rowLabel(b.row)):(b.status==='unmatched'?' — not matched to an extracted row':'')}</title></rect>`;
+  if(showMarks && b.mark_diff && b.mark_diff.length) b.mark_diff.forEach(c=>{ const col=p.columns[c-1]; if(col) h+=`<rect class="cellbad" x="${col[0]}" y="${b.y0}" width="${col[1]-col[0]}" height="${b.y1-b.y0}"/>`; });
+ });
+ svg.innerHTML=h;
+ svg.querySelectorAll('.band').forEach(r=>r.onclick=()=>{ const b=p.bands[+r.dataset.i]; if(b.row!==null) selectRow(b.row,true); else if(b.kind==='header') selectProp(b.i+1); });
+}
+['lyRows','lyMarks','lyHdr'].forEach(id=>document.getElementById(id).onchange=()=>showPage(S.page));
+
+function clearHighlights(){ document.querySelectorAll('#soa tr.sel,#soa tr.note,#soa tr.alt,#soa tr.fold').forEach(t=>t.classList.remove('sel','note','alt','fold')); }
+function selectRow(r, fromPage){
+ S.selRow=r; S.selProp=null;
+ const a=byRow()[r];
+ if(a && a.band[0]!==null){ const pi=T().pages.findIndex(p=>p.pdf_page===a.band[0]); showPage(pi>=0?pi:S.page); if(!fromPage) scrollToBand(a.band[1]); } else showPage(S.page);
+ document.querySelectorAll('#soa tr.sel').forEach(t=>t.classList.remove('sel'));
+ const tr=document.querySelector(`#soa tr[data-row="${r}"]`); if(tr){ tr.classList.add('sel'); if(fromPage) scrollRowIntoView(tr); }
+}
+function selectProp(pr){ S.selProp=pr; S.selRow=null; showPage(S.page); document.querySelectorAll('#soa tr.sel').forEach(t=>t.classList.remove('sel')); const tr=document.querySelector(`#soa tr[data-prop="${pr}"]`); if(tr) tr.classList.add('sel'); }
+function scrollToBand(i){ const p=T().pages[S.page], b=p.bands[i]; if(!b) return; const wrap=document.getElementById('pagewrap'), img=document.getElementById('pageimg'); const y=(b.y0/p.height_pt)*img.clientHeight; wrap.scrollTo({top:Math.max(0,y-wrap.clientHeight/2+10),behavior:'smooth'}); }
+function gotoRow(tableNum, row, cls){
+ const ti=tableIndex(tableNum); if(ti<0) return;
+ if(ti!==S.t) showTable(ti);
+ S.foldRows=cls==='fold'?[row]:[]; selectRow(row,false);
+ const tr=document.querySelector(`#soa tr[data-row="${row}"]`); if(tr){ scrollRowIntoView(tr); if(cls) tr.classList.add(cls); }
+ showPage(S.page);
+}
+
+// ---------- table pane
+function buildTable(){
+ const t=T(), el=document.getElementById('soa'), cols=t.data_cols;
+ const foldsByRow={}; D.across.folds.forEach(f=>f.sources.forEach(s=>{ if(s.table===t.number) (foldsByRow[s.row]=foldsByRow[s.row]||[]).push(f); }));
+ const badByRow={}; t.checks.mark_disagreements.forEach(d=>{(badByRow[d.row]=badByRow[d.row]||[]).push(d.col)});
+ let h='<thead><tr><th>Activity</th>'+cols.map(c=>`<th>${esc(t.visit_hdr[c]||'')}</th>`).join('')+'</tr>';
+ h+='<tr><th class="small">'+(t.week_hdr && Object.keys(t.week_hdr).length?'week':'')+'</th>'+cols.map(c=>`<th>${esc(t.week_hdr[c]||'')}</th>`).join('')+'</tr></thead><tbody>';
+ t.props.forEach(p=>{ h+=`<tr class="hdr" data-prop="${p.row}"><td class="name">${esc(p.name)} <span class="badge cm">header · ${esc(p.type)}</span></td><td colspan="${cols.length}" class="small">header row ${p.row}</td></tr>`; });
+ t.activities.forEach(a=>{
+  const marks=new Set(a.marks), bad=new Set(badByRow[a.row]||[]);
+  const badges=[];
+  if(a.is_redacted) badges.push('<span class="badge red" title="activity name redacted in the public protocol">redacted</span>');
+  if(a.band[0]===null) badges.push('<span class="badge nf" title="the page checker could not find this row in any rule-line band">not placed on page</span>');
+  if(a.name_composed) badges.push('<span class="badge cm" title="the name was composed from more than one printed cell">composed name</span>');
+  if(bad.size) badges.push(`<span class="badge bad">${bad.size} marks differ</span>`);
+  (foldsByRow[a.row]||[]).forEach(f=>{ const others=f.sources.filter(s=>!(s.table===t.number&&s.row===a.row)); badges.push(`<span class="badge fold" data-x="${f.xact_id}" title="${esc(f.status)} — same activity as: ${esc(others.map(o=>'Table '+o.table+' row '+o.row).join(', '))}">${f.status==='exact'?'also in':'matched to'} ${others.map(o=>'T'+o.table).join(' ')}</span>`); });
+  const sups=a.markers.map(m=>`<sup class="mk" data-m="${esc(m)}" title="note ${esc(m)}">${esc(m)}</sup>`).join('');
+  h+=`<tr class="act${a.is_header?' sect':''}" data-row="${a.row}"><td class="name" style="padding-left:${a.indent*18+4}px">${esc(a.name)}${sups}${badges.join('')}${a.doc_page?`<span class="small" style="float:right">p.${a.doc_page}</span>`:''}</td>`;
+  cols.forEach(c=>{ h+=`<td class="mark${bad.has(c)?' bad':''}">${marks.has(c)?'✕':''}</td>`; });
+  h+='</tr>';
+ });
+ el.innerHTML=h+'</tbody>';
+ el.querySelectorAll('tr.act').forEach(tr=>tr.onclick=e=>{ if(e.target.classList.contains('mk')||e.target.classList.contains('fold')) return; S.noteRows=[];S.altRows=[];S.foldRows=[]; clearHighlights(); selectRow(+tr.dataset.row,false); });
+ el.querySelectorAll('tr.hdr').forEach(tr=>tr.onclick=()=>selectProp(+tr.dataset.prop));
+ el.querySelectorAll('sup.mk').forEach(s=>s.onclick=e=>{e.stopPropagation(); showNote(s.dataset.m); switchTab('notes');});
+ el.querySelectorAll('.badge.fold').forEach(b=>b.onclick=e=>{e.stopPropagation(); showFold(b.dataset.x); switchTab('across');});
+}
+
+// ---------- side tabs
+function switchTab(n){ document.querySelectorAll('#sidetabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===n)); ['dec','notes','check','across'].forEach(k=>document.getElementById('tab-'+k).classList.toggle('hidden',k!==n)); }
+document.querySelectorAll('#sidetabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.t));
+
+// ---------- decisions (review_items of the current table + consolidation's review_queue)
+function buildDecisions(){
+ const t=T(), el=document.getElementById('tab-dec');
+ const items=t.review_items, rq=D.across.review_queue;
+ document.getElementById('ndec').textContent = D.review_status.open + rq.length;
+ let h='';
+ if(!items.length && !t.applied.length) h+=`<p class="small">This table carries no review items${D.review_status.total?'':' — the extraction predates the field (prompt v3.8.0), so its open calls, if any, are only in the extraction log'}.</p>`;
+ else h+='<p class="small">Calls the extractor made that could reasonably go the other way. Click one to see it on the page (call in purple, alternative rows in blue where the call names them). Choosing drafts a sidecar entry below; nothing is saved from here.</p>';
+ items.forEach(d=>{
+  const done=D.decided[d.id];
+  const where=[`document page ${d.location.page}`, d.location.row_position?`row ${d.location.row_position}`:'', d.location.row_positions?`rows ${d.location.row_positions.join(', ')}`:'', d.location.annotation_marker?`note ${d.location.annotation_marker}`:''].filter(Boolean).join(' · ');
+  h+=`<div class="dec${done?' done':''}" data-id="${d.id}"><div class="t">${d.id} <span class="pill ${d.severity}">${d.severity}</span>${done?`<span class="pill done">decided · ${esc(done)}</span>`:''}</div><div class="w">${esc(where)} · report §${esc(d.report_section)}</div>
+   <div class="c"><b>Call made:</b> ${esc(d.call_made)}</div><div class="c a"><b>Alternative:</b> ${esc(d.alternative)}</div>
+   ${done?'':`<div class="btns"><button class="keep" data-id="${d.id}" data-c="keep">keep the call</button><button class="alt" data-id="${d.id}" data-c="alt">take the alternative</button></div>`}</div>`;
+ });
+ rq.forEach((q,i)=>{
+  h+=`<div class="dec" data-q="${i}"><div class="t">Consolidation match <span class="pill cons">from consolidation</span></div><div class="w">${esc(q.xact_id)} · similarity ${Number(q.confidence).toFixed(2)}</div>
+   <div class="c"><b>Call made:</b> "${esc(q.new_name)}" was treated as the same activity as "${esc(q.existing_name)}".</div><div class="c a"><b>Alternative:</b> keep them as two activities.</div>
+   <div class="small">Consolidation has no sidecar yet — record this in the protocol's review notes for now.</div></div>`;
+ });
+ if(t.applied.length) h+=`<h3 style="font-size:13px;margin:14px 0 4px">Corrections applied to this table (${t.applied.length})</h3><ul class="plain small">${t.applied.map(a=>`<li><b>${esc(a.id)}</b> ${esc(a.op)} ${esc(a.target)}${a.review_item?` → ${esc(a.review_item)}`:''} — ${esc(a.reason)} <i>(${esc(a.by)}, ${esc(a.at.slice(0,10))})</i></li>`).join('')}</ul>`;
+ h+=`<h3 style="font-size:13px;margin:14px 0 4px">Draft for <code>${esc(t.sidecar||'the corrections sidecar')}</code></h3><input id="reviewer" placeholder="your name, as it should appear in the sidecar" value="${esc(S.reviewer||'')}"><textarea id="draft" readonly placeholder="Choose 'keep the call' or 'take the alternative' above to draft sidecar entries here. 'Keep' drafts a complete confirm entry; 'alternative' drafts the entry skeleton with the review item and its location filled in."></textarea>`;
+ el.innerHTML=h;
+ el.querySelectorAll('.dec[data-id]').forEach(c=>c.onclick=e=>{ if(e.target.tagName==='BUTTON') return; showDecision(c.dataset.id); });
+ el.querySelectorAll('.dec[data-q]').forEach(c=>c.onclick=()=>showQueue(+c.dataset.q));
+ el.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{ S.choice[b.dataset.id]=b.dataset.c; el.querySelectorAll(`.btns button[data-id="${b.dataset.id}"]`).forEach(x=>x.classList.toggle('on',x===b)); showDecision(b.dataset.id); renderDraft(); });
+ document.getElementById('reviewer').oninput=e=>{ S.reviewer=e.target.value; renderDraft(); };
+ renderDraft();
+}
+function showDecision(id){
+ const t=T(), d=t.review_items.find(x=>x.id===id); if(!d) return;
+ document.querySelectorAll('.dec').forEach(c=>c.classList.toggle('on',c.dataset.id===id));
+ const rows=d.location.row_positions||(d.location.row_position?[d.location.row_position]:[]);
+ const m=byRow();
+ S.noteRows=rows.filter(r=>m[r]); S.altRows=[]; S.foldRows=[]; S.selRow=null; S.selProp=null;
+ clearHighlights();
+ S.noteRows.forEach(r=>{ const tr=document.querySelector(`#soa tr[data-row="${r}"]`); if(tr) tr.classList.add('note'); });
+ if(!S.noteRows.length && d.location.row_position && t.props.some(p=>p.row===d.location.row_position)){ S.selProp=d.location.row_position; const tr=document.querySelector(`#soa tr[data-prop="${S.selProp}"]`); if(tr) tr.classList.add('sel'); }
+ if(!rows.length && d.location.annotation_marker){ const a=t.annotations.find(x=>x.marker===d.location.annotation_marker); if(a){ S.noteRows=a.rows.map(r=>r.row).filter(r=>r!=null); if(a.prop_rows.length) S.selProp=a.prop_rows[0].row; } }
+ const first=S.noteRows.map(r=>m[r]).find(a=>a&&a.band[0]!==null);
+ const pi = first ? t.pages.findIndex(p=>p.pdf_page===first.band[0]) : t.pages.findIndex(p=>p.doc_page===d.location.page);
+ showPage(pi>=0?pi:S.page);
+ if(first) scrollToBand(first.band[1]); else document.getElementById('pagewrap').scrollTo({top:0,behavior:'smooth'});
+ const tr=document.querySelector('#soa tr.note,#soa tr.sel'); if(tr) scrollRowIntoView(tr);
+}
+function showQueue(i){
+ const q=D.across.review_queue[i]; const f=D.across.folds.find(x=>x.xact_id===q.xact_id);
+ document.querySelectorAll('.dec').forEach(c=>c.classList.toggle('on',c.dataset.q==i));
+ if(f) showFold(f.xact_id, true);
+}
+function renderDraft(){
+ const t=T(), el=document.getElementById('draft'); if(!el) return;
+ const now=new Date().toISOString().slice(0,19)+'Z', by=S.reviewer||'<reviewer>';
+ const entries=[]; let n=t.applied.length;
+ t.review_items.forEach(d=>{
+  const ch=S.choice[d.id]; if(!ch) return; n+=1; const id='corr-'+String(n).padStart(3,'0');
+  if(ch==='keep') entries.push({id, target:'annotations', op:'confirm', review_item:d.id, reason:'<why the call stands>', source_ref:{page:d.location.page}, by, at:now});
+  else {
+   const match={}; if(d.location.annotation_marker) match.annotation_marker=d.location.annotation_marker; else if(d.location.row_position) match.row_position=d.location.row_position;
+   entries.push({id, target: d.location.annotation_marker?'annotations':'activities', op:'set', match, set:{'<field>':'<value>'}, review_item:d.id, reason:'<why the alternative is right>', source_ref:{page:d.location.page}, by, at:now});
+  }
+ });
+ el.value = entries.length ? JSON.stringify(entries,null,2) : '';
+}
+
+// ---------- notes
+function buildNotes(){
+ const t=T(), el=document.getElementById('tab-notes');
+ document.getElementById('nnotes').textContent=t.annotations.length;
+ let h='<p class="small">Footnotes and instruction blocks bound to rows. Click one to see which rows it governs. An asterisk marks a binding the extractor inferred rather than read from a printed marker; "by name" means the note names the row rather than marking it.</p>';
+ t.annotations.forEach(a=>{
+  const rows=a.rows.map(r=>`${esc(rowLabel(r.row))}${r.method==='text_match'?' (by name)':(r.method&&r.method!=='proximity'?'*':'')}`);
+  const props=a.prop_rows.map(r=>`header row ${r.row}*`);
+  const other=a.other.map(r=>`${esc(r.type)}${r.row?' row '+r.row:''}${r.col?' col '+r.col:''}`);
+  h+=`<div class="notecard" data-m="${esc(a.marker)}"><span class="m">${esc(a.marker)}</span> <span class="small">${esc(a.type)}</span> <span class="rows">→ ${[...rows,...props,...other].join('; ')||'no row'}</span><div>${esc(a.text)}</div></div>`;
+ });
+ el.innerHTML=h;
+ el.querySelectorAll('.notecard').forEach(c=>c.onclick=()=>showNote(c.dataset.m));
+}
+function showNote(m){
+ const t=T(), a=t.annotations.find(x=>x.marker===m); if(!a) return;
+ document.querySelectorAll('.notecard').forEach(c=>c.classList.toggle('on',c.dataset.m===m));
+ document.querySelectorAll('.dec').forEach(c=>c.classList.remove('on'));
+ S.noteRows=a.rows.map(r=>r.row).filter(r=>r!=null); S.altRows=[]; S.foldRows=[]; S.selRow=null; S.selProp=a.prop_rows.length?a.prop_rows[0].row:null;
+ clearHighlights();
+ S.noteRows.forEach(r=>{const tr=document.querySelector(`#soa tr[data-row="${r}"]`); if(tr) tr.classList.add('note');});
+ const bm=byRow(), first=S.noteRows.map(r=>bm[r]).find(x=>x&&x.band[0]!==null);
+ if(first){ const pi=t.pages.findIndex(p=>p.pdf_page===first.band[0]); showPage(pi>=0?pi:S.page); scrollToBand(first.band[1]); const tr=document.querySelector(`#soa tr[data-row="${first.row}"]`); if(tr) scrollRowIntoView(tr); } else showPage(S.page);
+}
+
+// ---------- checks
+function buildChecks(){
+ const t=T(), c=t.checks, el=document.getElementById('tab-check'), m=byRow();
+ const badByRow={}; c.mark_disagreements.forEach(d=>{(badByRow[d.row]=badByRow[d.row]||[]).push(d)});
+ let h=`<p class="small">Independent checks for Table ${t.number}, re-derived from the PDF — not the extractor's own report.</p>`;
+ if(c.audit_note) h+=`<p class="small"><b>Row audit note:</b> ${esc(c.audit_note)}</p>`;
+ if(c.unreadable_pages.length){
+  const byReason={}; c.unreadable_pages.forEach(u=>{(byReason[u.reason]=byReason[u.reason]||[]).push('p.'+u.doc_page)});
+  h+=`<p class="small"><b>Pages the checker could not read${c.rows_checked?'':' — this table is not checked'}:</b> ${Object.entries(byReason).map(([r,ps])=>`${ps.join(', ')} — ${esc(r)}`).join('; ')}. Rows and marks on these pages appear below as unplaced or unchecked, not as errors.</p>`;
+ }
+ h+=`<h3 style="font-size:13px;margin:8px 0 4px">Printed rows not extracted (${c.on_page_not_extracted.length})</h3>`;
+ h+=c.on_page_not_extracted.length? `<ul class="plain">${c.on_page_not_extracted.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : '<p class="small">None — every row band with a label the checker could read matches an extracted row.</p>';
+ h+=`<h3 style="font-size:13px;margin:12px 0 4px">Extracted rows the checker could not place (${c.extracted_not_on_page.length})</h3><p class="small">Usually section headings printed as full-width shaded bands, names composed from two cells, or tightly packed rows the band detector merged. Click to locate in the table.</p><ul class="plain">${c.extracted_not_on_page.map(r=>`<li><a href="#" data-row="${r}">${esc(rowLabel(r))}</a>${m[r]&&m[r].doc_page?` <span class="small">p.${m[r].doc_page}</span>`:''}</li>`).join('')}</ul>`;
+ const nb=Object.keys(badByRow).length;
+ h+=`<h3 style="font-size:13px;margin:12px 0 4px">Mark check (${nb} row${nb!==1?'s':''})</h3><p class="small">Every ✕ in the page's text layer, binned into the detected row band and column, compared with the extracted marks. A difference is either an extraction error or a band drawn at the wrong rule — look at the page before deciding.</p>`;
+ Object.entries(badByRow).forEach(([r,ds])=>{ h+=`<div><a href="#" data-row="${r}">${esc(rowLabel(+r))}</a>: ${ds.length} cells — ${ds.filter(d=>d.on_page).length} on page only, ${ds.filter(d=>d.extracted).length} extracted only</div>`; });
+ if(!nb) h+='<p class="small">No differences.</p>';
+ h+=`<p class="small" style="margin-top:12px">${c.marks} extracted marks in this table. Column identity per page: ${t.pages.map(p=>`p.${p.doc_page} ${p.col_method==='header'?'read from the header row':p.col_method==='position'?'by position':'<b>could not be read — marks unchecked</b>'}`).join('; ')}.</p>`;
+ el.innerHTML=h;
+ el.querySelectorAll('a[data-row]').forEach(a=>a.onclick=e=>{e.preventDefault(); S.noteRows=[];S.altRows=[];S.foldRows=[]; clearHighlights(); selectRow(+a.dataset.row,false); const tr=document.querySelector(`#soa tr[data-row="${a.dataset.row}"]`); if(tr) scrollRowIntoView(tr);});
+}
+
+// ---------- across tables (protocol level)
+(function(){
+ const el=document.getElementById('tab-across'), A=D.across;
+ const nonexact=A.folds.filter(f=>f.status!=='exact'), exact=A.folds.filter(f=>f.status==='exact');
+ document.getElementById('nacross').textContent=A.folds.length;
+ const st=A.stats||{};
+ let h=`<p class="small">Rows consolidation treated as the same activity across tables. Exact name matches are collapsed below; anything matched on similarity is listed first. Click a source to see that row on its page.</p>`;
+ if(!A.folds.length) h+='<p class="small">Single-table protocol, or no activity appears in more than one table.</p>';
+ const card=f=>`<div class="foldcard" data-x="${f.xact_id}"><b>${esc(f.name)}</b> <span class="pill cons">${esc(f.status)}${f.status!=='exact'?' · '+Number(f.confidence).toFixed(2):''}</span>${f.variations.length>1?`<div class="small">printed as: ${f.variations.map(esc).join(' / ')}</div>`:''}<div class="small">${f.sources.map(s=>`<span class="src" data-t="${s.table}" data-r="${s.row}">Table ${s.table} row ${s.row}</span>`).join(' · ')}</div></div>`;
+ if(nonexact.length) h+=`<h3 style="font-size:13px;margin:8px 0 4px">Matched on similarity (${nonexact.length})</h3>`+nonexact.map(card).join('');
+ if(exact.length) h+=`<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600;font-size:13px">Same name in more than one table (${exact.length})</summary>${exact.map(card).join('')}</details>`;
+ if(Object.keys(st).length) h+=`<p class="small" style="margin-top:12px">Consolidation counts: ${Object.entries(st).map(([k,v])=>`${esc(k)} ${v}`).join(' · ')}.</p>`;
+ el.innerHTML=h;
+ el.querySelectorAll('.src').forEach(s=>s.onclick=e=>{ e.stopPropagation(); gotoRow(+s.dataset.t,+s.dataset.r,'fold'); });
+ el.querySelectorAll('.foldcard').forEach(c=>c.onclick=()=>showFold(c.dataset.x));
+})();
+function showFold(x, jump){
+ const f=D.across.folds.find(y=>y.xact_id===x); if(!f) return;
+ document.querySelectorAll('.foldcard').forEach(c=>c.classList.toggle('on',c.dataset.x===x));
+ const here=f.sources.filter(s=>s.table===T().number);
+ if(here.length && !jump){ S.foldRows=here.map(s=>s.row); S.noteRows=[]; S.altRows=[]; S.selRow=null; clearHighlights(); here.forEach(s=>{const tr=document.querySelector(`#soa tr[data-row="${s.row}"]`); if(tr) tr.classList.add('fold');}); const m=byRow(), a=m[here[0].row]; if(a&&a.band[0]!==null){ const pi=T().pages.findIndex(p=>p.pdf_page===a.band[0]); showPage(pi>=0?pi:S.page); scrollToBand(a.band[1]); } else showPage(S.page); const tr=document.querySelector('#soa tr.fold'); if(tr) scrollRowIntoView(tr); }
+ else gotoRow(f.sources[0].table, f.sources[0].row, 'fold');
+}
+
+showTable(0);
+</script>
+</body></html>
