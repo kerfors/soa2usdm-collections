@@ -1,0 +1,87 @@
+[
+  {
+    "kind": "floor-placeholder",
+    "ref": "StudyArm",
+    "text": "One placeholder arm. The SoA does not state the study's arms."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "StudyElement",
+    "text": "One placeholder element, referenced by every cell."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "StudyCell",
+    "text": "One cell per epoch, all pointing at the placeholder arm and element."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "StudyDesignPopulation",
+    "text": "Placeholder population. includesHealthySubjects is asserted False because the attribute is mandatory."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "EligibilityCriterion",
+    "text": "One placeholder criterion. eligibilityCriteria is 1..* on StudyDesign, so it cannot be empty, but one is enough."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "EligibilityCriterionItem",
+    "text": "Item for the placeholder criterion."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "InterventionalStudyDesign.model",
+    "text": "Placeholder model code. The SoA does not state the design model."
+  },
+  {
+    "kind": "floor-placeholder",
+    "ref": "provenance",
+    "text": "10 floor objects carry the not-stated-in-protocol flag instead of a source reference. shellgen attributes everything it builds to the manifest's documentRef; a placeholder is not a reading of that document."
+  },
+  {
+    "kind": "chaining-rule",
+    "ref": "Activity.previousId/nextId",
+    "text": "Activities are chained within their parent, never across a parent boundary. 2 section headers carry childIds; their children form separate chains. Same rule shellgen applies to criteria groups: a chain is a sequence within one group, not a flattening of the tree."
+  },
+  {
+    "kind": "no-encounters",
+    "ref": "Encounter",
+    "text": "No encounterAxis declared. This SoA types its column properties as ['epoch', 'period', 'study_day'] -- none of them labels the columns as visits, so naming an Encounter per column would assert a classification the table does not print. Encounters are omitted; ScheduledActivityInstance.encounterId is 0..1 so the document stays conformant. To emit them, declare encounterAxis in the manifest, the same shape as epochAxis."
+  },
+  {
+    "kind": "extension-used",
+    "ref": "ScheduledActivityInstance.extensionAttributes",
+    "text": "activityIds is a plain set of references. This SoA prints 16 distinct mark values, so a reference alone loses everything except 'this activity happens in this column'. Non-'X' marks and cell-scoped footnote markers are carried in an ExtensionAttribute on 10 of the instances. USDM v4 has no cell-scoped annotation that is not a Condition."
+  },
+  {
+    "kind": "annotation-split",
+    "ref": "Condition vs ExtensionAttribute",
+    "text": "1 annotations carry cell references and map to Condition (contextIds x appliesToIds addresses a cell). The rest scope to whole activities (17 attachments) or whole columns (4) and are carried as ExtensionAttributes: USDM's cell-scoped annotation is Condition, and a source-section pointer or a definition is not a condition. 0 annotations reference neither and are not emitted."
+  },
+  {
+    "kind": "epoch-axis",
+    "ref": "ScheduledInstance.epochId",
+    "text": "Epoch resolved from consolidated property prop-001 (typed 'epoch'), 4 printed values mapped to declared epochs. 10 of 10 columns bound. This mapping is an interpretation of the extraction, not a fact the extraction records; it lives here and in this log rather than in the consolidated schema."
+  },
+  {
+    "kind": "timing-derived",
+    "ref": "Timing",
+    "text": "3 timings derived mechanically from property prop-003, anchored on xcol-003 ('D1 (±1)'). Only values matching a plain study day (optionally with a symmetric window) are converted; the offset is a difference of study days emitted as P<n>D. Columns outside the anchor's prop-002 value are excluded, because a day number that restarts per cycle is not a study day."
+  },
+  {
+    "kind": "timing-skipped",
+    "ref": "xcol-001, xcol-002, xcol-006, xcol-007, xcol-008, xcol-009, xcol-010",
+    "text": "No Timing emitted for: xcol-001 ('D-28 to D-15': not a plain study day); xcol-002 ('D-14 to D-1': not a plain study day); xcol-006 ('D1 (± 2)': outside the anchor's prop-002 value ('Cycle 2 and Beyond' vs 'Cycle 1')); xcol-007 ('30 (±7) days after last IMPs admin': not a plain study day); xcol-008 ('At 60 (±7) days after last IMPs admin': not a plain study day); xcol-009 ('At 90 (±7) days after last IMPs admin': not a plain study day); xcol-010 ('Every 90 days (±7) after last safety follow-up': not a plain study day). Each would need a reading the printed value does not mechanically supply."
+  },
+  {
+    "kind": "not-derived",
+    "ref": "ScheduleTimeline.entryCondition",
+    "text": "Mandatory (1). Not present in the SoA. Placeholder emitted."
+  },
+  {
+    "kind": "id-hygiene",
+    "ref": "SHELL_ / SOA_",
+    "text": "Shell and SoA ids are prefixed by producing stage before merging. JSON tolerates two objects with the same id in different arrays; RDF merges them into one node and the structural layer then reports a maxCount violation that reads nothing like a duplicate id. Duplicates after merge: 0. Dangling references: 0."
+  }
+]
