@@ -8,8 +8,8 @@
 #   protocol document  -- NCT03637764.pdf / .md in this collection (posted
 #                         Amended Clinical Trial Protocol 05, ACT15377)
 #   ClinicalTrials.gov -- sponsor name and registry identifier, via AACT
-#   NCI Thesaurus      -- epoch type codes, verified as children of C71738
-#                         Clinical Trial Epoch on 2026-09-04
+#   SDTM CT 2026-03-27 -- epoch type codes, verified as members of codelist C99079
+#                         in the NCI EVS package pinned by cdisc-for-ai (2026-09-05)
 #
 # Hand-authored. Every judgement is called out in a trailing comment.
 
@@ -23,10 +23,10 @@ study:
   versionRationale: Amended Clinical Trial Protocol 05, approval date 23 November 2020.
   documentRef: NCT03637764 Amended Clinical Trial Protocol 05 (ACT15377), approval
     date 23 November 2020;
-  # JUDGEMENT: the CT package date is asserted, not derived. USDM_CT.xlsx carries
-  # no release date. 2025-09-26 is the value used by the d4k USDM instance for this
-  # same protocol. The individual codes below were verified independently in NCIt.
-  ctVersion: "2025-09-26"
+  # The CT package the epoch codes were verified against: NCI EVS SDTM CT
+  # 2026-03-27, the release pinned by cdisc-for-ai. USDM_CT.xlsx carries no release
+  # date of its own, so this names the package actually consulted.
+  ctVersion: "2026-03-27"
 
 organizations:
   - slug: sponsor
@@ -79,12 +79,15 @@ epochs:
   - slug: eot
     name: EOT
     label: End of Treatment (EOT)
-    # JUDGEMENT: NCIt has no End-of-Treatment epoch term. C228369 Post-Treatment
-    # Epoch is used because the EOT visit is scheduled 30 (+/-7) days after the last
-    # IMP administration. The d4k USDM instance for this protocol chose C202578
-    # Follow-Up Epoch instead. StudyEpoch.type binds to SDTM codelist C99079, which
-    # is not in USDM_CT.xlsx, so no CT SHACL shape checks this choice.
-    ct: epoch_post_treatment
+    # JUDGEMENT: C99079 has no End-of-Treatment term. Its 15 members were checked
+    # against SDTM CT 2026-03-27; FOLLOW-UP (C202578) is the nearest published
+    # submission value, and the EOT visit is scheduled 30 (+/-7) days after the last
+    # IMP administration, i.e. after treatment. The same code as the follow-up epoch
+    # below -- the two are distinguished by name, not by type.
+    # CORRECTED 2026-09-05: this was C228369 Post-Treatment Epoch, chosen from the
+    # NCIt hierarchy under C71738. C228369 is NOT a member of C99079. C99079 is
+    # extensible, so it was permissible, but not a published submission value.
+    ct: epoch_followup
     ref: SCHEDULE OF ACTIVITIES (SOA) table, top header band.
   - slug: followup
     name: FOLLOWUP
@@ -118,7 +121,6 @@ timingAxis:
 terms:
   epoch_screening: ["C202487", "Screening Epoch"]
   epoch_treatment: ["C101526", "Treatment Epoch"]
-  epoch_post_treatment: ["C228369", "Post-Treatment Epoch"]
   epoch_followup: ["C202578", "Follow-Up Epoch"]
   org_pharmaceutical: ["C54149", "Pharmaceutical Company"]
   org_registry: ["C93453", "Clinical Study Registry"]
