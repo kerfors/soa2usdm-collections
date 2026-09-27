@@ -35,114 +35,86 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">misc_studies</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT01797120" title="This protocol's row on the collection index">NCT01797120</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT01797120_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT01797120_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT01797120_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT01797120_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <h1>NCT01797120 — SoA extraction uncertainty report</h1>
-<p>Source: <code>NCT01797120_soa.pdf</code> (PrECOG PrE0102, protocol section "7 Study Parameters", doc pages 69–71 per PAGEMAP). One table extracted → <code>NCT01797120_Table_01_extraction.json</code>. Prompt v3.8.0, schema soa-table-extraction v1.0.</p>
-<h2>Decisions needed (5)</h2>
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>where</th>
-<th>call made</th>
-<th>alternative</th>
-<th>detail</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>D1</td>
-<td>p.69, header rows 1–2, cols 7–9</td>
-<td>The header texts of the last three columns ("End of Induction Phase \&lt;OR&gt; End of Treatment Section 5.6", "Continuation Phase (until progression or unacceptable toxicity)", "Follow-Up Off Therapy (every 3 months for total of 3 yrs from date of randomization)") are each ONE tall cell spanning both header rows; each is recorded once, on header row 1 (the phase row), leaving row 2 empty in those columns.</td>
-<td>Record them on header row 2 instead, as visit-level labels parallel to "Pre-Study", or on both rows. The column each text (and its ^/£/o marker) binds to is unchanged either way.</td>
-<td>2</td>
-</tr>
-<tr>
-<td>D2</td>
-<td>p.69, above the table frame</td>
-<td>The bold banner "TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION", printed between the section heading and the table, sits outside the table's ruled frame and is recorded only in <code>table_metadata.notes</code>, not as an annotation.</td>
-<td>Treat it as a table-scope note: emit a footnote annotation with a synthesized marker anchored to header row 1.</td>
-<td>2</td>
-</tr>
-<tr>
-<td>D3</td>
-<td>p.69, header row 1, col 7</td>
-<td>"Section 5.6" is kept inside the column-7 header value, as printed.</td>
-<td>Strip "Section 5.6" out of the header value and emit it as a separate source_note (cross-reference) bound to that header cell.</td>
-<td>7</td>
-</tr>
-<tr>
-<td>D4</td>
-<td>p.69, header row 2</td>
-<td>Header row 2 (Pre-Study / Cycle 1 Day 1 / Cycle 1 Day 15 / Day 1 Each Subsequent Cycle / Every 12 weeks) is typed <code>visit</code> — the values name the occasions on which procedures are performed.</td>
-<td>Type it <code>timepoint</code> or <code>other</code>: the values mix a pre-study period, cycle-day timepoints and a frequency ("Every 12 weeks") rather than named visits.</td>
-<td>7</td>
-</tr>
-<tr>
-<td>D5</td>
-<td>p.69, header row 2</td>
-<td>The row's <code>property_name</code> is its printed column-1 label "Procedure", although that word labels the activity column rather than describing the row's schedule values.</td>
-<td>Synthesize a descriptive name (e.g. "Visit / Occasion") and treat "Procedure" purely as the label-column heading.</td>
-<td>7</td>
-</tr>
-</tbody>
-</table>
-<h2>Recorded, not open (9)</h2>
-<ul>
-<li>One table spanning doc pages 69–71, not a <code>continuation</code>: rows run onto p.70 under a reprinted header with no separate table number/caption (taxonomy v6, continuation rule).</li>
-<li>Reprinted header rows on p.70 deduplicated; each activity and mark counted once (§1b).</li>
-<li>"(see Appendix C)" stripped from the "Concomitant Meds" label into a <code>source_note</code> with synthesized marker <code>pr1</code> on the citing activity (§6 inline-reference rule); raw label preserved in <code>cell_text</code>.</li>
-<li>"(includes Ht)" kept literally in the Vital Signs Pre-Study cell (<code>cell_value</code> "X (includes Ht)") — a qualifier not expressible as columns (§5 qualified marks).</li>
-<li>Header-cell markers placed on that column's <code>schedule_grid</code> cell, cleaned out of <code>cell_value</code> (§6): <code>*</code> on cols 3 and 5 (row 2), <code>^</code> on col 7, <code>£</code> on col 8, <code>o</code> on col 9 (row 1).</li>
-<li>Superscript on "Follow-Up Off Therapy" read as footnote letter <code>o</code>, not a degree symbol: the bbox token is the letter "o", footnote o is defined on p.71, and no "°" definition is printed anywhere.</li>
-<li>Marker <code>n</code> printed on the activity label "PFTs with DLCO as medically indicatedⁿ" goes on that activity's <code>annotation_markers</code> (§6); the row carries no marks, which is data (§1).</li>
-<li>No abbreviation list and no X-legend are printed with the table, so no <code>abbreviation</code>/<code>legend</code> annotations exist (§6).</li>
-<li>Doc page 71 is inside the declared page range but contributes no activity rows — it carries only footnotes k–o and *, ^, £ (§4).</li>
-</ul>
-<h2>1. Table summary</h2>
-<ul>
-<li><strong>Table 1</strong> — <code>table_type: main_soa</code> (the only schedule grid in the excerpt; primary anchor). Title from the section heading "Study Parameters"; the table itself has no printed number or caption.</li>
-<li>Columns: 9 physical columns; <strong>L = 1</strong> label column ("Procedure"), so data columns are positions <strong>2–9</strong> (first data position 2): 2 Pre-Study, 3 Cycle 1 Day 1, 4 Cycle 1 Day 15, 5 Day 1 Each Subsequent Cycle, 6 Every 12 weeks, 7 End of Induction Phase \&lt;OR&gt; End of Treatment, 8 Continuation Phase, 9 Follow-Up Off Therapy.</li>
-<li>Header rows: 2 (row 1 epoch band, row 2 visit/occasion labels). Activities: 20 (rows 3–22), all flat (indentation_level 0, uniform text-layer left edge; no section-header rows). Marks: 71. Annotations: 19 (18 footnotes + 1 source_note).</li>
-<li>Activity rows per page: p.69 → 15 rows (rows 3–17), p.70 → 5 rows (rows 18–22), p.71 → 0 rows (footnotes k–o, *, ^, £ only — declared exception, see "Recorded, not open").</li>
-</ul>
-<h2>2. Header structure and merged cells</h2>
-<p>Rule lines recovered from the 150 dpi raster (§1d; the method also reads vector rules) on both p.69 and p.70 give identical geometry: full-height column boundaries at x ≈ 17.8 / 208.3 / 279.4 / 349.9 / 421.0 / 491.5 / 562.6 / 620.6 / 688.3 / 760.3 pt.</p>
-<ul>
-<li><strong>Header row 1</strong>: within the row-1 band the only internal boundaries are at 208.3, 562.6, 620.6 and 688.3 pt — so one cell spans x 208.3→562.6, i.e. data columns <strong>2–6 inclusive</strong>: the "Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)" band <strong>includes the Pre-Study column</strong>. This is mechanically confirmed from the rule lines, not an interpretation; the merge is recorded on each of columns 2–6 with <code>merged_cell_range</code> "2:6".</li>
-<li><strong>Columns 7–9 header cells</strong> have no internal horizontal rule between header rows 1 and 2 — each is one cell vertically merged across both header rows. The schema cannot express vertical merges, so each text is recorded once on row 1 (decision D1) and the vertical merge is stated in <code>table_metadata.notes</code>.</li>
-<li>The banner "TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION" sits at y ≈ 98–115 pt, above the table's top rule at y ≈ 120 pt — outside the frame (decision D2).</li>
-</ul>
-<h2>3. Merged-mark decisions</h2>
-<p>None in the body: every one of the 71 marks sits in a single-column cell (all 9 column boundaries are present through the body bands on both pages; no <code>source_range</code> used anywhere). The only merged cell in the table is the header "Induction Phase" band (columns 2:6, §2 above). No arrows, no vertically-merged marks.</p>
-<h2>4. Synthesised names and markers</h2>
-<ul>
-<li><code>property_name</code> "Study Phase" for header row 1 (label cell empty; <code>property_name_source.synthesized: true</code>).</li>
-<li>Synthesized marker <code>pr1</code> (source_note "see Appendix C") on activity row 7, Concomitant Meds — the only synthesized annotation marker.</li>
-</ul>
-<h2>5. Mechanical mark-check</h2>
-<p>Method: §1b bbox column-binning. <code>pdftotext -bbox</code>; column x-centres fixed from the header labels of the 8 data columns; mark tokens matched with <code>^[Xx][*a-zA-Z0-9]?$</code>. In this PDF every superscript footnote letter tokenizes as a <strong>separate</strong> small-height token (h ≈ 8.2 pt vs 12.3 pt for X) printed above/right of its X (e.g. "a,i", "c,d", "i,m,o", "f,g"); each was bound to its mark by coordinates. Two stray prose tokens "a" from the p.70 footnote paragraphs fall below the table body band and were excluded by the y-range.</p>
-<p>Result: mechanical matrix = 71 marks (60 on p.69, 11 on p.70); diffed cell-for-cell against the visual read of the rendered pages: <strong>zero disagreements</strong> — including the empty cells (e.g. Adverse Events has no Pre-Study mark; Fasting Glucose/Lipid have no Cycle 1 Day 15 mark; PFTs row has no marks at all). Lowercase <code>x</code> never occurs; all marks are uppercase X as recorded.</p>
-<h2>6. Annotation text integrity</h2>
-<ul>
-<li>The text layer is clean (whole-word tokens, no glyph-spread); no fields were reconstructed (§1c not applicable). Footnote wording taken from the text layer with line-wraps joined; the p.70 line-break inside "HCV RNA-\nPCR" (footnote h) is a hyphenated compound and was joined as "HCV RNA-PCR", matching its spelling elsewhere. Curly quotes in footnote h ("'cured'") preserved.</li>
-<li>Containment/overlap pairs among annotations: none. Footnote n opens with the full text of activity row 22's label and footnote l with the text of row 21's label — annotation-vs-activity-label overlap, verified source-faithful against the rendered pages (the footnotes genuinely restate the activity names), not a split note cell.</li>
-<li>No notes column exists; all footnotes are bounded paragraphs below the table, each starting at its printed marker — none were hard to bound.</li>
-</ul>
-<h2>7. Low-confidence calls</h2>
-<ul>
-<li><strong>D3</strong> — "Section 5.6" left inside the col-7 header value. The §6 inline-reference rule is written for activity labels; extending it to header cells would emit a source_note instead.</li>
-<li><strong>D4</strong> — property_type of header row 2: <code>visit</code> chosen over <code>timepoint</code>/<code>other</code> (mixed value kinds).</li>
-<li><strong>D5</strong> — property_name "Procedure" for header row 2, taken from the printed label though it names the activity column.</li>
-<li>table_type <code>main_soa</code> is not considered low-confidence: it is the only grid, and rows are clearly subject procedures.</li>
-<li>No PDF/markdown disagreements (no markdown supplied).</li>
-</ul>
-<h2>8. Orphan risk</h2>
-<p>None. All 19 annotations have ≥ 1 <code>marker_locations</code> entry; every marker printed in the table (a–o, <em>, ^, £) has its definition printed in the source (a–j on p.70, k–o and </em>, ^, £ on p.71); no marker is referenced-but-undefined and no location is <code>unresolved</code>. <code>annotation_markers</code> and <code>marker_locations</code> were cross-checked mechanically in both directions: exact agreement.</p>
-<h2>9. Method provenance</h2>
-<ul>
-<li><code>schedule_grid</code> row 1, columns 2–6: <code>method: "raster_pixel_detection"</code> — the cell text comes from the text layer, but the merged span 2:6 was established from rule lines recovered from the rendered page (§1d), since <code>pdftotext -bbox</code> carries no vector data. This is the only non-default method recorded in the JSON.</li>
-<li>The vertical merge of the col 7–9 header cells (D1) was likewise established from raster rule lines; the schema has no field for vertical merges, so it lives in <code>table_metadata.notes</code>.</li>
-<li>No <code>unresolved</code> marker locations; no <code>proximity</code>/<code>text_match</code> bindings; the two synthesized elements are listed in §4.</li>
-</ul>
+    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT01797120 — Uncertainty report (PDF_TO_JSON_PROMPT v3.8.1)
+
+## Decisions needed (6)
+
+| # | where | call made | alternative | detail |
+|---|---|---|---|---|
+| D1 | p.69, banner above table, header row 1 (marker tb1) | The bold banner &quot;TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION&quot; is kept as a footnote (synthesized marker tb1) attached to the Phase header row. | Treat the banner as part of the table title only, or drop it as a non-table heading. | 3.1 |
+| D2 | p.69, header rows 1-2, columns 7-9 | The column 7-9 header cells span both header rows; their text is recorded once in row 1 (Phase) and the row-2 (Visit) cells are left empty. | Repeat the same text in row 2 as well, so every column has a Visit label. | 3.1 |
+| D3 | p.69, header row 1, column 7 | Row 1 is typed epoch although column 7&#x27;s value (End of Induction Phase &lt;OR&gt; End of Treatment) is an end-of-phase visit rather than a phase. | Type row 1 as other, or model column 7&#x27;s header as a visit. | 3.1 |
+| D4 | p.69, row 8 (Vital Signs), column 2 | The Pre-Study cell is kept literally as &quot;X (includes Ht)&quot; (the qualifier stays inside the mark). | Record the mark as &quot;X&quot; and move &quot;(includes Ht)&quot; into a separate note. | 3.2 |
+| D5 | p.69, header row 1, column 7 (marker pr2) | &quot;Section 5.6&quot; printed under &quot;End of Treatment&quot; is removed from the header label and recorded as a cross-reference note (pr2) on that header cell. | Keep &quot;Section 5.6&quot; as part of the header label text. | 3.3 |
+| D6 | p.71 | The table&#x27;s page range is 69-71 because footnotes k-o, *, ^ and £ print on page 71, which has no activity rows. | Declare the table as pages 69-70 (grid pages only). | 3.1 |
+
+## Recorded, not open (6)
+
+- §2/type defs: page 70 reprints the header and continues the same untitled table, so it is one table spanning pages, not a `continuation`.
+- §1b: the header and property rows reprinted on page 70 were de-duplicated.
+- §5: one label column (L = 1), so the first data column is position 2 and the data columns are 2-9.
+- §6: the inline &quot;(see Appendix C)&quot; on Concomitant Meds was removed from the activity name and emitted as source_note pr1.
+- §6: the header-cell markers *, ^, £ and o sit on the specific schedule_grid cells where they are printed, not on the property rows.
+- §4: the table is flat. Every row is a level-0 activity with `indentation_method: assumed_flat`, and none are grouping headers.
+
+## 1. Tables
+
+One table: **Table 01, `main_soa`**, titled &quot;Study Parameters&quot; (section 7). It covers document pages 69-71.
+- The schedule has 8 data columns in positions 2-9: Pre-Study; Cycle 1 Day 1; Cycle 1 Day 15; Day 1 Each Subsequent Cycle; Every 12 weeks; End of Induction/End of Treatment; Continuation Phase; Follow-Up Off Therapy.
+- There are 2 header property rows and 20 activities, with 71 scheduled cells and 21 annotations.
+- Activity rows per page: p.69 has 15 (rows 3-17), p.70 has 5 (rows 18-22) and p.71 has 0. Page 71 holds only footnotes k, l, m, n, o, *, ^ and £, so it has no activity rows. It was not skipped.
+- There are no other SoA tables in the excerpt.
+
+## 2. Merged marks
+
+- **Header:** row 1, columns 2-6, &quot;Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)&quot; is a horizontally merged cell (`merged_cell_range` &quot;2:6&quot;).
+- **Header:** columns 7-9 are merged vertically across header rows 1-2 (see D2).
+- **Body:** no merged or spanning marks and no arrows.
+
+## 3. Details
+
+### 3.1 Header structure
+- Row 1 &quot;Phase&quot;: the name is synthesized because the label cell is empty. Type is epoch, level 1.
+- Row 2 &quot;Visit&quot;: the name is synthesized because the label cell reads &quot;Procedure&quot;, which is the heading of the activity column. Type is visit, level 2.
+- The banner is captured as footnote tb1 (D1).
+- Page range: see D6.
+
+### 3.2 Qualified mark
+Vital Signs, Pre-Study: an &quot;X&quot; with footnote a, with &quot;(includes Ht)&quot; printed below it. It is kept literally as &quot;X (includes Ht)&quot; (D4).
+
+### 3.3 Synthesized markers
+- **tb1:** the banner, placed on schedule_property row 1 with `method: synthesized`.
+- **pr1:** &quot;see Appendix C&quot;, on activity row 7.
+- **pr2:** &quot;Section 5.6&quot;, on the header cell at row 1, column 7.
+
+All three locations carry `method: synthesized`, and each marker is also listed in that element&#x27;s `annotation_markers`.
+
+## 4. Mechanical mark-check
+- **Layer type:** the PDF has a text layer and a vector grid, so it is not image-based.
+- **Method:** I ran `pdftotext -bbox` and set column x-centres from the header labels (about 244, 311, 382, 450, 521, 592, 654 and 717 pt). I then matched X tokens with `^[Xx][*a-zA-Z0-9]?$` and assigned each to the nearest column and row y-band.
+- **Result:** the bbox matrix matches the visual read on 200-dpi and 100-dpi renders cell for cell, on both pages. There were no disagreements.
+- **Footnote superscripts:** these were read from the render and cross-checked against their positions in the `pdftotext -layout` output.
+
+## 5. Annotation text integrity
+- **Glyph spacing:** the text layer is not glyph-spread, so no words needed rebuilding.
+- **Footnote bounds:** the footnotes a-o, *, ^ and £ are separate paragraphs, each with a printed marker, so their start and end were clear.
+- **Overlap:** footnote l repeats the activity label &quot;Study Drug Compliance (Pill Diary)&quot; but no two annotations share text.
+- **Source quirks:** &quot;HbsAg&quot; in the row 18 label is transcribed as printed; the footnotes spell it &quot;HBsAg&quot;.
+
+## 6. Low-confidence calls
+- **Row 2 type:** row 2 mixes visits (Pre-Study, C1D1, C1D15) with recurring occasions (&quot;Day 1 Each Subsequent Cycle&quot;, &quot;Every 12 weeks&quot;). It is typed visit as the best overall fit.
+- **Column 7 content:** the column-7 header holds the alternative &quot;End of Induction Phase &lt;OR&gt; End of Treatment&quot;, which is kept as printed.
+
+## 7. Orphan risk
+None.
+- Every marker that appears in the table is defined on pages 70-71.
+- Every annotation has at least one marker location.
+- Footnote o is on both the Follow-Up header cell (row 1, column 9) and the Imaging Scans cell (row 11, column 9).
+
+## 8. Method provenance
+- `indentation_method: assumed_flat` is set on all 20 activities because the table is flat.
+- `method: synthesized` is set on the locations of tb1, pr1 and pr2.
+- There are no `unresolved` locations and no raster, visual-read or proximity methods.
+</pre>
 </body>
 </html>

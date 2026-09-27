@@ -2,8 +2,9 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-29T20:18:16Z",
-    "extractor": "Claude (claude-fable-5), single-pass PDF-to-JSON extraction, prompt v3.8.0",
+    "extracted_at": "2026-09-27T17:48:13+02:00",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT01797120_soa.pdf",
       "document_type": "protocol",
@@ -11,22 +12,23 @@
       "document_date": "1/22/2014"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Word-generated PDF with a clean text layer. Marks re-derived mechanically per prompt section 1b: pdftotext -bbox tokens binned to column x-centres fixed from the header labels; superscript footnote letters tokenize as separate small-height tokens above/right of each X and were bound to their X by coordinates. Column and merged-cell geometry confirmed from rule lines recovered from the 150 dpi raster (section 1d), identical on doc pages 69 and 70. Mechanical matrix agreed with the visual read of the rendered pages cell-for-cell (71/71 marks). Reprinted header on doc page 70 deduplicated. Doc page 71 carries footnotes k-o and *, ^, £ only - no activity rows."
+    "extraction_notes": "Single SoA table (Section 7 Study Parameters) on document pages 69-70 with footnotes continuing on page 71. Text-layer PDF with vector grid; marks verified by pdftotext -bbox column binning against the visual read (no disagreements). Header reprinted on page 70 de-duplicated. One label column (L=1); data columns 2-9.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Study Parameters",
-    "table_purpose": "Single overall study schedule: screening (Pre-Study), Induction Phase cycle visits, End of Induction/End of Treatment, Continuation Phase, and Follow-Up Off Therapy.",
+    "table_purpose": "Main schedule of procedures from pre-study through induction, end of induction/treatment, continuation phase and follow-up off therapy",
     "page_start": 69,
     "page_end": 71,
-    "notes": "Only SoA table in the excerpt (protocol section '7 Study Parameters'); the source gives the table no printed number or caption. One table spanning doc pages 69-71: rows run onto page 70 under a reprinted header (not a continuation table - no separate number/caption), and page 71 holds only footnotes. A bold banner 'TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION' is printed above the table frame on page 69 (outside the ruled table) and is not extracted as a row or annotation (review item D2). Header geometry (rule-line confirmed): 1 label column; header row 1 has one cell merged across data columns 2-6 ('Induction Phase ...' - the merge includes the Pre-Study column), and the header cells of columns 7, 8 and 9 are single cells vertically merged across header rows 1-2, recorded on row 1 (review item D1). Header-cell markers: * on 'Cycle 1 Day 1' (col 3) and 'Day 1 Each Subsequent Cycle' (col 5), ^ on col 7, £ on col 8, and footnote letter o on 'Follow-Up Off Therapy' (col 9) - each recorded on that column's schedule_grid cell."
+    "notes": "Section heading '7 Study Parameters' used as title; banner 'TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION' captured as table-level footnote tb1. Page 70 reprints the header and continues the same table (not a separate continuation table). Page 71 holds footnotes only. Header cells of columns 7-9 are vertically merged across both header rows; recorded in row 1."
   },
   "schedule_properties": [
     {
       "table_number": 1,
       "row_position": 1,
-      "property_name": "Study Phase",
+      "property_name": "Phase",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -35,20 +37,22 @@
       },
       "property_type": "epoch",
       "hierarchical_level": 1,
-      "property_comment": "Top header row carrying the study-phase bands: a single cell merged across columns 2-6 reading 'Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)', then one phase per column for 'End of Induction Phase <OR> End of Treatment', 'Continuation Phase', and 'Follow-Up Off Therapy'. These are major study phases, hence property_type epoch. The label cell (column 1) is empty, so the property name is synthesized."
+      "annotation_markers": "tb1",
+      "property_comment": "Top header band. Label cell is empty; name synthesized. 'Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)' spans columns 2-6; columns 7-9 carry header cells that are vertically merged across both header rows (End of Induction Phase <OR> End of Treatment; Continuation Phase; Follow-Up Off Therapy) and are recorded in this row only. Typed epoch because the values are study phases (Induction, Continuation, Follow-Up); column 7 is an end-of-phase visit sitting in the same band."
     },
     {
       "table_number": 1,
       "row_position": 2,
-      "property_name": "Procedure",
+      "property_name": "Visit",
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
-        "cell_value": "Procedure"
+        "cell_value": "Procedure",
+        "synthesized": true
       },
       "property_type": "visit",
       "hierarchical_level": 2,
-      "property_comment": "Second header row. Its column-1 label cell prints 'Procedure' (labelling the activity column); the data cells carry the visit/occasion labels within the Induction Phase band: Pre-Study, Cycle 1 Day 1, Cycle 1 Day 15, Day 1 Each Subsequent Cycle, Every 12 weeks. These name the occasions on which procedures are performed, hence property_type visit. Columns 7-9 have no value in this row because their header cells are vertically merged across header rows 1-2 and are recorded on row 1."
+      "property_comment": "Second header row with visit/timepoint labels under the Induction Phase: Pre-Study, Cycle 1 Day 1, Cycle 1 Day 15, Day 1 Each Subsequent Cycle, Every 12 weeks. The label cell reads 'Procedure', which is the heading of the activity-name column, so the property name 'Visit' is synthesized. Typed visit because each value names a clinic visit/assessment occasion; cells in columns 7-9 are empty here because those header cells are vertically merged into row 1."
     }
   ],
   "schedule_grid": [
@@ -58,8 +62,7 @@
       "column_position": 2,
       "cell_value": "Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)",
       "is_merged_cell": true,
-      "merged_cell_range": "2:6",
-      "method": "raster_pixel_detection"
+      "merged_cell_range": "2:6"
     },
     {
       "table_number": 1,
@@ -67,8 +70,7 @@
       "column_position": 3,
       "cell_value": "Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)",
       "is_merged_cell": true,
-      "merged_cell_range": "2:6",
-      "method": "raster_pixel_detection"
+      "merged_cell_range": "2:6"
     },
     {
       "table_number": 1,
@@ -76,8 +78,7 @@
       "column_position": 4,
       "cell_value": "Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)",
       "is_merged_cell": true,
-      "merged_cell_range": "2:6",
-      "method": "raster_pixel_detection"
+      "merged_cell_range": "2:6"
     },
     {
       "table_number": 1,
@@ -85,8 +86,7 @@
       "column_position": 5,
       "cell_value": "Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)",
       "is_merged_cell": true,
-      "merged_cell_range": "2:6",
-      "method": "raster_pixel_detection"
+      "merged_cell_range": "2:6"
     },
     {
       "table_number": 1,
@@ -94,15 +94,14 @@
       "column_position": 6,
       "cell_value": "Induction Phase (fulvestrant + everolimus or placebo for a maximum of 12 cycles)",
       "is_merged_cell": true,
-      "merged_cell_range": "2:6",
-      "method": "raster_pixel_detection"
+      "merged_cell_range": "2:6"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 7,
-      "cell_value": "End of Induction Phase <OR> End of Treatment Section 5.6",
-      "annotation_markers": "^"
+      "cell_value": "End of Induction Phase <OR> End of Treatment",
+      "annotation_markers": "^,pr2"
     },
     {
       "table_number": 1,
@@ -149,6 +148,24 @@
       "row_position": 2,
       "column_position": 6,
       "cell_value": "Every 12 weeks"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 7,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 8,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 9,
+      "cell_value": ""
     }
   ],
   "activities": [
@@ -159,7 +176,8 @@
       "activity_name": "Eligibility Assessment",
       "activity_name_source": {
         "cell_text": "Eligibility Assessment",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -169,7 +187,8 @@
       "activity_name": "Informed Consent",
       "activity_name_source": {
         "cell_text": "Informed Consent",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -179,7 +198,8 @@
       "activity_name": "Medical History & Assessment of Baseline Signs and Symptoms",
       "activity_name_source": {
         "cell_text": "Medical History & Assessment of Baseline Signs and Symptoms",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -189,7 +209,8 @@
       "activity_name": "Physical Exam",
       "activity_name_source": {
         "cell_text": "Physical Exam",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -199,7 +220,8 @@
       "activity_name": "Concomitant Meds",
       "activity_name_source": {
         "cell_text": "Concomitant Meds (see Appendix C)",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
       "annotation_markers": "pr1"
     },
@@ -210,7 +232,8 @@
       "activity_name": "Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight",
       "activity_name_source": {
         "cell_text": "Vital Signs (Blood Pressure, Heart Rate, Temperature) and Weight",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -220,7 +243,8 @@
       "activity_name": "ECOG Performance Status",
       "activity_name_source": {
         "cell_text": "ECOG Performance Status",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -230,7 +254,8 @@
       "activity_name": "Adverse Events Assessments",
       "activity_name_source": {
         "cell_text": "Adverse Events Assessments",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -240,7 +265,8 @@
       "activity_name": "Imaging Scans",
       "activity_name_source": {
         "cell_text": "Imaging Scans",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -250,7 +276,8 @@
       "activity_name": "PT with INR",
       "activity_name_source": {
         "cell_text": "PT with INR",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -260,7 +287,8 @@
       "activity_name": "Urinalysis",
       "activity_name_source": {
         "cell_text": "Urinalysis",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -270,7 +298,8 @@
       "activity_name": "CBC with differentials, Platelets",
       "activity_name_source": {
         "cell_text": "CBC with differentials, Platelets",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -280,7 +309,8 @@
       "activity_name": "Serum Creatinine, Electrolytes (K, Na, Cl, CO2), Ca, BUN, Albumin, Total Protein, Phosphorus, AST (SGOT), ALT (SGPT), Alkaline Phosphatase, Total Bilirubin, Magnesium, Uric Acid.",
       "activity_name_source": {
         "cell_text": "Serum Creatinine, Electrolytes (K, Na, Cl, CO2), Ca, BUN, Albumin, Total Protein, Phosphorus, AST (SGOT), ALT (SGPT), Alkaline Phosphatase, Total Bilirubin, Magnesium, Uric Acid.",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -290,7 +320,8 @@
       "activity_name": "Fasting Glucose",
       "activity_name_source": {
         "cell_text": "Fasting Glucose",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -300,7 +331,8 @@
       "activity_name": "Fasting serum Lipid Profile (triglycerides, total cholesterol, HDL and LDL)",
       "activity_name_source": {
         "cell_text": "Fasting serum Lipid Profile (triglycerides, total cholesterol, HDL and LDL)",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -310,7 +342,8 @@
       "activity_name": "HBV-DNA, HbsAg, HBsAb, HBcAb, HCV-RNA-PCR",
       "activity_name_source": {
         "cell_text": "HBV-DNA, HbsAg, HBsAb, HBcAb, HCV-RNA-PCR",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -320,7 +353,8 @@
       "activity_name": "HBV DNA",
       "activity_name_source": {
         "cell_text": "HBV DNA",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -330,7 +364,8 @@
       "activity_name": "HCV RNA-PCR",
       "activity_name_source": {
         "cell_text": "HCV RNA-PCR",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -340,7 +375,8 @@
       "activity_name": "Study Drug Compliance (Pill Diary)",
       "activity_name_source": {
         "cell_text": "Study Drug Compliance (Pill Diary)",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       }
     },
     {
@@ -350,7 +386,8 @@
       "activity_name": "PFTs with DLCO as medically indicated",
       "activity_name_source": {
         "cell_text": "PFTs with DLCO as medically indicatedⁿ",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "assumed_flat"
       },
       "annotation_markers": "n"
     }
@@ -1392,6 +1429,19 @@
       ]
     },
     {
+      "annotation_marker": "tb1",
+      "annotation_type": "footnote",
+      "annotation_text": "TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_property",
+          "row_position": 1,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
       "annotation_marker": "pr1",
       "annotation_type": "source_note",
       "annotation_text": "see Appendix C",
@@ -1399,7 +1449,22 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 7
+          "row_position": 7,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_marker": "pr2",
+      "annotation_type": "source_note",
+      "annotation_text": "Section 5.6",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 7,
+          "method": "synthesized"
         }
       ]
     }
@@ -1407,7 +1472,19 @@
   "review_items": [
     {
       "id": "D1",
-      "severity": "low",
+      "severity": "medium",
+      "location": {
+        "page": 69,
+        "row_position": 1,
+        "annotation_marker": "tb1"
+      },
+      "call_made": "The bold banner above the table, 'TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION', is kept as a footnote (synthesized marker tb1) attached to the Phase header row.",
+      "alternative": "Treat the banner as part of the table title only, or drop it as a non-table heading.",
+      "report_section": "3.1"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
       "location": {
         "page": 69,
         "row_positions": [
@@ -1415,53 +1492,56 @@
           2
         ]
       },
-      "call_made": "The header cells for the last three columns ('End of Induction Phase <OR> End of Treatment Section 5.6', 'Continuation Phase (until progression or unacceptable toxicity)', 'Follow-Up Off Therapy (every 3 months for total of 3 yrs from date of randomization)') are each one tall cell spanning both header rows. They are recorded once, on header row 1 (the phase row), and header row 2 has no value in those columns.",
-      "alternative": "Record those three texts on header row 2 instead (treating them as visit-level labels parallel to 'Pre-Study'), or on both rows. The column each text binds to is unchanged either way.",
-      "report_section": "2"
-    },
-    {
-      "id": "D2",
-      "severity": "medium",
-      "location": {
-        "page": 69
-      },
-      "call_made": "The bold banner 'TREATMENT MUST BEGIN ≤ 7 WORKING DAYS FROM RANDOMIZATION' printed between the section heading and the table sits outside the table's ruled frame, so it is recorded only in the table notes, not as an annotation.",
-      "alternative": "Treat the banner as a table-scope note and emit it as a footnote annotation with a synthesized marker anchored to header row 1.",
-      "report_section": "2"
+      "call_made": "Header cells for columns 7-9 (End of Induction/End of Treatment, Continuation Phase, Follow-Up Off Therapy) are printed as one tall cell covering both header rows; their text is recorded once in row 1 (Phase) and the row-2 (Visit) cells are left empty.",
+      "alternative": "Repeat the same text in row 2 as well, so every column has a Visit label.",
+      "report_section": "3.1"
     },
     {
       "id": "D3",
-      "severity": "low",
+      "severity": "medium",
       "location": {
         "page": 69,
         "row_position": 1,
         "column_position": 7
       },
-      "call_made": "'Section 5.6' is kept inside the column-7 header cell value ('End of Induction Phase <OR> End of Treatment Section 5.6'), as printed.",
-      "alternative": "Strip 'Section 5.6' out of the header value and emit it as a separate source_note (cross-reference) bound to that header cell.",
-      "report_section": "7"
+      "call_made": "Row 1 is typed epoch although its column-7 value (End of Induction Phase <OR> End of Treatment) is an end-of-phase visit rather than a phase.",
+      "alternative": "Type row 1 as other, or model column 7's header as a visit.",
+      "report_section": "3.1"
     },
     {
       "id": "D4",
       "severity": "medium",
       "location": {
         "page": 69,
-        "row_position": 2
+        "row_position": 8,
+        "column_position": 2
       },
-      "call_made": "Header row 2 (Pre-Study / Cycle 1 Day 1 / Cycle 1 Day 15 / Day 1 Each Subsequent Cycle / Every 12 weeks) is classified property_type 'visit' - the values name the occasions on which procedures are performed.",
-      "alternative": "Classify it 'timepoint' or 'other', since the values mix a pre-study period, cycle-day timepoints and a frequency ('Every 12 weeks') rather than named visits.",
-      "report_section": "7"
+      "call_made": "The Pre-Study cell of Vital Signs is kept literally as 'X (includes Ht)' (qualifier kept inside the mark).",
+      "alternative": "Record the mark as 'X' and move '(includes Ht)' into a separate note.",
+      "report_section": "3.2"
     },
     {
       "id": "D5",
-      "severity": "low",
+      "severity": "medium",
       "location": {
         "page": 69,
-        "row_position": 2
+        "row_position": 1,
+        "column_position": 7,
+        "annotation_marker": "pr2"
       },
-      "call_made": "Header row 2's property_name is taken from its printed column-1 label 'Procedure', even though that word labels the activity column rather than describing the row's schedule values.",
-      "alternative": "Synthesize a descriptive name such as 'Visit / Occasion' for the row and treat 'Procedure' purely as the label-column heading.",
-      "report_section": "7"
+      "call_made": "'Section 5.6' printed under 'End of Treatment' in the column-7 header is removed from the header label and recorded as a cross-reference note (pr2) on that header cell.",
+      "alternative": "Keep 'Section 5.6' as part of the header label text.",
+      "report_section": "3.3"
+    },
+    {
+      "id": "D6",
+      "severity": "low",
+      "location": {
+        "page": 71
+      },
+      "call_made": "The table's page range is 69-71 because footnotes k-o, *, ^ and £ print on page 71, which carries no activity rows.",
+      "alternative": "Declare the table as pages 69-70 (the pages with grid rows only).",
+      "report_section": "3.1"
     }
   ]
 }

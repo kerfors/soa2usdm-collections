@@ -4,123 +4,46 @@
   "target_extraction": "NCT05051579_Table_01_extraction.json",
   "corrections": [
     {
-      "id": "corr-001",
-      "target": "annotations",
-      "op": "set",
-      "match": {"annotation_marker": "n12"},
-      "set": {
-        "marker_locations": [
-          {"table_number": 1, "location_type": "activity_name", "row_position": 49, "method": "synthesized"},
-          {"table_number": 1, "location_type": "activity_name", "row_position": 50, "method": "text_match"},
-          {"table_number": 1, "location_type": "activity_name", "row_position": 51, "method": "text_match"}
-        ]
-      },
-      "reason": "The FSH binding (row 49) comes from the note cell sitting inside the FSH row's own rule-line box with no printed marker, which is what 'synthesized' describes; 'proximity' (nearest-row geometry) was the wrong method label. Scope decision D2 (FSH only vs FSH+LH+Estradiol) is NOT changed by this correction.",
-      "source_ref": {"page": 16, "row_position": 49},
-      "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)",
-      "at": "2026-08-22T12:00:00+02:00"
-    },
-    {
-      "id": "corr-002",
-      "target": "review_items",
-      "op": "add",
-      "set": {
-        "id": "D1",
-        "severity": "high",
-        "location": {
-          "page": 17,
-          "row_positions": [67, 68]
-        },
-        "call_made": "\"Predose\" and \"Postdose\" under \"Pharmacokinetic (PK) sample\" were read as two row labels and the names composed as \"Pharmacokinetic (PK) sample - Predose\" / \"- Postdose\"; no mark was recorded in the Screening column for either.",
-        "alternative": "One activity \"Pharmacokinetic (PK) sample\", with \"Predose\" / \"Postdose\" recorded as text in the merged Screening+Lead-In cell (source_range 2:3).",
-        "report_section": "5.2"
-      },
-      "reason": "Backfill of decision D1 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.",
-      "source_ref": {"page": 17},
-      "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)",
-      "at": "2026-08-22T14:00:00+02:00"
-    },
-    {
-      "id": "corr-003",
-      "target": "review_items",
-      "op": "add",
-      "set": {
-        "id": "D2",
-        "severity": "high",
-        "location": {
-          "page": 16,
-          "row_positions": [49, 50, 51],
-          "annotation_marker": "n12"
-        },
-        "call_made": "Note 12 (menopausal status) applied to three rows: FSH, because the note sits inside the FSH row's box, and LH and Estradiol because the note names all three analytes.",
-        "alternative": "FSH only - the strict geometric reading; LH and Estradiol then read as unconditional at Screening.",
-        "report_section": "6"
-      },
-      "reason": "Backfill of decision D2 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.",
-      "source_ref": {"page": 16},
-      "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)",
-      "at": "2026-08-22T14:00:00+02:00"
-    },
-    {
-      "id": "corr-004",
-      "target": "review_items",
-      "op": "add",
-      "set": {
-        "id": "D3",
-        "severity": "medium",
-        "location": {
-          "page": 13,
-          "row_position": 1,
-          "annotation_marker": "n1"
-        },
-        "call_made": "The introductory paragraph printed above the table's top rule was kept as a table-wide note (n1) on header row 1.",
-        "alternative": "Drop it - it is section prose, not part of the table.",
-        "report_section": "5.4"
-      },
-      "reason": "Backfill of decision D3 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.",
-      "source_ref": {"page": 13},
-      "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)",
-      "at": "2026-08-22T14:00:00+02:00"
-    },
-    {
-      "id": "corr-005",
-      "target": "review_items",
-      "op": "add",
-      "set": {
-        "id": "D4",
-        "severity": "medium",
-        "location": {
-          "page": 13,
-          "row_position": 6
-        },
-        "call_made": "The \"Fasting Visit\" header row is typed modality (how the visit is conducted), with no hierarchical level.",
-        "alternative": "Type it condition (a requirement on the participant).",
-        "report_section": "5.6"
-      },
-      "reason": "Backfill of decision D4 from the uncertainty report's Decisions-needed block (2026-08-20): the extraction predates review_items (prompt v3.8.0), so the items arrive through the sidecar and the raw file stays untouched.",
-      "source_ref": {"page": 13},
-      "by": "Kerstin Forsberg (review, Cowork session 2026-08-22)",
-      "at": "2026-08-22T14:00:00+02:00"
-    },
-    {
       "id": "corr-006",
       "target": "annotations",
       "op": "confirm",
       "review_item": "D2",
       "reason": "We keep this as test for now",
-      "source_ref": {"page": 16},
+      "source_ref": {
+        "page": 16
+      },
       "by": "Kerstin Forsberg",
       "at": "2026-08-22T13:23:56Z"
     },
     {
-      "id": "corr-007",
-      "target": "annotations",
+      "id": "corr-008",
+      "target": "schedule_properties",
+      "op": "set",
+      "match": {
+        "row_position": 6
+      },
+      "set": {
+        "property_type": "modality",
+        "property_comment": "Marks with 'X' which visits are fasting visits (every column except the Lead-In visit). This is an attribute/type of the visit rather than a timing concept, so property_type=modality. hierarchical_level is null: removing the row leaves every column still distinguishable by Visit Number."
+      },
+      "reason": "'Fasting Visit' stays typed modality, as in the accepted corpus (D4, confirmed 2026-08-22 'We keep this as test for now'); the comment is carried with the type so the justification matches it. Carried over to the sweep-2 re-extraction (Opus 5.5, prompt v3.8.1), which raises no review item for this call; review_item dropped because its id now names a different call.",
+      "source_ref": {
+        "page": 13
+      },
+      "by": "Kerstin Forsberg (sweep-2 misc_studies review, 2026-09-27)",
+      "at": "2026-09-27T17:56:00+02:00"
+    },
+    {
+      "id": "corr-009",
+      "target": "activities",
       "op": "confirm",
-      "review_item": "D4",
-      "reason": "We keep this as test for now",
-      "source_ref": {"page": 13},
-      "by": "Kerstin Forsberg",
-      "at": "2026-08-22T13:23:56Z"
+      "review_item": "D1",
+      "reason": "PK sample as a mark-free parent row with 'Predose' / 'Postdose' as level-2 children is kept: same marks as the accepted flat composed names, and it follows the NCT02107703 grouping-row precedent. The accepted-corpus D1 was never decided.",
+      "source_ref": {
+        "page": 17
+      },
+      "by": "Kerstin Forsberg (sweep-2 misc_studies review, 2026-09-27)",
+      "at": "2026-09-27T17:56:00+02:00"
     }
   ]
 }
