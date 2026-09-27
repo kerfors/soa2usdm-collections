@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCT03637764 · Table 2 resolved · usdm_data</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5; padding: 20px; font-size: 11px;
+            max-width: 1600px; margin: 0 auto;
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+    .pnav { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+            padding: 8px 16px; margin-bottom: 14px; font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #666; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+    .pnav a { color: #1F4788; text-decoration: none; }
+    .pnav a:hover { text-decoration: underline; }
+    .pnav-sep { color: #999; margin: 0 4px; }
+    .pnav-cur { font-weight: 600; color: #333; }
+    .pnav-sib { margin-top: 4px; }
+    .pnav-grp { color: #888; font-size: 11px; }
+
+        .nav-tables {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-btn.disabled {
+            color: #ccc;
+            cursor: default;
+        }
+        .nav-table-list {
+            display: flex;
+            gap: 4px;
+        }
+        .nav-table-btn {
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+        }
+        .nav-table-btn:hover {
+            background: #e0e0e0;
+        }
+        .nav-table-btn.current {
+            background: #1F4788;
+            color: white;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
+            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 8px; }
+        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .header .meta { font-size: 11px; opacity: 0.8; }
+        
+        .toolbar {
+            background: white; border-radius: 8px; padding: 10px 20px;
+            margin-bottom: 15px; display: flex; gap: 10px; align-items: center;
+        }
+        .toolbar button {
+            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
+            background: #f5f5f5; cursor: pointer; font-size: 11px;
+        }
+        .toolbar button:hover { background: #e0e0e0; }
+        .toolbar .source-file { margin-left: auto; color: #666; font-size: 10px; }
+        
+        .comp {
+            background: white; border-radius: 8px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        }
+        .comp-header {
+            color: white; padding: 12px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none;
+        }
+        .comp-header:hover { filter: brightness(1.1); }
+        .comp-title { font-weight: bold; font-size: 13px; }
+        .comp-desc { font-size: 11px; opacity: 0.9; }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
+        .comp.collapsed .comp-body { max-height: 0 !important; }
+        .comp-note { padding: 8px 15px; color: #666; font-size: 10px; border-top: 1px solid #eee; background: #f9f9f9; margin: 0; }
+        
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-table th {
+            background: #f5f5f5; padding: 8px 10px; text-align: left;
+            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+        }
+        .comp-table td {
+            padding: 6px 10px; border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        .comp-table tr:hover { background: #fafafa; }
+        
+        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
+        .field { font-weight: 600; color: #333; white-space: nowrap; width: 160px; }
+        .type { font-size: 10px; color: #666; }
+        .trace { color: #999; font-size: 10px; }
+        .comment { max-width: 350px; color: #555; }
+        .text-full { max-width: 400px; }
+        
+        .type-badge { color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+        .track-label { background: #7030A0; color: white; padding: 2px 8px; border-radius: 3px; font-size: 10px; }
+        
+        .status-ok { color: #28a745; }
+        .status-warn { color: #fd7e14; }
+        .status-fail { color: #dc3545; }
+        
+        .level-cell { text-align: center; font-weight: bold; min-width: 40px; }
+        .level-num { text-align: center; width: 40px; }
+        
+        .synth-badge { 
+            background: #fd7e14; color: white; padding: 1px 4px; border-radius: 3px; 
+            font-size: 9px; font-weight: bold; margin-left: 4px;
+        }
+        
+        .section-header { font-weight: bold; }
+        .activity-name { max-width: 300px; }
+        
+
+        
+        .marker { background: #fff3cd; padding: 1px 4px; border-radius: 2px; font-family: monospace; }
+        .marker-cell { text-align: center; }
+        
+        .annot-section { margin-bottom: 15px; }
+        .annot-type-header {
+            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
+            border-radius: 4px 4px 0 0;
+        }
+        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
+        
+        .legend {
+            padding: 10px 15px; background: #f9f9f9; border-bottom: 1px solid #eee;
+            display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .legend-color { width: 14px; height: 10px; border-radius: 2px; border: 1px solid #ddd; }
+        
+        .grid-container { overflow-x: auto; padding: 10px; }
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
+        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
+        
+        .frozen-col {
+            position: sticky; left: 0; z-index: 2;
+            min-width: 280px; max-width: 280px;
+            background: #f5f5f5; border-right: 2px solid #999 !important;
+        }
+        .grid-table th.frozen-col { z-index: 3; }
+        
+        .activity-header { text-align: left; font-weight: bold; }
+        .activity-cell { text-align: left; vertical-align: top; }
+        .prop-row { text-align: left; font-size: 10px; }
+        .prop-id, .act-id { font-size: 9px; color: #999; font-family: monospace; }
+        .col-header { text-align: center; font-size: 9px; background: #1F4788; color: white; }
+        .prop-cell { text-align: center; font-size: 9px; }
+        .schedule-cell { text-align: center; font-weight: bold; }
+        .schedule-cell.empty { background: #fff; }
+        .cell-marker { color: #856404; font-size: 8px; }
+        
+        .data.null { color: #999; font-style: italic; }
+        .data.bool { color: #0066cc; }
+        .data.arr { color: #666; }
+    </style>
+</head>
+<body>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03637764" title="This protocol's row on the collection index">NCT03637764</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 2 — resolved</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT03637764_Table_01_extraction_viewer.html">T1</a> <a href="../../SoA2USDM/extracted/NCT03637764_Table_02_extraction_viewer.html">T2</a> <a href="../../SoA2USDM/extracted/NCT03637764_Table_03_extraction_viewer.html">T3</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03637764_Table_01_resolved.html">T1</a> <span class="pnav-cur">T2</span> <a href="../../SoA2USDM/resolved/NCT03637764_Table_03_resolved.html">T3</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03637764_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03637764_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03637764_uncertainty_report.html">extraction log</a></div></nav>
+    <nav class="navigation">
+        
+        <div class="nav-tables">
+            <a href="NCT03637764_Table_01_resolved.html" class="nav-btn">◀ T1</a>
+            <span class="nav-table-list"><a href="NCT03637764_Table_01_resolved.html" class="nav-table-btn">T1</a> <a href="NCT03637764_Table_02_resolved.html" class="nav-table-btn current">T2</a> <a href="NCT03637764_Table_03_resolved.html" class="nav-table-btn">T3</a></span>
+            <a href="NCT03637764_Table_03_resolved.html" class="nav-btn">T3 ▶</a>
+        </div>
+    </nav>
+    <div class="header">
+        <h1>Table 2: PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART</h1>
+        <div class="sub">soa-table-resolved v1.0 | Layer 2 | subsidiary</div>
+        <div class="meta">7 properties | 9 activities | 22 columns | 10 annotations</div>
+    </div>
+    
+    <div class="toolbar">
+        <button onclick="expandAll()">▼ Expand All</button>
+        <button onclick="collapseAll()">▶ Collapse All</button>
+        <span class="source-file">Source: NCT03637764_Table_02_resolved.json</span>
+    </div>
+    
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #5B9BD5;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Extraction Metadata</span>
+            <span class="comp-desc" style="background: #28a745; padding: 2px 8px; border-radius: 3px;">ready_for_resolution</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">extracted_at</td><td><span class="data">2026-09-27T21:05:00+02:00</span></td></tr><tr><td class="field">extractor</td><td><span class="data">Claude, PDF_TO_JSON_PROMPT single-pass</span></td></tr><tr><td class="field">extraction_status</td><td><span class="data">ready_for_resolution</span></td></tr><tr><td class="field">source_document</td><td>NCT03637764_soa.pdf [protocol] vAmended Clinical Trial Protocol 05, Version number: 1</td></tr><tr><td class="field">extraction_notes</td><td>Text-layer PDF with vector rule lines. Grid read with pdftotext -bbox, column/row boundaries from rule lines recovered on a 200 dpi render (§1d). One label column (L=1); data columns 2-23. Body rows 9-16 are drawn with vertical rules offset up to ~16 px (200 dpi) from the header rules; body cells assigned to header columns by majority x-overlap. Grey-shaded cells without text carry no entry; &#x27;-&#x27; is transcribed literally. Abbreviation block on p.23 not extracted (its terms occur only as cell values, never as markers).</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #2E75B6;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Resolution Metadata</span>
+            <span class="comp-desc" style="background: #fd7e14; padding: 2px 8px; border-radius: 3px;">resolved_with_warnings</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">resolved_at</td><td><span class="data">2026-09-27T19:02:08.986952+00:00</span></td></tr><tr><td class="field">resolver</td><td><span class="data">soa2usdm.steps.resolve v1.0</span></td></tr><tr><td class="field">source_extraction</td><td class="trace">NCT03637764_Table_02_extraction.verified.json | schema v1.0</td></tr><tr><td class="field">validation</td><td><span class="status-ok">✓ structure</span> &nbsp; <span class="status-ok">✓ hierarchy</span> &nbsp; <span class="status-ok">✓ annotations</span></td></tr><tr><td class="field">warnings</td><td class="status-warn">⚠ Property &#x27;Sample time window Atezolizumab&#x27; (type=window) has no hierarchical_level but sits between L4 and L5 — may be a missing level assignment</td></tr><tr><td class="field">resolution_status</td><td><span class="data">resolved_with_warnings</span></td></tr><tr><td class="field">ready_for_integration</td><td><span class="data bool">true</span></td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #7030A0;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Table Metadata</span>
+            <span class="comp-desc">PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table"><tbody><tr><td class="field">table_id</td><td class="id">table-002</td></tr><tr><td class="field">table_number</td><td>2</td></tr><tr><td class="field">table_type</td><td><span class="type-badge" style="background: #17a2b8;">subsidiary</span></td></tr><tr><td class="field">table_title</td><td>PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART</td></tr><tr><td class="field">table_purpose</td><td>Per-sample PK and ADA timing (relative to start/end of infusion) for atezolizumab and isatuximab, with IMP infusion timing</td></tr><tr><td class="field">pages</td><td>22 – 23</td></tr><tr><td class="field">dimensions</td><td class="trace">22 cols | 16 rows | 7 header | 9 activity</td></tr><tr><td class="field">notes</td><td>Typed subsidiary: the main SoA (Table 01, p.21) carries single rows &#x27;PK&#x27; and &#x27;ADA&#x27; reading &#x27;See Pharmacokinetics and immunogenicity Flow Chart&#x27;; this table breaks those into per-sample IDs on a finer, within-day timepoint grid (SOI/EOI/EOI+Xh). Grid on p.22; footnotes f-j and abbreviations continue on p.23 (no body rows there).</td></tr></tbody></table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #70AD47;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Property Hierarchy</span>
+            <span class="comp-desc">5 hierarchical, 2 qualifier</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Level</th><th>Name</th><th>Type</th><th>Comment</th><th>Hierarchy</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr>
+            <td class="id">prop-001</td>
+            <td class="level-cell" style="background: #375623; color: white;">L1</td>
+            <td>Study Phase </td>
+            <td class="type">epoch</td>
+            <td class="comment">Study phase band: &#x27;Treatment Phase&#x27; spans all cycle columns (2:21), &#x27;Post-treatment&#x27; spans EOT and FUP (22:23). Major study phases -&gt; epoch.</td>
+            <td class="trace">↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-002</td>
+            <td class="level-cell" style="background: #548235; color: white;">L2</td>
+            <td>Cycle </td>
+            <td class="type">cycle</td>
+            <td class="comment">Treatment cycles: Cycle 1 (2:10), Cycle 2 (11:13), Cycle 3 (14:15), Cycle 4 (16:19), Subsequent Cycles (20:21); EOT (22) and FUP (90±7 days) (23) are cells vertically merged across this row and the Day row, recorded on this row only. Repeating oncology cycles -&gt; cycle.</td>
+            <td class="trace">↑prop-001 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-003</td>
+            <td class="level-cell" style="background: #70AD47; color: #333;">L3</td>
+            <td>Day within the Cycle </td>
+            <td class="type">study_day</td>
+            <td class="comment">Day within the cycle: D1 (2:8), D15 (9:10) in Cycle 1; D1 for every later cycle. Columns 22-23 are covered by the vertically merged EOT / FUP cells from the Cycle row. Note the source prints the 72h and 168h (SOI of Day 8) columns under the Cycle 1 &#x27;D1&#x27; span. Day numbers -&gt; study_day.</td>
+            <td class="trace">↑prop-002 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-004</td>
+            <td class="level-cell" style="background: #A9D08E; color: #333;">L4</td>
+            <td>Sample RNT (h) Ref: SOI Atezolizumab </td>
+            <td class="type">timepoint</td>
+            <td class="comment">Atezolizumab relative nominal sampling times (SOI, EOI, EOI +30 min), referenced to atezolizumab start of infusion; &#x27;-&#x27; where no atezolizumab timepoint applies. Within-visit timing -&gt; timepoint. Drug-specific: governs the atezolizumab PK/ADA rows. Parallel to row 6 (isatuximab scale); stacked levels 4 and 5 follow print order, not a parent-child relation.</td>
+            <td class="trace">↑prop-003 ↓1</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-006</td>
+            <td class="level-cell" style="background: #C6E0B4; color: #333;">L5</td>
+            <td>Sample RNT (h) Ref: SOI Isatuximab </td>
+            <td class="type">timepoint</td>
+            <td class="comment">Isatuximab relative nominal sampling times (SOI, EOI, EOI +4h, 72h, 168h (SOI of Day 8), EOI +1h), referenced to isatuximab start of infusion; &#x27;-&#x27; where no isatuximab timepoint applies. Within-visit timing -&gt; timepoint. Drug-specific: governs the isatuximab PK/ADA rows. Parallel to row 4; this row carries the finest column split of the table.</td>
+            <td class="trace">↑prop-004</td>
+            <td class="trace">—</td>
+        </tr><tr class="section-divider"><td colspan="7" style="background: #e9ecef; padding: 4px 10px; font-size: 10px; font-weight: 600; color: #666;">Column Qualifiers</td></tr><tr>
+            <td class="id">prop-005</td>
+            <td class="level-cell" style="background: #f5f5f5; color: #666;">—</td>
+            <td>Sample time window Atezolizumab </td>
+            <td class="type">window</td>
+            <td class="comment">Allowed sampling windows for the atezolizumab timepoints in row 4 ([-24h, SOI], ±5 min, ±10 min). Window qualifier of row 4; does not by itself distinguish columns -&gt; level null.</td>
+            <td class="trace">—</td>
+            <td class="trace">—</td>
+        </tr><tr>
+            <td class="id">prop-007</td>
+            <td class="level-cell" style="background: #f5f5f5; color: #666;">—</td>
+            <td>Sample time window Isatuximab </td>
+            <td class="type">window</td>
+            <td class="comment">Allowed sampling windows for the isatuximab timepoints in row 6 (±10 min, ±30 min, ±5 h, [-24h, SOI]). Window qualifier of row 6 -&gt; level null.</td>
+            <td class="trace">—</td>
+            <td class="trace">—</td>
+        </tr></tbody>
+            </table>
+            <p class="comp-note"><span class="synth-badge">S</span> = Synthesized (name inferred from row data, source label cell was empty)</p>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Activities</span>
+            <span class="comp-desc">9 total (3 headers, 6 leaf)</span>
+        </div>
+        <div class="comp-body">
+            <table class="comp-table">
+                <thead><tr>
+                    <th>ID</th><th>Lvl</th><th>Activity Name</th><th>Parent</th><th>Annotations</th>
+                </tr></thead>
+                <tbody><tr style="background: #FBE5D6;">
+            <td class="id">act-001</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">IMP administration (IV infusion)</td>
+            <td>—</td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-002</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Atezolizumab</td>
+            <td><span class="trace">IMP administration (IV infusio</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-003</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Isatuximab</td>
+            <td><span class="trace">IMP administration (IV infusio</span></td>
+            <td class="trace">—</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-004</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Pharmacokinetics</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">a,i</span> → annot-001, annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-005</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Atezolizumab Sample ID</td>
+            <td><span class="trace">Pharmacokinetics</span></td>
+            <td class="trace"><span class="marker">j</span> → annot-010</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-006</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Isatuximab Sample ID</td>
+            <td><span class="trace">Pharmacokinetics</span></td>
+            <td class="trace"><span class="marker">i</span> → annot-009</td>
+        </tr><tr style="background: #FBE5D6;">
+            <td class="id">act-007</td>
+            <td class="level-num">0</td>
+            <td class="activity-name section-header">Immunogenicity (ADA)</td>
+            <td>—</td>
+            <td class="trace"><span class="marker">a,e,i</span> → annot-001, annot-005, annot-009</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-008</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Atezolizumab</td>
+            <td><span class="trace">Immunogenicity (ADA)</span></td>
+            <td class="trace"><span class="marker">c,j</span> → annot-003, annot-010</td>
+        </tr><tr style="background: #FFFFFF;">
+            <td class="id">act-009</td>
+            <td class="level-num">1</td>
+            <td class="activity-name ">&nbsp;&nbsp;Isatuximab</td>
+            <td><span class="trace">Immunogenicity (ADA)</span></td>
+            <td class="trace"><span class="marker">g,h,i</span> → annot-007, annot-008, annot-009</td>
+        </tr></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #6c757d;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Annotations</span>
+            <span class="comp-desc">10 annotations</span>
+        </div>
+        <div class="comp-body">
+            
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #5a6268;">Footnote (9)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-002</td>
+                <td class="marker-cell"><span class="marker">b</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Isatuximab PK or ADA predose samples should be collected before isatuximab administration and at the same time as atezolizumab predose samples when applicable.">Isatuximab PK or ADA predose samples should be collected before isatuximab administration and at ...</td>
+                <td class="trace">cells: 10</td>
+                <td class="trace">10 locations</td>
+            </tr><tr>
+                <td class="id">annot-003</td>
+                <td class="marker-cell"><span class="marker">c</span></td>
+                <td class="type">multiple</td>
+                <td class="text-full" title="Atezolizumab sample collected strictly before the start of atezolizumab infusion (during treatment phase).">Atezolizumab sample collected strictly before the start of atezolizumab infusion (during treatmen...</td>
+                <td class="trace">acts: act-008 | cells: 4</td>
+                <td class="trace">5 locations</td>
+            </tr><tr>
+                <td class="id">annot-004</td>
+                <td class="marker-cell"><span class="marker">d</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="P04 sample must be collected even if the participant withdraws the study without receiving the second administration of isatuximab.">P04 sample must be collected even if the participant withdraws the study without receiving the se...</td>
+                <td class="trace">cells: 1</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-005</td>
+                <td class="marker-cell"><span class="marker">e</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="After start of study treatment, if 1 drug is prematurely discontinued, ADA samples for this drug will be collected and tested on Day 1 of the 2 next cycles. The ADA sample collection for other drug should be done as planned.">After start of study treatment, if 1 drug is prematurely discontinued, ADA samples for this drug ...</td>
+                <td class="trace">acts: act-007</td>
+                <td class="trace">1 locations</td>
+            </tr><tr>
+                <td class="id">annot-006</td>
+                <td class="marker-cell"><span class="marker">f</span></td>
+                <td class="type">cell</td>
+                <td class="text-full" title="Sample collected just before actual end of infusion of isatuximab.">Sample collected just before actual end of infusion of isatuximab.</td>
+                <td class="trace">cells: 4</td>
+                <td class="trace">4 locations</td>
+            </tr><tr>
+                <td class="id">annot-007</td>
+                <td class="marker-cell"><span class="marker">g</span></td>
+                <td class="type">multiple</td>
+                <td class="text-full" title="Isatuximab sample collected strictly before the start of isatuximab infusion (during treatment phase).">Isatuximab sample collected strictly before the start of isatuximab infusion (during treatment ph...</td>
+                <td class="trace">acts: act-009 | cells: 6</td>
+                <td class="trace">7 locations</td>
+            </tr><tr>
+                <td class="id">annot-008</td>
+                <td class="marker-cell"><span class="marker">h</span></td>
+                <td class="type">multiple</td>
+                <td class="text-full" title="After FUP 90(±7) days after last isatuximab administration no further ADA will be sampled even if the status is positive or inconclusive.">After FUP 90(±7) days after last isatuximab administration no further ADA will be sampled even if...</td>
+                <td class="trace">acts: act-009 | cells: 1</td>
+                <td class="trace">2 locations</td>
+            </tr><tr>
+                <td class="id">annot-009</td>
+                <td class="marker-cell"><span class="marker">i</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Isatuximab PK and ADA samples to be collected each cycle until the last study treatment for PK and until FUP 90(±7) days after last IMP administration for ADA or at the cut-off date, whichever comes first. However, collection can be reduced or stopped earlier upon notification from the Sponsor based on the updated knowledge of isatuximab on PK/ADA.">Isatuximab PK and ADA samples to be collected each cycle until the last study treatment for PK an...</td>
+                <td class="trace">acts: act-004, act-006, act-007 <span class="trace">(+1 more)</span></td>
+                <td class="trace">4 locations</td>
+            </tr><tr>
+                <td class="id">annot-010</td>
+                <td class="marker-cell"><span class="marker">j</span></td>
+                <td class="type">multiple</td>
+                <td class="text-full" title="For subsequent cycles, atezolizumab PK and ADA samples (pre-dose) are to be collected at Cycle 8 Day 1 and Cycle 16 Day 1 only.">For subsequent cycles, atezolizumab PK and ADA samples (pre-dose) are to be collected at Cycle 8 ...</td>
+                <td class="trace">acts: act-005, act-008 | cells: 2</td>
+                <td class="trace">4 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+            <div class="annot-section">
+                <div class="annot-type-header" style="background: #BF8F00;">Source Note (1)</div>
+                <table class="comp-table">
+                    <thead><tr>
+                        <th>ID</th><th>Marker</th><th>Scope</th><th>Text</th><th>References</th><th>Locations</th>
+                    </tr></thead>
+                    <tbody><tr>
+                <td class="id">annot-001</td>
+                <td class="marker-cell"><span class="marker">a</span></td>
+                <td class="type">activity</td>
+                <td class="text-full" title="Refer to the laboratory manual for sample collection, processing and shipping.">Refer to the laboratory manual for sample collection, processing and shipping.</td>
+                <td class="trace">acts: act-004, act-007</td>
+                <td class="trace">2 locations</td>
+            </tr></tbody>
+                </table>
+            </div>
+        
+        </div>
+    </div>
+    
+    <div class="comp">
+        <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Schedule Grid</span>
+            <span class="comp-desc">9 activities × 22 columns (105 cells)</span>
+        </div>
+        <div class="comp-body">
+            <div class="legend"><span class="legend-item"><span class="legend-color" style="background: #BDD7EE;"></span>marker</span> <span class="legend-item"><span class="legend-color" style="background: #E2EFDA;"></span>timing_text</span> <span class="legend-item"><span class="legend-color" style="background: #FFF2CC;"></span>frequency</span> <span class="legend-item"><span class="legend-color" style="background: #FCE4D6;"></span>continuation</span> <span class="legend-item"><span class="legend-color" style="background: #E1BEE7;"></span>conditional</span> <span class="legend-item"><span class="legend-color" style="background: #F5F5F5;"></span>other</span></div>
+            <div class="grid-container">
+                <table class="grid-table"><tr><th class="frozen-col activity-header">Activity</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / SOI / [-24h, SOI] / SOI / -">col-002</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / EOI / ±5 min / - / -">col-003</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / EOI +30 min / ±10 min / - / -">col-004</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / - / - / EOI / ±10 min">col-005</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / - / - / EOI +4h / ±30 min">col-006</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / - / - / 72h / ±5 h">col-007</th><th class="col-header" title="Treatment Phase / Cycle 1 / D1 / - / - / 168h (SOI of Day 8) / [-24h, SOI]">col-008</th><th class="col-header" title="Treatment Phase / Cycle 1 / D15 / - / - / SOI / [-24h, SOI]">col-009</th><th class="col-header" title="Treatment Phase / Cycle 1 / D15 / - / - / EOI / ±10 min">col-010</th><th class="col-header" title="Treatment Phase / Cycle 2 / D1 / SOI / [-24h, SOI] / SOI / -">col-011</th><th class="col-header" title="Treatment Phase / Cycle 2 / D1 / - / - / - / -">col-012</th><th class="col-header" title="Treatment Phase / Cycle 2 / D1 / - / - / EOI / ±10 min">col-013</th><th class="col-header" title="Treatment Phase / Cycle 3 / D1 / SOI / [-24h, SOI] / SOI / -">col-014</th><th class="col-header" title="Treatment Phase / Cycle 3 / D1 / - / - / - / -">col-015</th><th class="col-header" title="Treatment Phase / Cycle 4 / D1 / SOI / [-24h, SOI] / SOI / -">col-016</th><th class="col-header" title="Treatment Phase / Cycle 4 / D1 / - / - / - / -">col-017</th><th class="col-header" title="Treatment Phase / Cycle 4 / D1 / - / - / EOI / ±10 min">col-018</th><th class="col-header" title="Treatment Phase / Cycle 4 / D1 / - / - / EOI +1h / ±10 min">col-019</th><th class="col-header" title="Treatment Phase / Subsequent Cycles / D1 / SOI / [-24h, SOI] / SOI / -">col-020</th><th class="col-header" title="Treatment Phase / Subsequent Cycles / D1 / - / - / - / -">col-021</th><th class="col-header" title="Post-treatment / EOT / - / - / - / -">col-022</th><th class="col-header" title="Post-treatment / FUP (90±7 days) / - / - / - / -">col-023</th></tr><tr><td class="frozen-col prop-row" style="background: #375623; color: white;">Study Phase<br/><span class="prop-id">prop-001</span></td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Treatment Phase</td><td class="prop-cell" style="background: #375623; color: white;">Post-treatment</td><td class="prop-cell" style="background: #375623; color: white;">Post-treatment</td></tr><tr><td class="frozen-col prop-row" style="background: #548235; color: white;">Cycle<br/><span class="prop-id">prop-002</span></td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 1</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 2</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 2</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 2</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 3</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 3</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 4</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 4</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 4</td><td class="prop-cell" style="background: #548235; color: white;">Cycle 4</td><td class="prop-cell" style="background: #548235; color: white;">Subsequent Cycles</td><td class="prop-cell" style="background: #548235; color: white;">Subsequent Cycles</td><td class="prop-cell" style="background: #548235; color: white;">EOT</td><td class="prop-cell" style="background: #548235; color: white;">FUP (90±7 days)</td></tr><tr><td class="frozen-col prop-row" style="background: #70AD47; color: #333;">Day within the Cycle<br/><span class="prop-id">prop-003</span></td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D15</td><td class="prop-cell" style="background: #70AD47; color: #333;">D15</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;">D1</td><td class="prop-cell" style="background: #70AD47; color: #333;"></td><td class="prop-cell" style="background: #70AD47; color: #333;"></td></tr><tr><td class="frozen-col prop-row" style="background: #A9D08E; color: #333;">Sample RNT (h) Ref: SOI Atezolizumab<br/><span class="prop-id">prop-004</span></td><td class="prop-cell" style="background: #A9D08E; color: #333;">SOI</td><td class="prop-cell" style="background: #A9D08E; color: #333;">EOI</td><td class="prop-cell" style="background: #A9D08E; color: #333;">EOI +30 min</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">SOI</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">SOI</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">SOI</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">SOI</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td><td class="prop-cell" style="background: #A9D08E; color: #333;">-</td></tr><tr><td class="frozen-col prop-row" style="background: #f5f5f5; color: #666;">Sample time window Atezolizumab<br/><span class="prop-id">prop-005</span></td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±5 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±10 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td></tr><tr><td class="frozen-col prop-row" style="background: #C6E0B4; color: #333;">Sample RNT (h) Ref: SOI Isatuximab<br/><span class="prop-id">prop-006</span></td><td class="prop-cell" style="background: #C6E0B4; color: #333;">SOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">EOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">EOI +4h</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">72h</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">168h (SOI of Day 8)</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">SOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">EOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">SOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">EOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">SOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">SOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">EOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">EOI +1h</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">SOI</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td><td class="prop-cell" style="background: #C6E0B4; color: #333;">-</td></tr><tr><td class="frozen-col prop-row" style="background: #f5f5f5; color: #666;">Sample time window Isatuximab<br/><span class="prop-id">prop-007</span></td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±10 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±30 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±5 h</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">[-24h, SOI]</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±10 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±10 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±10 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">±10 min</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td><td class="prop-cell" style="background: #f5f5f5; color: #666;">-</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">IMP administration (IV infusion)<br/><span class="act-id">act-001</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Atezolizumab<br/><span class="act-id">act-002</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X------------X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X------------X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Isatuximab<br/><span class="act-id">act-003</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X--------------X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X--------------X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X----------------X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X----------------X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X----------------X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X----------------X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X------------X</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">X------------X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell" style="background: #BDD7EE;" title="marker">X</td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Pharmacokinetics<br/><span class="act-id">act-004</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Atezolizumab Sample ID<br/><span class="act-id">act-005</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">S00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">S01</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">S00<sup class="cell-marker">c</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">S00<sup class="cell-marker">c</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">S00<sup class="cell-marker">c</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">S00<sup class="cell-marker">c,j</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">SF00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Isatuximab Sample ID<br/><span class="act-id">act-006</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P00<sup class="cell-marker">b</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P01<sup class="cell-marker">f</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P02</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P03</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P04<sup class="cell-marker">d,g</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P05<sup class="cell-marker">g</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P06<sup class="cell-marker">f</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P00<sup class="cell-marker">b,g</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P01<sup class="cell-marker">f</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P00<sup class="cell-marker">b,g</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P00<sup class="cell-marker">b,g</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P01<sup class="cell-marker">f</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P02</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">P00<sup class="cell-marker">b,g</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td></tr><tr><td class="frozen-col activity-cell section-header" style="background: #FBE5D6;">Immunogenicity (ADA)<br/><span class="act-id">act-007</span></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td><td class="schedule-cell empty"></td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Atezolizumab<br/><span class="act-id">act-008</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AS00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AS00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AS00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AS00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AS00<sup class="cell-marker">j</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">ASF00</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td></tr><tr><td class="frozen-col activity-cell " style="background: #fff;">&nbsp;&nbsp;Isatuximab<br/><span class="act-id">act-009</span></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AP00<sup class="cell-marker">b</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AP00<sup class="cell-marker">b</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AP00<sup class="cell-marker">b</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AP00<sup class="cell-marker">b</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">AP00<sup class="cell-marker">b</sup></td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">-</td><td class="schedule-cell" style="background: #F5F5F5;" title="other">APF00<sup class="cell-marker">h</sup></td></tr></table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleSection(header) {
+            const comp = header.closest('.comp');
+            comp.classList.toggle('collapsed');
+        }
+        function expandAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.remove('collapsed'));
+        }
+        function collapseAll() {
+            document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        }
+        // Start with metadata sections collapsed
+        document.querySelectorAll('.comp').forEach((c, i) => {
+            if (i < 3) c.classList.add('collapsed');
+        });
+    </script>
+</body>
+</html>
