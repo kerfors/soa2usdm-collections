@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.269353+00:00",
+    "resolved_at": "2026-09-27T15:03:22.984174+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -18,12 +18,12 @@
       "validation_errors": [],
       "method_provenance": [
         "activity_name:visual_transcription: 21",
-        "annotation_text:visual_transcription: 5",
+        "annotation_text:visual_transcription: 8",
         "grid_cell:visual_read: 18",
         "indentation_level:assumed_flat: 21",
-        "property_structure:inferred_from_layout: 3",
-        "schedule_cell:raster_pixel_detection: 42",
-        "schedule_cell:visual_read: 14"
+        "marker_location:synthesized: 4",
+        "property_structure:assumed: 1",
+        "schedule_cell:visual_read: 56"
       ]
     },
     "resolution_status": "resolved",
@@ -31,23 +31,24 @@
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5 (SoA PDF->JSON prompt v3.7.2)",
+    "extracted_at": "2026-09-27T12:00:00Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT02291289_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Version 9",
-      "document_date": ""
+      "document_version": "Protocol MO29112, Version 9"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Rule lines recovered from the 200 dpi raster (no vector rule lines, no text layer on the grid pages). Marks detected by near-black pixel count inside rule-bounded cells and validated cell-for-cell against direct visual reads. Footnotes a-e were transcribed visually from the scanned page 171; footnotes f-t were read from the text layer of pages 172-173."
+    "extraction_notes": "SoA grid pages are full-page raster images with no text layer; grid, headers and labels read visually (method visual_read / visual_transcription). Footnote continuation pages carry a text layer and were read from it. Document page numbers from PAGEMAP.md.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
-    "table_title": "APPENDIX 1  SCHEDULE OF ASSESSMENTS FOR ALL PATIENTS (SCREENING / BASELINE AND INDUCTION TREATMENT PHASE)",
-    "table_purpose": "Screening/Baseline and Induction Treatment Phase schedule applying to all patients, plus Study Treatment Discontinuation Visit and Post-Treatment Follow-Up columns.",
+    "table_title": "Appendix 1 Schedule of Assessments for All Patients (Screening / Baseline and Induction Treatment Phase)",
+    "table_purpose": "Screening/Baseline and Induction Treatment Phase schedule for all patients, with Study Treatment Discontinuation Visit and Post-Treatment Follow-up for patients not entering maintenance",
     "page_start": 169,
     "page_end": 173,
     "track_label": null,
@@ -55,14 +56,14 @@
     "row_count": 24,
     "header_row_count": 3,
     "activity_row_count": 21,
-    "notes": "Primary anchor grid of the excerpt: rows are activities, all patients attend, and the four maintenance-cohort appendices (Tables 2-5) all reference this phase as their predecessor. One label column (L=1); first data column position is 2; 6 data columns (2-7). Grid pages 169-171 are scanned images with no text layer; footnote pages 172-173 carry a text layer. Pages 172-173 contribute no activity rows - they carry only footnotes f-t of this table."
+    "notes": "Image-based pages (no text layer on 169-171): grid and header read visually from 200 dpi renders; cell boundaries/merges confirmed from raster rule lines. Footnotes a-e visually transcribed from p171; f-t from the text layer on pp172-173."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-001",
       "row_position": 1,
-      "property_name": "Population qualifier",
+      "property_name": "Population condition",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -70,7 +71,7 @@
         "synthesized": true
       },
       "property_type": "condition",
-      "property_comment": "Topmost header band. Its label cell and its cells over columns 2-5 are empty; the cell merged across columns 6-7 carries an eligibility/population statement ('Patients who have PD during or at end of Induction Treatment Phase or who refuse Maintenance Treatment or who are not eligible for any study cohort'). It qualifies which patients attend those two columns rather than naming a timing concept, so property_type=condition; it does not by itself tell column 6 from column 7, so hierarchical_level is null. Name synthesized - the row has no printed label.",
+      "property_comment": "Qualifier band printed only above the last two columns: \"Patients who have PD during or at end of Induction Treatment Phase or who refuse Maintenance Treatment or who are not eligible for any study cohort\". Identifies the sub-population attending those columns; does not by itself distinguish columns, so hierarchical_level null.",
       "hierarchical_level": null,
       "parent_property_id": null,
       "child_property_ids": [],
@@ -89,7 +90,7 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Major study phases across the columns: Screening / Baseline, Induction Treatment Phase, Study Treatment Discontinuation Visit, Post-Treatment Follow-Up Phase. These are the protocol's phase names, hence epoch. Topmost row that distinguishes columns, hence level 1. Name synthesized - the label cell is empty.",
+      "property_comment": "Study phase headers (Screening / Baseline, Induction Treatment Phase, Study Treatment Discontinuation Visit, Post-Treatment Follow-Up Phase) - major study phases, hence epoch. Label cell empty; name synthesised.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -110,7 +111,7 @@
         "synthesized": true
       },
       "property_type": "other",
-      "property_comment": "Timing qualifier under each phase. The values mix screening windows ('≤ 28 days', '≤ 7 days'), a cycle day ('Day 1 Cycle 1'), frequencies ('Every 2 cycles (every 4 weeks)', 'Every 3 months until May 31, 2019 (see Appendix 19)') and a post-dose window ('(≤ 30 days after last dose of study treatment)'), so no single printed concept applies - property_type=other. It is what tells columns 2 from 3 and 4 from 5, hence level 2. Name synthesized - the label cell is empty.",
+      "property_comment": "Per-column timing descriptors mixing windows relative to Day 1 (≤ 28 days, ≤ 7 days), a cycle/day anchor (Day 1 Cycle 1), a recurrence frequency (Every 2 cycles), a post-dose window and a follow-up frequency. No single property_type fits the mix, hence other. Label cell empty; name synthesised.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-002",
       "child_property_ids": [],
@@ -285,14 +286,15 @@
         },
         {
           "property_id": "prop-003",
-          "value": "Every 3 months until May 31, 2019 (see Appendix 19)",
+          "value": "Every 3 months until May 31, 2019",
           "is_merged": false,
-          "annotation_markers": ""
+          "annotation_markers": "pr1"
         }
       ],
-      "composite_label": "Patients who have PD during or at end of Induction Treatment Phase or who refuse Maintenance Treatment or who are not eligible for any study cohort / Post-Treatment Follow-Up Phase / Every 3 months until May 31, 2019 (see Appendix 19)",
+      "composite_label": "Patients who have PD during or at end of Induction Treatment Phase or who refuse Maintenance Treatment or who are not eligible for any study cohort / Post-Treatment Follow-Up Phase / Every 3 months until May 31, 2019",
       "linked_annotation_ids": [
-        "annot-003"
+        "annot-003",
+        "annot-023"
       ]
     }
   ],
@@ -586,9 +588,10 @@
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "q",
+      "annotation_markers": "q,n1",
       "linked_annotation_ids": [
-        "annot-017"
+        "annot-017",
+        "annot-021"
       ]
     },
     {
@@ -649,8 +652,10 @@
       "parent_activity_id": null,
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "n2",
+      "linked_annotation_ids": [
+        "annot-022"
+      ]
     },
     {
       "activity_id": "act-018",
@@ -1392,7 +1397,7 @@
       "table_id": "table-001",
       "annotation_marker": "b",
       "annotation_type": "footnote",
-      "annotation_text": "Patients who experience PD during or at the end of the Induction Treatment Phase, or who refuse to go into the Maintenance Treatment Phase or who are not eligible for any study cohort, will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study medication.  These patients will then enter the Post-Treatment Follow-up Phase. All patients need to be evaluated for potential resection of metastasis at completion of the induction period. This is of particular importance for patients with liver metastases. If the patient is found to be resectable they will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study treatment and will then enter the Post-Treatment Follow-up Phase.",
+      "annotation_text": "Patients who experience PD during or at the end of the Induction Treatment Phase, or who refuse to go into the Maintenance Treatment Phase or who are not eligible for any study cohort, will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study medication. These patients will then enter the Post-Treatment Follow-up Phase. All patients need to be evaluated for potential resection of metastasis at completion of the induction period. This is of particular importance for patients with liver metastases. If the patient is found to be resectable they will undergo a Study Treatment Discontinuation Visit within 30 days after the last dose of study treatment and will then enter the Post-Treatment Follow-up Phase.",
       "annotation_scope": "column",
       "referenced_elements": {
         "property_ids": [],
@@ -1416,7 +1421,7 @@
       "table_id": "table-001",
       "annotation_marker": "c",
       "annotation_type": "footnote",
-      "annotation_text": "Patients in the Post-Treatment Follow-up Phase will be followed up every 3 months after their Study Treatment Discontinuation Visit. During post-treatment follow-up subsequent anti-cancer therapies will be recorded and survival assessed up to May 31, 2019 only. Refer to Appendix 19 for management of patients based on their study status on May 31, 2019.  Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion; BRAFmut/MSS patients experiencing early disease progression during induction treatment will have the option of proceeding immediately to receive second-line treatment with 5-FU/LV, cetuximab and vemurafenib; BRAFmut/MSI-H patients experiencing early disease progression during induction treatment will have the option of proceeding immediately to receive second-line treatment with a fluoropyrimidine (5-FU/LV or capecitabine), bevacizumab and atezolizumab. See Section 3.1.1.1 for further details including if disease progression occurs prior to availability of study biomarker test results in a patient with a previous BRAF mutation-positive result (e.g. by local test). Patients who discontinue study treatment during the Induction Treatment Phase prior to disease progression will also continue to be followed for PFS, with disease status followed according to local practice until progression or May 31, 2019, whichever comes first. Disease status will not be collected for the study after May 31, 2019.",
+      "annotation_text": "Patients in the Post-Treatment Follow-up Phase will be followed up every 3 months after their Study Treatment Discontinuation Visit. During post-treatment follow-up subsequent anti-cancer therapies will be recorded and survival assessed up to May 31, 2019 only. Refer to Appendix 19 for management of patients based on their study status on May 31, 2019. Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion; BRAFmut/MSS patients experiencing early disease progression during induction treatment will have the option of proceeding immediately to receive second-line treatment with 5-FU/LV, cetuximab and vemurafenib; BRAFmut/MSI-H patients experiencing early disease progression during induction treatment will have the option of proceeding immediately to receive second-line treatment with a fluoropyrimidine (5-FU/LV or capecitabine), bevacizumab and atezolizumab. See Section 3.1.1.1 for further details including if disease progression occurs prior to availability of study biomarker test results in a patient with a previous BRAF mutation-positive result (e.g. by local test). Patients who discontinue study treatment during the Induction Treatment Phase prior to disease progression will also continue to be followed for PFS, with disease status followed according to local practice until progression or May 31, 2019, whichever comes first. Disease status will not be collected for the study after May 31, 2019.",
       "annotation_scope": "multiple",
       "referenced_elements": {
         "property_ids": [],
@@ -1453,7 +1458,7 @@
       "table_id": "table-001",
       "annotation_marker": "d",
       "annotation_type": "footnote",
-      "annotation_text": "Written informed consent for participation in the study must be obtained before performing any study-specific screening tests or evaluations and before shipping primary tumour blocks or slides to the Sponsor-designated laboratory.  However, results from routine assessments conducted prior to informed consent signature may be used as screening assessments as long as they were done within 7 days prior to informed consent signature.",
+      "annotation_text": "Written informed consent for participation in the study must be obtained before performing any study-specific screening tests or evaluations and before shipping primary tumour blocks or slides to the Sponsor-designated laboratory. However, results from routine assessments conducted prior to informed consent signature may be used as screening assessments as long as they were done within 7 days prior to informed consent signature.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -1697,7 +1702,8 @@
         {
           "table_number": 1,
           "location_type": "activity_name",
-          "row_position": 14
+          "row_position": 14,
+          "method": "synthesized"
         }
       ]
     },
@@ -1804,7 +1810,7 @@
       "table_id": "table-001",
       "annotation_marker": "s",
       "annotation_type": "footnote",
-      "annotation_text": "After the signing of the informed consent form, and prior to Day 1 of Cycle 1 (Induction Treatment Phase), any SAEs thought to be related to a protocol- mandated intervention should be reported. Adverse events will be documented at every cycle during treatment. All patients will be followed for new AEs for 28 days following the discontinuation of study treatment. At the time of treatment discontinuation, any ongoing AE/SAE will be followed until the event resolves, the Investigator assesses the event as stable, the patient is lost to follow-up, dies or withdraws consent. Death related to disease progression is not considered to be an SAE. The Sponsor should be notified if the Investigator becomes aware of any SAE or AEs of special interest occurring after the end of the adverse event reporting period if the event is believed to be related to prior study treatment.",
+      "annotation_text": "After the signing of the informed consent form, and prior to Day 1 of Cycle 1 (Induction Treatment Phase), any SAEs thought to be related to a protocol-mandated intervention should be reported. Adverse events will be documented at every cycle during treatment. All patients will be followed for new AEs for 28 days following the discontinuation of study treatment. At the time of treatment discontinuation, any ongoing AE/SAE will be followed until the event resolves, the Investigator assesses the event as stable, the patient is lost to follow-up, dies or withdraws consent. Death related to disease progression is not considered to be an SAE. The Sponsor should be notified if the Investigator becomes aware of any SAE or AEs of special interest occurring after the end of the adverse event reporting period if the event is believed to be related to prior study treatment.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -1844,6 +1850,107 @@
           "row_position": 22
         }
       ]
+    },
+    {
+      "annotation_id": "annot-021",
+      "table_id": "table-001",
+      "annotation_marker": "n1",
+      "annotation_type": "footnote",
+      "annotation_text": "Collection of these samples discontinued as of May 2018",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-014"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 17,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-022",
+      "table_id": "table-001",
+      "annotation_marker": "n2",
+      "annotation_type": "footnote",
+      "annotation_text": "Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.",
+      "annotation_scope": "activity",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [],
+        "activity_ids": [
+          "act-017"
+        ],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "activity_name",
+          "row_position": 20,
+          "method": "synthesized"
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-023",
+      "table_id": "table-001",
+      "annotation_marker": "pr1",
+      "annotation_type": "source_note",
+      "annotation_text": "See Appendix 19",
+      "annotation_scope": "column",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [
+          "col-007"
+        ],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 3,
+          "column_position": 7,
+          "method": "synthesized"
+        }
+      ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "location": {
+        "page": 170,
+        "row_positions": [
+          17,
+          20
+        ],
+        "annotation_marker": "n1"
+      },
+      "call_made": "Explanatory sub-lines printed inside an activity label cell (e.g. \"Collection of these samples discontinued as of May 2018\" under Metastatic tumour tissue; the Supplemental Biomarker Program closure sentence under Stool sample; \"(Experimental Arm only)\" under several Cohort 1/2/4 activities) were moved out of activity_name into footnote annotations with synthesised markers n1/n2 bound to that activity. The full raw text stays in activity_name_source.cell_text. Applies to Tables 1, 2, 3, 4 and 5.",
+      "alternative": "Keep the sub-line as part of activity_name (e.g. \"Pulse oximetry (Experimental Arm only)\"), producing no synthesised annotation.",
+      "report_section": "3.3"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "location": {
+        "page": 169,
+        "row_position": 3
+      },
+      "call_made": "The second/third header row carrying per-column timing descriptors (\"≤ 28 days\", \"Day 1 Cycle 1\", \"Every 2 cycles (every 4 weeks)\", \"(≤ 30 days after last dose ...)\", \"Every 3 months ...\") is typed property_type \"other\" in every table, because it mixes windows, anchors and recurrence frequencies.",
+      "alternative": "Type the row as \"visit\" (each column is one visit/encounter) or as \"window\".",
+      "report_section": "3.2"
     }
   ]
 }

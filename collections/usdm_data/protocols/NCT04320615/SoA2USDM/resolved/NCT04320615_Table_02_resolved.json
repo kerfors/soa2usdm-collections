@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.651295+00:00",
+    "resolved_at": "2026-09-27T15:03:31.323770+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -14,39 +14,37 @@
       "structure_valid": true,
       "hierarchy_valid": true,
       "annotations_valid": true,
-      "validation_warnings": [
-        "Resolved annotation annot-001 ('tn1') has no referenced elements — orphan: Note: For patients who have been discharged, all a...",
-        "Annotation summary: 1 of 12 annotations have no referenced elements (will be orphans in consolidation)"
-      ],
+      "validation_warnings": [],
       "validation_errors": [],
       "method_provenance": [
-        "indentation_level:font_signal: 1",
-        "indentation_level:visual_estimate: 7",
+        "indentation_level:font_signal: 17",
         "marker_location:synthesized: 1",
-        "property_structure:inferred_from_layout: 1"
+        "schedule_cell:visual_read: 26"
       ]
     },
-    "resolution_status": "resolved_with_warnings",
+    "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5",
+    "extracted_at": "2026-09-27T13:02:25Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT04320615_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Version 3"
+      "document_version": "Protocol WA42380, Version 3"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Appendix 2 of protocol WA42380 v3. Body rows run across document pages 81-82; the two-row header block is reprinted on page 82 and de-duplicated here. Page 83 carries only footnote text. One leading label column (L=1); first data column is 2, so Day 3 = column 2 ... Day 28 = column 27 and Study Completion/Discontinuation = column 28. Symbol-font private-use glyphs mapped to Unicode as in Table 1."
+    "extraction_notes": "Text-layer PDF with vector rule lines. Marks verified mechanically by pdftotext -bbox column binning; merged spans confirmed from raster rule-line detection (200/120 dpi render). Symbol-font glyphs in the text layer (private-use code points U+F02D, U+F02B, U+F0B1, U+F0DF, U+F0E0, U+F022) were mapped to the characters visible on the rendered page (minus/en dash, plus, plus-minus, left/right arrow, registered sign). Subscripts (PaO2, FiO2, SpO2) flattened to plain digits.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-002",
     "table_number": 2,
     "table_type": "main_soa",
-    "table_title": "Appendix 2 Schedule of Activities: Days 3−28",
-    "table_purpose": "Daily/periodic in-hospital and follow-up assessments from Day 3 through Day 28 plus the study completion/discontinuation visit",
+    "table_title": "Appendix 2 Schedule of Activities: Days 3–28",
+    "table_purpose": "Daily in-hospital/follow-up schedule Days 3-28 plus Study Completion/Discontinuation",
     "page_start": 81,
     "page_end": 83,
     "track_label": null,
@@ -54,29 +52,31 @@
     "row_count": 19,
     "header_row_count": 2,
     "activity_row_count": 17,
-    "notes": "Classified main_soa rather than continuation or domain: the column structure is entirely different from Appendix 1 (26 day columns plus a completion column vs 5 screening/Day1/Day2 columns), so it is not a physical page split, and it is not a finer-granularity subset of one Appendix 1 activity. It is not a track either: the population is the same randomized patients continuing on the same single timeline, with no branching. Per the taxonomy, independent schedules with different column structures are each main_soa. The '(Cont.)' page (document page 82) reprints the header and carries the last body row."
+    "notes": "Body rows on page 81 (16 rows) and page 82 (1 row, header reprinted and de-duplicated); page 83 carries footnotes g-k only. Classified main_soa (see Table 1 notes and review item D4); alternative 'track' recorded."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-002",
       "row_position": 1,
-      "property_name": "Study Period",
+      "property_name": "Period",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
         "cell_value": "",
         "synthesized": true
       },
-      "property_type": "epoch",
-      "property_comment": "Top header band: 'Days 3−28' merged across all 26 day columns (positions 2-27) and 'Study Completion/Discontinuation' over the last column (position 28); the latter cell is also merged vertically down into the Study Day row. The row label cell is blank, so property_name was synthesized. Classified 'epoch' because the row separates the on-study day range from the completion/discontinuation encounter.",
+      "property_type": "period",
+      "property_comment": "Top header band with an empty label cell: 'Days 3–28' (marker a) merged across columns 2-27 and 'Study Completion/Discontinuation' over column 28. Groups the daily columns into a follow-up period versus the completion/discontinuation visit; typed period; name synthesized. Also anchors the table-wide 'Note:' (synthesized marker tn1).",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
         "prop-002"
       ],
-      "annotation_markers": "",
-      "linked_annotation_ids": []
+      "annotation_markers": "tn1",
+      "linked_annotation_ids": [
+        "annot-001"
+      ]
     },
     {
       "property_id": "prop-002",
@@ -89,7 +89,7 @@
         "cell_value": "Study Day"
       },
       "property_type": "study_day",
-      "property_comment": "Protocol study day numbers 3 through 28, one per column; the Study Completion/Discontinuation column carries no day value at this level. Classified 'study_day' because the values are protocol day numbers.",
+      "property_comment": "Protocol study days 3 to 28, one per column (columns 2-27); empty under the Study Completion/Discontinuation column.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [],
@@ -106,7 +106,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -117,7 +117,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 3",
+      "composite_label": "Days 3–28 / 3",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -130,7 +130,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -141,7 +141,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 4",
+      "composite_label": "Days 3–28 / 4",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -154,7 +154,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -165,7 +165,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 5",
+      "composite_label": "Days 3–28 / 5",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -178,7 +178,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -189,7 +189,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 6",
+      "composite_label": "Days 3–28 / 6",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -202,7 +202,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -213,7 +213,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 7",
+      "composite_label": "Days 3–28 / 7",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -226,7 +226,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -237,7 +237,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 8",
+      "composite_label": "Days 3–28 / 8",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -250,7 +250,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -261,7 +261,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 9",
+      "composite_label": "Days 3–28 / 9",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -274,7 +274,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -285,7 +285,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 10",
+      "composite_label": "Days 3–28 / 10",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -298,7 +298,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -309,7 +309,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 11",
+      "composite_label": "Days 3–28 / 11",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -322,7 +322,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -333,7 +333,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 12",
+      "composite_label": "Days 3–28 / 12",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -346,7 +346,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -357,7 +357,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 13",
+      "composite_label": "Days 3–28 / 13",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -370,7 +370,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -381,7 +381,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 14",
+      "composite_label": "Days 3–28 / 14",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -394,7 +394,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -405,7 +405,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 15",
+      "composite_label": "Days 3–28 / 15",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -418,7 +418,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -429,7 +429,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 16",
+      "composite_label": "Days 3–28 / 16",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -442,7 +442,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -453,7 +453,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 17",
+      "composite_label": "Days 3–28 / 17",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -466,7 +466,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -477,7 +477,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 18",
+      "composite_label": "Days 3–28 / 18",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -490,7 +490,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -501,7 +501,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 19",
+      "composite_label": "Days 3–28 / 19",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -514,7 +514,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -525,7 +525,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 20",
+      "composite_label": "Days 3–28 / 20",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -538,7 +538,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -549,7 +549,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 21",
+      "composite_label": "Days 3–28 / 21",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -562,7 +562,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -573,7 +573,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 22",
+      "composite_label": "Days 3–28 / 22",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -586,7 +586,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -597,7 +597,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 23",
+      "composite_label": "Days 3–28 / 23",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -610,7 +610,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -621,7 +621,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 24",
+      "composite_label": "Days 3–28 / 24",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -634,7 +634,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -645,7 +645,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 25",
+      "composite_label": "Days 3–28 / 25",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -658,7 +658,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -669,7 +669,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 26",
+      "composite_label": "Days 3–28 / 26",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -682,7 +682,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -693,7 +693,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 27",
+      "composite_label": "Days 3–28 / 27",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -706,7 +706,7 @@
       "column_values": [
         {
           "property_id": "prop-001",
-          "value": "Days 3−28",
+          "value": "Days 3–28",
           "is_merged": true,
           "annotation_markers": "a"
         },
@@ -717,7 +717,7 @@
           "annotation_markers": ""
         }
       ],
-      "composite_label": "Days 3−28 / 28",
+      "composite_label": "Days 3–28 / 28",
       "linked_annotation_ids": [
         "annot-002"
       ]
@@ -753,7 +753,8 @@
       "activity_name": "Chest X-ray/CT scan",
       "activity_name_source": {
         "cell_text": "Chest X-ray/CT scan",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -770,7 +771,8 @@
       "activity_name": "Vital signs",
       "activity_name_source": {
         "cell_text": "Vital signs b",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -789,7 +791,8 @@
       "activity_name": "PaO2/FiO2",
       "activity_name_source": {
         "cell_text": "PaO2/FiO2 c",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -808,7 +811,8 @@
       "activity_name": "SpO2",
       "activity_name_source": {
         "cell_text": "SpO2 b",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -827,7 +831,8 @@
       "activity_name": "Ordinal scoring",
       "activity_name_source": {
         "cell_text": "Ordinal scoring d",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -846,7 +851,8 @@
       "activity_name": "Adverse events",
       "activity_name_source": {
         "cell_text": "Adverse events e",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -865,7 +871,8 @@
       "activity_name": "Concomitant medications",
       "activity_name_source": {
         "cell_text": "Concomitant medications f",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -884,7 +891,8 @@
       "activity_name": "Hematology",
       "activity_name_source": {
         "cell_text": "Hematology g",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -903,7 +911,8 @@
       "activity_name": "Chemistry",
       "activity_name_source": {
         "cell_text": "Chemistry h",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 0,
       "is_section_header": false,
@@ -923,11 +932,11 @@
       "activity_name_source": {
         "cell_text": "Central Labs",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold",
           "underline"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -951,9 +960,9 @@
       "row_position": 13,
       "activity_name": "Serum PD (CRP, IL-6, sIL-6R)",
       "activity_name_source": {
-        "cell_text": "Serum PD (CRP, IL-6, sIL-6R)",
+        "cell_text": "Serum PD (CRP, IL-6,\nsIL-6R)",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -971,7 +980,7 @@
       "activity_name_source": {
         "cell_text": "Serum PK",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -987,9 +996,9 @@
       "row_position": 15,
       "activity_name": "Serum sample for exploratory biomarkers",
       "activity_name_source": {
-        "cell_text": "Serum sample for exploratory biomarkers",
+        "cell_text": "Serum sample for\nexploratory biomarkers",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1007,7 +1016,7 @@
       "activity_name_source": {
         "cell_text": "SARS-CoV-2 viral load i",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1025,9 +1034,9 @@
       "row_position": 17,
       "activity_name": "Serum SARS-CoV-2 antibody titer",
       "activity_name_source": {
-        "cell_text": "Serum SARS-CoV-2 antibody titer",
+        "cell_text": "Serum SARS-CoV-2\nantibody titer",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1045,7 +1054,7 @@
       "activity_name_source": {
         "cell_text": "Cryopreserved PBMCs j",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1063,9 +1072,9 @@
       "row_position": 19,
       "activity_name": "Whole blood in PAXgene® tubes for RNA analyses",
       "activity_name_source": {
-        "cell_text": "Whole blood in PAXgene® tubes for RNA analyses k",
+        "cell_text": "Whole blood in PAXgene®\ntubes for RNA analyses k",
         "indentation_level": 1,
-        "indentation_method": "visual_estimate"
+        "indentation_method": "font_signal"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -3507,9 +3516,11 @@
       "annotation_marker": "tn1",
       "annotation_type": "footnote",
       "annotation_text": "Note: For patients who have been discharged, all assessments should be performed within ±3 days of the scheduled onsite visit.",
-      "annotation_scope": "table",
+      "annotation_scope": "column",
       "referenced_elements": {
-        "property_ids": [],
+        "property_ids": [
+          "prop-001"
+        ],
         "column_ids": [],
         "activity_ids": [],
         "cell_references": []
@@ -3957,6 +3968,29 @@
           "row_position": 19
         }
       ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D4",
+      "severity": "medium",
+      "location": {
+        "page": 81
+      },
+      "call_made": "Appendix 2 (Days 3–28) and Appendix 3 (After Day 28) are each typed main_soa: sequential, independently structured schedules for the same participants, like separate Screening and Treatment tables.",
+      "alternative": "Type Appendix 2 and/or Appendix 3 as track (same participants in a different study phase, own visit structure) with a short track_label such as 'Days 3–28' / 'After Day 28'.",
+      "report_section": "5.1"
+    },
+    {
+      "id": "D5",
+      "severity": "medium",
+      "location": {
+        "page": 81,
+        "row_position": 1
+      },
+      "call_made": "The top header band ('Days 3–28' over the daily columns, 'Study Completion/Discontinuation' over the last column) is typed period with a synthesized name 'Period'.",
+      "alternative": "Type the band as epoch (follow-up phase vs completion) or as visit (the last cell names a visit).",
+      "report_section": "5.2"
     }
   ]
 }

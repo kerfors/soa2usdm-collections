@@ -60,7 +60,7 @@
 </style>
 </head>
 <body>
-    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03817853" title="This protocol's row on the collection index">NCT03817853</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 1 extraction data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <span class="pnav-cur">T1</span> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03817853_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03817853_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_uncertainty_report.html">extraction log</a></div></nav>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03817853" title="This protocol's row on the collection index">NCT03817853</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 1 extraction data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <span class="pnav-cur">T1</span> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03817853_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03817853_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_uncertainty_report.html">extraction log</a></div></nav>
     <div class="toolbar">
         <div class="title">NCT03817853 — Table 1 extraction data</div>
         <div class="raw-link"><a href="NCT03817853_Table_01_extraction.json" download>raw json</a></div>
@@ -74,30 +74,32 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5 (prompt v3.7.3)",
+    "extracted_at": "2026-09-27T12:40:57Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03817853_soa.pdf",
       "document_type": "protocol",
       "document_version": "Protocol MO40597, Version 5"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Single SoA table (Appendix 1). Document pages 100-102 per PAGEMAP.md; page 100 carries the whole grid, pages 101-102 carry only the general Notes paragraph and footnotes a-z, aa. Column geometry recovered from 200-dpi raster rule lines (13 full-height vertical rules -> 1 label column + 11 data columns) and marks binned from the pdftotext -bbox text layer into those rule-bounded cells."
+    "extraction_notes": "Single SoA table (Appendix 1) printed on document page 100; its footnotes (general Notes paragraph and a–aa) continue on pages 101-102, which carry no activity rows. Text-layer PDF with vector rule lines; marks verified by pdftotext -bbox column binning against raster-recovered vertical rules. Abbreviation paragraph under the table not emitted (no in-grid markers).",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Appendix 1 Schedule of Activities",
-    "table_purpose": "Primary schedule of activities for screening, induction, EOI, maintenance, EOM and safety follow-up",
+    "table_purpose": "Main study schedule: screening, induction (G-chemo), end of induction, maintenance, end of maintenance and safety follow-up",
     "page_start": 100,
     "page_end": 102,
-    "notes": "Only SoA table in the excerpt, so main_soa by the §2 discriminators: rows are procedures performed on subjects and this is the primary anchor grid. One leading label column (L=1): the 13 full-height vertical rules at 200 dpi give one label column plus 11 data columns, so the first data column is position 2 and the last is 12. The label column carries an internal vertical rule ONLY across the two study-drug rows (x=372 px, rows y=1090-1171 px), so it is a nested split, not a second table column. 'Study drug administration' is a label cell vertically merged across those two rows; it is emitted as a level-0 organisational activity row (row_position 24) that carries no marks, so the 27 emitted activity rows correspond to 26 physical body rows. Pages 101-102 contribute footnote text only, no activity rows."
+    "notes": "Only SoA table in the excerpt; primary anchor grid. Pages 101-102 hold footnotes only."
   },
   "schedule_properties": [
     {
       "table_number": 1,
       "row_position": 1,
-      "property_name": "Study phase",
+      "property_name": "Study period",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -105,14 +107,13 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "hierarchical_level": 1,
-      "property_comment": "Top header band: 'Screening' (merged over columns 2-3), 'Treatment' (merged over columns 4-11) and 'Follow-up (3 months)' (column 12). These are the major study phases, hence epoch. The Screening and Follow-up cells are also vertically merged downward (Screening through header row 3, Follow-up through header row 4); the schema has no vertical merge, so each is recorded once, on this row.",
-      "annotation_markers": "n1"
+      "property_comment": "Top header band: Screening (cols 2-3, cell also spans header rows 1-3), Treatment (cols 4-11), Follow-up (3 months) (col 12, cell spans header rows 1-4). Major study phases, hence epoch. Label cell empty; name synthesized.",
+      "hierarchical_level": 1
     },
     {
       "table_number": 1,
       "row_position": 2,
-      "property_name": "Treatment period",
+      "property_name": "Treatment phase",
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
@@ -120,9 +121,9 @@
         "synthesized": true
       },
       "property_type": "period",
+      "property_comment": "Second header band under Treatment: Induction (6-8 cycles) (cols 4-8), EOI (col 9), Maintenance (every 8 weeks ± 10 days) (col 10), EOM (col 11); EOI/Maintenance/EOM cells span header rows 2-4. Sub-phases of the Treatment epoch (EOI and EOM are end-of-phase visits printed at this level), hence period. Label cell empty; name synthesized.",
       "hierarchical_level": 2,
-      "structure_method": "inferred_from_layout",
-      "property_comment": "Second header band, printed only under 'Treatment': 'Induction (6-8 cycles)' merged over columns 4-8, then EOI, Maintenance (every 8 weeks +/- 10 days) and EOM. Typed period because the row subdivides the Treatment epoch; note that EOI and EOM read more like end-of-phase encounters than periods, so the type is a judgement call recorded in the uncertainty report. Level 2 from the rule-line geometry (this band sits below the epoch band and above the cycle band); the label cell is empty, so the name is synthesised."
+      "structure_method": "inferred_from_layout"
     },
     {
       "table_number": 1,
@@ -135,9 +136,8 @@
         "synthesized": true
       },
       "property_type": "cycle",
-      "hierarchical_level": 3,
-      "structure_method": "inferred_from_layout",
-      "property_comment": "Third header band, printed only under Induction: 'Cycle 1' merged over columns 4-6, 'Cycle 2' (column 7), 'Cycles 3-6/8' (column 8). Repeating treatment cycles, hence cycle. Label cell empty, name synthesised from the cell values."
+      "property_comment": "Cycle band under Induction: Cycle 1 (cols 4-6), Cycle 2 (col 7), Cycles 3–6/8 (col 8). Treatment cycles, hence cycle. Label cell empty; name synthesized.",
+      "hierarchical_level": 3
     },
     {
       "table_number": 1,
@@ -149,8 +149,8 @@
         "cell_value": "Day"
       },
       "property_type": "study_day",
-      "hierarchical_level": 4,
-      "property_comment": "Bottom header band, labelled 'Day' in the label column: screening windows 'D-28 to D-1' and 'D-7 to D-1' and cycle days D1, D8, D15, D1, D1. Protocol days relative to each cycle, hence study_day. Columns 9-12 (EOI, Maintenance, EOM, Follow-up) have no day cell here - their header cells are vertically merged from the band above."
+      "property_comment": "Printed row label 'Day': screening windows D–28 to D–1 and D–7 to D–1 (cols 2-3) and day-within-cycle D1/D8/D15/D1/D1 (cols 4-8). Study/cycle days, hence study_day.",
+      "hierarchical_level": 4
     }
   ],
   "schedule_grid": [
@@ -159,8 +159,8 @@
       "row_position": 1,
       "column_position": 2,
       "cell_value": "Screening",
-      "merged_cell_range": "2:3",
       "is_merged_cell": true,
+      "merged_cell_range": "2:3",
       "annotation_markers": "a"
     },
     {
@@ -168,8 +168,8 @@
       "row_position": 1,
       "column_position": 3,
       "cell_value": "Screening",
-      "merged_cell_range": "2:3",
       "is_merged_cell": true,
+      "merged_cell_range": "2:3",
       "annotation_markers": "a"
     },
     {
@@ -177,64 +177,64 @@
       "row_position": 1,
       "column_position": 4,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 5,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 6,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 7,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 8,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 9,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 10,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
       "row_position": 1,
       "column_position": 11,
       "cell_value": "Treatment",
-      "merged_cell_range": "4:11",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:11"
     },
     {
       "table_number": 1,
@@ -246,10 +246,22 @@
     {
       "table_number": 1,
       "row_position": 2,
+      "column_position": 2,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
+      "column_position": 3,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
       "column_position": 4,
       "cell_value": "Induction (6–8 cycles)",
-      "merged_cell_range": "4:8",
       "is_merged_cell": true,
+      "merged_cell_range": "4:8",
       "annotation_markers": "b"
     },
     {
@@ -257,8 +269,8 @@
       "row_position": 2,
       "column_position": 5,
       "cell_value": "Induction (6–8 cycles)",
-      "merged_cell_range": "4:8",
       "is_merged_cell": true,
+      "merged_cell_range": "4:8",
       "annotation_markers": "b"
     },
     {
@@ -266,8 +278,8 @@
       "row_position": 2,
       "column_position": 6,
       "cell_value": "Induction (6–8 cycles)",
-      "merged_cell_range": "4:8",
       "is_merged_cell": true,
+      "merged_cell_range": "4:8",
       "annotation_markers": "b"
     },
     {
@@ -275,8 +287,8 @@
       "row_position": 2,
       "column_position": 7,
       "cell_value": "Induction (6–8 cycles)",
-      "merged_cell_range": "4:8",
       "is_merged_cell": true,
+      "merged_cell_range": "4:8",
       "annotation_markers": "b"
     },
     {
@@ -284,8 +296,8 @@
       "row_position": 2,
       "column_position": 8,
       "cell_value": "Induction (6–8 cycles)",
-      "merged_cell_range": "4:8",
       "is_merged_cell": true,
+      "merged_cell_range": "4:8",
       "annotation_markers": "b"
     },
     {
@@ -309,27 +321,45 @@
     },
     {
       "table_number": 1,
+      "row_position": 2,
+      "column_position": 12,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 2,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 3,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
       "row_position": 3,
       "column_position": 4,
       "cell_value": "Cycle 1",
-      "merged_cell_range": "4:6",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:6"
     },
     {
       "table_number": 1,
       "row_position": 3,
       "column_position": 5,
       "cell_value": "Cycle 1",
-      "merged_cell_range": "4:6",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:6"
     },
     {
       "table_number": 1,
       "row_position": 3,
       "column_position": 6,
       "cell_value": "Cycle 1",
-      "merged_cell_range": "4:6",
-      "is_merged_cell": true
+      "is_merged_cell": true,
+      "merged_cell_range": "4:6"
     },
     {
       "table_number": 1,
@@ -342,6 +372,30 @@
       "row_position": 3,
       "column_position": 8,
       "cell_value": "Cycles 3–6/8"
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 9,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 10,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 11,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 3,
+      "column_position": 12,
+      "cell_value": ""
     },
     {
       "table_number": 1,
@@ -384,6 +438,30 @@
       "row_position": 4,
       "column_position": 8,
       "cell_value": "D1"
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 9,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 10,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 11,
+      "cell_value": ""
+    },
+    {
+      "table_number": 1,
+      "row_position": 4,
+      "column_position": 12,
+      "cell_value": ""
     }
   ],
   "activities": [
@@ -594,7 +672,8 @@
       "activity_name": "Study drug administration",
       "activity_name_source": {
         "cell_text": "Study drug administration",
-        "indentation_level": 0
+        "indentation_level": 0,
+        "indentation_method": "visual_estimate"
       }
     },
     {
@@ -604,7 +683,8 @@
       "activity_name": "obinutuzumab",
       "activity_name_source": {
         "cell_text": "obinutuzumab r",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "annotation_markers": "r"
     },
@@ -615,7 +695,8 @@
       "activity_name": "chemotherapy",
       "activity_name_source": {
         "cell_text": "chemotherapy s",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "annotation_markers": "s"
     },
@@ -1226,7 +1307,7 @@
   ],
   "annotations": [
     {
-      "annotation_marker": "n1",
+      "annotation_marker": "gn1",
       "annotation_type": "footnote",
       "annotation_text": "Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit date, with the exception of C1D1 which should take place within 28 days of the patient entering screening. All assessments should be performed within 2 days of the scheduled visit, unless otherwise specified. On treatment days, all assessments should be performed prior to dosing, unless otherwise specified. Results from hematology and biochemistry must be reviewed, and the review documented, prior to study drug administration.",
       "marker_locations": [
@@ -1660,8 +1741,53 @@
         }
       ]
     }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "location": {
+        "page": 100,
+        "row_positions": [
+          24,
+          25,
+          26
+        ]
+      },
+      "call_made": "'Study drug administration' (a label cell spanning two sub-rows) is recorded as a mark-free parent row (level 0) with two child activities 'obinutuzumab' and 'chemotherapy' (level 1) carrying the marks.",
+      "alternative": "Record two flat level-0 activities named 'Study drug administration – obinutuzumab' and 'Study drug administration – chemotherapy', with no separate parent row.",
+      "report_section": "3.2"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "location": {
+        "page": 100,
+        "row_position": 2
+      },
+      "call_made": "The second header band (Induction / EOI / Maintenance / EOM) is typed 'period' (sub-phases of Treatment), with EOI and EOM as single-column entries of that band.",
+      "alternative": "Type the band 'visit' or 'other', since EOI and EOM are end-of-phase visits rather than periods; Induction and Maintenance would then be periods mixed in a visit row.",
+      "report_section": "3.3"
+    },
+    {
+      "id": "D3",
+      "severity": "low",
+      "location": {
+        "page": 100,
+        "row_positions": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "call_made": "Header cells that span several header rows vertically (Screening rows 1-3; EOI, Maintenance, EOM rows 2-4; Follow-up rows 1-4) are recorded only on the topmost row they occupy; the covered lower-row cells are empty.",
+      "alternative": "Repeat the label in every header row the cell covers (e.g. 'EOI' also in the Cycle and Day rows).",
+      "report_section": "3.3"
+    }
   ]
-};
+}
+;
     
     function escHtml(s) {
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

@@ -1,280 +1,155 @@
-# NCT02107703 (Protocol I3Y-MC-JPBL, LY2835219) — SoA extraction uncertainty report
+# NCT02107703 — SoA extraction uncertainty report
 
-Source: `NCT02107703_soa.pdf`, 7 PDF pages = document pages 72–78 (per PAGEMAP.md).
-Prompt v3.7.3, schema `soa-table-extraction` v1.0. Two tables emitted.
+Source: `NCT02107703_soa.pdf` (7 PDF pages = document pages 72–78 per PAGEMAP.md; protocol I3Y-MC-JPBL, Attachment 1). No protocol markdown was provided. Prompt v3.8.1, single pass.
 
----
+## Decisions needed (7)
 
-## 1. Structure of the excerpt
+| # | where | call made | alternative | detail |
+|---|---|---|---|---|
+| D1 | T1 p73–75, rows 7, 10, 14, 19, 27, 37, 40 | Each Procedure Category cell (Study Entry /Enrollment, Medical History, Physical Examination, Tumor Assessment, Lab/Diagnostic Tests, Study Drug, Health Outcomes) is emitted as its own level-0 grouping row with no marks, placed just above its procedures. The procedures are level 1. These grouping rows are not separately printed rows. | Treat the category column as a label column only: no grouping rows, and every procedure at level 0 (a flat table). | 3.2 |
+| D2 | T1 p75, rows 38–39 (Fulvestrant / LY2835219 Therapy) | The dosing text cells are spread across columns 6–11: all on-treatment columns and both follow-up columns. The ruled merged cell runs to the right edge of the table. | Limit the text to the on-treatment columns 6–9, reading the extra width as layout only, since no drug is given in postdiscontinuation follow-up. | 3.3 |
+| D3 | T1 p73, row 4 (Approximate Duration (days)) | This header row gets no hierarchy level (null), because it does not tell any two columns apart. "Relative day within a cycle" is level 4. | Give Duration level 4 and Relative day level 5, following the printed order. | 3.4 |
+| D4 | T1 p73, row 2 (Cycle) | The row is typed as cycle, although its last two cells read "Short-Term Follow-Up" and "Long-Term Follow-Up", which are periods, not cycles. | Type the row `other`, or treat the follow-up cells as period labels. | 3.4 |
+| D5 | T1 p73, subtitle | The subtitle "Perform procedure as indicated." is kept only in `table_metadata.notes`. It is not an annotation. | Emit it as a table-scope footnote with a synthesised marker on header row 1. | 3.5 |
+| D6 | T2 p78 | The extension-period schedule is typed `track` with `track_label` "Extension period". It covers patients who continue treatment after study completion and has its own visits (501–5XX, 901). | Type it `main_soa`, as an independent schedule, with no track label. | 4.1 |
+| D7 | T2 p78, rows 9–10 | The dosing text for Fulvestrant and LY2835219 is spread across both Day 1 and Day 15 (columns 4–5), matching the ruled merged cell. | Anchor the text to Day 1 only (column 4). | 4.2 |
 
-| Doc page | Content | Belongs to |
+## Recorded, not open (14)
+
+- §5 label columns: both tables have L = 3 label columns (Procedure Category, Procedure, Protocol Reference). The header-row labels (Cycle, Visit, …) sit in column 3. The first data position is 4. T1 data columns are 4–11 and T2 data columns are 4–6.
+- §6 abbreviations: both abbreviation blocks (p75 for T1, p78 for T2) yield zero annotations. None of their terms is printed as a marker.
+- §6 inline/column references: every Protocol Reference entry became a `source_note`, de-duplicated by text. Rows with two references (e.g. "Section 7.1 / Attachment 4") were split into separate notes. The synthesised markers pr1–pr20 are numbered once across the study, so "Section 10.3" is pr9 in both tables. Each location has `method: synthesized` and the marker is also in the row's `annotation_markers`.
+- §8 bare pointer: footnote m ("See Pharmacokinetic Sampling Schedule (Attachment 7).") is typed `source_note`. Footnote p ends with "Refer to Section 9.4.1.1.2." but also explains, so it stays a `footnote`.
+- §6 header-cell footnotes: T1 marker a (Short-/Long-Term Follow-Upᵃ) is placed on the Cycle-row grid cells for columns 10 and 11. Marker p (1ᵖ) is placed on the Relative-day grid cells for columns 8 and 9. T2 marker a is on Cycle-row column 6.
+- §5 merged marks: these were spread across their span from the raster rule geometry. The spans are listed in 3.3 and 4.2.
+- §1b de-duplication: the header reprinted on p74 and p75 was de-duplicated, and header values are taken from p73. On p74–75 the text layer prints "≤" as the Symbol-font private-use glyph U+F0A3, so those tokens read "28" / "14". The render shows ≤28 / ≤14, the same as p73.
+- §4 non-activity row: the "Procedure Category / Procedure / Protocol Reference" column-label band (row 6 in both tables) is not emitted as an activity.
+- §4 page coverage: pages 76 and 77 of T1 hold only footnotes b–q and contribute no rows (see 3.1).
+- §3 synthesised name: the empty-label epoch row is named "Study period" in both tables.
+- Type definitions, one printed table: T1 is one table spanning p73–77, not a set of continuations. The "(continued)" / "(concluded)" captions on p76–77 caption the footnote pages and have no table number of their own.
+- §1 literal transcription: Survival Information has no baseline mark, although footnote d says survival information is "collected at baseline". The grid was transcribed as printed.
+- §1 literal transcription: some text differs between label and footnote, and some text looks defective. All of it was kept as printed. The BPI row label reads "BPI, EORTC QLQ-C30, EORTC BR23, EQ-5D 5L", while footnote k says "mBPI-sf … EORTC QLQ-BR23". Footnote h has no final period. T2 note c reads "ending hour after" with the "1" missing.
+- §1c/§1e text repair: three glyph or line-break repairs are recorded as `annotation_text_source.method: visual_transcription` on notes a, b and j (see 5.2).
+
+## 1. Method
+
+- **Text layer:** present on every page, with real words, so the text is not glyph-spread (§1c does not apply). Two exceptions: Symbol-font characters come through as private-use glyphs (U+F0B1 = ±, U+F0A3 = ≤), and pdftotext drops line-break hyphens.
+- **Vector layer:** not relied on. Rule lines were recovered from the 200-dpi raster (§1d): vertical rules are pixel columns that are more than 90% ink inside each row band. The same method was used on every page.
+- **Mechanical mark-check (§1b):** I ran `pdftotext -bbox` and matched X tokens with `^[Xx][*a-zA-Z0-9]?$`. I binned each token to a column using the raster column boundaries (269.2 / 297.2 / 323.2 / 346.6 / 377.2 / 413.2 / 471.7 / 534.8 / 606.8 pt on T1), then grouped tokens by row y. On T1 this gave 30 bbox mark rows (p73: 13, p74: 13, p75: 4). They match the 30 marked activity rows cell for cell. The only difference is expected: tokens sitting on a column border (x ≈ 295 at the 4|5 border, x ≈ 350 at the 6|7 border) belong to merged cells whose internal rule is missing in the raster. They were spread across the span rather than binned. On T2, the X tokens at x = 377 (column 4) and x = 524 (column 6) match the visual read. **Mechanical and visual reads disagree in no cell.**
+
+## 3. Table 1 — Study Schedule, Protocol I3Y-MC-JPBL (main_soa, doc pages 73–77)
+
+### 3.1 Counts
+
+- 8 data columns (4–11): Baseline ≤28 | Baseline ≤14 | C1 D1 | C1 D15±3 | C2–3 D1 | C4+ D1 | Short-Term FU (801) | Long-Term FU (802–8XX).
+- 5 schedule properties.
+- 38 activity rows: 7 category/grouping rows and 31 procedures. 117 activity_schedule entries. 36 annotations: 17 lettered footnotes a–q, including one `source_note` (m), plus 19 protocol-reference `source_note`s (pr1–pr19).
+- Activity rows per page: p73 = 17, p74 = 13, p75 = 8, p76 = 0, p77 = 0. Pages 76–77 are footnote-only pages (notes b–h on p76, i–q on p77), so they have no activity rows. No page was skipped.
+
+### 3.2 Hierarchy (D1)
+
+The Procedure Category column is a vertically merged label column. To keep the grouping, each category became a level-0 organisational row with no marks, and its procedures are level 1. The row positions of these grouping rows are placed before their first child, so they are not separate printed rows. Three rows print their name across the merged Category+Procedure cells and carry marks: Survival Information, Adverse Event Collection/CTCAE Grading, and Concomitant Medications (with analgesics). These are standalone level-0 activities. Indentation came from the column position, with category cells bold except "Health Outcomes", which is printed in regular weight. This is recorded as `indentation_method: visual_estimate` on every row. The category "Medical History" and the procedure "Medical History" (row 11) are distinct printed cells, and both were kept.
+
+### 3.3 Merged-mark decisions
+
+| rows | span | evidence |
 |---|---|---|
-| 72 | Divider page: `Attachment 1. Protocol JPBL Study Schedule` — no grid | neither table |
-| 73 | `Study Schedule, Protocol I3Y-MC-JPBL` — header + first body block | Table 1 |
-| 74 | same header reprinted + body continues | Table 1 |
-| 75 | same header reprinted + body ends; abbreviations block + footnote a | Table 1 |
-| 76 | `Study Schedule, Protocol I3Y-MC-JPBL (continued)` — footnotes b–h only | Table 1 |
-| 77 | `Study Schedule, Protocol I3Y-MC-JPBL (concluded)` — footnotes i–q only | Table 1 |
-| 78 | `Study Schedule for the extension period only, Protocol I3Y-MC-JPBL` | Table 2 |
+| 8 Informed Consent Form signed (Xᵠ) | 4:5 | no 297 pt rule in the row band |
+| 20–23 Tumor measurement, Radiologic imaging, Bone Scintigraphy, X-ray/CT/MRI (Xᶜ/Xᵇ/Xⁱ/Xʲ) | 4:5 | no 297 pt rule |
+| 25 Adverse Event Collection (Xᶠ), 26 Concomitant Medications (X) | 6:7 | no 346.6 pt rule (rows 28–29 and 32–36 do have it, so their Cycle 1 marks are split) |
+| 38 Fulvestrant Therapy, 39 LY2835219 Therapy (dosing text with ᵍ) | 6:11 | only rules at 269.2 / 323.2 / 606.6 pt in the band. The cell runs to the table edge (D2) |
 
-Pages 73–75 reprint an identical header block and the same
-Procedure Category / Procedure / Protocol Reference label band; the rows simply continue, so this
-is one logical table (page split), extracted as a single file with `page_start` 73 / `page_end` 77
-and the repeated header rows counted once (§1b de-duplication), not as three files with
-`continuation_of`.
+Shaded empty merged cells (for example Cycle 1 in the tumor rows) carry no value and were not emitted.
 
-PAGEMAP.md flags no page as beyond the declared SoA range; printed footers happen to agree with the
-document pages here, but document pages from PAGEMAP.md were used throughout regardless.
+### 3.4 Header properties (D3, D4)
 
----
+The rows are: Study period (epoch, level 1, name synthesised), Cycle (cycle, 2), Visit (visit, 3), Approximate Duration (days) (other, null), and Relative day within a cycle (study_day, 4). Header cells are merged as follows: Baseline 4:5, Patients on Study Treatment 6:9, Postdiscontinuation Follow-Up 10:11. Cycle "BL", Visit "0" and Duration "28" span 4:5, and Cycle 1, Visit 1 and Duration 28 span 6:7. The Relative-day cells in columns 10–11 are shaded and blank, and were emitted as empty grid cells.
 
-## 2. Per table
+### 3.5 Annotations
 
-### Table 01 — `main_soa`
-- Title: `Study Schedule, Protocol I3Y-MC-JPBL`. Pages 73–77.
-- **Label columns L = 3** (Procedure Category, Procedure, Protocol Reference) → **first data column is
-  position 4**; data columns run **4–11** (8 data columns).
-  Columns: 4 = Baseline / relative day ≤28, 5 = Baseline / ≤14, 6 = Cycle 1 / day 1,
-  7 = Cycle 1 / day 15±3, 8 = Cycle 2–3 / day 1, 9 = Cycle 4 and Beyond / day 1,
-  10 = Short-Term Follow-Up (Visit 801), 11 = Long-Term Follow-Up (Visit 802 - 8XX).
-- 5 schedule properties, 40 schedule-grid cells, **31 activities**, 117 activity_schedule cells,
-  37 annotations.
-- **Activity rows per page:** 73 → 13 rows (row_position 7–19); 74 → 12 rows (20–31);
-  75 → 6 rows (32–37); **76 → 0 rows; 77 → 0 rows**. Pages 76 and 77 are inside the declared range
-  but carry only the "(continued)" / "(concluded)" footnote blocks — they contribute footnotes b–h
-  and i–q respectively and no body rows. This is declared, not a skipped page (§4).
-- Row_position 6 is the repeated label band that reprints the three label-column headings. It
-  is neither an activity (§4: repeated column-label band) nor a schedule property (its data cells are
-  blank/shaded and it distinguishes no column), so row 6 is intentionally unused; activities start at 7.
+- All lettered notes are in the page-bottom footnote block. They were bound through their printed markers (activity label and cell), so no proximity binding was used and there is no notes column.
+- Markers are placed as follows:
+  - a: header columns 10–11
+  - b: row 21 and columns 4, 5, 8–11
+  - c: row 20 and columns 4, 5, 8–11
+  - d: row 24 and columns 10–11
+  - e: row 35 and columns 5, 6, 7, 9, 10
+  - f: row 25 and columns 5–11
+  - g: rows 38–39 and columns 6–11
+  - h: row 36 and column 6
+  - i: row 22 and columns 4, 5, 9–11
+  - j: row 23 and columns 4, 5, 8–11
+  - k: row 41 and columns 5, 8, 9, 10
+  - l: row 42 and columns 5, 8–11
+  - m: row 32 and columns 6–8
+  - n: row 30 and column 5
+  - o: row 31 and column 5
+  - p: header columns 8–9
+  - q: row 8 and columns 4–5
+- The subtitle "Perform procedure as indicated." is not an annotation (D5).
 
-### Table 02 — `track`, `track_label` "Extension Period"
-- Title: `Study Schedule for the extension period only, Protocol I3Y-MC-JPBL`. Page 78 only.
-- **L = 3**, first data column **4**, data columns **4–6** (4 = cycle X-Y day 1, 5 = cycle X-Y day 15,
-  6 = Extension Period Follow-Up, visit 901).
-- 5 schedule properties, 15 grid cells, **3 activities** (all on page 78), 6 activity_schedule cells,
-  6 annotations.
-- **Classification reasoning.** Not `continuation` (different header block, own footnote set a–c, own
-  abbreviations line). Not `domain` (column structure differs entirely: 3 data columns, cycles "X-Y",
-  visits "501-5XX" and "901" against Table 1's BL/1/2–3/4+/801/802-8XX). It is a separate study phase
-  attended by the subset of patients who continue: footnote a reads
-  "The extension period begins after study completion and ends at the end of trial." → `track`.
-  `track_label` "Extension Period" is taken from the source's own wording
-  ("Study Schedule for the extension period only…", "Extension Period Follow-Up").
+## 4. Table 2 — Study Schedule for the extension period only (track, doc page 78)
 
----
+### 4.1 Classification (D6)
 
-## 3. Method — how the grid was read
+The table is typed `track` with `track_label` "Extension period". The title limits it to the extension period, which footnote a says "begins after study completion and ends at the end of trial". It has its own visit numbers (501–5XX, 901) and its own columns. This fits the type definition's example of a post-study schedule for participants continuing treatment.
 
-The PDF has a real text layer (`pdftotext` returns full words) and **no raster images at all**
-(`pdfimages -list` is empty), so this is a vector table, not a scan. pdfplumber is forbidden (§1), so
-the rule lines were recovered from the **raster** at 200 dpi per §1d and used for every page:
+### 4.2 Counts and spans (D7)
 
-- Vertical rules (page 73–75): px 184 | 338 | 587 | 749 | 824 | 899 | 962 | 1049 | 1149 | 1312 | 1487 | 1687
-  → 3 label columns + 8 data columns.
-- Vertical rules (page 78): px 186 | 420 | 661 | 955 | 1137 | 1312 | 1600 → 3 label columns + 3 data columns.
-- Horizontal rules taken from full-width ink rows; per-band re-scan of each vertical rule x tells
-  which internal boundaries a given row actually draws — that is what identifies the merges below.
-- Cell text then came from `pdftotext -bbox` tokens binned into those rule-bounded cells.
-- The bbox matrix was diffed cell-for-cell against a visual read of each rendered page
-  (73, 74, 75, 78) plus zoomed crops of the Baseline block on page 73. **No mark disagreed** between
-  the mechanical matrix and the visual read.
-- One systematic bbox-only artefact worth recording: a footnoted mark tokenises as X
-  plus a separate superscript-letter token, and in a Baseline-merged row the two tokens straddle the
-  (undrawn) 4/5 boundary — column binning alone would file the `X` in column 4 and the marker in
-  column 5. The rule-line geometry resolves it: those cells are merged 4:5 and the mark is
-  distributed, not centred (§5).
-- Within multi-line cells the text layer's word order is scrambled (the ECOG label's two printed
-  lines come back out of order); line order for every activity name and header label was re-established
-  against the rendered page. The words themselves are text-layer reads, so no
-  `activity_name_source.method` was recorded.
+- 3 data columns (4–6): Day 1 | Day 15 | Extension Period Follow-Up (901).
+- 5 schedule properties, with the same row structure as Table 1.
+- 4 activity rows, all on p78: 3 procedures and 1 grouping row (Study Drug). 6 activity_schedule entries. 5 annotations: footnotes a, b, c, plus pr9 (Section 10.3) and pr20 (Section 8.1.2).
+- The AE row has X in column 4 and column 6. Column 5 is shaded and has its own rule at 409.6 pt, so it is not merged.
+- The Fulvestrant and LY2835219 dosing text spans 4:5: the band has rules only at 343.4 / 471.9 pt. The follow-up column for both rows is shaded and empty.
+- "Patients on Study Treatment", "X-Y", "501-5XX" and "28" are merged header cells spanning 4:5.
 
-### Text-layer glyph encoding (normalised against the render)
-- Some maths glyphs are encoded in a Symbol font at private-use code points rather than as their
-  Unicode characters, which makes them look like dropped characters in a text dump. Page 73 carries
-  both less-than-or-equal signs of the relative-day header as U+2264; page 74 carries one as U+2264
-  and one as U+F0A3; page 75 carries both as U+F0A3. A 200-dpi crop of page 75 shows both signs
-  printed, so the header cells are transcribed `≤28` and `≤14` on all three pages.
-- Same for footnote a: the plus-minus in the 12-week follow-up interval is U+F0B1 in the text layer.
-  The render shows it printed, so it is transcribed as `±` — my JSON reads
-  "every 12 weeks (± 14 days) for the duration of this period."
-  (The `15±3` header cell, by contrast, uses a plain U+00B1 in the source.)
-- Two line-break rejoins verified on the render: footnote b prints
-  "…is performed locally at baseline (Day -28 to Day -" / "1)" → transcribed "(Day -28 to Day -1)";
-  footnote j prints post- / baseline across a line break and is rejoined as "post-baseline".
-  The hyphen-collapsing raw (non-layout) pdftotext rendering of these two spots was not used.
-- Not glyph-spread (§1c): tokens are whole words, so no deglyph reconstruction was needed anywhere,
-  including `annotation_text`.
+## 5. Cross-cutting checks
 
----
+### 5.1 Synthesised items
 
-## 4. Merged cells — every distribution decision
+- Property name "Study period" (row 1, both tables).
+- Protocol-reference markers pr1–pr20:
+  - pr1 Section 8.1
+  - pr2 Section 7
+  - pr3 Section 12.2.3
+  - pr4 Section 7.1
+  - pr5 Attachment 4
+  - pr6 Section 10.1.1
+  - pr7 Attachment 5
+  - pr8 Section 10.1
+  - pr9 Section 10.3
+  - pr10 Section 9.6
+  - pr11 Attachment 2
+  - pr12 Attachment 7
+  - pr13 Section 10.4.2.2
+  - pr14 Section 10.4.2.3
+  - pr15 Section 10.3.2.1
+  - pr16 Section 10.4.2.1
+  - pr17 Section 9.1
+  - pr18 Section 12.2.11
+  - pr19 Section 12.2.11.4
+  - pr20 Section 8.1.2 (T2 only)
+- The Medical History procedure row has no reference.
 
-Confirmed from per-row rule-line geometry, never from where the glyph sits.
+### 5.2 Annotation text integrity
 
-**Table 1 — header (merged_cell_range):** row 1 `Baseline` 4:5, `Patients on Study Treatment` 6:9,
-`Postdiscontinuation Follow-Up` 10:11; rows 2, 3 and 4 merge 4:5 and 6:7 (`BL`/`0`/`28` and
-`1`/`1`/`28`). Row 5 (`Relative day within a cycle`) is the only header row that draws both internal
-boundaries — it is what splits Baseline into two columns and Cycle 1 into two columns.
+- The text is not glyph-spread. Three notes were repaired against the render, and each carries `annotation_text_source.method: visual_transcription` with a note explaining the repair:
+  - Note a: the private-use glyph U+F0B1 was mapped to "±", giving "(± 14 days)".
+  - Note b: the second "Day -28 to Day -1)". pdftotext had turned the line-break "Day -⏎1)" into "Day 1)".
+  - Note j: "post-⏎baseline" was restored to "post-baseline".
+- Overlap pairs:
+  - T1 notes b, c and j share a long closing sentence ("For patients who discontinue study treatment without objectively measured progressive disease (PD) … overall study completion."). I re-checked this against pp76–77. **It is source-faithful:** these are three separately lettered notes, each printed in full, and none is a split cell.
+  - T2 note b is the opening sentence of T1 note f, and T2 note c overlaps T1 note g. These pairs are in different tables and are also source-faithful, since the extension table reprints shortened versions.
+- No note's boundary is uncertain: each footnote starts at its printed letter and ends before the next letter.
 
-**Table 1 — body marks distributed (`source_range` set):**
+### 5.3 Orphan risk
 
-| Row | Activity | Value | Span |
-|---|---|---|---|
-| 7 | Informed Consent Form signed | X (marker q) | 4:5 |
-| 16 | Tumor measurement (palpable or visible) | X (c) | 4:5 |
-| 17 | Radiologic imaging according to RECIST | X (b) | 4:5 |
-| 18 | Bone Scintigraphy | X (i) | 4:5 |
-| 19 | X-ray or CT scan with bone windows or MRI | X (j) | 4:5 |
-| 21 | Adverse Event Collection/CTCAE Grading | X (f) | 6:7 |
-| 22 | Concomitant Medications (with analgesics) | X | 6:7 |
-| 32 | Fulvestrant Therapy | "Days 1 and 15 of Cycle 1, then Day 1 of Cycle 2 and beyond" | 6:11 |
-| 33 | LY2835219 Therapy | "Every 12 hours on Days 1 through 28 of every cycle" | 6:11 |
+None. Every annotation has at least one `marker_location`, and each such marker also appears in the target row's or cell's `annotation_markers`. I checked this by script. Every marker printed in either table has a printed definition.
 
-Rows 8–15, 23, 24, 25, 26, 30, 34, 35, 36, 37 **do** draw the 4/5 boundary and their baseline mark
-sits in column 5 alone; rows 13–15, 23, 24, 27, 30 draw the 6/7 boundary and carry separate marks in
-6 and 7. So the merges above are row-specific, not a table-wide pattern.
+### 5.4 Method provenance
 
-**Table 2:** header rows 1–4 merge 4:5; row 5 draws the 4/5 boundary (days 1 and 15). Body rows 8 and
-9 carry merged text across 4:5 ("Days 1 and 15 of Cycle 1, then Day 1 of Cycle 2 and beyond" and
-"Daily every 12 hours"); row 7 (Adverse Events Collection) draws the boundary and marks column 4 only.
-
-**Deliberately empty cells worth a second look at resolution:** row 18 (Bone Scintigraphy) column 8 is
-shaded/blank while rows 16, 17 and 19 carry a mark there; row 30 (Local ECG) column 8 is blank, which
-matches footnote e (baseline, C1D1, C1D15, C4D1, short-term follow-up — no cycle 2–3 ECG). Both were
-re-checked on a zoomed crop. Nothing was completed by pattern.
-
----
-
-## 5. Hierarchy — the Procedure Category column
-
-Table 1 groups its rows with a vertically merged **Procedure Category** column (Study Entry/Enrollment, Medical History, Physical Examination, Tumor Assessment, Lab/Diagnostic Tests, Study
-Drug, Health Outcomes); Table 2 does the same with "Study Drug". That column is a leading label column
-and is excluded from the grid (§5). Those category labels occupy **no physical row of their own** —
-they are merged cells spanning several body rows — so no synthetic level-0 section rows were
-fabricated for them. Every activity is therefore recorded flat at `indentation_level` 0 with
-`indentation_method: "assumed_flat"`, and the grouping is documented in `table_metadata.notes`.
-This is a real loss of grouping information at this layer and the main judgement call in this
-extraction; the alternative (inventing 7 header rows that do not exist) would have broken the schema's definition of `row_position` as the physical row position in the source.
-
-Three rows on page 74 (`Survival Information`, `Adverse Event Collection/CTCAE Grading`,
-`Concomitant Medications (with analgesics)`) and one on page 78
-(`Adverse Events Collection/CTCAE Grading`) merge the Category and Procedure cells; the activity name
-was taken from that merged label. Note the two spellings across tables — "Adverse Event Collection"
-(Table 1) versus "Adverse Events Collection" (Table 2) — transcribed as printed, not harmonised.
-
----
-
-## 6. Annotations
-
-**Table 1 — 37:** 16 `footnote` (a–l, n–q), 1 `source_note` from the footnote block (m),
-19 `source_note` from the Protocol Reference column, 1 `legend`.
-**Table 2 — 6:** 3 `footnote` (a–c), 2 `source_note` (reference column), 1 `legend`.
-`by_type` is not degenerate in either table; no annotation has empty `marker_locations`.
-
-- **Footnote m typed `source_note`,** not footnote: its entire text is a bare pointer —
-  "See Pharmacokinetic Sampling Schedule (Attachment 7)." (§8). Footnote p also points
-  ("Refer to Section 9.4.1.1.2.") but explains first, so it stays a `footnote`.
-- **Protocol Reference column → `source_note`s, deduplicated by text** (§6, "a dedicated reference
-  column"). Table 1: pr1 `Section 8.1`, pr2 `Section 7`, pr3 `Section 12.2.3`, pr4 `Section 7.1`,
-  pr5 `Attachment 4`, pr6 `Section 10.1.1`, pr7 `Attachment 5`, pr8 `Section 10.1`, pr9 `Section 10.3`,
-  pr10 `Section 9.6`, pr11 `Attachment 2`, pr12 `Attachment 7`, pr13 `Section 10.4.2.2`,
-  pr14 `Section 10.4.2.3`, pr15 `Section 10.3.2.1`, pr16 `Section 10.4.2.1`, pr17 `Section 9.1`,
-  pr18 `Section 12.2.11`, pr19 `Section 12.2.11.4`. Table 2: pr1 `Section 10.3`, pr2 `Section 8.1.2`.
-  Cells holding two references (ECOG: `Section 7.1` + `Attachment 4`; the three imaging rows:
-  `Section 10.1.1` + `Attachment 5`) were split into separate notes. Every citing row carries the
-  synthesised marker in its `annotation_markers`, and each location is flagged
-  `method: "synthesized"` because the marker itself is not printed.
-  `Medical History` (row 9) is the one activity whose reference cell is empty — no marker was invented.
-- **Synthesised markers:** `pr1`–`pr19` (Table 1), `pr1`–`pr2` (Table 2), `lg1` (both tables).
-- **Synthesised property names:** row 1 in each table is `Study Phase` — the label cell of the top
-  header band is blank while the row carries `Baseline` / `Patients on Study Treatment` /
-  `Postdiscontinuation Follow-Up` (Table 1) and `Patients on Study Treatment` /
-  `Extension Period Follow-Up` (Table 2). `property_name_source.synthesized: true` on both.
-- **`lg1` — "Perform procedure as indicated."** printed under each table title. It tells the reader
-  what a grid mark means, so it is typed `legend`; it has no printed marker and no modelled element,
-  so it is anchored table-scope to schedule_property row 1 with `method: "synthesized"` (§6, final
-  bullet) and the marker is also recorded in that property's `annotation_markers` so resolve can link
-  it.
-- **Header-cell footnotes bound to their column, not the row** (§6): marker a sits on the Cycle row's
-  "Short-Term Follow-Up" and "Long-Term Follow-Up" cells → `schedule_cell` (2,10) and (2,11) in Table 1, and (2,6)
-  in Table 2; marker p sits on the two cells whose value is 1 in the Relative-day row → `schedule_cell` (5,8) and (5,9).
-  Neither was put on the `schedule_property` row.
-- **Zero `abbreviation` annotations.** The abbreviation block on page 75 (16 terms: BL, Temp, BP, CT,
-  CTCAE, ECG, ECOG, GnRH, HR, IV, PK, MRI, RECIST, RR, SAEs, FSH) and on page 78 (CTCAE, PK, SAEs)
-  define terms that appear only inside running activity names ("Vital Signs (Temp, BP, HR, RR)",
-  "Local ECG", "Central pharmacokinetic (PK) sampling"). Binding those would be word overlap
-  (`text_match`), which §6/§8 forbid. **Borderline call, recorded here:** `BL` *is* printed as a
-  standalone cell value in the Cycle header row (columns 4–5), so it arguably has a printed marker
-  location; it was still dropped, because tagging a cell whose entire `cell_value` is `BL` with an
-  `annotation_markers` of `BL` would put the marker back inside the value it is supposed to be
-  cleaned out of. GnRH, IV, SAEs and RECIST v1.1 appear only in footnote prose.
-
-### Annotation-text integrity
-- No annotation's text is contained in another's, in either table.
-- **Long shared runs, re-verified against the pages and source-faithful — not a split note cell.**
-  Footnotes b and c (page 76) and i and j (page 77) each end with the same boilerplate paragraph,
-  "For patients who discontinue study treatment without objectively measured progressive disease
-  (PD), continue to evaluate tumor response…"; b/j share 611 characters, b/c and c/j 451, and the
-  pairs involving i 158–159. Each block is printed under its own marker letter, on a page that starts
-  a new marker sequence, and the differing halves are assessment-specific (radiologic tests vs tumor
-  assessments vs bone scintigraphy every 6 months vs radiologic tests). Nothing was merged, truncated
-  or dropped to make the overlap go away.
-- Every footnote was bounded by its printed marker letter at the left margin of pages 75–77 / 78, so
-  no note needed `proximity_bounded`; there is no notes/comments column in either table.
-- Two source defects transcribed as printed, not repaired: footnote h ends without a full stop
-  ("…it will not constitute a protocol deviation"), and Table 2 footnote c reads
-  "ending hour after taking study drug" where Table 1 footnote g reads "ending 1 hour after taking
-  LY2835219" — the "1" is missing in the extension-period version.
-
----
-
-## 7. Low-confidence calls
-
-1. **`Approximate Duration (days)` / `Duration (days)` typed `other`, `hierarchical_level` null.**
-   The row gives the nominal length of each cycle or period (28/28/28/28/30/Variable). No enum member
-   fits a period-length row — it is not a visit `window` and not a `study_day` — and removing the row
-   leaves every column still distinguishable via Cycle/Visit/Relative day. Consequently the
-   `Relative day within a cycle` row is level 4 (fourth level-bearing row), not 5.
-2. **`Cycle` row typed `cycle` although two of its values are follow-up periods**
-   ("Short-Term Follow-Up" and "Long-Term Follow-Up", each carrying marker a). The printed row label
-   is `Cycle`, and the
-   remaining values are cycle identifiers, so the label was followed rather than reclassified.
-3. **Table 2 as `track` rather than a second `main_soa`.** Both readings are defensible — it is an
-   independent schedule with its own header block. `track` was chosen because it covers a distinct
-   later phase of the same study for the continuing subset, which is what `track_label` exists to
-   carry; a resolver that treats it as an independent anchor loses nothing but the phase label.
-4. **Distributing the Baseline-merged marks across columns 4 and 5.** Semantically the Informed
-   Consent / tumor-assessment marks probably belong to the ≤28-day baseline window only (footnote q:
-   "Informed Consent Form is signed within 28 days prior to randomization…"; footnote c/i/j:
-   "(Day -28 to Day -1)"). The cell is nonetheless physically merged across both baseline columns and
-   §5 forbids collapsing a merged mark onto one column, so both columns carry the mark and
-   `source_range` "4:5" records the span. Resolution may wish to narrow these using footnotes q, b, c,
-   i and j.
-5. No full-protocol markdown was attached, so there is no PDF/markdown text disagreement to report;
-   all text is from the PDF text layer, with the four glyph/line-break exceptions listed in §3.
-
----
-
-## 8. Method provenance (§1e) — everything non-default
-
-- `activity_name_source.indentation_method: "assumed_flat"` on all 31 Table 1 activities and all 3
-  Table 2 activities — flat tables; grouping lives in an excluded label column (see §5 above).
-- `marker_locations[].method: "synthesized"` on: the 24 reference-column locations in Table 1
-  (pr1–pr19) and 3 in Table 2 (pr1–pr2), and the single `lg1` schedule_property location in each
-  table. All other locations are printed markers (no `method` recorded).
-- **No `location_type: "unresolved"`** anywhere — every marker's target is printed.
-- **No `annotation_text_source.method`** recorded: every note was read from a rule-line-bounded /
-  marker-delimited text-layer block. In particular no `proximity_bounded` notes exist in this study.
-- **No `activity_schedule` / `schedule_grid` cell `method`** recorded: all cell values are text-layer
-  reads; only the *cell boundaries* came from the raster (§1d), which the schema does not treat as a
-  different value-read method. The rendered pages were used for verification, and for the four glyph
-  gaps in §3 (≤, ±, two hyphen rejoins) which affect header cell values `≤28`/`≤14` and footnote text
-  only.
-
-## 9. Orphan risk
-
-None identified. All 37 + 6 annotations carry at least one `marker_locations` entry; every marker in
-a `marker_locations` entry also appears in that row's / cell's `annotation_markers` (checked
-mechanically). No marker is referenced in the grid without a definition printed in the source, and no
-footnote definition is printed without a referencing marker: Table 1 defines exactly a–q and all
-seventeen are used; Table 2 defines a–c and all three are used.
+- `annotation_text_source.method = visual_transcription`: T1 notes a, b and j (see 5.2).
+- `marker_locations[].method = synthesized`: every pr1–pr20 location, anchored to the row whose Protocol Reference cell prints it.
+- `activity_name_source.indentation_method = visual_estimate`: every activity in both tables (level from the category-column layout, see 3.2).
+- No `proximity`, `text_match` or `unresolved` locations. No `structure_method` values: the header rows all have printed labels, except the epoch row name, which is flagged as synthesised.
+- Cell values come from the bbox text layer, the default, so there is no cell `method`. Merged spans come from the raster rules (§1d).

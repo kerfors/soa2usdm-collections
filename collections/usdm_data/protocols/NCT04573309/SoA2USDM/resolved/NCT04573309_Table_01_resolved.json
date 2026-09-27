@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.732164+00:00",
+    "resolved_at": "2026-09-27T15:03:33.120598+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -19,7 +19,7 @@
       "method_provenance": [
         "indentation_level:font_signal: 44",
         "property_structure:inferred_from_layout: 2",
-        "schedule_cell:visual_read: 40"
+        "schedule_cell:raster_pixel_detection: 40"
       ]
     },
     "resolution_status": "resolved",
@@ -27,23 +27,25 @@
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude Opus 5 (prompt v3.7.3)",
+    "extracted_at": "2026-09-27T13:08:28Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT04573309_soa.pdf",
-      "document_type": "protocol",
-      "document_version": "Protocol Amendment 3.1 (US)",
+      "document_type": "amendment",
+      "document_version": "Protocol Amendment 3.1 (US), ALXN1840-WD-204",
       "document_date": "18 Mar 2022"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Vector table with a clean text layer. Column boundaries and every merged span were taken from rule-line geometry recovered from a 200 dpi raster render (identical on both grid pages: 26 vertical rules -> 1 label column + 24 data columns); marks were binned to those columns from pdftotext -bbox token centres and diffed against a visual read of the rendered pages. One leading label column (L=1), so the first data column is position 2. Document pages taken from PAGEMAP.md (PDF pages 1-4 = document pages 14-17); the printed footers happen to agree."
+    "extraction_notes": "Text-layer PDF with vector rule lines. Grid marks verified by pdftotext -bbox column binning against the rule-line column boundaries recovered from a 200 dpi raster; arrows measured from the raster.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
-    "table_title": "Schedule of Activities",
-    "table_purpose": "Main schedule of activities for the whole study: screening, check-in, inpatient Period 1, outpatient period, inpatient Period 2, unscheduled visits and End of Study/Early Termination.",
+    "table_title": "Table 1: Schedule of Activities",
+    "table_purpose": "Main study schedule from Screening through EOS/ET (Day 54+/-2), including both inpatient periods and the outpatient interval",
     "page_start": 14,
     "page_end": 16,
     "track_label": null,
@@ -51,22 +53,22 @@
     "row_count": 47,
     "header_row_count": 3,
     "activity_row_count": 44,
-    "notes": "Single logical table; the grid runs across document pages 14-15 with the three header rows reprinted verbatim on page 15, and the footnote block runs from page 15 into page 16, so page 16 contributes annotations but no activity rows. Header rows 1-2 have no printed row label (the label column carries 'Study Procedures' merged over both), so both property names are synthesized. Transcribed as printed, not repaired: (1) the 'Inpatient Period 2' cell in header row 2 spans columns 15-23 (Days 24-40) and the Day 23 column (position 14) has an EMPTY period cell, although footnote v states inpatient Period 2 runs Day 23 to Day 40; (2) the activity 'PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu' (row 31, first body row on page 15) carries no marks in the source - the marks for the PK/PD sampling pair are printed only on the preceding row 'Blood sampling for PK: Plasma total Mo and PUF-Mo' (row 30, last body row on page 14). In Table 2 the same two assessments share one merged mark cell, so the empty row is probably a vertical merge broken by the page break, but the page break makes the merge unverifiable from rule-line geometry and the marks were left where they are printed."
+    "notes": "One printed table running over pages 14-15 with the header reprinted on page 15 (de-duplicated); footnotes a-h on page 15 and i-x on page 16; page 16 has no activity rows. One label column (L=1); data columns 2-25 (24 columns: 22 day columns, UNS, EOS/ET). Abbreviations block not emitted as annotations (no term used as a marker)."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-001",
       "row_position": 1,
-      "property_name": "Visit",
+      "property_name": "Study Phase",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
         "cell_value": "",
         "synthesized": true
       },
-      "property_type": "visit",
-      "property_comment": "Topmost header row. The row label cell is empty (the label column carries 'Study Procedures', merged over header rows 1-2), so the name is synthesized. The row carries visit/encounter designations - 'Screening' (merged over the two screening day columns), 'C-I' (check-in), 'UNS' (unscheduled) and 'EOS or ET' (End of Study or Early Termination) - with one empty merged cell spanning columns 5-23. Typed 'visit' because its values name encounters rather than study phases; it is the only row that distinguishes the UNS column from its neighbours.",
+      "property_type": "epoch",
+      "property_comment": "Top header band: 'Screening' (Days -42 to -9 and -21), 'C-I' (check-in, Day -8), a blank merged cell over Days -7 to 40, 'UNS' (unscheduled) and 'EOS or ET'. The label column for rows 1-2 is a single merged cell reading 'Study Procedures' (the activity-column heading), so the property name is synthesised. Typed epoch because the values name study phases/visit categories spanning columns; distinguishes the UNS column (whose Days cell is empty) from the others.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -79,7 +81,7 @@
       "property_id": "prop-002",
       "table_id": "table-001",
       "row_position": 2,
-      "property_name": "Study Period",
+      "property_name": "Period",
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
@@ -87,7 +89,7 @@
         "synthesized": true
       },
       "property_type": "period",
-      "property_comment": "Second header row; label cell empty (shared 'Study Procedures' cell), so the name is synthesized. Values are the study's periods - Screening, C-I, Inpatient Period 1, OP (outpatient), Inpatient Period 2 - each spanning several day columns. Typed 'period' because the values are named sub-phases of the study ('Period 1'/'Period 2' are the source's own words) rather than visits or days.",
+      "property_comment": "Second header band: 'Screening', 'C-I', 'Inpatient Period 1' (merged over Days -7 to 9), 'OP' (outpatient, Days 10-22), blank at Day 23, 'Inpatient Period 2' (merged over Days 24 to 40), blank under UNS and EOS/ET. Sub-phases of the treatment phase -> period. Label cell is part of the merged 'Study Procedures' cell, so name synthesised.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [
@@ -107,7 +109,7 @@
         "cell_value": "Days"
       },
       "property_type": "study_day",
-      "property_comment": "Printed row label 'Days'. Values are protocol study days and day ranges relative to first dose (-42 to -9, -21, -8, -7, -6 through -5, -4 through -1, 1, 2-3 ... 40), plus an empty cell under UNS and 'EOS Day 54+/-2' under the EOS or ET column. Typed 'study_day' because every value is a protocol day or day range.",
+      "property_comment": "Study days / day ranges relative to first ALXN1840 dose (Day 1): -42 to -9 ... 40, blank under UNS, and 'EOS Day 54+/-2'. Printed label 'Days' -> study_day.",
       "hierarchical_level": 3,
       "parent_property_id": "prop-002",
       "child_property_ids": [],
@@ -810,10 +812,10 @@
       "activity_name_source": {
         "cell_text": "Eligibility",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1026,10 +1028,10 @@
       "activity_name_source": {
         "cell_text": "Study Administration",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1153,10 +1155,10 @@
       "activity_name_source": {
         "cell_text": "Enrollment",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1232,10 +1234,10 @@
       "activity_name_source": {
         "cell_text": "Administration of Study Interventionm",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1313,10 +1315,10 @@
       "activity_name_source": {
         "cell_text": "PK/PD Analyseso",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1375,10 +1377,10 @@
       "activity_name_source": {
         "cell_text": "Safety Assessments / Laboratory Analyses",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1538,10 +1540,10 @@
       "activity_name_source": {
         "cell_text": "Balance assessments",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1663,10 +1665,10 @@
       "activity_name_source": {
         "cell_text": "Other",
         "indentation_level": 0,
+        "indentation_method": "font_signal",
         "text_formatting": [
           "bold"
-        ],
-        "indentation_method": "font_signal"
+        ]
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -5143,6 +5145,47 @@
           "row_position": 45
         }
       ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "location": {
+        "page": 14,
+        "row_positions": [
+          1,
+          2
+        ]
+      },
+      "call_made": "The top header band (Screening / C-I / UNS / EOS or ET) is typed as the study phase (epoch, level 1) and the second band (Inpatient Period 1 / OP / Inpatient Period 2) as sub-periods (period, level 2); both names are synthesised because the label cell only reads 'Study Procedures'.",
+      "alternative": "Type the top band as visit categories (visit) — Screening, Check-in, Unscheduled and EOS/ET read as visit names — and keep the second band as epoch.",
+      "report_section": "2.2"
+    },
+    {
+      "id": "D2",
+      "severity": "high",
+      "location": {
+        "page": 14,
+        "row_positions": [
+          23,
+          24
+        ]
+      },
+      "call_made": "The arrows after the X in 'Discontinue chelation therapy' (X at Day -4 through -1) and 'Discontinue zinc therapy' (X at Day -21) are distributed as '→' over every following column through the EOS column (8:25 and 4:25), including the UNS column, because the drawn arrowhead ends inside the EOS column.",
+      "alternative": "Stop the arrow span at Day 40 (column 23), treating the arrowhead overshoot into UNS/EOS as drawing slack, or keep only the X and treat the arrow as 'discontinued for the rest of the study' without per-column entries.",
+      "report_section": "2.3"
+    },
+    {
+      "id": "D3",
+      "severity": "high",
+      "location": {
+        "page": 15,
+        "row_position": 31
+      },
+      "call_made": "'PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu' (first row on page 15) is transcribed with no marks, exactly as printed.",
+      "alternative": "Treat it as the second half of the PK blood-sampling row split by the page break (Table 2 prints PK and PD in one cell sharing marks) and copy the PK row's marks (Days 1, 4-7, 25, 26-28, 29, 30-35, 36, 37-38, 39, 40, with footnote p at Days 1, 25, 29, 39) onto the PD row.",
+      "report_section": "2.4"
     }
   ]
 }

@@ -2,25 +2,27 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5",
+    "extracted_at": "2026-09-27T12:37:09+00:00",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03283098_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Protocol Number: 20140197",
+      "document_version": "Protocol Number 20140197 (AMG 416)",
       "document_date": "25 May 2018"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Text-layer table. Column grid and row bands recovered from the raster rule lines (pdftoppm -r 200); marks binned mechanically from pdftotext -bbox token centres and diffed against a visual read of the rendered page; no disagreement. TWO leading label columns ('Time' and 'Assessment'), so the first data column is position 3 and the 20 data columns run 3-22. Every assessment cell reads 'PK', so all six body rows carry the same activity_name; the within-visit timing that tells them apart is printed in the 'Time' row-label column and is carried as annotations t1-t6, one per row. Footnote marker 'a' on the 29/ET header is referenced but not defined on this page."
+    "extraction_notes": "Text-layer PDF with vector rule lines; marks verified by pdftotext -bbox column binning against header day-label x-centres and diffed against a visual read (no disagreements). 2 leading label column(s); first data column position 3.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 3,
     "table_type": "domain",
     "table_title": "Table 1c. Schedule of Pharmacokinetic Assessments",
-    "table_purpose": "Pharmacokinetic sampling on the same study-visit timeline as Tables 1a and 1b.",
+    "table_purpose": "Pharmacokinetic sampling by time relative to hemodialysis / study drug administration, on the shared Screening-Day 55 timeline",
     "page_start": 36,
     "page_end": 36,
-    "notes": "Classified domain rather than subsidiary: the column structure is NOT finer than the main SoA - the 20 data columns are identical to Table 1a's (Screening, -2, 1 ... 55) - and the participants are the same subjects, so this is a further assessment category on the shared timeline. The finer within-visit timing (Pre HD, SDA + 10/30/60/90 min, SDA + 18 to 30 hr) lives in the 'Time' row-label column, not in the column grid, and 'PK' is not an activity row of Table 1a or 1b that this table breaks down. The call is recorded here because the PK-sampling / subsidiary ambiguity is close."
+    "notes": "Classified domain rather than subsidiary: it prints exactly the same day columns as Tables 1a/1b (not a finer column structure) for the same participants, and its finer timing lives in the rows (Time label column: Pre HD, SDA + 10/30/60/90 min, SDA + 18 to 30 hr). Two leading label columns (Time, Assessment); data columns 3-22. The Time value is folded into activity_name to keep the six 'PK' rows distinct. 'Central Laboratory' band spanning the data columns is taken as a level-0 section header. Marker 'a' on the 29/ET header has no footnote printed with this table."
   },
   "schedule_properties": [
     {
@@ -29,12 +31,14 @@
       "property_name": "Study Visit (Day)",
       "property_name_source": {
         "row_position": 1,
-        "column_position": 3,
-        "cell_value": "Study Visit (Day)"
+        "column_position": 1,
+        "cell_value": "",
+        "synthesized": true
       },
       "property_type": "other",
-      "property_comment": "Top header band: a single merged cell reading 'Study Visit (Day)' spanning every data column (3:22); the row-label column to its left is an empty cell. It names the column axis rather than carrying per-column values, so no column is distinguished by it; typed 'other' because the row holds one spanning axis title, not visit names, days or weeks per column.",
-      "hierarchical_level": 1
+      "hierarchical_level": null,
+      "structure_method": "inferred_from_layout",
+      "property_comment": "Banner row: the caption 'Study Visit (Day)' printed once in a cell merged across all data columns (3-22). It names the row below and does not by itself distinguish one column from another, so hierarchical_level is null; label cell empty, name taken from the banner text."
     },
     {
       "table_number": 3,
@@ -43,12 +47,12 @@
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
-        "cell_value": "Time",
+        "cell_value": "",
         "synthesized": true
       },
       "property_type": "study_day",
-      "property_comment": "Second header band: one cell per data column holding the protocol day number (-2, 1, 2, 3 ... 55), the screening column, the combined 29/ET column, and a '(HD)' hemodialysis-day qualifier printed on the second line of the same cell (no rule line separates day number from '(HD)', so both stay in one cell_value). Typed 'study_day' because the distinguishing values are protocol day numbers. property_name is synthesised: the two label-column cells of this row carry the headings of the label columns ('Time' in column 1, 'Assessment' in column 2), not a name for this header row; property_name_source points at column 1 as printed.",
-      "hierarchical_level": 2
+      "hierarchical_level": 1,
+      "property_comment": "Study visit days (Screening, Day -2, 1 ... 55); '(HD)' printed inside the same cell marks hemodialysis days and is kept literally. Classified study_day because the values are protocol day numbers per the banner 'Study Visit (Day)'; the Screening column is the only non-numeric day. Label cell holds the activity-column heading ('Assessment'), so the property name is synthesized."
     }
   ],
   "schedule_grid": [
@@ -62,161 +66,17 @@
     },
     {
       "table_number": 3,
+      "row_position": 2,
+      "column_position": 3,
+      "cell_value": "Screening"
+    },
+    {
+      "table_number": 3,
       "row_position": 1,
       "column_position": 4,
       "cell_value": "Study Visit (Day)",
       "is_merged_cell": true,
       "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 5,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 6,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 7,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 8,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 9,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 10,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 11,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 12,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 13,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 14,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 15,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 16,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 17,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 18,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 19,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 20,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 21,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 1,
-      "column_position": 22,
-      "cell_value": "Study Visit (Day)",
-      "is_merged_cell": true,
-      "merged_cell_range": "3:22"
-    },
-    {
-      "table_number": 3,
-      "row_position": 2,
-      "column_position": 3,
-      "cell_value": "Screening"
     },
     {
       "table_number": 3,
@@ -226,10 +86,25 @@
     },
     {
       "table_number": 3,
+      "row_position": 1,
+      "column_position": 5,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
+    },
+    {
+      "table_number": 3,
       "row_position": 2,
       "column_position": 5,
-      "cell_value": "1 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "1 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 6,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
@@ -239,80 +114,165 @@
     },
     {
       "table_number": 3,
+      "row_position": 1,
+      "column_position": 7,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
+    },
+    {
+      "table_number": 3,
       "row_position": 2,
       "column_position": 7,
-      "cell_value": "3 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "3 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 8,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 8,
-      "cell_value": "6 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "6 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 9,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 9,
-      "cell_value": "8 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "8 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 10,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 10,
-      "cell_value": "10 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "10 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 11,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 11,
-      "cell_value": "13 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "13 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 12,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 12,
-      "cell_value": "15 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "15 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 13,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 13,
-      "cell_value": "17 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "17 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 14,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 14,
-      "cell_value": "20 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "20 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 15,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 15,
-      "cell_value": "22 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "22 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 16,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 16,
-      "cell_value": "24 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "24 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 17,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 17,
-      "cell_value": "27 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "27 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 18,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
@@ -322,31 +282,60 @@
     },
     {
       "table_number": 3,
+      "row_position": 1,
+      "column_position": 19,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
+    },
+    {
+      "table_number": 3,
       "row_position": 2,
       "column_position": 19,
       "cell_value": "29/ET (HD)",
-      "annotation_markers": "a,ab1,ab2"
+      "annotation_markers": "a"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 20,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 20,
-      "cell_value": "34 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "34 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 21,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 21,
-      "cell_value": "41 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "41 (HD)"
+    },
+    {
+      "table_number": 3,
+      "row_position": 1,
+      "column_position": 22,
+      "cell_value": "Study Visit (Day)",
+      "is_merged_cell": true,
+      "merged_cell_range": "3:22"
     },
     {
       "table_number": 3,
       "row_position": 2,
       "column_position": 22,
-      "cell_value": "55 (HD)",
-      "annotation_markers": "ab1"
+      "cell_value": "55 (HD)"
     }
   ],
   "activities": [
@@ -365,73 +354,67 @@
       "table_number": 3,
       "row_position": 4,
       "source_page": 36,
-      "activity_name": "PK",
+      "activity_name": "PK (Pre HD)",
       "activity_name_source": {
-        "cell_text": "PK",
+        "cell_text": "Pre HD | PK",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
-      },
-      "annotation_markers": "t1"
+      }
     },
     {
       "table_number": 3,
       "row_position": 5,
       "source_page": 36,
-      "activity_name": "PK",
+      "activity_name": "PK (SDA + 10 min)",
       "activity_name_source": {
-        "cell_text": "PK",
+        "cell_text": "SDA +\n10 min | PK",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
-      },
-      "annotation_markers": "t2"
+      }
     },
     {
       "table_number": 3,
       "row_position": 6,
       "source_page": 36,
-      "activity_name": "PK",
+      "activity_name": "PK (SDA + 30 min)",
       "activity_name_source": {
-        "cell_text": "PK",
+        "cell_text": "SDA +\n30 min | PK",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
-      },
-      "annotation_markers": "t3"
+      }
     },
     {
       "table_number": 3,
       "row_position": 7,
       "source_page": 36,
-      "activity_name": "PK",
+      "activity_name": "PK (SDA + 60 min)",
       "activity_name_source": {
-        "cell_text": "PK",
+        "cell_text": "SDA +\n60 min | PK",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
-      },
-      "annotation_markers": "t4"
+      }
     },
     {
       "table_number": 3,
       "row_position": 8,
       "source_page": 36,
-      "activity_name": "PK",
+      "activity_name": "PK (SDA + 90 min)",
       "activity_name_source": {
-        "cell_text": "PK",
+        "cell_text": "SDA +\n90 min | PK",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
-      },
-      "annotation_markers": "t5"
+      }
     },
     {
       "table_number": 3,
       "row_position": 9,
       "source_page": 36,
-      "activity_name": "PK",
+      "activity_name": "PK (SDA + 18 to 30 hr)",
       "activity_name_source": {
-        "cell_text": "PK",
+        "cell_text": "SDA +\n18 to\n30 hr | PK",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
-      },
-      "annotation_markers": "t6"
+      }
     }
   ],
   "activity_schedule": [
@@ -439,384 +422,231 @@
       "table_number": 3,
       "row_position": 4,
       "column_position": 5,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 7,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 9,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 12,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 15,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 17,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 19,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 20,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 21,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 4,
       "column_position": 22,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 5,
       "column_position": 5,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 5,
       "column_position": 9,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 5,
       "column_position": 12,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 5,
       "column_position": 15,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 5,
       "column_position": 17,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 6,
       "column_position": 5,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 6,
       "column_position": 17,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 7,
       "column_position": 5,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 7,
       "column_position": 17,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 8,
       "column_position": 5,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 8,
       "column_position": 17,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 9,
       "column_position": 6,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     },
     {
       "table_number": 3,
       "row_position": 9,
       "column_position": 18,
-      "cell_value": "X"
+      "cell_value": "X",
+      "source_range": ""
     }
   ],
   "annotations": [
     {
       "annotation_marker": "a",
       "annotation_type": "footnote",
-      "annotation_text": "Marker 'a' is printed on the 29/ET column header of this table but its footnote text is not printed anywhere on document page 36, the only page this table occupies; the definition is not present in the extracted source. Probable equivalent (NOT asserted as this table's source content): Table 1b footnote a on document page 35 reads 'If a treated subject withdraws from study before completion of dosing, the investigator will make every effort to obtain day 29 samples as close to 2 days after the last dose of investigational product as possible.'",
+      "annotation_text": "Definition of footnote 'a' (on the 29/ET column header) is not printed in the source for Table 1c; only the abbreviation line 'HD = hemodialysis; ET = early termination; SDA = Study drug administration.' follows the table. Probable equivalent (NOT source content for this table): Table 1b footnote a - 'If a treated subject withdraws from study before completion of dosing, the investigator will make every effort to obtain day 29 samples as close to 2 days after the last dose of investigational product as possible.'",
       "marker_locations": [
         {
           "table_number": 3,
-          "location_type": "schedule_cell",
+          "location_type": "schedule_property",
           "row_position": 2,
           "column_position": 19
         }
       ]
-    },
+    }
+  ],
+  "review_items": [
     {
-      "annotation_marker": "t1",
-      "annotation_type": "footnote",
-      "annotation_text": "Pre HD",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "Leading 'Time' label column; cell bounded by the raster rule lines of that column on document page 36."
+      "id": "D3",
+      "severity": "medium",
+      "location": {
+        "page": 36
       },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 4,
-          "method": "synthesized"
-        }
-      ]
+      "call_made": "Table 1c is typed 'domain' (same day columns and same participants as Table 1a, PK category).",
+      "alternative": "Type it 'subsidiary' (finer PK timing for a subset of activities), since its rows are sampling times relative to dosing.",
+      "report_section": "4.1"
     },
     {
-      "annotation_marker": "t2",
-      "annotation_type": "footnote",
-      "annotation_text": "SDA + 10 min",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "Leading 'Time' label column; cell bounded by the raster rule lines of that column on document page 36."
+      "id": "D4",
+      "severity": "medium",
+      "location": {
+        "page": 36,
+        "row_positions": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
       },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 5,
-          "method": "synthesized"
-        }
-      ]
+      "call_made": "The Time label column value is folded into each activity name: 'PK (Pre HD)', 'PK (SDA + 10 min)', ... 'PK (SDA + 18 to 30 hr)'.",
+      "alternative": "Keep every row's name as the printed 'PK' and carry the time value separately (e.g. as a per-row note), accepting six rows with the same name.",
+      "report_section": "4.3"
     },
     {
-      "annotation_marker": "t3",
-      "annotation_type": "footnote",
-      "annotation_text": "SDA + 30 min",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "Leading 'Time' label column; cell bounded by the raster rule lines of that column on document page 36."
+      "id": "D5",
+      "severity": "medium",
+      "location": {
+        "page": 36,
+        "row_position": 3
       },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 6,
-          "method": "synthesized"
-        }
-      ]
+      "call_made": "The 'Central Laboratory' band printed across the day columns is a level-0 section-header row grouping the PK rows (no marks).",
+      "alternative": "Treat it as a header property/condition row (where samples are analysed) or as a table-level note rather than an activity row.",
+      "report_section": "4.3"
     },
     {
-      "annotation_marker": "t4",
-      "annotation_type": "footnote",
-      "annotation_text": "SDA + 60 min",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "Leading 'Time' label column; cell bounded by the raster rule lines of that column on document page 36."
+      "id": "D6",
+      "severity": "medium",
+      "location": {
+        "page": 36,
+        "row_position": 2,
+        "column_position": 19,
+        "annotation_marker": "a"
       },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 7,
-          "method": "synthesized"
-        }
-      ]
-    },
-    {
-      "annotation_marker": "t5",
-      "annotation_type": "footnote",
-      "annotation_text": "SDA + 90 min",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "Leading 'Time' label column; cell bounded by the raster rule lines of that column on document page 36."
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 8,
-          "method": "synthesized"
-        }
-      ]
-    },
-    {
-      "annotation_marker": "t6",
-      "annotation_type": "footnote",
-      "annotation_text": "SDA + 18 to 30 hr",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "Leading 'Time' label column; cell bounded by the raster rule lines of that column on document page 36."
-      },
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "activity_name",
-          "row_position": 9,
-          "method": "synthesized"
-        }
-      ]
-    },
-    {
-      "annotation_marker": "ab1",
-      "annotation_type": "abbreviation",
-      "annotation_text": "HD = hemodialysis",
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 5
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 7
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 8
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 9
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 10
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 11
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 12
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 13
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 14
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 15
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 16
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 17
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 19
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 20
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 21
-        },
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 22
-        }
-      ]
-    },
-    {
-      "annotation_marker": "ab2",
-      "annotation_type": "abbreviation",
-      "annotation_text": "ET = early termination",
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 19
-        }
-      ]
-    },
-    {
-      "annotation_marker": "ab4",
-      "annotation_type": "abbreviation",
-      "annotation_text": "SDA = Study drug administration",
-      "marker_locations": [
-        {
-          "table_number": 3,
-          "location_type": "unresolved",
-          "row_position": 5
-        }
-      ]
+      "call_made": "Marker 'a' on the 29/ET header is kept; its annotation says the definition is not printed for Table 1c and cites Table 1b footnote a as a probable (unasserted) equivalent.",
+      "alternative": "Assert Table 1b footnote a's wording as this table's footnote a, or drop the marker as undefined.",
+      "report_section": "4.4"
     }
   ]
 }

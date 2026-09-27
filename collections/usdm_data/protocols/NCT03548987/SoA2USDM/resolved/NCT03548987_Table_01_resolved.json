@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.411466+00:00",
+    "resolved_at": "2026-09-27T15:03:27.744258+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -17,7 +17,7 @@
       "validation_warnings": [],
       "validation_errors": [],
       "method_provenance": [
-        "indentation_level:font_signal: 5",
+        "indentation_level:visual_estimate: 69",
         "marker_location:synthesized: 49"
       ]
     },
@@ -26,8 +26,9 @@
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude Opus 5 (claude-opus-5), prompt PDF_TO_JSON_PROMPT v3.7.2",
+    "extracted_at": "2026-09-27T12:40:41Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03548987_soa.pdf",
       "document_type": "protocol",
@@ -35,14 +36,15 @@
       "document_date": "21 December 2017"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Single flowchart table, section '2 Flowchart', printed rotated 90 degrees on four portrait letter pages (document pages 8-11); the header band (study period / visit / week / window) reprints on every page and is de-duplicated to schedule_property rows 1-4. Grid read mechanically: rule lines recovered from a 200 dpi render (vertical image rules = table row boundaries, horizontal image rules = table column boundaries because of the rotation), text-layer tokens from pdftotext -bbox assigned to the resulting cells. 1 leading label column, so the first data column is position 2 and the 25 data columns run 2-26. All 378 marks are literal 'X'. An independent near-black-pixel raster detector reproduced the mark matrix for all 69 body rows with zero disagreement. Inline protocol section/appendix references printed in activity labels are emitted as deduplicated source_note annotations with synthesized markers pr1-pr29."
+    "extraction_notes": "Trial ID NN9536-4376. Single flowchart printed on document pages 8-11 (rotated landscape) with the 4 header rows reprinted on every page; header rows de-duplicated. Text layer present; marks verified by pdftotext -bbox binning into cell rectangles recovered from raster rule lines (200 dpi); matrix matched visual read on all 4 pages. No merged body cells. Inline section/appendix references stripped from activity names into source_note annotations pr1-pr29.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
-    "table_title": "2 Flowchart",
-    "table_purpose": "Primary schedule of activities for the whole trial: screening, run-in, randomisation, maintenance period, end of treatment and end of trial visits.",
+    "table_title": "Flowchart",
+    "table_purpose": "Main schedule of activities across screening, run-in, randomisation, maintenance, end of treatment and end of trial",
     "page_start": 8,
     "page_end": 11,
     "track_label": null,
@@ -50,14 +52,14 @@
     "row_count": 73,
     "header_row_count": 4,
     "activity_row_count": 69,
-    "notes": "Only one table in the excerpt. table_type main_soa: rows are procedures performed on subjects, it is the primary anchor grid, and there is no second column structure or second population to compare against. Although the grid runs over four pages, the source presents it as one continuous, unnumbered flowchart with a reprinted header band rather than as separately titled tables, so it is modelled as a single table with page_start 8 / page_end 11 rather than one main_soa plus three continuation tables. The epoch header row is the only row carrying merged cells (Run-in 3:12, Maintenance period 14:24); every body row has a complete set of internal column rules, so no body mark is merged."
+    "notes": "One label column (L=1); data columns 2-26 (V1..V25). Header rows reprint on each page and are recorded once; body rows continue across pages, so this is one table rather than a continuation."
   },
   "schedule_properties": [
     {
       "property_id": "prop-001",
       "table_id": "table-001",
       "row_position": 1,
-      "property_name": "Study period",
+      "property_name": "Period",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
@@ -65,7 +67,7 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Top header band naming the study periods that group the visit columns: Screening, Run-in, Randomisation, Maintenance period, End of treatment, End of trial. The row-label cell is empty in the source, so the property_name is synthesized. Classified as 'epoch' because the values are major study phases.",
+      "property_comment": "Unlabelled top header band of merged cells naming study periods (Screening, Run-in, Randomisation, Maintenance period, End of treatment, End of trial); major study phases, hence epoch. Name synthesised because the label cell is empty.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
@@ -85,7 +87,7 @@
         "cell_value": "Visit(V), Phone (P)"
       },
       "property_type": "visit",
-      "property_comment": "Visit identifiers, one per column: V1, V2, P3 ... V25. The label distinguishes site visits (V) from phone contacts (P). Classified as 'visit' because the values are named/numbered visit identifiers.",
+      "property_comment": "Visit identifiers V1-V25; prefix V = site visit, P = phone contact (per the row label). Named visits, hence visit; the V/P prefix also encodes contact modality.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [
@@ -105,7 +107,7 @@
         "cell_value": "Timing of Visit (Weeks)"
       },
       "property_type": "week",
-      "property_comment": "Nominal timing of each visit expressed in study weeks (-1, 0, 2 ... 75). Classified as 'week' because the values are week numbers relative to randomisation week 20 / run-in start week 0.",
+      "property_comment": "Nominal timing of each visit in weeks (-1 to 75), hence week.",
       "hierarchical_level": 3,
       "parent_property_id": "prop-002",
       "child_property_ids": [
@@ -125,7 +127,7 @@
         "cell_value": "Visit Window (Days)"
       },
       "property_type": "window",
-      "property_comment": "Permitted visit window in days for each column ('-7 to 0', '0', '±3' ... '0 to +5'). Classified as 'window' because the values are visit tolerance windows, not timepoints.",
+      "property_comment": "Allowed visit window in days per visit (-7 to 0, 0, ±3, 0 to +5), hence window.",
       "hierarchical_level": 4,
       "parent_property_id": "prop-003",
       "child_property_ids": [],
@@ -994,7 +996,7 @@
       "activity_name_source": {
         "cell_text": "SUBJECT RELATED INFORMATION AND ASSESSMENTS",
         "indentation_level": 0,
-        "indentation_method": "font_signal"
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1030,8 +1032,9 @@
       "row_position": 6,
       "activity_name": "Informed consent and Demography",
       "activity_name_source": {
-        "cell_text": "Informed consent and Demographya (Appendix 3)",
-        "indentation_level": 1
+        "cell_text": "Informed consent and Demographyᵃ (Appendix 3)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1050,8 +1053,9 @@
       "row_position": 7,
       "activity_name": "Childbearing potential",
       "activity_name_source": {
-        "cell_text": "Childbearing potentialb (Appendix 5)",
-        "indentation_level": 1
+        "cell_text": "Childbearing potentialᵇ (Appendix 5)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1071,7 +1075,8 @@
       "activity_name": "Inclusion criteria",
       "activity_name_source": {
         "cell_text": "Inclusion criteria (6.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1090,7 +1095,8 @@
       "activity_name": "Exclusion criteria",
       "activity_name_source": {
         "cell_text": "Exclusion criteria (6.2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1108,8 +1114,9 @@
       "row_position": 10,
       "activity_name": "Run-in criteria",
       "activity_name_source": {
-        "cell_text": "Run-in criteria (6.3.1)",
-        "indentation_level": 1
+        "cell_text": "Run-in criteria  (6.3.1)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1127,8 +1134,9 @@
       "row_position": 11,
       "activity_name": "Randomisation criteria and randomisation",
       "activity_name_source": {
-        "cell_text": "Randomisation criteria and randomisationc (6.3.2)",
-        "indentation_level": 1
+        "cell_text": "Randomisation criteria and randomisationᶜ (6.3.2)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1148,7 +1156,8 @@
       "activity_name": "Medical history/Concomitant illness",
       "activity_name_source": {
         "cell_text": "Medical history/Concomitant illness (9.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1167,7 +1176,8 @@
       "activity_name": "Weight History",
       "activity_name_source": {
         "cell_text": "Weight History (9)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1186,7 +1196,8 @@
       "activity_name": "History of Gallbladder Disease",
       "activity_name_source": {
         "cell_text": "History of Gallbladder Disease (9.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1204,8 +1215,9 @@
       "row_position": 15,
       "activity_name": "History of Breast Neoplasm",
       "activity_name_source": {
-        "cell_text": "History of Breast Neoplasmb (9.4)",
-        "indentation_level": 1
+        "cell_text": "History of Breast Neoplasmᵇ (9.4)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1225,7 +1237,8 @@
       "activity_name": "History of Colon Neoplasm",
       "activity_name_source": {
         "cell_text": "History of Colon Neoplasm (9.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1244,7 +1257,8 @@
       "activity_name": "History of Skin Cancer",
       "activity_name_source": {
         "cell_text": "History of Skin Cancer (9.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1263,7 +1277,8 @@
       "activity_name": "History of Psychiatric Disorder",
       "activity_name_source": {
         "cell_text": "History of Psychiatric Disorder (9.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1281,8 +1296,9 @@
       "row_position": 19,
       "activity_name": "Tobacco Use",
       "activity_name_source": {
-        "cell_text": "Tobacco Used",
-        "indentation_level": 1
+        "cell_text": "Tobacco Useᵈ",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1301,7 +1317,8 @@
       "activity_name": "Concomitant medication",
       "activity_name_source": {
         "cell_text": "Concomitant medication (7.7)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1320,7 +1337,8 @@
       "activity_name": "Trial product compliance",
       "activity_name_source": {
         "cell_text": "Trial product compliance (7.1, 7.6)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1340,7 +1358,8 @@
       "activity_name": "Evaluation of lipid-lowering treatment",
       "activity_name_source": {
         "cell_text": "Evaluation of lipid-lowering treatment (9)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1359,7 +1378,8 @@
       "activity_name": "Evaluation of antihypertensive treatment",
       "activity_name_source": {
         "cell_text": "Evaluation of antihypertensive treatment (9)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1378,7 +1398,8 @@
       "activity_name": "Evaluation of glycaemic status",
       "activity_name_source": {
         "cell_text": "Evaluation of glycaemic status (9)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1398,7 +1419,7 @@
       "activity_name_source": {
         "cell_text": "EFFICACY",
         "indentation_level": 0,
-        "indentation_method": "font_signal"
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1423,7 +1444,8 @@
       "activity_name": "Body measurements",
       "activity_name_source": {
         "cell_text": "Body measurements (9.1.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1445,8 +1467,9 @@
       "row_position": 27,
       "activity_name": "Height",
       "activity_name_source": {
-        "cell_text": "   Height",
-        "indentation_level": 2
+        "cell_text": "    Height",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1462,8 +1485,9 @@
       "row_position": 28,
       "activity_name": "Body Weight",
       "activity_name_source": {
-        "cell_text": "   Body Weight",
-        "indentation_level": 2
+        "cell_text": "    Body Weight",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1479,8 +1503,9 @@
       "row_position": 29,
       "activity_name": "Waist Circumference",
       "activity_name_source": {
-        "cell_text": "   Waist Circumference",
-        "indentation_level": 2
+        "cell_text": "    Waist Circumference",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1497,7 +1522,8 @@
       "activity_name": "HbA1c",
       "activity_name_source": {
         "cell_text": "HbA1c",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1514,7 +1540,8 @@
       "activity_name": "Fasting plasma glucose",
       "activity_name_source": {
         "cell_text": "Fasting plasma glucose",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1531,7 +1558,8 @@
       "activity_name": "Fasting serum insulin",
       "activity_name_source": {
         "cell_text": "Fasting serum insulin",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1548,7 +1576,8 @@
       "activity_name": "Lipids",
       "activity_name_source": {
         "cell_text": "Lipids (Appendix 2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1567,7 +1596,8 @@
       "activity_name": "Vital Signs",
       "activity_name_source": {
         "cell_text": "Vital Signs (6.4.2, 9.4.3)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1589,8 +1619,9 @@
       "row_position": 35,
       "activity_name": "Systolic Blood Pressure",
       "activity_name_source": {
-        "cell_text": "   Systolic Blood Pressure",
-        "indentation_level": 2
+        "cell_text": "    Systolic Blood Pressure",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1606,8 +1637,9 @@
       "row_position": 36,
       "activity_name": "Diastolic Blood Pressure",
       "activity_name_source": {
-        "cell_text": "   Diastolic Blood Pressure",
-        "indentation_level": 2
+        "cell_text": "    Diastolic Blood Pressure",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1624,7 +1656,8 @@
       "activity_name": "Clinical Outcome Assessments",
       "activity_name_source": {
         "cell_text": "Clinical Outcome Assessments (9.1.2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1648,8 +1681,9 @@
       "row_position": 38,
       "activity_name": "Short Form-36 (SF-36)",
       "activity_name_source": {
-        "cell_text": "   Short Form-36 (SF-36)",
-        "indentation_level": 2
+        "cell_text": "    Short Form-36 (SF-36)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1665,8 +1699,9 @@
       "row_position": 39,
       "activity_name": "Weight Related Sign and Symptom Measure (WRSSM)",
       "activity_name_source": {
-        "cell_text": "  Weight Related Sign and Symptom Measure (WRSSM)",
-        "indentation_level": 2
+        "cell_text": "    Weight Related Sign and Symptom Measure (WRSSM)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1682,8 +1717,9 @@
       "row_position": 40,
       "activity_name": "Patient Global Impression of Severity (PGI-S)",
       "activity_name_source": {
-        "cell_text": "   Patient Global Impression of Severity (PGI-S)",
-        "indentation_level": 2
+        "cell_text": "    Patient Global Impression of Severity (PGI-S)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1699,8 +1735,9 @@
       "row_position": 41,
       "activity_name": "Patient Global Impression of Change (PGI-C)",
       "activity_name_source": {
-        "cell_text": "  Patient Global Impression of Change (PGI-C)",
-        "indentation_level": 2
+        "cell_text": "    Patient Global Impression of Change (PGI-C)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1716,8 +1753,9 @@
       "row_position": 42,
       "activity_name": "Stanford Presenteeism Scale (SPS-6)",
       "activity_name_source": {
-        "cell_text": "     Stanford Presenteeism Scale (SPS-6)",
-        "indentation_level": 2
+        "cell_text": "    Stanford Presenteeism Scale (SPS-6)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1735,7 +1773,7 @@
       "activity_name_source": {
         "cell_text": "SAFETY",
         "indentation_level": 0,
-        "indentation_method": "font_signal"
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -1764,7 +1802,8 @@
       "activity_name": "Physical examination",
       "activity_name_source": {
         "cell_text": "Physical examination (9.4.2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1783,7 +1822,8 @@
       "activity_name": "Pregnancy test",
       "activity_name_source": {
         "cell_text": "Pregnancy test (9.4.5, Appendix 5)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1803,7 +1843,8 @@
       "activity_name": "ECG",
       "activity_name_source": {
         "cell_text": "ECG (9.4.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1822,7 +1863,8 @@
       "activity_name": "Adverse event",
       "activity_name_source": {
         "cell_text": "Adverse event (9.2, Appendix 4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1842,7 +1884,8 @@
       "activity_name": "Technical complaint",
       "activity_name_source": {
         "cell_text": "Technical complaint (9.2.9, Appendix 6)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1861,8 +1904,9 @@
       "row_position": 49,
       "activity_name": "Breast neoplasms follow-up",
       "activity_name_source": {
-        "cell_text": "Breast neoplasms follow-upb (9.4)",
-        "indentation_level": 1
+        "cell_text": "Breast neoplasms follow-upᵇ (9.4)",
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1882,7 +1926,8 @@
       "activity_name": "Colon neoplasms follow-up",
       "activity_name_source": {
         "cell_text": "Colon neoplasms follow-up (9.4)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1901,7 +1946,8 @@
       "activity_name": "Haematology",
       "activity_name_source": {
         "cell_text": "Haematology (Appendix 2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1920,7 +1966,8 @@
       "activity_name": "Biochemistry",
       "activity_name_source": {
         "cell_text": "Biochemistry (Appendix 2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1939,7 +1986,8 @@
       "activity_name": "Vital Signs",
       "activity_name_source": {
         "cell_text": "Vital Signs (6.4.2, 9.4.3)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1960,8 +2008,9 @@
       "row_position": 54,
       "activity_name": "Pulse",
       "activity_name_source": {
-        "cell_text": "     Pulse",
-        "indentation_level": 2
+        "cell_text": "    Pulse",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -1978,7 +2027,8 @@
       "activity_name": "Clinical Outcome Assessments",
       "activity_name_source": {
         "cell_text": "Clinical Outcome Assessments (9.4.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -1999,8 +2049,9 @@
       "row_position": 56,
       "activity_name": "Patient Health Questionnaire – 9 (PHQ-9)",
       "activity_name_source": {
-        "cell_text": "   Patient Health Questionnaire – 9 (PHQ-9)",
-        "indentation_level": 2
+        "cell_text": "    Patient Health Questionnaire – 9 (PHQ-9)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -2016,8 +2067,9 @@
       "row_position": 57,
       "activity_name": "Columbia Suicide Severity Rating Scale (C-SSRS)",
       "activity_name_source": {
-        "cell_text": "   Columbia Suicide Severity Rating Scale (C-SSRS)",
-        "indentation_level": 2
+        "cell_text": "    Columbia Suicide Severity Rating Scale (C-SSRS)",
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -2035,7 +2087,7 @@
       "activity_name_source": {
         "cell_text": "TRIAL MATERIAL",
         "indentation_level": 0,
-        "indentation_method": "font_signal"
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -2056,7 +2108,8 @@
       "activity_name": "First date on trial product",
       "activity_name_source": {
         "cell_text": "First date on trial product",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2073,7 +2126,8 @@
       "activity_name": "IWRS session",
       "activity_name_source": {
         "cell_text": "IWRS session",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2090,7 +2144,8 @@
       "activity_name": "Administration of trial product",
       "activity_name_source": {
         "cell_text": "Administration of trial product (7.1, 7.5)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2113,7 +2168,8 @@
       "activity_name": "Dispensing visit",
       "activity_name_source": {
         "cell_text": "    Dispensing visit",
-        "indentation_level": 2
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -2130,7 +2186,8 @@
       "activity_name": "Drug accountability",
       "activity_name_source": {
         "cell_text": "    Drug accountability",
-        "indentation_level": 2
+        "indentation_level": 2,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 2,
       "is_section_header": false,
@@ -2148,7 +2205,7 @@
       "activity_name_source": {
         "cell_text": "REMINDERS",
         "indentation_level": 0,
-        "indentation_method": "font_signal"
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 0,
       "is_section_header": true,
@@ -2175,7 +2232,8 @@
       "activity_name": "Criteria for discontinuation",
       "activity_name_source": {
         "cell_text": "Criteria for discontinuation (8.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2194,7 +2252,8 @@
       "activity_name": "Barriers and motivation interview",
       "activity_name_source": {
         "cell_text": "Barriers and motivation interview (9)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2213,7 +2272,8 @@
       "activity_name": "Diet and physical activity counselling",
       "activity_name_source": {
         "cell_text": "Diet and physical activity counselling (7.1.2)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2232,7 +2292,8 @@
       "activity_name": "Training in trial product, pen-handling",
       "activity_name_source": {
         "cell_text": "Training in trial product, pen-handling (7.1.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2251,7 +2312,8 @@
       "activity_name": "Hand out direction for use",
       "activity_name_source": {
         "cell_text": "Hand out direction for use (7.1.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2270,7 +2332,8 @@
       "activity_name": "Hand out dose reminder card",
       "activity_name_source": {
         "cell_text": "Hand out dose reminder card (7.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2289,7 +2352,8 @@
       "activity_name": "Hand out and instruct in food diary",
       "activity_name_source": {
         "cell_text": "Hand out and instruct in food diary (9)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2308,7 +2372,8 @@
       "activity_name": "Hand out ID card",
       "activity_name_source": {
         "cell_text": "Hand out ID card",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -2325,7 +2390,8 @@
       "activity_name": "Attend visit fasting",
       "activity_name_source": {
         "cell_text": "Attend visit fasting (6.4.1)",
-        "indentation_level": 1
+        "indentation_level": 1,
+        "indentation_method": "visual_estimate"
       },
       "hierarchy_level": 1,
       "is_section_header": false,
@@ -6663,7 +6729,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr3",
       "annotation_type": "source_note",
-      "annotation_text": "6.1",
+      "annotation_text": "Section 6.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6687,7 +6753,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr4",
       "annotation_type": "source_note",
-      "annotation_text": "6.2",
+      "annotation_text": "Section 6.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6711,7 +6777,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr5",
       "annotation_type": "source_note",
-      "annotation_text": "6.3.1",
+      "annotation_text": "Section 6.3.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6735,7 +6801,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr6",
       "annotation_type": "source_note",
-      "annotation_text": "6.3.2",
+      "annotation_text": "Section 6.3.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6759,7 +6825,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr7",
       "annotation_type": "source_note",
-      "annotation_text": "9.4",
+      "annotation_text": "Section 9.4",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6832,7 +6898,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr8",
       "annotation_type": "source_note",
-      "annotation_text": "9",
+      "annotation_text": "Section 9",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6891,7 +6957,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr9",
       "annotation_type": "source_note",
-      "annotation_text": "7.7",
+      "annotation_text": "Section 7.7",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6915,7 +6981,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr10",
       "annotation_type": "source_note",
-      "annotation_text": "7.1",
+      "annotation_text": "Section 7.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6953,7 +7019,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr11",
       "annotation_type": "source_note",
-      "annotation_text": "7.6",
+      "annotation_text": "Section 7.6",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -6977,7 +7043,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr12",
       "annotation_type": "source_note",
-      "annotation_text": "9.1.1",
+      "annotation_text": "Section 9.1.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7039,7 +7105,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr14",
       "annotation_type": "source_note",
-      "annotation_text": "6.4.2",
+      "annotation_text": "Section 6.4.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7070,7 +7136,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr15",
       "annotation_type": "source_note",
-      "annotation_text": "9.4.3",
+      "annotation_text": "Section 9.4.3",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7101,7 +7167,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr16",
       "annotation_type": "source_note",
-      "annotation_text": "9.1.2",
+      "annotation_text": "Section 9.1.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7125,7 +7191,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr17",
       "annotation_type": "source_note",
-      "annotation_text": "9.4.2",
+      "annotation_text": "Section 9.4.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7149,7 +7215,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr18",
       "annotation_type": "source_note",
-      "annotation_text": "9.4.5",
+      "annotation_text": "Section 9.4.5",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7173,7 +7239,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr19",
       "annotation_type": "source_note",
-      "annotation_text": "9.4.4",
+      "annotation_text": "Section 9.4.4",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7197,7 +7263,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr20",
       "annotation_type": "source_note",
-      "annotation_text": "9.2",
+      "annotation_text": "Section 9.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7245,7 +7311,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr22",
       "annotation_type": "source_note",
-      "annotation_text": "9.2.9",
+      "annotation_text": "Section 9.2.9",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7293,7 +7359,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr24",
       "annotation_type": "source_note",
-      "annotation_text": "9.4.1",
+      "annotation_text": "Section 9.4.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7317,7 +7383,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr25",
       "annotation_type": "source_note",
-      "annotation_text": "7.5",
+      "annotation_text": "Section 7.5",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7341,7 +7407,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr26",
       "annotation_type": "source_note",
-      "annotation_text": "8.1",
+      "annotation_text": "Section 8.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7365,7 +7431,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr27",
       "annotation_type": "source_note",
-      "annotation_text": "7.1.2",
+      "annotation_text": "Section 7.1.2",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7389,7 +7455,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr28",
       "annotation_type": "source_note",
-      "annotation_text": "7.1.1",
+      "annotation_text": "Section 7.1.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7420,7 +7486,7 @@
       "table_id": "table-001",
       "annotation_marker": "pr29",
       "annotation_type": "source_note",
-      "annotation_text": "6.4.1",
+      "annotation_text": "Section 6.4.1",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7438,6 +7504,49 @@
           "method": "synthesized"
         }
       ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "location": {
+        "page": 8,
+        "row_positions": [
+          5,
+          6
+        ]
+      },
+      "call_made": "Three indentation levels were read from shading and text indent: dark-grey section bands (SUBJECT RELATED..., EFFICACY, SAFETY, TRIAL MATERIAL, REMINDERS) = 0; medium-grey unindented rows = 1; light, indented rows = 2 (children of Body measurements, Vital Signs, Clinical Outcome Assessments, Administration of trial product).",
+      "alternative": "Treat the medium-grey rows as level 0 peers of the section bands (flat two-level reading: only the indented light rows are children).",
+      "report_section": "3.1"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "location": {
+        "page": 9,
+        "row_positions": [
+          22,
+          23,
+          24
+        ]
+      },
+      "call_made": "The three \"Evaluation of ...\" rows at the top of page 9 (and PGI-C / SPS-6 at the top of page 10) are read as continuing the group open at the end of the previous page: Evaluation rows under SUBJECT RELATED INFORMATION AND ASSESSMENTS, PGI-C and SPS-6 as level-2 children of Clinical Outcome Assessments (9.1.2).",
+      "alternative": "Treat the rows at the top of pages 9 and 10 as ungrouped rows with no section parent.",
+      "report_section": "3.1"
+    },
+    {
+      "id": "D3",
+      "severity": "low",
+      "location": {
+        "page": 8,
+        "row_position": 16,
+        "column_position": 2
+      },
+      "call_made": "The mark at History of Colon Neoplasm / V1 prints underlined; transcribed as a plain \"X\" (the underline is read as a formatting artefact, like the hyperlink underlines in the label column).",
+      "alternative": "Keep the underline as a distinct glyph/annotation (e.g. cell_value \"X\" with a note that it is underlined in source).",
+      "report_section": "3.3"
     }
   ]
 }

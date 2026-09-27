@@ -1,138 +1,79 @@
 # NCT03402841 — SoA extraction uncertainty report
 
-Source: `/root/ph3/blind/NCT03402841/NCT03402841_soa.pdf` (5 PDF pages = document pages 40–44 per PAGEMAP.md).
-Protocol identifiers on every page header: `Study Code D0816C00020`, `Version 3.0`, `Date 26 October 2018`.
-Printed page footers read `40 (111)` … `44 (111)`; these happen to agree with PAGEMAP.md, but PAGEMAP.md was used as the authority throughout. PAGEMAP.md marks no page as back matter, so all five pages are inside the declared SoA range.
+Prompt 3.8.1, single pass. Source: NCT03402841_soa.pdf (5 PDF pages = document pages 40–44 per PAGEMAP.md). No protocol markdown was available, so all text comes from the PDF text layer.
 
-The excerpt contains **two** SoA tables. The protocol itself says so:
+## Decisions needed (2)
 
-> "The schedule of assessments for the screening visit is shown in Table 1."
+| # | where | call made | alternative | detail |
+|---|---|---|---|---|
+| D1 | p41, Table 1, row 16 (Tumour assessment), marker n1 | The unmarked line "Note: MRI/ CT scan more than 28 days prior to Day 1 may be acceptable, please consult with AstraZeneca." printed directly under footnote e is kept as its own footnote (synthesised marker n1). It is attached to the Tumour assessment row because it sits next to footnote e (method proximity). | Treat the Note as the end of footnote e (add its text to e and drop n1), or leave it as a table-level note not attached to any row. | 2.3 |
+| D2 | p40/p42, Tables 1 and 2 | Table 1 (screening) and Table 2 (on-study) are both typed main_soa: two independent schedules for the same participants, with different columns. | Type Table 1 as the only main_soa and Table 2 as a track for the treatment/follow-up phase, or the reverse. | 1 |
 
----
+## Recorded, not open (6)
 
-## 1. Per-table summary
+- §5: there is L = 1 label column in both tables, so data columns start at position 2. Table 1 uses positions 2–3 and Table 2 uses positions 2–8.
+- §1b / types doc: the header rows reprinted on p41 (Table 1) and p43 (Table 2) are removed as duplicates. Each table is one printed table that runs over a page break, so neither is typed `continuation`.
+- §6 header-cell footnotes: marker a in Table 2 is placed on grid cells (row 1 col 5 "…safety visits^a", row 2 col 4 "…thereafter^a"), not on the property rows.
+- §6: footnotes b and d (both tables) end with "please refer to Section 5.2.1", but they also give instructions, so they stay `footnote` and are not `source_note`.
+- §4: all rows have indentation_level 0 with `indentation_method: assumed_flat`, because both tables are flat and have no grouping headers.
+- §6: no abbreviation or legend annotations were emitted, because the source prints no abbreviation list or legend for these tables.
 
-### Table 1 — `main_soa`
-- Title: "Study Schedule – Screening (Visit 1)"
-- Pages: document 40–41.
-- Label columns **L = 1** (the activity-name column, which also carries the header row's own label "Day"). **First data column position = 2**; data columns are 2 and 3. Column count: 2 data columns (3 physical columns).
-- Header rows: 1, labelled `Day`.
-- Activities: 18. Marks: 19 (one row carries two).
-- Activity rows per page: **page 40 → 14 rows; page 41 → 4 rows**. Every page in the declared range contributed rows.
-- Classification reasoning (also in `table_metadata.notes`): the taxonomy states that where a protocol carries independent Screening and Treatment schedules with different column structures, *each* is `main_soa`. Table 1's two-column screening timeline shares no visit with Table 2, and both tables schedule the same participants, so it is neither a `domain` nor a `track` of Table 2. Not `continuation` — it is the first table, and its body simply runs over a page break under a reprinted header.
-- Page 41 also carries footnotes a–g plus one unmarked Note; the header row reprints there and was de-duplicated (counted once).
+## 1. Tables
 
-### Table 2 — `main_soa`
-- Title: "Study Plan Detailing the Procedures"
-- Pages: document 42–44.
-- Label columns **L = 1** (activity-name column, which also carries the labels "Visit Number or type", "Day", "Visit Window"). **First data column position = 2**; data columns are 2–8. Column count: 7 data columns (8 physical columns).
-- Header rows: 3 (`Visit Number or type` → visit, level 1; `Day` → study_day, level 2; `Visit Window` → window, level 3).
-- Activities: 15. Marks: 45.
-- Activity rows per page: **page 42 → 11 rows; page 43 → 4 rows; page 44 → 0 rows**.
-  **Page 44 contributes no activity rows and this is expected**: it is a footnote-only page carrying the continuation of the footnote block (markers g, h, j, k, l). It is inside the declared range because those footnotes belong to Table 2. No table body appears on it.
-- The three header rows reprint on page 43 and were de-duplicated.
+| Table | Title | type | pages | data cols | activities | rows per page |
+|---|---|---|---|---|---|---|
+| 1 | Study Schedule – Screening (Visit 1) | main_soa | 40–41 | 2 | 18 | p40: 14, p41: 4 |
+| 2 | Study Plan Detailing the Procedures | main_soa | 42–44 | 7 | 15 | p42: 11, p43: 4, p44: 0 |
 
----
+- Classification (D2): the protocol text says "The schedule of assessments for the screening visit is shown in Table 1. On-study assessments are shown in Table 2." The two tables have completely different columns and cover different phases for the same participants. The taxonomy says separate Screening and Treatment tables with different column structures are each main_soa. This reasoning is also recorded in `table_metadata.notes`.
+- Page 44 has no activity rows. It holds only the Table 2 footnotes g, h, j, k and l (the table body ends on p43). It stays in the declared range because those footnotes belong to the table.
+- Only non-empty body cells are written to `activity_schedule`. Empty header cells (Table 2 Day cols 6–8, Visit Window col 8) are written as empty strings in `schedule_grid`.
 
-## 2. Merged cells and merged marks
+### Schedule properties
+- Table 1: row 1 "Day" is `study_day` (values "Before screening period", "-28 to -1"), level 1.
+- Table 2: row 1 "Visit Number or type" is `visit` (L1), row 2 "Day" is `study_day` (L2), and row 3 "Visit Window" is `window` (L3). All three labels are printed, so none are synthesised.
+- Low confidence: the Table 2 visit row mixes visit numbers (2, 3), recurring visit groups (V4+, V5+) and event-driven visits (treatment discontinued, 30-day FU, long-term FU). It is typed `visit` as a whole.
 
-**None in either table.** No mark or text was distributed across a span; no `source_range` and no `merged_cell_range` is set anywhere in either file.
+## 2. Table 1 details
 
-This is not an eyeball judgement — the vertical rule lines were recovered from the 150 dpi page raster (ink columns whose ink fraction over the table height exceeds 0.6) and every internal vertical boundary is present over the full table height:
+### 2.1 Merged marks
+- None. Every mark sits in a single rule-bounded cell.
 
-- Table 1 (pages 40 and 41, identical): rules at x = 85.0, 442.6, 497.8, 551.0 pt → 3 columns.
-- Table 2 (pages 42 and 43, identical): rules at x = 72.0, 211.2, 236.6, 265.0, 389.8, 504.0, 589.4, 688.3, 759.4 pt → 8 columns.
+### 2.2 Notable cells
+- Row 15 "Confirmed as having non-Germline BRCA Mutated ovarian cancer": X under "Before screening period" (col 2). The glyph sits a little low in the cell, but it is clearly inside that row's rules.
+- Row 19 "Archival or fresh tumour biopsy sample…": X in both col 2 and col 3.
+- The marker on "Haematology / clinical chemistry" is "b,f". In the `-layout` text dump it prints between the Vital signs and Haematology lines, but the bbox y (641.6) matches the Haematology row, so it is attached to Haematology.
+- The marker on "Tumour assessment" (p41) is "e" according to the text layer and the 300 dpi render. A low-resolution render looked like "c", which was an artefact.
 
-Because no internal vertical rule is missing on any row band, no cell is merged, and every mark belongs to the single column its glyph sits under.
+### 2.3 Unmarked note (D1)
+- The "Note: MRI/ CT scan…" line is printed flush left between footnotes e and f and has no marker of its own. I synthesised marker `n1` and gave it one `activity_name` location on row 16 with `method: proximity`. It is flagged for page verification.
 
----
+## 3. Table 2 details
+- Merged marks: none. The wide V4/V5 columns are single columns, not merged spans.
+- In-cell markers: X^b in col 2 on rows 4 (Physical examination), 5 (Vital signs), 7 (Haematology) and 8 (Urinalysis); X^j in cols 3 and 4 on row 16 (Olaparib dispensed/returned).
+- Activity text is kept exactly as printed, including the source typo "Blood sample for restrospective gBRCA test".
+- The marker sequence skips "i" (a, b, c, d, e, f, g, h, j, k, l). No "i" is printed anywhere, so nothing is missing.
+- Footnote e mentions "Table 2", which is a self-reference and not a cross-reference; it is kept as a footnote.
 
-## 3. Mechanical mark-check (§1b)
+## 4. Synthesised items
+- Property names: none.
+- Annotation markers: `n1` (Table 1, see D1).
 
-Both tables have a genuine text layer *and* a vector/raster rule grid, so the §1b bbox route was used and cross-checked against the raster rules and a full-page visual read.
+## 5. Mechanical mark-check
+- Method: `pdftotext -bbox`. Column x-centres were fixed from the header labels (T1: 470, 525; T2: 220, 246, 327, 447, 547, 639, 728). X tokens matching `^[Xx][*a-zA-Z0-9]?$` were binned to the nearest centre and the y-band of their row. The resulting matrix was compared cell by cell with visual reads of 300 dpi renders.
+- Result: no disagreements. Table 1 has 19 marks and Table 2 has 45.
+- The pages have vector rule lines and a normal (not glyph-spread) text layer, so no raster or glyph reconstruction was needed.
 
-Method: `pdftotext -bbox` on all 5 pages; column x-centres fixed from the header rows (Table 2: the `Visit Window` row values `0 / ±3d / ±7d / ±3d / ±7d / +7d` plus the `Long-term follow up` header cell for column 8; Table 1: the `Before screening period` and `-28 to -1` header cells). Mark tokens matched with `^[Xx][*a-zA-Z0-9]?$` so that footnoted marks (`X b`, `X j` — printed as superscripts and tokenised separately here) were not dropped. Each mark token binned to the nearest column centre, then checked against the raster column boundaries.
+## 6. Annotation text integrity
+- The text layer is not glyph-spread, so no reconstruction was done (§1c).
+- Each footnote was checked from its first word to its last against the page.
+- Source quirks kept as printed: "collection,shipping" (no space) in T2 g, "Day1" in T1 g, and no final full stop on T1 f and T2 a.
+- Containment/overlap pairs: none. Footnote b in Table 1 and footnote d in Table 2 share the sentence about coagulation and Section 5.2.1, but they are separate notes in separate tables and are faithful to the source.
 
-Recovered column centres (pt):
-- Table 1: col 2 ≈ 470.2, col 3 ≈ 524.4. All 19 marks land at x-centres 470.3 or 524.6 — dead on.
-- Table 2: col 2 ≈ 223.9, col 3 ≈ 250.8, col 4 ≈ 327.4, col 5 ≈ 446.9, col 6 ≈ 546.7, col 7 ≈ 638.9, col 8 ≈ 723.9. All 45 marks land within ~3 pt of a centre.
+## 7. Orphan risk
+- None. Every annotation has at least one marker_location, and every location's marker is also present in that row's or cell's `annotation_markers` (checked by script). Both files validate against the schema.
 
-**Disagreements between the mechanical matrix and the visual read: none.** Rows that are easy to mis-read and were explicitly re-checked against the rendered page:
-
-- `Pregnancy test` (row 9): X in columns 2, 3, 4, 5 and 7 — **column 6 (Study treatment discontinued) is empty**. Confirmed empty on the page; not filled in.
-- `FACT-O and EQ-5D-5L questionnaires` (row 14): X in columns 2, 3, 4, 6, 7 — **column 5 (Visit No. 5 and subsequent safety visits) is empty**. Confirmed empty.
-- `ECOG performance status` (row 6): X in columns 2, 4, 6 only.
-- `Olaparib dispensed/returned` (row 16): X in columns 2, 3, 4, 6 only; the column-4 mark sits at x 321.6–328.9 (slightly left of centre because the superscript `j` follows it) and still bins to column 4, which the raster boundaries 265.0–389.8 confirm.
-- `Subsequent cancer therapy …` (row 17): X in columns 7 and 8; `Time to subsequent therapy and Survival` (row 18): X in column 8 only.
-
-Glyph case: every mark in both tables is an upper-case `X`. Nothing normalised.
-
----
-
-## 4. Synthesised values
-
-- **Property names:** none synthesised. All four header rows across the two tables carry printed labels in column 1 (`Day`; `Visit Number or type`, `Day`, `Visit Window`), so no `property_name_source.synthesized` is set anywhere.
-- **Annotation markers:** exactly one synthesised marker, `note1` in Table 1 — see §6 below.
-
----
-
-## 5. Annotation text integrity
-
-- The text layer is **not** glyph-spread. Tokens are whole words; no `deglyph_reconstruction` was needed and no `annotation_text_source` is recorded on any annotation. Superscript footnote markers do tokenise separately from the word they follow (e.g. `transfusions` then `a`), which is why the mark regex above allows a trailing character.
-- Footnote text was read from the footnote blocks below each table (Table 1: page 41; Table 2: pages 43 and 44). These are ordinary paragraph footnotes, not a right-hand notes column, so each marker's text is bounded by the next marker's superscript — no proximity bounding was needed and no `proximity_bounded` is recorded.
-- **Containment pairs within a single table: none.**
-- **Containment pair across tables (reported for completeness, source-faithful):** Table 1 footnote `b` is a proper substring of Table 2 footnote `d`.
-  - Table 1 `b`: "Coagulation test should be performed if clinically indicated. For a list of all required laboratory tests please refer to Section 5.2.1."
-  - Table 2 `d`: "All samples should be taken prior to first dose. Coagulation test should be performed if clinically indicated. For a list of all required laboratory tests please refer to Section 5.2.1."
-  Re-verified against the pages: these are **two separate footnotes of two separate tables, printed on two different pages** (page 41 and page 43), and Table 2's version genuinely opens with an extra sentence that Table 1's lacks. This is the source-faithful case, **not** one note cell split across rows. Neither was merged, truncated or dropped.
-- Source typos transcribed verbatim, not repaired:
-  - "restrospective" in the Table 2 activity label "Blood sample for restrospective gBRCA test".
-  - the missing space in "collection,shipping" in Table 2 footnote g.
-  - Table 1 footnote g's "before Day1." (no space).
-- Footnote lettering in Table 2 runs a, b, c, d, e, f, g, h, **j**, k, l — the source skips `i`. Transcribed as printed; no marker was renumbered.
-
----
-
-## 6. Annotation binding, orphan risk, method provenance
-
-Both files: every annotation has ≥ 1 `marker_locations` entry, and every marker recorded in a location also appears in that row's / cell's `annotation_markers` (checked mechanically). No `abbreviation` or `legend` annotations were emitted — the tables define no in-grid legend and print no abbreviation block, so there is nothing that would produce an orphan list entry. `by_type` is all `footnote` in both files (8 and 11), which §8 explicitly allows.
-
-**Header-cell footnote (§6).** Table 2 footnote `a` is printed twice inside the header area, not on the property label. It is bound to the two specific grid cells it sits on, and NOT to the `schedule_property` row:
-- `schedule_grid` row 1, column 5 — the cell "Visit No. 5 and subsequent safety visits (For the first 12 months only)"; the superscript `a` is printed immediately after the word `visits` in the phrase "subsequent safety visits".
-- `schedule_grid` row 2, column 4 — the `Day` cell, where the superscript `a` is printed immediately after the word `thereafter` at the end of "every 12 weeks thereafter".
-The marker was cleaned out of both `cell_value`s and recorded in each cell's `annotation_markers`.
-
-**Cell-level footnotes.** Table 2 `b` sits on four marks (`Xᵇ` at rows 4, 5, 7, 8, all column 2) and `j` on two (`Xʲ` at row 16, columns 3 and 4); these are recorded as `schedule_cell` locations with the marker stripped from `cell_value`, not as activity-level markers.
-
-**The one synthesised marker — `note1` (Table 1).** Page 41 prints, between footnote `e` and footnote `f`, an unmarked line:
-
-> "Note: MRI/ CT scan more than 28 days prior to Day 1 may be acceptable, please consult with AstraZeneca."
-
-It carries no printed marker. It was emitted as its own `footnote` with the synthesised marker `note1`, bound by one `activity_name` location on row 16 (`Tumour assessment`) with `method: "synthesized"`, and `note1` added to that activity's `annotation_markers` (which therefore reads `e,note1`). Rationale: the note is printed inside footnote `e`'s block and continues `e`'s subject (pre-treatment RECIST / imaging timing relative to Day 1), and `Tumour assessment` is the only row citing `e`. **This is the weakest binding in the run** — it is an interpretation of placement plus subject matter, not a printed marker, and is the one item to spot-check against page 41. It was not left as an unresolved location because the note's target is strongly indicated by both its position in the footnote block and its content; the `synthesized` method flags it for verification.
-
-**Method provenance recorded (§1e), exhaustively:**
-- `activity_name_source.indentation_method: "assumed_flat"` on all 18 Table 1 activities and all 15 Table 2 activities. Both tables are flat — every row is a level-0 activity that itself carries marks, there are no grouping/section-header rows and no visual indentation in either body, so §4's flat-table exception applies and no row was left artificially mark-free.
-- `marker_locations[].method: "synthesized"` on the single `note1` location described above.
-- Nothing else. No `annotation_text_source` anywhere, no `activity_name_source.method`, no `structure_method`, no cell-level `method` (all marks and header values came from the bbox text layer, with the raster used only to confirm column boundaries).
-- **`location_type` = `unresolved`: zero.** No marker in either table had an undeterminable target.
-
----
-
-## 7. Low-confidence calls / judgement calls
-
-1. **Both tables typed `main_soa` (moderate confidence, documented in `table_metadata.notes` of each file).** The alternative readings were considered and rejected: `continuation` fails because the column structures differ completely (2 screening columns vs 7 visit columns); `domain` fails because `domain` requires the *same* column structure; `track` fails because both tables schedule the same single population — every enrolled patient screens under Table 1 and then follows Table 2 — so there is no mutually exclusive population split and no `track_label` would be meaningful. The taxonomy's own wording covers this shape directly: independent Screening and Treatment schedules are each `main_soa`.
-2. **Table 1 `property_type: study_day` (moderate confidence).** The printed row label is `Day`. One value is an explicit study-day range, "-28 to -1"; the other value, "Before screening period", is a phase-style qualifier rather than a day. A downstream reader may prefer `epoch` or `other` for that column. Typed on the printed label, with the mixed content spelled out in `property_comment`.
-3. **Table 2 `Day` row (row 2) typed `study_day` (good confidence, prose values).** Columns 2 and 3 carry plain day numbers (1, 29), but columns 4 and 5 carry whole timing rules in prose ("On the first day of next visit period (V4 = Day 57 and thereafter every 8 weeks for the first 12 months; every 12 weeks thereafter)"). Transcribed literally into `schedule_grid`, with the parenthesised sub-lines joined into one cell value in printed reading order. Columns 6, 7 and 8 carry no Day value and no grid entry was emitted for them (empty stays empty).
-4. **Empty cells emitted as absent, not as empty strings.** `schedule_grid` and `activity_schedule` contain entries only for non-empty cells; the "Long-term follow up" column has no `Day` and no `Visit Window` value, and those two cells simply do not appear.
-5. **Table 1 "Urinalysis" carries no footnote marker; Table 2 "Urinalysis" carries `c`.** Transcribed exactly as printed in each table — no marker was carried across from one table to the other.
-6. **Table 1 row 12 "Haematology / clinical chemistry" carries two markers, `b,f`,** printed as a stacked superscript above the line. Both are recorded, and both `b` and `f` have an `activity_name` location on row 12.
-7. **Activity name cleaning.** Trailing footnote letters were stripped from `activity_name` and preserved in `activity_name_source.cell_text` (e.g. cell text "Time to subsequent therapy and Survival l" → name "Time to subsequent therapy and Survival"). Multi-line label cells were joined with a single space in printed reading order (e.g. "Subsequent cancer therapy following discontinuation of study treatment", "Blood sample for restrospective gBRCA test"). Italicisation of *BRCA* in the source is not represented; no `text_formatting` was captured.
-8. **No inline section/appendix references appear in any activity label**, so no `source_note` annotations were created. Section references occur only inside footnote text (e.g. Table 1 footnote `b` ends "please refer to Section 5.2.1."), where they accompany an explanation and therefore stay part of the `footnote` per §6/§8. No annotation in either file is a bare pointer.
-
----
-
-## 8. Recommended spot-checks
-
-1. Page 41, the unmarked "Note: MRI/ CT scan…" line — confirm the `note1` → `Tumour assessment` binding.
-2. Page 42, `Pregnancy test` column 6 and `FACT-O and EQ-5D-5L questionnaires` column 5 — confirm both are genuinely blank.
-3. Page 43, `Olaparib dispensed/returned` — confirm marks in columns 2, 3, 4, 6 and blanks in 5, 7, 8.
+## 8. Method provenance
+- All activities: `indentation_method: assumed_flat` (flat tables).
+- T1 n1: one marker location with `method: proximity` (D1).
+- No `unresolved` locations, no `annotation_text_source` methods and no non-default cell methods.

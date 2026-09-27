@@ -60,7 +60,7 @@
 </style>
 </head>
 <body>
-    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT05176314" title="This protocol's row on the collection index">NCT05176314</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 1 extraction data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <span class="pnav-cur">T1</span> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT05176314_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT05176314_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05176314_uncertainty_report.html">extraction log</a></div></nav>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT05176314" title="This protocol's row on the collection index">NCT05176314</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 1 extraction data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <span class="pnav-cur">T1</span> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT05176314_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT05176314_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05176314_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05176314_uncertainty_report.html">extraction log</a></div></nav>
     <div class="toolbar">
         <div class="title">NCT05176314 — Table 1 extraction data</div>
         <div class="raw-link"><a href="NCT05176314_Table_01_extraction.json" download>raw json</a></div>
@@ -74,39 +74,42 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5 (prompt v3.7.3, single-pass PDF to JSON)",
+    "extracted_at": "2026-09-27T08:55:37Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT05176314_soa.pdf",
       "document_type": "protocol",
-      "document_version": "J2N-MC-JZNW (a)"
+      "document_version": "Protocol number J2N-MC-JZNW (a)"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Text-layer table with vector rule lines. Column x-centres fixed from the header day labels; the mark matrix was re-derived mechanically by binning every pdftotext -bbox token to the rule-line-bounded cell it falls in, and diffed cell-for-cell against a visual read of the 200 dpi renders - no disagreement. Every internal vertical rule is present in every body row, so there are no merged body cells and no marks were distributed. The only merges are in the header: 'Treatment Period (Study Days)' across columns 3-21, and the 'Study Procedure' and 'Screening (D-42 to -2)' cells merged vertically across both header bands. Two full-width black redaction boxes on document page 11 conceal activity rows - see table_metadata.notes."
+    "extraction_notes": "Text-layer PDF (no glyph spreading). Grid read from pdftotext -bbox tokens binned into cells whose boundaries were recovered from 200-dpi raster rule lines (§1d); mechanical matrix agreed with the visual read cell-for-cell. Footnotes a-e read from document page 12 (beyond the declared SoA range, per PAGEMAP). Footnotes d, f, g are referenced in the table but their text is redacted (CCI). Two full-width redaction bars on page 11 may hide activity rows (see review item D1).",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Schedule of Activities (SoA)",
-    "table_purpose": "Single schedule for all participants covering screening (Days -42 to -2), the inpatient treatment period (Study Days -1 to 18) and the follow-up / early discontinuation visit at Day 24 (± 2 days).",
+    "table_purpose": "Main schedule: screening, in-clinic treatment period Days -1 to 18 (rosuvastatin and pirtobrutinib administration, rosuvastatin PK sampling), and FU/ED visit on Day 24",
     "page_start": 10,
     "page_end": 11,
-    "notes": "Single SoA grid printed across document pages 10-11 under section heading '1.3. Schedule of Activities (SoA)'; the source prints no table number and no table title. The two-band column header (epoch band + study-day band) is reprinted verbatim at the top of page 11 and the body rows simply continue, so this is treated as ONE table (page_start 10, page_end 11) with the reprinted header de-duplicated, not as a main_soa + continuation pair. table_type main_soa: rows are procedures performed on participants, one population, one timeline, and it is the only grid in the excerpt. Label columns L=1 (Study Procedure); first data column is position 2; 21 data columns (2-22). SOURCE DEFECT - two solid black redaction boxes overprinted with the label 'CCI' cross the full width of the table on document page 11: one between the 'Genetic blood sample for screening' row and the 'Rosuvastatin PK samples' row (117 px tall at 200 dpi), one between 'Rosuvastatin PK samples' and 'Adverse event review' (82 px tall). Each conceals at least one activity row together with all of its marks; the number of concealed rows and their content cannot be determined, so no activity rows were emitted for them and row_position runs contiguously across the gaps. The footnote/abbreviation block for this table is printed on document page 12, which PAGEMAP.md declares to be beyond the SoA range; its text has been transcribed into annotations but page 12 is not included in page_start/page_end. Footnotes d, f and g are themselves redacted on that page."
+    "notes": "Section 1.3. One printed table whose rows run from page 10 onto page 11 under a reprinted header; extracted as one table (the header is not duplicated). 1 label column; data columns 2-22. Footnote text is on page 12."
   },
   "schedule_properties": [
     {
       "table_number": 1,
       "row_position": 1,
-      "property_name": "Study Period",
+      "property_name": "Epoch",
       "property_name_source": {
         "row_position": 1,
         "column_position": 1,
         "cell_value": "",
         "synthesized": true
       },
+      "structure_method": "inferred_from_layout",
       "property_type": "epoch",
       "hierarchical_level": 1,
-      "property_comment": "Top header band. Values are the major study phases: 'Screening (D-42 to -2)' in column 2 (a cell merged vertically across both header bands), 'Treatment Period (Study Days)' merged across columns 3-21, and 'FU/ED' (follow-up / early discontinuation) in column 22. Screening / Treatment / Follow-up phases make this an epoch row. The leftmost header cell reads 'Study Procedure' and labels the activity column rather than this row, so no printed row label exists and property_name is synthesized."
+      "property_comment": "Top header band: 'Screening' (upper line of the rotated col-2 cell, which spans header rows 1-2), 'Treatment Period (Study Days)' merged across cols 3-21, and 'FU/ED' (follow-up / early discontinuation) in col 22. Study phases -> epoch. The label column holds 'Study Procedure' merged across both header rows, so the property name is synthesized."
     },
     {
       "table_number": 1,
@@ -120,7 +123,7 @@
       },
       "property_type": "study_day",
       "hierarchical_level": 2,
-      "property_comment": "Lower header band. Values are protocol day numbers -1, 1, 2 ... 18 across columns 3-21 and '24 (± 2 days)' in the follow-up / early-discontinuation column 22; the band above labels them '(Study Days)', so property_type is study_day. Column 2 carries no value in this band because the Screening cell is merged vertically up into band 1. No printed row label, so property_name is synthesized."
+      "property_comment": "Study day per column: '(D-42 to -2)' for Screening (lower line of the rotated col-2 cell), -1, 1-18 for the Treatment Period, and '24 (± 2 days)' for FU/ED. Values are protocol study days (the band header reads 'Study Days') -> study_day; the ± 2 day window is kept inside the FU/ED cell value as printed. Name synthesized (label column empty for this row)."
     }
   ],
   "schedule_grid": [
@@ -128,8 +131,7 @@
       "table_number": 1,
       "row_position": 1,
       "column_position": 2,
-      "cell_value": "Screening (D-42 to -2)",
-      "is_merged_cell": true
+      "cell_value": "Screening"
     },
     {
       "table_number": 1,
@@ -293,6 +295,12 @@
     {
       "table_number": 1,
       "row_position": 2,
+      "column_position": 2,
+      "cell_value": "(D-42 to -2)"
+    },
+    {
+      "table_number": 1,
+      "row_position": 2,
       "column_position": 3,
       "cell_value": "-1"
     },
@@ -420,8 +428,7 @@
       "activity_name": "Informed consent",
       "activity_name_source": {
         "cell_text": "Informed consent",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "indentation_level": 0
       }
     },
     {
@@ -430,9 +437,8 @@
       "source_page": 10,
       "activity_name": "Admission to CRU",
       "activity_name_source": {
-        "cell_text": "Admission to CRU",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Admission to\nCRU",
+        "indentation_level": 0
       }
     },
     {
@@ -441,9 +447,8 @@
       "source_page": 10,
       "activity_name": "Discharge from CRU",
       "activity_name_source": {
-        "cell_text": "Discharge from CRU",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Discharge from\nCRU",
+        "indentation_level": 0
       }
     },
     {
@@ -453,8 +458,7 @@
       "activity_name": "Outpatient visit",
       "activity_name_source": {
         "cell_text": "Outpatient visit",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "indentation_level": 0
       }
     },
     {
@@ -463,9 +467,8 @@
       "source_page": 10,
       "activity_name": "Medical history and demographics",
       "activity_name_source": {
-        "cell_text": "Medical history and demographics",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Medical history\nand demographics",
+        "indentation_level": 0
       }
     },
     {
@@ -474,9 +477,8 @@
       "source_page": 10,
       "activity_name": "Participant eligibility",
       "activity_name_source": {
-        "cell_text": "Participant eligibility",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Participant\neligibility",
+        "indentation_level": 0
       }
     },
     {
@@ -485,9 +487,8 @@
       "source_page": 10,
       "activity_name": "Rosuvastatin administration",
       "activity_name_source": {
-        "cell_text": "Rosuvastatin administration",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Rosuvastatin\nadministration",
+        "indentation_level": 0
       }
     },
     {
@@ -496,9 +497,8 @@
       "source_page": 10,
       "activity_name": "Pirtobrutinib administration",
       "activity_name_source": {
-        "cell_text": "Pirtobrutinib administration",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Pirtobrutinib\nadministration",
+        "indentation_level": 0
       }
     },
     {
@@ -508,8 +508,7 @@
       "activity_name": "Height",
       "activity_name_source": {
         "cell_text": "Height",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "indentation_level": 0
       }
     },
     {
@@ -519,8 +518,7 @@
       "activity_name": "Weight",
       "activity_name_source": {
         "cell_text": "Weight",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "indentation_level": 0
       }
     },
     {
@@ -529,9 +527,8 @@
       "source_page": 10,
       "activity_name": "Pregnancy test",
       "activity_name_source": {
-        "cell_text": "Pregnancy testᶜ",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Pregnancy testc",
+        "indentation_level": 0
       },
       "annotation_markers": "c"
     },
@@ -541,9 +538,8 @@
       "source_page": 10,
       "activity_name": "Urine drug screen (including cotinine)",
       "activity_name_source": {
-        "cell_text": "Urine drug screen (including cotinine)",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Urine drug screen\n(including\ncotinine)",
+        "indentation_level": 0
       }
     },
     {
@@ -553,8 +549,7 @@
       "activity_name": "Ethanol test",
       "activity_name_source": {
         "cell_text": "Ethanol test",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "indentation_level": 0
       }
     },
     {
@@ -563,9 +558,8 @@
       "source_page": 10,
       "activity_name": "Supine vital signs (PR and BP)",
       "activity_name_source": {
-        "cell_text": "Supine vital signs (PR and BP)ᵈ",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Supine vital signs\n(PR and BP)d",
+        "indentation_level": 0
       },
       "annotation_markers": "d"
     },
@@ -575,9 +569,8 @@
       "source_page": 10,
       "activity_name": "Oral body temperature",
       "activity_name_source": {
-        "cell_text": "Oral body temperature",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Oral body\ntemperature",
+        "indentation_level": 0
       }
     },
     {
@@ -587,8 +580,7 @@
       "activity_name": "12-lead ECG",
       "activity_name_source": {
         "cell_text": "12-lead ECG",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "indentation_level": 0
       }
     },
     {
@@ -597,9 +589,8 @@
       "source_page": 11,
       "activity_name": "Clinical laboratory tests",
       "activity_name_source": {
-        "cell_text": "Clinical laboratory tests",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Clinical\nlaboratory tests",
+        "indentation_level": 0
       }
     },
     {
@@ -608,9 +599,8 @@
       "source_page": 11,
       "activity_name": "Physical examination",
       "activity_name_source": {
-        "cell_text": "Physical examinationᵉ",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Physical\nexaminatione",
+        "indentation_level": 0
       },
       "annotation_markers": "e"
     },
@@ -620,9 +610,8 @@
       "source_page": 11,
       "activity_name": "Genetic blood sample for screening",
       "activity_name_source": {
-        "cell_text": "Genetic blood sample for screening",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Genetic blood\nsample for\nscreening",
+        "indentation_level": 0
       }
     },
     {
@@ -631,9 +620,8 @@
       "source_page": 11,
       "activity_name": "Rosuvastatin PK samples",
       "activity_name_source": {
-        "cell_text": "Rosuvastatin PK samplesᵍ",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Rosuvastatin PK\nsamplesg",
+        "indentation_level": 0
       },
       "annotation_markers": "g"
     },
@@ -643,9 +631,8 @@
       "source_page": 11,
       "activity_name": "Adverse event review",
       "activity_name_source": {
-        "cell_text": "Adverse event review",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Adverse event\nreview",
+        "indentation_level": 0
       }
     },
     {
@@ -654,9 +641,8 @@
       "source_page": 11,
       "activity_name": "Concomitant medication review",
       "activity_name_source": {
-        "cell_text": "Concomitant medication review",
-        "indentation_level": 0,
-        "indentation_method": "assumed_flat"
+        "cell_text": "Concomitant\nmedication review",
+        "indentation_level": 0
       }
     }
   ],
@@ -858,39 +844,42 @@
       "row_position": 16,
       "column_position": 4,
       "cell_value": "P, 2 h",
-      "annotation_markers": "P"
+      "annotation_markers": "P,h"
     },
     {
       "table_number": 1,
       "row_position": 16,
       "column_position": 5,
-      "cell_value": "24 h"
+      "cell_value": "24 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 16,
       "column_position": 9,
       "cell_value": "P, 2 h",
-      "annotation_markers": "P"
+      "annotation_markers": "P,h"
     },
     {
       "table_number": 1,
       "row_position": 16,
       "column_position": 10,
-      "cell_value": "24 h"
+      "cell_value": "24 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 16,
       "column_position": 16,
       "cell_value": "P, 2 h",
-      "annotation_markers": "P"
+      "annotation_markers": "P,h"
     },
     {
       "table_number": 1,
       "row_position": 16,
       "column_position": 17,
-      "cell_value": "24 h"
+      "cell_value": "24 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
@@ -1053,105 +1042,119 @@
       "row_position": 22,
       "column_position": 4,
       "cell_value": "P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h",
-      "annotation_markers": "P"
+      "annotation_markers": "P,h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 5,
-      "cell_value": "24 h"
+      "cell_value": "24 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 6,
-      "cell_value": "48 h"
+      "cell_value": "48 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 7,
-      "cell_value": "72 h"
+      "cell_value": "72 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 8,
-      "cell_value": "96 h"
+      "cell_value": "96 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 9,
       "cell_value": "P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h",
-      "annotation_markers": "f,P"
+      "annotation_markers": "f,P,h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 10,
-      "cell_value": "24 h"
+      "cell_value": "24 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 11,
-      "cell_value": "48 h"
+      "cell_value": "48 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 12,
-      "cell_value": "72 h"
+      "cell_value": "72 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 13,
-      "cell_value": "96 h"
+      "cell_value": "96 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 14,
-      "cell_value": "120 h"
+      "cell_value": "120 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 16,
       "cell_value": "P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h",
-      "annotation_markers": "P"
+      "annotation_markers": "P,h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 17,
-      "cell_value": "24 h"
+      "cell_value": "24 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 18,
-      "cell_value": "48 h"
+      "cell_value": "48 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 19,
-      "cell_value": "72 h"
+      "cell_value": "72 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 20,
-      "cell_value": "96 h"
+      "cell_value": "96 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
       "row_position": 22,
       "column_position": 21,
-      "cell_value": "120 h"
+      "cell_value": "120 h",
+      "annotation_markers": "h"
     },
     {
       "table_number": 1,
@@ -1448,7 +1451,7 @@
     {
       "annotation_marker": "d",
       "annotation_type": "footnote",
-      "annotation_text": "[Footnote d is not printed in the source. In the footnote block (document page 12) the slot immediately after footnote c is covered by a solid black redaction box overprinted with the label \"CCI\"; no text is legible. Remainder redacted in source.]",
+      "annotation_text": "Definition not printed in the source: the footnote block on document page 12 lists a, b, c and e as text, while the positions where footnote 'd' would print are covered by redaction boxes labelled 'CCI'. [remainder redacted in source]",
       "marker_locations": [
         {
           "table_number": 1,
@@ -1472,7 +1475,7 @@
     {
       "annotation_marker": "f",
       "annotation_type": "footnote",
-      "annotation_text": "[Footnote f is not printed in the source. In the footnote block (document page 12) the region after footnote e is covered by a solid black redaction box overprinted with the label \"CCI\"; no text is legible. Remainder redacted in source.]",
+      "annotation_text": "Definition not printed in the source: the footnote block on document page 12 lists a, b, c and e as text, while the positions where footnote 'f' would print are covered by redaction boxes labelled 'CCI'. [remainder redacted in source]",
       "marker_locations": [
         {
           "table_number": 1,
@@ -1485,7 +1488,7 @@
     {
       "annotation_marker": "g",
       "annotation_type": "footnote",
-      "annotation_text": "[Footnote g is not printed in the source. In the footnote block (document page 12) the region after footnote e is covered by a solid black redaction box overprinted with the label \"CCI\"; no text is legible. Remainder redacted in source.]",
+      "annotation_text": "Definition not printed in the source: the footnote block on document page 12 lists a, b, c and e as text, while the positions where footnote 'g' would print are covered by redaction boxes labelled 'CCI'. [remainder redacted in source]",
       "marker_locations": [
         {
           "table_number": 1,
@@ -1572,9 +1575,198 @@
           "column_position": 16
         }
       ]
+    },
+    {
+      "annotation_marker": "h",
+      "annotation_type": "legend",
+      "annotation_text": "h = hours postdose",
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 4
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 9
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 16,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 4
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 5
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 6
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 7
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 8
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 9
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 10
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 11
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 12
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 13
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 14
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 16
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 17
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 18
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 19
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 20
+        },
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 22,
+          "column_position": 21
+        }
+      ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "high",
+      "location": {
+        "page": 11,
+        "row_positions": [
+          21,
+          22,
+          23
+        ]
+      },
+      "call_made": "Two full-width black redaction bars labelled 'CCI' on page 11 (one between 'Genetic blood sample for screening' and 'Rosuvastatin PK samples', one between 'Rosuvastatin PK samples' and 'Adverse event review') are treated as hiding content, and no activity rows are created for them.",
+      "alternative": "Each bar hides one (or more) activity row with its own marks; add placeholder activity rows (e.g. '[redacted row]') so the redacted procedures are represented in the schedule.",
+      "report_section": "4"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "location": {
+        "page": 11,
+        "row_position": 21
+      },
+      "call_made": "The label is transcribed as 'Genetic blood sample for screening' - the three visible lines of the cell, the last line partly clipped by the redaction bar below it.",
+      "alternative": "Part of the label is hidden under the redaction bar (the text layer places the bar's 'CCI' label between 'for' and 'screening'); record the name as incomplete, e.g. 'Genetic blood sample for [redacted] screening'.",
+      "report_section": "4"
+    },
+    {
+      "id": "D3",
+      "severity": "low",
+      "location": {
+        "page": 10,
+        "row_positions": [
+          1,
+          2
+        ],
+        "column_position": 2
+      },
+      "call_made": "The single rotated Screening header cell, which spans both header rows, is split by its two printed lines: 'Screening' goes on the epoch row and '(D-42 to -2)' on the study-day row.",
+      "alternative": "Keep the whole cell text 'Screening (D-42 to -2)' as one value on the epoch row and leave the study-day row empty for the Screening column.",
+      "report_section": "3"
     }
   ]
-};
+}
+;
     
     function escHtml(s) {
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

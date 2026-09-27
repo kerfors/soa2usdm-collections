@@ -74,26 +74,27 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5 (prompt v3.7.3, single-pass)",
+    "extracted_at": "2026-09-27T12:58:17+00:00",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT04184622_soa.pdf",
       "document_type": "protocol",
-      "document_version": "I8F-MC-GPHK(b)",
-      "document_date": ""
+      "document_version": "I8F-MC-GPHK(b)"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table read from the PDF text layer; cell boundaries recovered from 200 dpi raster rule lines (vertical rules give 20 columns = 1 label + 19 visit columns). Section bands (Clinical Assessments, Participant Education and Assessment, Laboratory Tests, Mental Health Questionnaires, PROs) are single cells merged across all 20 columns and carry no marks. Footnote marker '*' is defined by the line '*Please see table below for corresponding additional information' printed directly beneath this table on document page 24; the notes it points to are in the 'Additional Information Regarding Activities Described in Schedule of Activities' table on document pages 25-28, beyond the declared SoA page range. Distinct synthesised markers n1-n27 (printed order of that table, shared with Table 1) disambiguate the 27 notes that the single '*' stands for; only the subset cited in this table is emitted here."
+    "extraction_notes": "All printed '*' markers in this table point to the 'Additional Information Regarding Activities Described in Schedule of Activities' table printed after Table 2 (document pages 25-28), per the source note '*Please see table below for corresponding additional information'. Because every marker prints as the same '*', each Additional Information note was given a synthesized id (n1..n27, identical across Tables 1 and 2) and bound to the starred element whose label matches that note's Activity cell (method text_match). The Additional Information table itself is not emitted as a table (its rows key to SoA elements; soa_table_type_definitions 'reference' rule). Abbreviation lists dropped (no in-grid abbreviation markers). Grid read by pdftotext -bbox column binning to Visit-row centres; row bands from raster rule lines.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 2,
     "table_type": "track",
     "table_title": "Schedule of Activities for additional 2-year treatment period for participants with prediabetes at randomization",
-    "table_purpose": "Additional 2-year (Week 78 to Week 176) treatment schedule attended only by the participants who had prediabetes at randomization, with its own visit numbering (101-116, 199, ED, 802).",
+    "table_purpose": "Additional 2-year treatment period (Weeks 78-176, Visits 101-116, 199, ED, 802) for participants with prediabetes at randomization only.",
     "page_start": 22,
     "page_end": 24,
-    "notes": "Section 1.3.2. Classified 'track' rather than 'domain' or 'continuation': the columns are a different timeline (Visits 101-116, Weeks 78-176, ED, 802) and the population is the mutually exclusive subgroup with prediabetes at randomization, so it is a separate ScheduleTimeline. One label column (activity name); first data column position is 2; 19 data columns. Header block reprints on all three pages and was de-duplicated to a single set of 5 schedule_property rows read from document page 22.",
-    "track_label": "Prediabetes"
+    "track_label": "Prediabetes",
+    "notes": "Classified track, not domain/continuation: section 1.3.2 is its own numbered schedule with different visits (101-116, 199, ED, 802) and weeks (78-176), and it applies only to the sub-population with prediabetes at randomization (a separate study phase for a subset of participants)."
   },
   "schedule_properties": [
     {
@@ -106,9 +107,9 @@
         "cell_value": "Visit*"
       },
       "property_type": "visit",
-      "property_comment": "Visit identifiers as printed in the header row (numbered visits plus the coded visits 99/199, ED and 801/802); a named-visit row, hence 'visit'.",
+      "property_comment": "Visit identifiers (1–21, 99, ED, 801 in Table 1; 101–116, 199, ED, 802 in Table 2); a named/numbered visit per column, so property_type visit. Uniquely identifies every column.",
       "hierarchical_level": 1,
-      "annotation_markers": "*,n1"
+      "annotation_markers": "n1"
     },
     {
       "table_number": 2,
@@ -120,7 +121,7 @@
         "cell_value": "Week of Treatment"
       },
       "property_type": "week",
-      "property_comment": "Week of treatment for each visit column (negative weeks for screening, then Week 0 onward; the safety follow-up column carries a relative interval rather than a week number); week numbers, hence 'week'.",
+      "property_comment": "Week of treatment relative to randomization (negative weeks = screening/lead-in; last column reads \"N wks Post TxP\"). Numeric week labels, so property_type week. ED column is empty.",
       "hierarchical_level": 2
     },
     {
@@ -133,9 +134,9 @@
         "cell_value": "Allowable Deviation (days)*"
       },
       "property_type": "window",
-      "property_comment": "Permitted visit-window deviation in days for each visit column (e.g. ±3, +7, ±7); visit windows, hence 'window'.",
+      "property_comment": "Visit window in days (±3, +7, ±7). Allowed deviation around the target date, so property_type window. Empty for the first visit and for ED.",
       "hierarchical_level": 3,
-      "annotation_markers": "*,n6"
+      "annotation_markers": "n6"
     },
     {
       "table_number": 2,
@@ -146,10 +147,11 @@
         "column_position": 1,
         "cell_value": "Fasting Visit*"
       },
-      "property_type": "modality",
-      "property_comment": "X marks the visit columns that are fasting visits. Together with the Telephone Visit row it partitions the columns exhaustively into two visit types, so it is read as a visit-type row, hence 'modality'.",
-      "hierarchical_level": 4,
-      "annotation_markers": "*,n1"
+      "property_type": "other",
+      "property_comment": "X marks visits at which the participant must attend fasting. A per-visit attribute/requirement flag, not a timing level; does not distinguish columns, so hierarchical_level null and property_type other.",
+      "hierarchical_level": null,
+      "structure_method": "inferred_from_layout",
+      "annotation_markers": "n1"
     },
     {
       "table_number": 2,
@@ -161,8 +163,9 @@
         "cell_value": "Telephone Visit"
       },
       "property_type": "modality",
-      "property_comment": "X marks the visit columns conducted by telephone rather than in person; visit type, hence 'modality'.",
-      "hierarchical_level": 5
+      "property_comment": "X marks visits conducted by telephone (these columns are grey-shaded in the body). Visit type/modality, so property_type modality; does not distinguish columns, so hierarchical_level null.",
+      "hierarchical_level": null,
+      "structure_method": "inferred_from_layout"
     }
   ],
   "schedule_grid": [
@@ -267,21 +270,21 @@
       "row_position": 1,
       "column_position": 18,
       "cell_value": "199",
-      "annotation_markers": "*,n3"
+      "annotation_markers": "n3"
     },
     {
       "table_number": 2,
       "row_position": 1,
       "column_position": 19,
       "cell_value": "ED",
-      "annotation_markers": "*,n4"
+      "annotation_markers": "n4"
     },
     {
       "table_number": 2,
       "row_position": 1,
       "column_position": 20,
       "cell_value": "802",
-      "annotation_markers": "*,n5"
+      "annotation_markers": "n5"
     },
     {
       "table_number": 2,
@@ -514,8 +517,20 @@
     {
       "table_number": 2,
       "row_position": 4,
+      "column_position": 2,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
       "column_position": 3,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 4,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -526,8 +541,20 @@
     {
       "table_number": 2,
       "row_position": 4,
+      "column_position": 6,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
       "column_position": 7,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 8,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -538,8 +565,20 @@
     {
       "table_number": 2,
       "row_position": 4,
+      "column_position": 10,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
       "column_position": 11,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 12,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -550,8 +589,20 @@
     {
       "table_number": 2,
       "row_position": 4,
+      "column_position": 14,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
       "column_position": 15,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 4,
+      "column_position": 16,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -586,8 +637,20 @@
     {
       "table_number": 2,
       "row_position": 5,
+      "column_position": 3,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
       "column_position": 4,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 5,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -598,8 +661,20 @@
     {
       "table_number": 2,
       "row_position": 5,
+      "column_position": 7,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
       "column_position": 8,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 9,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -610,8 +685,20 @@
     {
       "table_number": 2,
       "row_position": 5,
+      "column_position": 11,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
       "column_position": 12,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 13,
+      "cell_value": ""
     },
     {
       "table_number": 2,
@@ -622,8 +709,38 @@
     {
       "table_number": 2,
       "row_position": 5,
+      "column_position": 15,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
       "column_position": 16,
       "cell_value": "X"
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 17,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 18,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 19,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 5,
+      "column_position": 20,
+      "cell_value": ""
     }
   ],
   "activities": [
@@ -659,7 +776,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n8"
+      "annotation_markers": "n8"
     },
     {
       "table_number": 2,
@@ -682,7 +799,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n9"
+      "annotation_markers": "n9"
     },
     {
       "table_number": 2,
@@ -694,7 +811,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n10"
+      "annotation_markers": "n10"
     },
     {
       "table_number": 2,
@@ -739,7 +856,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n11"
+      "annotation_markers": "n11"
     },
     {
       "table_number": 2,
@@ -747,11 +864,11 @@
       "source_page": 22,
       "activity_name": "Review study participant diary, including study drug compliance",
       "activity_name_source": {
-        "cell_text": "Review study participant diary, including study drug compliance*",
+        "cell_text": "Review study participant diary, including study drug compliance *",
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n12"
+      "annotation_markers": "n12"
     },
     {
       "table_number": 2,
@@ -763,7 +880,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n13"
+      "annotation_markers": "n13"
     },
     {
       "table_number": 2,
@@ -775,7 +892,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n14"
+      "annotation_markers": "n14"
     },
     {
       "table_number": 2,
@@ -820,7 +937,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n19"
+      "annotation_markers": "n19"
     },
     {
       "table_number": 2,
@@ -832,7 +949,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n21"
+      "annotation_markers": "n21"
     },
     {
       "table_number": 2,
@@ -844,7 +961,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n23"
+      "annotation_markers": "n23"
     },
     {
       "table_number": 2,
@@ -944,7 +1061,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n24"
+      "annotation_markers": "n24"
     },
     {
       "table_number": 2,
@@ -978,7 +1095,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n26"
+      "annotation_markers": "n26"
     },
     {
       "table_number": 2,
@@ -990,7 +1107,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n26"
+      "annotation_markers": "n26"
     },
     {
       "table_number": 2,
@@ -1002,7 +1119,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n26"
+      "annotation_markers": "n26"
     },
     {
       "table_number": 2,
@@ -1014,7 +1131,7 @@
         "indentation_level": 1,
         "indentation_method": "visual_estimate"
       },
-      "annotation_markers": "*,n27"
+      "annotation_markers": "n27"
     },
     {
       "table_number": 2,
@@ -2945,10 +3062,6 @@
       "annotation_marker": "n1",
       "annotation_type": "footnote",
       "annotation_text": "On all office visits, study participants should be reminded to report to the site before taking study drug (s) in a fasting condition, after a period of approximately 8 hours without eating, drinking (except water), or any significant physical activity. Since some screening procedures need to be completed in the fasting state, Visit 1 may be conducted over more than 1 day to ensure necessary conditions are met.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -2968,10 +3081,6 @@
       "annotation_marker": "n3",
       "annotation_type": "footnote",
       "annotation_text": "Participants wanting to discontinue the study before Week 72 will be asked to return for Visit 99 at 72 weeks ± 7 days after randomization primarily for body weight measurement and assessment of adverse events. If the participant is unwilling to attend Visit 99, it should be documented in the participant medical record that the participant has refused to attend. Participants wanting to discontinue the study after Week 72 but before Week 176 will be asked to return for Visit 199 primarily for the body weight measurement and assessment of adverse events. Refusal to attend should be documented.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -2986,10 +3095,6 @@
       "annotation_marker": "n4",
       "annotation_type": "footnote",
       "annotation_text": "Participants who are unable or unwilling to continue the study treatment for any reason will perform an ED visit. If the participant is discontinuing during an unscheduled visit or a scheduled visit, that visit should be performed as the ED visit.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3004,10 +3109,6 @@
       "annotation_marker": "n5",
       "annotation_type": "footnote",
       "annotation_text": "For participants who discontinue or complete the study within the first 72 weeks, Visit 801 (safety follow-up visit) should be performed 4 weeks after the last visit during the 72-week treatment period. Participants with prediabetes continuing to Week 78 should not perform Visit 801. For participants with prediabetes who complete the 176 weeks or discontinue after Week 72, Visit 802 should be performed 17 weeks after the last visit during the additional 2-year treatment period for participants with prediabetes at randomization.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3022,10 +3123,6 @@
       "annotation_marker": "n6",
       "annotation_type": "footnote",
       "annotation_text": "The visit date is determined in relation to the date of the randomization visit (± the allowed visit window).",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3039,10 +3136,6 @@
       "annotation_marker": "n8",
       "annotation_type": "footnote",
       "annotation_text": "Weight measurements should be obtained per the instructions in Section 10.7. Body weight must be measured in fasting state. If the participant is not fasting, the participant should be called in for a new visit within the visit window to have the fasting body weight measured.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3056,10 +3149,6 @@
       "annotation_marker": "n9",
       "annotation_type": "footnote",
       "annotation_text": "ECG measurements should be obtained per the instructions in Section 10.7. ECGs will be performed in triplicate at Weeks 0 and 36. All other ECGs will be single measurements. ECGs should be collected at least 30 minutes prior to collection of blood samples for laboratory testing, including PK samples.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3073,10 +3162,6 @@
       "annotation_marker": "n10",
       "annotation_type": "footnote",
       "annotation_text": "Vital-sign measurements should be taken before obtaining an ECG tracing and before collection of blood samples for laboratory testing, per the instruction in Section 10.7.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3090,10 +3175,6 @@
       "annotation_marker": "n11",
       "annotation_type": "footnote",
       "annotation_text": "All training should be repeated as needed to ensure participant compliance.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3107,10 +3188,6 @@
       "annotation_marker": "n12",
       "annotation_type": "footnote",
       "annotation_text": "Data from diary, as well as study drug compliance, should be reviewed.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3124,10 +3201,6 @@
       "annotation_marker": "n13",
       "annotation_type": "footnote",
       "annotation_text": "Counselling on diet and exercise, to be performed by a dietician or equivalent qualified delegate, to include calculation of individualized energy requirement and methods to change dietary composition and amount of physical activity. The Lifestyle Program Instruction may be delivered on a separate day from the rest of that visit’s study procedures but must occur within the visit window. Beginning at Week 8, the Lifestyle Program Instruction may be delivered by phone.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3141,10 +3214,6 @@
       "annotation_marker": "n14",
       "annotation_type": "footnote",
       "annotation_text": "All training should be repeated as needed to ensure participant compliance. Study personnel to provide reinforcement and encouragement for lifestyle modifications.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3158,10 +3227,6 @@
       "annotation_marker": "n19",
       "annotation_type": "footnote",
       "annotation_text": "A urine pregnancy test must be performed at Visit 3 with the result available prior to randomization and first injection of study drug(s) for women of childbearing potential only. Additional pregnancy tests (beyond those required per the Schedule of Activities) should be performed at any time during the trial if a menstrual period is missed, there is clinical suspicion of pregnancy, or as required by local law or regulation.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3175,10 +3240,6 @@
       "annotation_marker": "n21",
       "annotation_type": "footnote",
       "annotation_text": "2-hour OGTT testing should be omitted at visits following a protocol-defined diabetes diagnosis.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3192,10 +3253,6 @@
       "annotation_marker": "n23",
       "annotation_type": "footnote",
       "annotation_text": "The CKD-EPI equation will be used by the central lab to estimate and report eGFR.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3209,10 +3266,6 @@
       "annotation_marker": "n24",
       "annotation_type": "footnote",
       "annotation_text": "PK samples for immunogenicity must be taken prior to drug administration at these visits. In the event of systemic drug hypersensitivity reactions (immediate or nonimmediate), additional blood samples will be collected including ADA, PK, and exploratory biomarker samples.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3226,10 +3279,6 @@
       "annotation_marker": "n26",
       "annotation_type": "footnote",
       "annotation_text": "The C-SSRS, Self-Harm Supplement Form and PHQ-9 should be administered after assessment of adverse events. For this study, the C-SSRS is adapted for the assessment of the ideation and behavior categories only. The Intensity of Ideation and Lethality of Behavior sections are removed.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3255,10 +3304,6 @@
       "annotation_marker": "n27",
       "annotation_type": "footnote",
       "annotation_text": "Self-Harm Follow-up Form is only required if triggered by the Self-Harm Supplement Form, per instructions in the form.",
-      "annotation_text_source": {
-        "method": "raster_band_cells",
-        "note": "note cell bounded by rule lines recovered from the 200 dpi raster of the Additional Information table (document pages 25-28)"
-      },
       "marker_locations": [
         {
           "table_number": 2,
@@ -3267,124 +3312,33 @@
           "method": "text_match"
         }
       ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D6",
+      "severity": "medium",
+      "location": {
+        "page": 22
+      },
+      "call_made": "Table 2 (section 1.3.2) is typed 'track' with label 'Prediabetes': a separate 2-year schedule (Visits 101-116, 199, ED, 802; Weeks 78-176) only for participants with prediabetes at randomization.",
+      "alternative": "Type it 'main_soa' (an independent schedule with its own columns) rather than a population/phase track.",
+      "report_section": "4.1"
     },
     {
-      "annotation_marker": "*",
-      "annotation_type": "source_note",
-      "annotation_text": "*Please see table below for corresponding additional information",
-      "marker_locations": [
-        {
-          "table_number": 2,
-          "location_type": "schedule_property",
-          "row_position": 1
-        },
-        {
-          "table_number": 2,
-          "location_type": "schedule_property",
-          "row_position": 4
-        },
-        {
-          "table_number": 2,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 18
-        },
-        {
-          "table_number": 2,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 19
-        },
-        {
-          "table_number": 2,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 20
-        },
-        {
-          "table_number": 2,
-          "location_type": "schedule_property",
-          "row_position": 3
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 8
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 10
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 11
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 15
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 16
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 17
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 18
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 22
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 23
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 24
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 33
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 36
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 37
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 38
-        },
-        {
-          "table_number": 2,
-          "location_type": "activity_name",
-          "row_position": 39
-        }
-      ]
+      "id": "D7",
+      "severity": "low",
+      "location": {
+        "page": 24,
+        "row_position": 1
+      },
+      "call_made": "The line '*Please see table below for corresponding additional information' is not emitted as its own annotation; its content is carried by the 27 per-note annotations it points to.",
+      "alternative": "Emit it as an additional source_note annotation with marker '*' attached at table level.",
+      "report_section": "4.3"
     }
   ]
-};
+}
+;
     
     function escHtml(s) {
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

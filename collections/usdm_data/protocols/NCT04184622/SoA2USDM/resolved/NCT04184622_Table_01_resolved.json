@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.585409+00:00",
+    "resolved_at": "2026-09-27T15:03:30.160913+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -17,9 +17,9 @@
       "validation_warnings": [],
       "validation_errors": [],
       "method_provenance": [
-        "annotation_text:raster_band_cells: 27",
         "indentation_level:visual_estimate: 54",
-        "marker_location:text_match: 35"
+        "marker_location:text_match: 35",
+        "property_structure:inferred_from_layout: 2"
       ]
     },
     "resolution_status": "resolved",
@@ -27,23 +27,24 @@
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5 (prompt v3.7.3, single-pass)",
+    "extracted_at": "2026-09-27T12:58:17+00:00",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT04184622_soa.pdf",
       "document_type": "protocol",
-      "document_version": "I8F-MC-GPHK(b)",
-      "document_date": ""
+      "document_version": "I8F-MC-GPHK(b)"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table read from the PDF text layer; cell boundaries recovered from 200 dpi raster rule lines (vertical rules give 25 columns = 1 label + 24 visit columns; horizontal rules taken from the activity-label column). Section bands (Clinical Assessments, Participant Education and Assessment, Laboratory Tests, Mental Health Questionnaires, Patient Reported Outcomes) are single cells merged across all 25 columns and carry no marks. The single printed footnote marker in this table is '*', defined once by the line '*Please see table below for corresponding additional information' printed after Table 1.3.2 on document page 24; the notes it points to are printed in the 'Additional Information Regarding Activities Described in Schedule of Activities' table on document pages 25-28, which lies beyond the declared SoA page range. Because one '*' stands for 27 different notes, each note was given a distinct synthesised marker n1-n27 in the printed order of that table, and the synthesised marker was added alongside '*' on every citing row."
+    "extraction_notes": "All printed '*' markers in this table point to the 'Additional Information Regarding Activities Described in Schedule of Activities' table printed after Table 2 (document pages 25-28), per the source note '*Please see table below for corresponding additional information'. Because every marker prints as the same '*', each Additional Information note was given a synthesized id (n1..n27, identical across Tables 1 and 2) and bound to the starred element whose label matches that note's Activity cell (method text_match). The Additional Information table itself is not emitted as a table (its rows key to SoA elements; soa_table_type_definitions 'reference' rule). Abbreviation lists dropped (no in-grid abbreviation markers). Grid read by pdftotext -bbox column binning to Visit-row centres; row bands from raster rule lines.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Schedule of Activities covering visits to primary study endpoint",
-    "table_purpose": "Main study schedule: screening through the 72-week treatment period to the primary endpoint, plus early discontinuation and the 4-week safety follow-up visit.",
+    "table_purpose": "Main 72-week treatment schedule (screening, treatment to primary endpoint at Week 72, Visit 99, early discontinuation and safety follow-up Visit 801) for all participants.",
     "page_start": 18,
     "page_end": 21,
     "track_label": null,
@@ -51,7 +52,7 @@
     "row_count": 59,
     "header_row_count": 5,
     "activity_row_count": 54,
-    "notes": "Section 1.3.1. One label column (activity name); first data column position is 2; 24 data columns (Visits 1-21, 99, ED, 801). Header block (Visit / Week of Treatment / Allowable Deviation (days) / Fasting Visit / Telephone Visit) reprints on all four pages and was de-duplicated to a single set of 5 schedule_property rows read from document page 18."
+    "notes": ""
   },
   "schedule_properties": [
     {
@@ -65,16 +66,15 @@
         "cell_value": "Visit*"
       },
       "property_type": "visit",
-      "property_comment": "Visit identifiers as printed in the header row (numbered visits plus the coded visits 99/199, ED and 801/802); a named-visit row, hence 'visit'.",
+      "property_comment": "Visit identifiers (1–21, 99, ED, 801 in Table 1; 101–116, 199, ED, 802 in Table 2); a named/numbered visit per column, so property_type visit. Uniquely identifies every column.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
         "prop-002"
       ],
-      "annotation_markers": "*,n1",
+      "annotation_markers": "n1",
       "linked_annotation_ids": [
-        "annot-001",
-        "annot-028"
+        "annot-001"
       ]
     },
     {
@@ -88,7 +88,7 @@
         "cell_value": "Week of Treatment"
       },
       "property_type": "week",
-      "property_comment": "Week of treatment for each visit column (negative weeks for screening, then Week 0 onward; the safety follow-up column carries a relative interval rather than a week number); week numbers, hence 'week'.",
+      "property_comment": "Week of treatment relative to randomization (negative weeks = screening/lead-in; last column reads \"N wks Post TxP\"). Numeric week labels, so property_type week. ED column is empty.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [
@@ -108,16 +108,13 @@
         "cell_value": "Allowable Deviation (days)*"
       },
       "property_type": "window",
-      "property_comment": "Permitted visit-window deviation in days for each visit column (e.g. ±3, +7, ±7); visit windows, hence 'window'.",
+      "property_comment": "Visit window in days (±3, +7, ±7). Allowed deviation around the target date, so property_type window. Empty for the first visit and for ED.",
       "hierarchical_level": 3,
       "parent_property_id": "prop-002",
-      "child_property_ids": [
-        "prop-004"
-      ],
-      "annotation_markers": "*,n6",
+      "child_property_ids": [],
+      "annotation_markers": "n6",
       "linked_annotation_ids": [
-        "annot-006",
-        "annot-028"
+        "annot-006"
       ]
     },
     {
@@ -130,17 +127,14 @@
         "column_position": 1,
         "cell_value": "Fasting Visit*"
       },
-      "property_type": "modality",
-      "property_comment": "X marks the visit columns that are fasting visits. Together with the Telephone Visit row it partitions the columns exhaustively into two visit types, so it is read as a visit-type row, hence 'modality'.",
-      "hierarchical_level": 4,
-      "parent_property_id": "prop-003",
-      "child_property_ids": [
-        "prop-005"
-      ],
-      "annotation_markers": "*,n1",
+      "property_type": "other",
+      "property_comment": "X marks visits at which the participant must attend fasting. A per-visit attribute/requirement flag, not a timing level; does not distinguish columns, so hierarchical_level null and property_type other.",
+      "hierarchical_level": null,
+      "parent_property_id": null,
+      "child_property_ids": [],
+      "annotation_markers": "n1",
       "linked_annotation_ids": [
-        "annot-001",
-        "annot-028"
+        "annot-001"
       ]
     },
     {
@@ -154,9 +148,9 @@
         "cell_value": "Telephone Visit"
       },
       "property_type": "modality",
-      "property_comment": "X marks the visit columns conducted by telephone rather than in person; visit type, hence 'modality'.",
-      "hierarchical_level": 5,
-      "parent_property_id": "prop-004",
+      "property_comment": "X marks visits conducted by telephone (these columns are grey-shaded in the body). Visit type/modality, so property_type modality; does not distinguish columns, so hierarchical_level null.",
+      "hierarchical_level": null,
+      "parent_property_id": null,
       "child_property_ids": [],
       "annotation_markers": "",
       "linked_annotation_ids": []
@@ -190,6 +184,12 @@
         {
           "property_id": "prop-004",
           "value": "X",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         }
@@ -226,6 +226,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "2 / -1 / ±3 / X",
@@ -241,7 +247,7 @@
           "property_id": "prop-001",
           "value": "3",
           "is_merged": false,
-          "annotation_markers": "*,n2"
+          "annotation_markers": "n2"
         },
         {
           "property_id": "prop-002",
@@ -260,12 +266,17 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "3 / 0 / ±3 / X",
       "linked_annotation_ids": [
-        "annot-002",
-        "annot-028"
+        "annot-002"
       ]
     },
     {
@@ -295,6 +306,12 @@
         {
           "property_id": "prop-004",
           "value": "X",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         }
@@ -331,6 +348,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "5 / 8 / +7 / X",
@@ -363,6 +386,12 @@
         {
           "property_id": "prop-004",
           "value": "X",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         }
@@ -399,6 +428,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "7 / 16 / +7 / X",
@@ -431,6 +466,12 @@
         {
           "property_id": "prop-004",
           "value": "X",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         }
@@ -467,6 +508,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "9 / 24 / ±3 / X",
@@ -493,6 +540,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -527,6 +580,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -569,6 +628,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "12 / 36 / +7 / X",
@@ -595,6 +660,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -629,6 +700,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -671,6 +748,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "15 / 48 / ±3 / X",
@@ -697,6 +780,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -731,6 +820,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -773,6 +868,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "18 / 60 / ±3 / X",
@@ -799,6 +900,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -833,6 +940,12 @@
         {
           "property_id": "prop-003",
           "value": "±3",
+          "is_merged": false,
+          "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-004",
+          "value": "",
           "is_merged": false,
           "annotation_markers": ""
         },
@@ -875,6 +988,12 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "21 / 72 / ±7 / X",
@@ -890,7 +1009,7 @@
           "property_id": "prop-001",
           "value": "99",
           "is_merged": false,
-          "annotation_markers": "*,n3"
+          "annotation_markers": "n3"
         },
         {
           "property_id": "prop-002",
@@ -909,12 +1028,17 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "99 / 72 / ±7 / X",
       "linked_annotation_ids": [
-        "annot-003",
-        "annot-028"
+        "annot-003"
       ]
     },
     {
@@ -927,7 +1051,7 @@
           "property_id": "prop-001",
           "value": "ED",
           "is_merged": false,
-          "annotation_markers": "*,n4"
+          "annotation_markers": "n4"
         },
         {
           "property_id": "prop-002",
@@ -946,12 +1070,17 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "ED / X",
       "linked_annotation_ids": [
-        "annot-004",
-        "annot-028"
+        "annot-004"
       ]
     },
     {
@@ -964,7 +1093,7 @@
           "property_id": "prop-001",
           "value": "801",
           "is_merged": false,
-          "annotation_markers": "*,n5"
+          "annotation_markers": "n5"
         },
         {
           "property_id": "prop-002",
@@ -983,12 +1112,17 @@
           "value": "X",
           "is_merged": false,
           "annotation_markers": ""
+        },
+        {
+          "property_id": "prop-005",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "801 / 4 wks Post TxP / ±3 / X",
       "linked_annotation_ids": [
-        "annot-005",
-        "annot-028"
+        "annot-005"
       ]
     }
   ],
@@ -1090,10 +1224,9 @@
       "parent_activity_id": "act-004",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n7",
+      "annotation_markers": "n7",
       "linked_annotation_ids": [
-        "annot-007",
-        "annot-028"
+        "annot-007"
       ]
     },
     {
@@ -1147,10 +1280,9 @@
       "parent_activity_id": "act-004",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n8",
+      "annotation_markers": "n8",
       "linked_annotation_ids": [
-        "annot-008",
-        "annot-028"
+        "annot-008"
       ]
     },
     {
@@ -1186,10 +1318,9 @@
       "parent_activity_id": "act-004",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n9",
+      "annotation_markers": "n9",
       "linked_annotation_ids": [
-        "annot-009",
-        "annot-028"
+        "annot-009"
       ]
     },
     {
@@ -1207,10 +1338,9 @@
       "parent_activity_id": "act-004",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n10",
+      "annotation_markers": "n10",
       "linked_annotation_ids": [
-        "annot-010",
-        "annot-028"
+        "annot-010"
       ]
     },
     {
@@ -1291,10 +1421,9 @@
       "parent_activity_id": "act-014",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n11",
+      "annotation_markers": "n11",
       "linked_annotation_ids": [
-        "annot-011",
-        "annot-028"
+        "annot-011"
       ]
     },
     {
@@ -1312,10 +1441,9 @@
       "parent_activity_id": "act-014",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n12",
+      "annotation_markers": "n12",
       "linked_annotation_ids": [
-        "annot-012",
-        "annot-028"
+        "annot-012"
       ]
     },
     {
@@ -1333,10 +1461,9 @@
       "parent_activity_id": "act-014",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n13",
+      "annotation_markers": "n13",
       "linked_annotation_ids": [
-        "annot-013",
-        "annot-028"
+        "annot-013"
       ]
     },
     {
@@ -1354,10 +1481,9 @@
       "parent_activity_id": "act-014",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n14",
+      "annotation_markers": "n14",
       "linked_annotation_ids": [
-        "annot-014",
-        "annot-028"
+        "annot-014"
       ]
     },
     {
@@ -1375,10 +1501,9 @@
       "parent_activity_id": "act-014",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n15",
+      "annotation_markers": "n15",
       "linked_annotation_ids": [
-        "annot-015",
-        "annot-028"
+        "annot-015"
       ]
     },
     {
@@ -1414,10 +1539,9 @@
       "parent_activity_id": "act-014",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n17",
+      "annotation_markers": "n17",
       "linked_annotation_ids": [
-        "annot-017",
-        "annot-028"
+        "annot-017"
       ]
     },
     {
@@ -1492,10 +1616,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n18",
+      "annotation_markers": "n18",
       "linked_annotation_ids": [
-        "annot-018",
-        "annot-028"
+        "annot-018"
       ]
     },
     {
@@ -1513,10 +1636,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n19",
+      "annotation_markers": "n19",
       "linked_annotation_ids": [
-        "annot-019",
-        "annot-028"
+        "annot-019"
       ]
     },
     {
@@ -1534,10 +1656,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n20",
+      "annotation_markers": "n20",
       "linked_annotation_ids": [
-        "annot-020",
-        "annot-028"
+        "annot-020"
       ]
     },
     {
@@ -1555,10 +1676,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n21",
+      "annotation_markers": "n21",
       "linked_annotation_ids": [
-        "annot-021",
-        "annot-028"
+        "annot-021"
       ]
     },
     {
@@ -1576,10 +1696,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n23",
+      "annotation_markers": "n23",
       "linked_annotation_ids": [
-        "annot-023",
-        "annot-028"
+        "annot-023"
       ]
     },
     {
@@ -1795,10 +1914,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n24",
+      "annotation_markers": "n24",
       "linked_annotation_ids": [
-        "annot-024",
-        "annot-028"
+        "annot-024"
       ]
     },
     {
@@ -1816,10 +1934,9 @@
       "parent_activity_id": "act-023",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n25",
+      "annotation_markers": "n25",
       "linked_annotation_ids": [
-        "annot-025",
-        "annot-028"
+        "annot-025"
       ]
     },
     {
@@ -1897,10 +2014,9 @@
       "parent_activity_id": "act-044",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n26",
+      "annotation_markers": "n26",
       "linked_annotation_ids": [
-        "annot-026",
-        "annot-028"
+        "annot-026"
       ]
     },
     {
@@ -1918,10 +2034,9 @@
       "parent_activity_id": "act-044",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n26",
+      "annotation_markers": "n26",
       "linked_annotation_ids": [
-        "annot-026",
-        "annot-028"
+        "annot-026"
       ]
     },
     {
@@ -1939,10 +2054,9 @@
       "parent_activity_id": "act-044",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n26",
+      "annotation_markers": "n26",
       "linked_annotation_ids": [
-        "annot-026",
-        "annot-028"
+        "annot-026"
       ]
     },
     {
@@ -1960,10 +2074,9 @@
       "parent_activity_id": "act-044",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n26",
+      "annotation_markers": "n26",
       "linked_annotation_ids": [
-        "annot-026",
-        "annot-028"
+        "annot-026"
       ]
     },
     {
@@ -1981,10 +2094,9 @@
       "parent_activity_id": "act-044",
       "child_activity_ids": [],
       "has_schedule_data": true,
-      "annotation_markers": "*,n27",
+      "annotation_markers": "n27",
       "linked_annotation_ids": [
-        "annot-027",
-        "annot-028"
+        "annot-027"
       ]
     },
     {
@@ -4237,10 +4349,9 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "*,n16",
+      "annotation_markers": "n16",
       "linked_annotation_ids": [
-        "annot-016",
-        "annot-028"
+        "annot-016"
       ]
     },
     {
@@ -4955,10 +5066,9 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "*,n22",
+      "annotation_markers": "n22",
       "linked_annotation_ids": [
-        "annot-022",
-        "annot-028"
+        "annot-022"
       ]
     },
     {
@@ -5013,10 +5123,9 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "*,n22",
+      "annotation_markers": "n22",
       "linked_annotation_ids": [
-        "annot-022",
-        "annot-028"
+        "annot-022"
       ]
     },
     {
@@ -5071,10 +5180,9 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "*,n22",
+      "annotation_markers": "n22",
       "linked_annotation_ids": [
-        "annot-022",
-        "annot-028"
+        "annot-022"
       ]
     },
     {
@@ -5140,10 +5248,9 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "*,n22",
+      "annotation_markers": "n22",
       "linked_annotation_ids": [
-        "annot-022",
-        "annot-028"
+        "annot-022"
       ]
     },
     {
@@ -5396,10 +5503,9 @@
       "cell_value": "X",
       "cell_value_type": "marker",
       "source_range": "",
-      "annotation_markers": "*,n22",
+      "annotation_markers": "n22",
       "linked_annotation_ids": [
-        "annot-022",
-        "annot-028"
+        "annot-022"
       ]
     },
     {
@@ -7302,7 +7408,7 @@
       "table_id": "table-001",
       "annotation_marker": "n25",
       "annotation_type": "footnote",
-      "annotation_text": "PK samples will be collected at these visits at time windows of 1 to 24 hours, 24 to 96 hours, or 120 to 168 hours post dose, as assignedby IWRS at randomization. Dependent on the time windows to which a participant is assigned, they may be required to come to site for PK-specific visits.",
+      "annotation_text": "PK samples will be collected at these visits at time windows of 1 to 24 hours, 24 to 96 hours, or 120 to 168 hours post dose, as assigned by IWRS at randomization. Dependent on the time windows to which a participant is assigned, they may be required to come to site for PK-specific visits.",
       "annotation_scope": "activity",
       "referenced_elements": {
         "property_ids": [],
@@ -7389,264 +7495,77 @@
           "method": "text_match"
         }
       ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "high",
+      "location": {
+        "page": 18,
+        "row_position": 1,
+        "annotation_marker": "n1"
+      },
+      "call_made": "Every '*' in the table was treated as pointing to one specific note of the 'Additional Information' table (pages 25-28): each note got its own id (n1-n27) and was attached to the starred row, visit or cell whose name matches that note's Activity cell.",
+      "alternative": "Treat '*' as a single generic pointer ('see table below') and emit one annotation bound to every starred element, leaving the note-to-element matching to a later step.",
+      "report_section": "3.1"
     },
     {
-      "annotation_id": "annot-028",
-      "table_id": "table-001",
-      "annotation_marker": "*",
-      "annotation_type": "source_note",
-      "annotation_text": "*Please see table below for corresponding additional information",
-      "annotation_scope": "multiple",
-      "referenced_elements": {
-        "property_ids": [
-          "prop-001",
-          "prop-003",
-          "prop-004"
+      "id": "D2",
+      "severity": "high",
+      "location": {
+        "page": 19,
+        "row_position": 25,
+        "column_position": 22,
+        "annotation_marker": "n16"
+      },
+      "call_made": "The note 'Dispense study drug Visit 72' (only for participants continuing into the prediabetes 2-year period) is attached only to the starred X of Dispense study drug at Visit 21 (Week 72), the one cell printed 'X*'.",
+      "alternative": "Attach the note to the whole Dispense study drug row (all visits), since the note's own label names 'Visit 72', which does not exist as a visit number.",
+      "report_section": "3.2"
+    },
+    {
+      "id": "D3",
+      "severity": "high",
+      "location": {
+        "page": 20,
+        "row_positions": [
+          38,
+          39,
+          40,
+          41,
+          44
         ],
-        "column_ids": [
-          "col-004",
-          "col-023",
-          "col-024",
-          "col-025"
-        ],
-        "activity_ids": [
-          "act-005",
-          "act-008",
-          "act-010",
-          "act-011",
-          "act-015",
-          "act-016",
-          "act-017",
-          "act-018",
-          "act-019",
-          "act-021",
-          "act-024",
-          "act-025",
-          "act-026",
-          "act-027",
-          "act-028",
-          "act-040",
-          "act-041",
-          "act-045",
-          "act-046",
-          "act-047",
-          "act-048",
-          "act-049"
-        ],
-        "cell_references": [
-          {
-            "activity_id": "act-020",
-            "column_id": "col-022"
-          },
-          {
-            "activity_id": "act-033",
-            "column_id": "col-002"
-          },
-          {
-            "activity_id": "act-034",
-            "column_id": "col-002"
-          },
-          {
-            "activity_id": "act-035",
-            "column_id": "col-002"
-          },
-          {
-            "activity_id": "act-036",
-            "column_id": "col-002"
-          },
-          {
-            "activity_id": "act-039",
-            "column_id": "col-002"
-          }
+        "column_position": 2,
+        "annotation_marker": "n22"
+      },
+      "call_made": "The eligibility note for Urinary albumin/creatinine, Cystatin-c, Calcitonin, Hematology and TSH ('Screening visit assessment will be used to confirm eligibility ...') is attached only to their starred Visit 1 cells, where the '*' is printed.",
+      "alternative": "Attach it to the five activity rows as a whole (all visits), and also to the same-named rows of Table 2 which carry no '*'.",
+      "report_section": "3.2"
+    },
+    {
+      "id": "D4",
+      "severity": "medium",
+      "location": {
+        "page": 18,
+        "row_positions": [
+          4,
+          5
         ]
       },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 1
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 4
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 4
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 23
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 24
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 25
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 3
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 10
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 13
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 15
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 16
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 20
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 21
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 22
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 23
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 24
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 25,
-          "column_position": 22
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 26
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 29
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 30
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 31
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 32
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 38,
-          "column_position": 2
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 39,
-          "column_position": 2
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 40,
-          "column_position": 2
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 41,
-          "column_position": 2
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 44,
-          "column_position": 2
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 33
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 45
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 46
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 50
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 51
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 52
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 53
-        },
-        {
-          "table_number": 1,
-          "location_type": "activity_name",
-          "row_position": 54
-        }
-      ]
+      "call_made": "'Fasting Visit' and 'Telephone Visit' (blue-shaded header rows reprinted on every page) are recorded as header properties (Fasting = other, Telephone = modality), not as activities.",
+      "alternative": "Record them as activity rows with X marks at the fasting / telephone visits.",
+      "report_section": "3.3"
+    },
+    {
+      "id": "D5",
+      "severity": "medium",
+      "location": {
+        "page": 21,
+        "row_position": 51
+      },
+      "call_made": "The activity name is transcribed literally as printed: 'C-SSRS (Baseline/Screening) Version)', including the stray parenthesis.",
+      "alternative": "Normalise to 'C-SSRS (Baseline/Screening Version)', the spelling used in the Additional Information table.",
+      "report_section": "3.4"
     }
   ]
 }

@@ -2,8 +2,9 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude Opus 5 (claude-opus-5) — prompt v3.7.3 single-pass",
+    "extracted_at": "2026-09-27T13:02:07Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03402841_soa.pdf",
       "document_type": "protocol",
@@ -11,16 +12,17 @@
       "document_date": "26 October 2018"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table 2 is the on-study schedule. One leading label column (L=1: the activity-name column, which also carries the 'Visit Number or type', 'Day' and 'Visit Window' header-row labels); first data column position is 2, last is 8. Column boundaries confirmed from the page raster rule lines at x=72.0, 211.2, 236.6, 265.0, 389.8, 504.0, 589.4, 688.3, 759.4 pt on document pages 42 and 43 — eight columns, every internal vertical rule present over the full table height, so no cell is merged and no mark was distributed. The three header rows reprint on document page 43 and were de-duplicated. Document page 44 carries footnotes g, h, j, k and l only and contributes no activity rows."
+    "extraction_notes": "Text-layer PDF with vector rule lines; marks verified by pdftotext -bbox column binning against visual read of 300 dpi renders. Only non-empty body cells are emitted in activity_schedule. Document page numbers from PAGEMAP.md (PDF p1-5 = doc p40-44).",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 2,
     "table_type": "main_soa",
     "table_title": "Study Plan Detailing the Procedures",
-    "table_purpose": "On-study schedule from Visit 2 (Day 1) through treatment, tumour-assessment and safety visits, treatment discontinuation, 30-day follow up and long-term follow up.",
+    "table_purpose": "On-study treatment and follow-up schedule (Visit 2 onwards)",
     "page_start": 42,
     "page_end": 44,
-    "notes": "Typed main_soa: this is the protocol's primary on-study anchor grid ('On-study assessments are shown in Table 2'). It is not a continuation, domain or track of Table 1 — its column structure is entirely different (7 visit/encounter columns versus Table 1's 2 screening columns) and the taxonomy classifies an independent Screening table and Treatment table each as main_soa. Same participants as Table 1, so no track_label is set."
+    "notes": "On-study schedule with its own columns, independent of the Table 1 screening schedule; both typed main_soa per taxonomy (independent Screening and Treatment tables). One printed table running over p42-43 under a reprinted header (de-duplicated); p44 carries only footnotes g-l and contributes no rows."
   },
   "schedule_properties": [
     {
@@ -33,8 +35,8 @@
         "cell_value": "Visit Number or type"
       },
       "property_type": "visit",
-      "property_comment": "Top header row. Values are visit identifiers and visit-type labels: numbered visits '2' and '3', then descriptive recurring/terminal encounters ('Visit No. 4 and subsequent tumour assessment visits', 'Visit No. 5 and subsequent safety visits', 'Study treatment discontinued', 'Follow up 30 days after last dose of study medication', 'Long-term follow up'). Typed visit because the printed label names the row 'Visit Number or type' and every value identifies a visit or encounter rather than a day, week or phase.",
-      "hierarchical_level": 1
+      "hierarchical_level": 1,
+      "property_comment": "Visit numbers (2, 3) and visit types (Visit No. 4 and subsequent tumour assessment visits, Visit No. 5 and subsequent safety visits, Study treatment discontinued, 30-day follow up, Long-term follow up); named visits, so visit."
     },
     {
       "table_number": 2,
@@ -46,8 +48,8 @@
         "cell_value": "Day"
       },
       "property_type": "study_day",
-      "property_comment": "Second header row, printed label 'Day'. Gives the study day of each visit column: '1' and '29' for Visits 2 and 3, and prose day rules for the recurring visit columns ('On the first day of next visit period (V4 = Day 57 ...)'). Typed study_day on the printed label and the numeric day values; the last three columns carry no day value and are left empty.",
-      "hierarchical_level": 2
+      "hierarchical_level": 2,
+      "property_comment": "Study day of each visit (1, 29, recurring-visit day rules for V4+/V5+); empty for event-driven columns. Labelled 'Day', so study_day."
     },
     {
       "table_number": 2,
@@ -59,8 +61,8 @@
         "cell_value": "Visit Window"
       },
       "property_type": "window",
-      "property_comment": "Third header row, printed label 'Visit Window'. Values are permitted visit-timing tolerances (0, ±3d, ±7d, ±3d, ±7d, +7d). Typed window because these are visit-window tolerances, not timepoints. The Long-term follow up column carries no window value.",
-      "hierarchical_level": 3
+      "hierarchical_level": 3,
+      "property_comment": "Allowed visit windows (0, ±3d, ±7d, +7d); empty for Long-term follow up. Window values, so window."
     }
   ],
   "schedule_grid": [
@@ -134,6 +136,24 @@
     },
     {
       "table_number": 2,
+      "row_position": 2,
+      "column_position": 6,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 2,
+      "column_position": 7,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
+      "row_position": 2,
+      "column_position": 8,
+      "cell_value": ""
+    },
+    {
+      "table_number": 2,
       "row_position": 3,
       "column_position": 2,
       "cell_value": "0"
@@ -167,6 +187,12 @@
       "row_position": 3,
       "column_position": 7,
       "cell_value": "+7d"
+    },
+    {
+      "table_number": 2,
+      "row_position": 3,
+      "column_position": 8,
+      "cell_value": ""
     }
   ],
   "activities": [
@@ -270,7 +296,7 @@
       "source_page": 42,
       "activity_name": "Blood sample for restrospective gBRCA test",
       "activity_name_source": {
-        "cell_text": "Blood sample for restrospective gBRCA test g",
+        "cell_text": "Blood sample for restrospective gBRCA testg",
         "indentation_level": 0,
         "indentation_method": "assumed_flat"
       },
@@ -339,7 +365,7 @@
       "source_page": 43,
       "activity_name": "Time to subsequent therapy and Survival",
       "activity_name_source": {
-        "cell_text": "Time to subsequent therapy and Survival l",
+        "cell_text": "Time to subsequent therapy and Survivall",
         "indentation_level": 0,
         "indentation_method": "assumed_flat"
       },
@@ -800,5 +826,6 @@
         }
       ]
     }
-  ]
+  ],
+  "review_items": []
 }

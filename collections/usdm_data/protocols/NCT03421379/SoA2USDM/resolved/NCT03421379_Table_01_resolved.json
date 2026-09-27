@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.358338+00:00",
+    "resolved_at": "2026-09-27T15:03:26.463852+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -17,7 +17,6 @@
       "validation_warnings": [],
       "validation_errors": [],
       "method_provenance": [
-        "annotation_text:raster_band_cells: 25",
         "indentation_level:font_signal: 36",
         "marker_location:synthesized: 28"
       ]
@@ -27,22 +26,24 @@
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T17:28:35Z",
-    "extractor": "Claude-Opus-5",
+    "extracted_at": "2026-09-27T12:29:45+00:00",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03421379_soa.pdf",
       "document_type": "protocol",
       "document_version": "I8R-JE-IGBJ(a)"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Single Study Schedule table spanning document pages 11-18; the two header rows reprint on every page and were de-duplicated. Column model: 1 leading label column (Procedure), 8 schedule columns at positions 2-9, and a right-hand Comments column at source position 10 which is a notes column (excluded from schedule_grid/activity_schedule; each non-empty Comments cell emitted as an annotation per prompt section 6). Column boundaries and per-row cell boundaries were recovered from rule lines detected in a 200 dpi render; cell text was read from the PDF text layer and binned into those cells. The only merged cells in the whole table are the Period 1 and Period 2 header cells (columns 3:4 and 6:7); every body band has all 11 vertical rules present, so no body mark is merged."
+    "extraction_notes": "Single SoA table \"Study Schedule Protocol I8R-JE-IGBJ\", document pages 11-18, header reprinted on every page (one table, not continuations). Text layer with vector rule rectangles; marks verified by bbox column binning against rule-line column boundaries. One label column (L=1); data columns 2-9; right-hand Comments column (col 10) converted to footnote/source_note annotations with synthesised markers c1..c25. Abbreviation list dropped (no in-grid markers).",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Study Schedule Protocol I8R-JE-IGBJ",
-    "table_purpose": "Primary schedule of procedures for the two-period crossover: Screening, Period 1, Wash out, Period 2, Follow-up/ED, and an additional follow-up for treatment-emergent antidrug antibodies.",
+    "table_purpose": "Main study schedule: screening, two crossover dosing periods with washout, follow-up/ED and additional TE ADA follow-up",
     "page_start": 11,
     "page_end": 18,
     "track_label": null,
@@ -50,7 +51,7 @@
     "row_count": 38,
     "header_row_count": 2,
     "activity_row_count": 36,
-    "notes": "Classified main_soa: the rows are procedures performed on subjects and this is the only activity grid in the excerpt - the anchor timeline for the study. The eight pages carry one continuous table (identical two-row header reprinted on each page, body rows running on), so it is extracted as one table with page_start 11 / page_end 18 rather than a main table plus continuations. Document pages are taken from PAGEMAP.md; the printed page footers agree with it here but were not relied on."
+    "notes": "Only SoA table in the excerpt; anchor grid. Header rows reprinted on pages 12-18 de-duplicated. Comments column is a notes column, not a schedule column."
   },
   "schedule_properties": [
     {
@@ -65,13 +66,13 @@
         "synthesized": true
       },
       "property_type": "epoch",
-      "property_comment": "Top header row naming the major study phases across the columns: Screening, Period 1, Wash out, Period 2, Follow-up/ED and Additional Follow-up for TE ADA. Classified 'epoch' because the values are named study phases rather than visits or days. The label cell in the leading Procedure column is empty on this row, so property_name was synthesized from the row's own values. Period 1 and Period 2 are each printed as one cell merged across the two day columns beneath them (confirmed from the rule-line geometry: the internal vertical rules at columns 3|4 and 6|7 are absent in this band only).",
+      "property_comment": "Top header row naming the study phases: Screening, Period 1 (spanning Day -1 and Day 1), Wash out, Period 2 (spanning Day -1 and Day 1), Follow-up/ED, and Additional Follow-up for TE ADA. Label cell is empty, so the name is synthesised; these are major study phases, hence epoch.",
       "hierarchical_level": 1,
       "parent_property_id": null,
       "child_property_ids": [
         "prop-002"
       ],
-      "annotation_markers": "gn1",
+      "annotation_markers": "n1",
       "linked_annotation_ids": [
         "annot-027"
       ]
@@ -88,7 +89,7 @@
         "synthesized": true
       },
       "property_type": "study_day",
-      "property_comment": "Second header row giving the protocol day / day-window for each column: Days -28 to -2, Day -1, Day 1, 3 to 14 days, Day -1, Day 1, Within 28+/-2 days after last study treatment. Classified 'study_day' because the values are protocol days and day windows relative to dosing. The leading label cell on this row prints 'Procedure', which is the column heading for the activity-name column and not a name for this schedule row, so property_name was synthesized from the row's values; the printed cell text is retained in property_name_source.cell_value. This row is needed to tell columns apart: 'Day -1' and 'Day 1' each occur twice and are only distinguished by the Period row above.",
+      "property_comment": "Second header row giving the day or day range of each column: Days -28 to -2, Day -1, Day 1, 3 to 14 days (washout duration), Day -1, Day 1, Within 28±2 days after last study treatment; empty under Additional Follow-up for TE ADA. Values are protocol days/day ranges, hence study_day. The label cell prints \"Procedure\" (the activity-column heading), so the property name is synthesised.",
       "hierarchical_level": 2,
       "parent_property_id": "prop-001",
       "child_property_ids": [],
@@ -262,11 +263,17 @@
           "value": "Additional Follow-up for TE ADA",
           "is_merged": false,
           "annotation_markers": "a"
+        },
+        {
+          "property_id": "prop-002",
+          "value": "",
+          "is_merged": false,
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Additional Follow-up for TE ADA",
       "linked_annotation_ids": [
-        "annot-026"
+        "annot-001"
       ]
     }
   ],
@@ -365,7 +372,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c1",
       "linked_annotation_ids": [
-        "annot-001"
+        "annot-002"
       ]
     },
     {
@@ -385,7 +392,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c2",
       "linked_annotation_ids": [
-        "annot-002"
+        "annot-003"
       ]
     },
     {
@@ -441,7 +448,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c3",
       "linked_annotation_ids": [
-        "annot-003"
+        "annot-004"
       ]
     },
     {
@@ -461,7 +468,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c4",
       "linked_annotation_ids": [
-        "annot-004"
+        "annot-005"
       ]
     },
     {
@@ -481,7 +488,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c5",
       "linked_annotation_ids": [
-        "annot-005"
+        "annot-006"
       ]
     },
     {
@@ -501,7 +508,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c6",
       "linked_annotation_ids": [
-        "annot-006"
+        "annot-007"
       ]
     },
     {
@@ -521,7 +528,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c7",
       "linked_annotation_ids": [
-        "annot-007"
+        "annot-008"
       ]
     },
     {
@@ -541,7 +548,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c8",
       "linked_annotation_ids": [
-        "annot-008"
+        "annot-009"
       ]
     },
     {
@@ -561,7 +568,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c9",
       "linked_annotation_ids": [
-        "annot-009"
+        "annot-010"
       ]
     },
     {
@@ -581,7 +588,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c10",
       "linked_annotation_ids": [
-        "annot-010"
+        "annot-011"
       ]
     },
     {
@@ -601,7 +608,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c11",
       "linked_annotation_ids": [
-        "annot-011"
+        "annot-012"
       ]
     },
     {
@@ -621,7 +628,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c12",
       "linked_annotation_ids": [
-        "annot-012"
+        "annot-013"
       ]
     },
     {
@@ -641,7 +648,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c13",
       "linked_annotation_ids": [
-        "annot-013"
+        "annot-014"
       ]
     },
     {
@@ -679,7 +686,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c14",
       "linked_annotation_ids": [
-        "annot-014"
+        "annot-015"
       ]
     },
     {
@@ -732,7 +739,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c15",
       "linked_annotation_ids": [
-        "annot-015"
+        "annot-016"
       ]
     },
     {
@@ -752,7 +759,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c16",
       "linked_annotation_ids": [
-        "annot-016"
+        "annot-017"
       ]
     },
     {
@@ -772,7 +779,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c15",
       "linked_annotation_ids": [
-        "annot-015"
+        "annot-016"
       ]
     },
     {
@@ -792,7 +799,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c17",
       "linked_annotation_ids": [
-        "annot-017"
+        "annot-018"
       ]
     },
     {
@@ -812,7 +819,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c18",
       "linked_annotation_ids": [
-        "annot-018"
+        "annot-019"
       ]
     },
     {
@@ -832,7 +839,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c19",
       "linked_annotation_ids": [
-        "annot-019"
+        "annot-020"
       ]
     },
     {
@@ -852,7 +859,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c19",
       "linked_annotation_ids": [
-        "annot-019"
+        "annot-020"
       ]
     },
     {
@@ -872,7 +879,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c20",
       "linked_annotation_ids": [
-        "annot-020"
+        "annot-021"
       ]
     },
     {
@@ -892,7 +899,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c21",
       "linked_annotation_ids": [
-        "annot-021"
+        "annot-022"
       ]
     },
     {
@@ -912,7 +919,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c22",
       "linked_annotation_ids": [
-        "annot-022"
+        "annot-023"
       ]
     },
     {
@@ -932,7 +939,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c23",
       "linked_annotation_ids": [
-        "annot-023"
+        "annot-024"
       ]
     },
     {
@@ -995,7 +1002,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c24",
       "linked_annotation_ids": [
-        "annot-024"
+        "annot-025"
       ]
     },
     {
@@ -1015,7 +1022,7 @@
       "has_schedule_data": true,
       "annotation_markers": "c25",
       "linked_annotation_ids": [
-        "annot-025"
+        "annot-026"
       ]
     }
   ],
@@ -1905,6 +1912,30 @@
     {
       "annotation_id": "annot-001",
       "table_id": "table-001",
+      "annotation_marker": "a",
+      "annotation_type": "footnote",
+      "annotation_text": "Samples for immunogenicity, should be collected every 12 weeks (84±7 days) until the titer returns to baseline (ie, returns to within a single 2-fold dilution of the baseline titer) or until 1 year after the last dose of study treatment. A time-matched PK (glucagon) sample may be collected at the follow-up immunogenicity assessment(s) if warranted and agreed upon between both the investigator and sponsor.",
+      "annotation_scope": "column",
+      "referenced_elements": {
+        "property_ids": [],
+        "column_ids": [
+          "col-009"
+        ],
+        "activity_ids": [],
+        "cell_references": []
+      },
+      "marker_locations": [
+        {
+          "table_number": 1,
+          "location_type": "schedule_cell",
+          "row_position": 1,
+          "column_position": 9
+        }
+      ]
+    },
+    {
+      "annotation_id": "annot-002",
+      "table_id": "table-001",
       "annotation_marker": "c1",
       "annotation_type": "footnote",
       "annotation_text": "Admission can be rescheduled if PG level is not 90 to 250 mg/dL on Day 1.",
@@ -1927,7 +1958,7 @@
       ]
     },
     {
-      "annotation_id": "annot-002",
+      "annotation_id": "annot-003",
       "table_id": "table-001",
       "annotation_marker": "c2",
       "annotation_type": "footnote",
@@ -1951,7 +1982,7 @@
       ]
     },
     {
-      "annotation_id": "annot-003",
+      "annotation_id": "annot-004",
       "table_id": "table-001",
       "annotation_marker": "c3",
       "annotation_type": "footnote",
@@ -1975,7 +2006,7 @@
       ]
     },
     {
-      "annotation_id": "annot-004",
+      "annotation_id": "annot-005",
       "table_id": "table-001",
       "annotation_marker": "c4",
       "annotation_type": "footnote",
@@ -1999,7 +2030,7 @@
       ]
     },
     {
-      "annotation_id": "annot-005",
+      "annotation_id": "annot-006",
       "table_id": "table-001",
       "annotation_marker": "c5",
       "annotation_type": "source_note",
@@ -2023,7 +2054,7 @@
       ]
     },
     {
-      "annotation_id": "annot-006",
+      "annotation_id": "annot-007",
       "table_id": "table-001",
       "annotation_marker": "c6",
       "annotation_type": "footnote",
@@ -2047,7 +2078,7 @@
       ]
     },
     {
-      "annotation_id": "annot-007",
+      "annotation_id": "annot-008",
       "table_id": "table-001",
       "annotation_marker": "c7",
       "annotation_type": "footnote",
@@ -2071,7 +2102,7 @@
       ]
     },
     {
-      "annotation_id": "annot-008",
+      "annotation_id": "annot-009",
       "table_id": "table-001",
       "annotation_marker": "c8",
       "annotation_type": "footnote",
@@ -2095,7 +2126,7 @@
       ]
     },
     {
-      "annotation_id": "annot-009",
+      "annotation_id": "annot-010",
       "table_id": "table-001",
       "annotation_marker": "c9",
       "annotation_type": "footnote",
@@ -2119,7 +2150,7 @@
       ]
     },
     {
-      "annotation_id": "annot-010",
+      "annotation_id": "annot-011",
       "table_id": "table-001",
       "annotation_marker": "c10",
       "annotation_type": "footnote",
@@ -2143,7 +2174,7 @@
       ]
     },
     {
-      "annotation_id": "annot-011",
+      "annotation_id": "annot-012",
       "table_id": "table-001",
       "annotation_marker": "c11",
       "annotation_type": "footnote",
@@ -2167,7 +2198,7 @@
       ]
     },
     {
-      "annotation_id": "annot-012",
+      "annotation_id": "annot-013",
       "table_id": "table-001",
       "annotation_marker": "c12",
       "annotation_type": "footnote",
@@ -2191,7 +2222,7 @@
       ]
     },
     {
-      "annotation_id": "annot-013",
+      "annotation_id": "annot-014",
       "table_id": "table-001",
       "annotation_marker": "c13",
       "annotation_type": "footnote",
@@ -2215,7 +2246,7 @@
       ]
     },
     {
-      "annotation_id": "annot-014",
+      "annotation_id": "annot-015",
       "table_id": "table-001",
       "annotation_marker": "c14",
       "annotation_type": "footnote",
@@ -2239,7 +2270,7 @@
       ]
     },
     {
-      "annotation_id": "annot-015",
+      "annotation_id": "annot-016",
       "table_id": "table-001",
       "annotation_marker": "c15",
       "annotation_type": "source_note",
@@ -2270,7 +2301,7 @@
       ]
     },
     {
-      "annotation_id": "annot-016",
+      "annotation_id": "annot-017",
       "table_id": "table-001",
       "annotation_marker": "c16",
       "annotation_type": "footnote",
@@ -2294,7 +2325,7 @@
       ]
     },
     {
-      "annotation_id": "annot-017",
+      "annotation_id": "annot-018",
       "table_id": "table-001",
       "annotation_marker": "c17",
       "annotation_type": "footnote",
@@ -2318,7 +2349,7 @@
       ]
     },
     {
-      "annotation_id": "annot-018",
+      "annotation_id": "annot-019",
       "table_id": "table-001",
       "annotation_marker": "c18",
       "annotation_type": "footnote",
@@ -2342,7 +2373,7 @@
       ]
     },
     {
-      "annotation_id": "annot-019",
+      "annotation_id": "annot-020",
       "table_id": "table-001",
       "annotation_marker": "c19",
       "annotation_type": "footnote",
@@ -2373,7 +2404,7 @@
       ]
     },
     {
-      "annotation_id": "annot-020",
+      "annotation_id": "annot-021",
       "table_id": "table-001",
       "annotation_marker": "c20",
       "annotation_type": "footnote",
@@ -2397,7 +2428,7 @@
       ]
     },
     {
-      "annotation_id": "annot-021",
+      "annotation_id": "annot-022",
       "table_id": "table-001",
       "annotation_marker": "c21",
       "annotation_type": "footnote",
@@ -2421,7 +2452,7 @@
       ]
     },
     {
-      "annotation_id": "annot-022",
+      "annotation_id": "annot-023",
       "table_id": "table-001",
       "annotation_marker": "c22",
       "annotation_type": "footnote",
@@ -2445,7 +2476,7 @@
       ]
     },
     {
-      "annotation_id": "annot-023",
+      "annotation_id": "annot-024",
       "table_id": "table-001",
       "annotation_marker": "c23",
       "annotation_type": "footnote",
@@ -2469,7 +2500,7 @@
       ]
     },
     {
-      "annotation_id": "annot-024",
+      "annotation_id": "annot-025",
       "table_id": "table-001",
       "annotation_marker": "c24",
       "annotation_type": "footnote",
@@ -2493,7 +2524,7 @@
       ]
     },
     {
-      "annotation_id": "annot-025",
+      "annotation_id": "annot-026",
       "table_id": "table-001",
       "annotation_marker": "c25",
       "annotation_type": "footnote",
@@ -2517,33 +2548,9 @@
       ]
     },
     {
-      "annotation_id": "annot-026",
-      "table_id": "table-001",
-      "annotation_marker": "a",
-      "annotation_type": "footnote",
-      "annotation_text": "Samples for immunogenicity, should be collected every 12 weeks (84±7 days) until the titer returns to baseline (ie, returns to within a single 2-fold dilution of the baseline titer) or until 1 year after the last dose of study treatment. A time-matched PK (glucagon) sample may be collected at the follow-up immunogenicity assessment(s) if warranted and agreed upon between both the investigator and sponsor.",
-      "annotation_scope": "column",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [
-          "col-009"
-        ],
-        "activity_ids": [],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 1,
-          "column_position": 9
-        }
-      ]
-    },
-    {
       "annotation_id": "annot-027",
       "table_id": "table-001",
-      "annotation_marker": "gn1",
+      "annotation_marker": "n1",
       "annotation_type": "footnote",
       "annotation_text": "Note: if multiple procedures take place at the same time point, the following order of the procedure should be used: ECG, vital signs, and venipuncture. Plasma glucose sample should be collected as close as possible of protocol-specified time point.",
       "annotation_scope": "column",
@@ -2563,6 +2570,46 @@
           "method": "synthesized"
         }
       ]
+    }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "location": {
+        "page": 11,
+        "row_position": 2
+      },
+      "call_made": "The second header row (label cell reads \"Procedure\") is recorded as a study-day row named \"Study Day\", although its washout and follow-up entries are a duration (\"3 to 14 days\") and a relative window (\"Within 28±2 days after last study treatment\").",
+      "alternative": "Type the row as \"other\" (mixed day / duration / window content), or keep the printed label \"Procedure\" as its name.",
+      "report_section": "3"
+    },
+    {
+      "id": "D2",
+      "severity": "low",
+      "location": {
+        "page": 18,
+        "annotation_marker": "n1"
+      },
+      "call_made": "The unmarked \"Note: if multiple procedures take place at the same time point...\" below the table is kept as a table-wide footnote with a synthesised marker n1 anchored to the top header row.",
+      "alternative": "Bind it to the activities it names (ECG, vital signs, venipuncture-based lab/PK/PG rows) instead of the whole table.",
+      "report_section": "5"
+    },
+    {
+      "id": "D3",
+      "severity": "low",
+      "location": {
+        "page": 16,
+        "row_positions": [
+          31,
+          32,
+          33,
+          34
+        ]
+      },
+      "call_made": "PK (Glucagon), Plasma Glucose for PD, Genetic Sample (Stored) and Anti-glucagon Antibodies are indented as children of the \"Laboratory Tests\" section header (level 1), since no other section header precedes them.",
+      "alternative": "Treat them as their own ungrouped rows; the source prints no separate header (e.g. \"PK/PD sampling\") for them.",
+      "report_section": "4"
     }
   ]
 }

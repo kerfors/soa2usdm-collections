@@ -2,7 +2,7 @@
   "schema_name": "soa-table-resolved",
   "schema_version": "1.0",
   "resolution_metadata": {
-    "resolved_at": "2026-08-17T19:13:16.314594+00:00",
+    "resolved_at": "2026-09-27T15:03:25.614800+00:00",
     "resolver": "soa2usdm.steps.resolve v1.0",
     "source_extraction": {
       "schema_name": "soa-table-extraction",
@@ -14,38 +14,37 @@
       "structure_valid": true,
       "hierarchy_valid": true,
       "annotations_valid": true,
-      "validation_warnings": [
-        "Resolved annotation annot-012 ('cn1') has no referenced elements — orphan: Footnotes displayed on the next page...",
-        "Annotation summary: 1 of 12 annotations have no referenced elements (will be orphans in consolidation)"
-      ],
+      "validation_warnings": [],
       "validation_errors": [],
       "method_provenance": [
         "indentation_level:assumed_flat: 14",
-        "marker_location:synthesized: 1"
+        "property_structure:inferred_from_layout: 1"
       ]
     },
-    "resolution_status": "resolved_with_warnings",
+    "resolution_status": "resolved",
     "ready_for_integration": true,
     "resolution_notes": ""
   },
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5",
+    "extracted_at": "2026-09-27T12:37:09+00:00",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03283098_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Protocol Number: 20140197",
+      "document_version": "Protocol Number 20140197 (AMG 416)",
       "document_date": "25 May 2018"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Text-layer table. Column grid fixed from the raster rule lines (pdftoppm -r 200) and marks binned mechanically from pdftotext -bbox token centres, then diffed against a visual read of the rendered page; no disagreement. One leading label column (the activity-name column headed 'Assessment'), so the first data column is position 2 and the 20 data columns run 2-21. Footnotes a-i are printed on document page 33, which carries no activity rows."
+    "extraction_notes": "Text-layer PDF with vector rule lines; marks verified by pdftotext -bbox column binning against header day-label x-centres and diffed against a visual read (no disagreements). 1 leading label column(s); first data column position 2.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_id": "table-001",
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Table 1a. Schedule of Non-laboratory Assessments",
-    "table_purpose": "Primary anchor schedule: non-laboratory assessments across screening and study days -2 to 55. Printed under the overall heading 'Table 1. Schedule of Assessments' together with Table 1b (laboratory) and Table 1c (pharmacokinetic).",
+    "table_purpose": "Main schedule: non-laboratory assessments across screening, dosing (Days 1-27) and follow-up to Day 55 (EOS)",
     "page_start": 32,
     "page_end": 33,
     "track_label": null,
@@ -53,7 +52,7 @@
     "row_count": 16,
     "header_row_count": 2,
     "activity_row_count": 14,
-    "notes": "Classified main_soa: rows are procedures performed on subjects and this is the primary/anchor grid of the Table 1 set. Two header rows: a merged 'Study Visit (Day)' banner spanning columns 2-21, and the day-number row. The day number and its '(HD)' qualifier sit in ONE cell (no horizontal rule between them in the raster), so they are transcribed as a single cell_value. Document page 33 carries only the footnote block and contributes no activity rows."
+    "notes": "Printed under the overall caption 'Table 1. Schedule of Assessments'; 1a, 1b and 1c share one column structure (Screening, Day -2 ... Day 55). 1a is the anchor grid (main_soa). Page 33 carries only the abbreviation line and footnotes a-i (no activity rows)."
   },
   "schedule_properties": [
     {
@@ -63,16 +62,15 @@
       "property_name": "Study Visit (Day)",
       "property_name_source": {
         "row_position": 1,
-        "column_position": 2,
-        "cell_value": "Study Visit (Day)"
+        "column_position": 1,
+        "cell_value": "",
+        "synthesized": true
       },
       "property_type": "other",
-      "property_comment": "Top header band: a single merged cell reading 'Study Visit (Day)' spanning every data column (2:21); the row-label column to its left is an empty cell. It names the column axis rather than carrying per-column values, so no column is distinguished by it; typed 'other' because the row holds one spanning axis title, not visit names, days or weeks per column.",
-      "hierarchical_level": 1,
+      "property_comment": "Banner row: the caption 'Study Visit (Day)' printed once in a cell merged across all data columns (2-21). It names the row below and does not by itself distinguish one column from another, so hierarchical_level is null; label cell empty, name taken from the banner text.",
+      "hierarchical_level": null,
       "parent_property_id": null,
-      "child_property_ids": [
-        "prop-002"
-      ],
+      "child_property_ids": [],
       "annotation_markers": "",
       "linked_annotation_ids": []
     },
@@ -84,13 +82,13 @@
       "property_name_source": {
         "row_position": 2,
         "column_position": 1,
-        "cell_value": "Assessment",
+        "cell_value": "",
         "synthesized": true
       },
       "property_type": "study_day",
-      "property_comment": "Second header band: one cell per data column holding the protocol day number (-2, 1, 2, 3 ... 55), the screening column, the combined 29/ET column, and a '(HD)' hemodialysis-day qualifier printed on the second line of the same cell (no rule line separates day number from '(HD)', so both stay in one cell_value). Typed 'study_day' because the distinguishing values are protocol day numbers. property_name is synthesised: the label cell of this row carries the heading of the activity-name column ('Assessment'), not a name for this header row.",
-      "hierarchical_level": 2,
-      "parent_property_id": "prop-001",
+      "property_comment": "Study visit days (Screening, Day -2, 1 ... 55); '(HD)' printed inside the same cell marks hemodialysis days and is kept literally. Classified study_day because the values are protocol day numbers per the banner 'Study Visit (Day)'; the Screening column is the only non-numeric day. Label cell holds the activity-column heading ('Assessment'), so the property name is synthesized.",
+      "hierarchical_level": 1,
+      "parent_property_id": null,
       "child_property_ids": [],
       "annotation_markers": "",
       "linked_annotation_ids": []
@@ -157,13 +155,11 @@
           "property_id": "prop-002",
           "value": "1 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 1 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-005",
@@ -203,13 +199,11 @@
           "property_id": "prop-002",
           "value": "3 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 3 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-007",
@@ -227,13 +221,11 @@
           "property_id": "prop-002",
           "value": "6 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 6 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-008",
@@ -251,13 +243,11 @@
           "property_id": "prop-002",
           "value": "8 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 8 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-009",
@@ -275,13 +265,11 @@
           "property_id": "prop-002",
           "value": "10 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 10 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-010",
@@ -299,13 +287,11 @@
           "property_id": "prop-002",
           "value": "13 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 13 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-011",
@@ -323,13 +309,11 @@
           "property_id": "prop-002",
           "value": "15 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 15 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-012",
@@ -347,13 +331,11 @@
           "property_id": "prop-002",
           "value": "17 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 17 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-013",
@@ -371,13 +353,11 @@
           "property_id": "prop-002",
           "value": "20 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 20 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-014",
@@ -395,13 +375,11 @@
           "property_id": "prop-002",
           "value": "22 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 22 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-015",
@@ -419,13 +397,11 @@
           "property_id": "prop-002",
           "value": "24 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 24 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-016",
@@ -443,13 +419,11 @@
           "property_id": "prop-002",
           "value": "27 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 27 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-017",
@@ -489,15 +463,13 @@
           "property_id": "prop-002",
           "value": "29/ET (HD)",
           "is_merged": false,
-          "annotation_markers": "a,h,ab1,ab2"
+          "annotation_markers": "a,h"
         }
       ],
       "composite_label": "Study Visit (Day) / 29/ET (HD)",
       "linked_annotation_ids": [
         "annot-001",
-        "annot-008",
-        "annot-010",
-        "annot-011"
+        "annot-008"
       ]
     },
     {
@@ -516,13 +488,11 @@
           "property_id": "prop-002",
           "value": "34 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 34 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-020",
@@ -540,13 +510,11 @@
           "property_id": "prop-002",
           "value": "41 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 41 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     },
     {
       "column_id": "col-021",
@@ -564,13 +532,11 @@
           "property_id": "prop-002",
           "value": "55 (HD)",
           "is_merged": false,
-          "annotation_markers": "ab1"
+          "annotation_markers": ""
         }
       ],
       "composite_label": "Study Visit (Day) / 55 (HD)",
-      "linked_annotation_ids": [
-        "annot-010"
-      ]
+      "linked_annotation_ids": []
     }
   ],
   "activities": [
@@ -752,7 +718,7 @@
       "row_position": 12,
       "activity_name": "Investigational product administration",
       "activity_name_source": {
-        "cell_text": "Investigational product administrationd",
+        "cell_text": "Investigational product\nadministrationd",
         "indentation_level": 0,
         "indentation_method": "assumed_flat"
       },
@@ -772,7 +738,7 @@
       "row_position": 13,
       "activity_name": "Vital Signs (BP, HR, RR, TEMP)",
       "activity_name_source": {
-        "cell_text": " Vital Signs (BP, HR, RR, TEMP)e",
+        "cell_text": " Vital Signs (BP, HR, RR,\nTEMP)e",
         "indentation_level": 0,
         "indentation_method": "assumed_flat"
       },
@@ -1900,7 +1866,7 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_cell",
+          "location_type": "schedule_property",
           "row_position": 2,
           "column_position": 18
         }
@@ -2074,7 +2040,7 @@
       "marker_locations": [
         {
           "table_number": 1,
-          "location_type": "schedule_cell",
+          "location_type": "schedule_property",
           "row_position": 2,
           "column_position": 18
         }
@@ -2102,181 +2068,19 @@
           "row_position": 6
         }
       ]
-    },
+    }
+  ],
+  "review_items": [
     {
-      "annotation_id": "annot-010",
-      "table_id": "table-001",
-      "annotation_marker": "ab1",
-      "annotation_type": "abbreviation",
-      "annotation_text": "HD = hemodialysis",
-      "annotation_scope": "column",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [
-          "col-004",
-          "col-006",
-          "col-007",
-          "col-008",
-          "col-009",
-          "col-010",
-          "col-011",
-          "col-012",
-          "col-013",
-          "col-014",
-          "col-015",
-          "col-016",
-          "col-018",
-          "col-019",
-          "col-020",
-          "col-021"
-        ],
-        "activity_ids": [],
-        "cell_references": []
+      "id": "D1",
+      "severity": "low",
+      "location": {
+        "page": 32,
+        "row_position": 2
       },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 4
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 6
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 7
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 8
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 9
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 10
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 11
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 12
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 13
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 14
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 15
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 16
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 18
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 19
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 20
-        },
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 21
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-011",
-      "table_id": "table-001",
-      "annotation_marker": "ab2",
-      "annotation_type": "abbreviation",
-      "annotation_text": "ET = early termination",
-      "annotation_scope": "column",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [
-          "col-018"
-        ],
-        "activity_ids": [],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_cell",
-          "row_position": 2,
-          "column_position": 18
-        }
-      ]
-    },
-    {
-      "annotation_id": "annot-012",
-      "table_id": "table-001",
-      "annotation_marker": "cn1",
-      "annotation_type": "continuation_note",
-      "annotation_text": "Footnotes displayed on the next page",
-      "annotation_scope": "table",
-      "referenced_elements": {
-        "property_ids": [],
-        "column_ids": [],
-        "activity_ids": [],
-        "cell_references": []
-      },
-      "marker_locations": [
-        {
-          "table_number": 1,
-          "location_type": "schedule_property",
-          "row_position": 1,
-          "method": "synthesized"
-        }
-      ]
+      "call_made": "The '(HD)' printed under a day number is kept inside that day's header value (e.g. '3 (HD)'), as one header row, in all three tables.",
+      "alternative": "Split '(HD)' into a separate header row (modality: hemodialysis day) so day number and HD flag are separate properties.",
+      "report_section": "2.1"
     }
   ]
 }

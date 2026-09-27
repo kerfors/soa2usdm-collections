@@ -2,39 +2,42 @@
  "schema_name": "soa-table-extraction",
  "schema_version": "1.0",
  "extraction_metadata": {
-  "extracted_at": "2026-08-17T00:00:00Z",
-  "extractor": "Claude-Opus-5",
+  "extracted_at": "2026-09-27T08:45:27Z",
+  "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+  "prompt_version": "3.8.1",
   "source_document": {
    "filename": "NCT04557384_soa.pdf",
    "document_type": "protocol",
-   "document_version": "I4T-MC-JVDU(e)"
+   "document_version": "Protocol I4T-MC-JVDU(e)"
   },
   "extraction_status": "ready_for_resolution",
-  "extraction_notes": "Image-only PDF (no text layer). Cell geometry recovered from the 200-dpi raster; X marks detected by near-black pixel counts inside rule-bounded cells and confirmed visually against the rendered page. Light grey shading marks cells where no sample is collected and is not transcribed. The abbreviation line below the table ('hr = hour; PK = pharmacokinetic') yielded no annotations: neither term is printed as a marker on a grid cell, header cell or activity label."
+  "extraction_notes": "Image-only source PDF; text visually transcribed; marks from raster detection, validated visually.",
+  "model": "claude-opus-5-5"
  },
  "table_metadata": {
   "table_number": 3,
   "table_type": "subsidiary",
   "table_title": "Pharmacokinetic Sampling Schedule",
-  "table_purpose": "Per-sample timing for the PK and immunogenicity blood collections that appear in Table 1 as the single activities 'PK' and 'IG' (both pointing to Section 1.3.1).",
+  "table_purpose": "Detailed PK and immunogenicity sample timing (Section 1.3.1) for the 'Sample collection: PK / IG' rows of Table 1",
   "page_start": 24,
   "page_end": 24,
-  "notes": "subsidiary rather than reference: the rows read 'Sample n', but the table's function is to give finer timing for activities that already exist in the main SoA (Table 1 rows 'PK' and 'IG', whose grid cells read 'See Section 1.3.1'), which is the subsidiary definition. Recorded as an interpretation - the literal reference test (are the rows procedures performed on subjects?) reads 'no'. 1 leading label column ('Sample #'), so the first data column is position 2 and data columns run 2-6. The 'Study Cycle', 'Day within Cycle' and 'Collection Time Point' columns were kept as data columns rather than treated as further label columns so that their per-row timing values are preserved as cell values."
+  "notes": "subsidiary (by function): Table 1 rows 'PK' and 'IG' point to Section 1.3.1 ('See Section 1.3.1'); this table gives per-sample cycle/day/timepoint for those two activities, i.e. finer timing for an existing activity, although its rows read 'Sample n' (prompt section 2 PK-sampling note). L=1 label column ('Sample #'); data columns 2-6 transcribed in printed orientation. Abbreviation line (hr, PK) not captured (no in-grid markers)."
  },
  "schedule_properties": [
   {
    "table_number": 3,
    "row_position": 1,
-   "property_name": "Sample #",
+   "property_name": "Column heading",
    "property_name_source": {
     "row_position": 1,
     "column_position": 1,
-    "cell_value": "Sample #"
+    "cell_value": "Sample #",
+    "synthesized": true
    },
    "property_type": "other",
+   "property_comment": "Single header row naming the columns: 'Study Cycle' (col 2, cycle number), 'Day within Cycle' (col 3, day), 'Collection Time Point Relative to Ramucirumab Weekly Dose' (col 4, timepoint), 'Ramucirumab PK Collection' (col 5) and 'Immunogenicity Collection' (col 6) (sample types marked X). The label cell reads 'Sample #' (heading of the label column); property name synthesised. Mixed content -> other.",
    "hierarchical_level": 1,
-   "annotation_markers": "gi1",
-   "property_comment": "The table's single header row. Its data-column cells are not a single timing concept: 'Study Cycle', 'Day within Cycle' and 'Collection Time Point Relative to Ramucirumab Weekly Dose' give the per-row timing, while 'Ramucirumab PK Collection' and 'Immunogenicity Collection' name the two sample types that carry the X marks. Mixed timing-plus-sample-type header -> other."
+   "annotation_markers": "g1,g2,g3,g4"
   }
  ],
  "schedule_grid": [
@@ -42,36 +45,36 @@
    "table_number": 3,
    "row_position": 1,
    "column_position": 2,
-   "cell_value": "Study Cycle",
-   "method": "visual_read"
+   "method": "visual_read",
+   "cell_value": "Study Cycle"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 3,
-   "cell_value": "Day within Cycle",
-   "method": "visual_read"
+   "method": "visual_read",
+   "cell_value": "Day within Cycle"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 4,
-   "cell_value": "Collection Time Point Relative to Ramucirumab Weekly Dose",
-   "method": "visual_read"
+   "method": "visual_read",
+   "cell_value": "Collection Time Point Relative to Ramucirumab Weekly Dose"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 5,
-   "cell_value": "Ramucirumab PK Collection",
-   "method": "visual_read"
+   "method": "visual_read",
+   "cell_value": "Ramucirumab PK Collection"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 6,
-   "cell_value": "Immunogenicity Collection",
-   "method": "visual_read"
+   "method": "visual_read",
+   "cell_value": "Immunogenicity Collection"
   }
  ],
  "activities": [
@@ -262,452 +265,511 @@
    "row_position": 2,
    "column_position": 2,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 2,
    "column_position": 3,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 2,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 2,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 2,
    "column_position": 6,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 3,
    "column_position": 2,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 3,
    "column_position": 3,
    "cell_value": "2",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 3,
    "column_position": 4,
    "cell_value": "24 hrs ± 2 postdose",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 3,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 4,
    "column_position": 2,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 4,
    "column_position": 3,
    "cell_value": "4 ± 1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 4,
    "column_position": 4,
    "cell_value": "48-96 hrs postdose window",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 4,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 5,
    "column_position": 2,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 5,
    "column_position": 3,
    "cell_value": "8",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 5,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 5,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 6,
    "column_position": 2,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 6,
    "column_position": 3,
    "cell_value": "15",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 6,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 6,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 6,
    "column_position": 6,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 7,
    "column_position": 2,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 7,
    "column_position": 3,
    "cell_value": "18 ± 1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 7,
    "column_position": 4,
    "cell_value": "48-96 hrs postdose window",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 7,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 8,
    "column_position": 2,
    "cell_value": "2",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 8,
    "column_position": 3,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 8,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 8,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 9,
    "column_position": 2,
    "cell_value": "2",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 9,
    "column_position": 3,
    "cell_value": "8",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 9,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 9,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 9,
    "column_position": 6,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 10,
    "column_position": 2,
    "cell_value": "2",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 10,
    "column_position": 3,
    "cell_value": "11 ± 1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 10,
    "column_position": 4,
    "cell_value": "48-96 hrs postdose window",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 10,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 11,
    "column_position": 2,
    "cell_value": "3",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 11,
    "column_position": 3,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 11,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 11,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 12,
    "column_position": 2,
    "cell_value": "3",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 12,
    "column_position": 3,
    "cell_value": "15",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 12,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 12,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 13,
    "column_position": 2,
    "cell_value": "3",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 13,
    "column_position": 3,
    "cell_value": "18 ± 1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 13,
    "column_position": 4,
    "cell_value": "48-96 hrs postdose window",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 13,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 14,
    "column_position": 2,
    "cell_value": "4",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 14,
    "column_position": 3,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 14,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 14,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 14,
    "column_position": 6,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 15,
    "column_position": 2,
    "cell_value": "5",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 15,
    "column_position": 3,
    "cell_value": "1",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 15,
    "column_position": 4,
    "cell_value": "-1 hr (predose)",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 15,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 16,
    "column_position": 4,
    "cell_value": "30 days post last dose",
-   "method": "visual_read"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 16,
    "column_position": 5,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   },
   {
    "table_number": 3,
    "row_position": 16,
    "column_position": 6,
    "cell_value": "X",
-   "method": "raster_pixel_detection"
+   "method": "raster_pixel_detection",
+   "source_range": ""
   }
  ],
  "annotations": [
   {
-   "annotation_marker": "gi1",
+   "annotation_marker": "g1",
    "annotation_type": "footnote",
-   "annotation_text": "General Instructions: The pharmacokinetic sampling table applies to all participants irrespective of 21-day or 28-day cycle length. Adequately record the actual collection date and time (24-hour clock; for example, 16:00, not 4 pm) on the requisition form of the sample. In case of cycle delay and/or ramucirumab dosing interruption, if possible, collect an additional unscheduled PK samples using the appropriate central lab collection kit: • at time as close as possible to the onset of the adverse event (AE) (if the cycle delay or ramucirumab dosing interruption is due to an AE). • at the time when ramucirumab dose should have been administered (if there had not been a delay or dose interruption). • prior to resuming the ramucirumab dosing after dosing interruption/dosing delay. Note:  If the above time points for unscheduled PK sampling happen to occur at the same time as a scheduled PK time point (see table below), then only the scheduled sample will be taken.",
-   "annotation_text_source": {
-    "method": "visual_transcription",
-    "note": "Printed as running text immediately above the table under heading 1.3.1; no text layer, read by eye from the 200-dpi render."
-   },
+   "annotation_text": "The pharmacokinetic sampling table applies to all participants irrespective of 21-day or 28-day cycle length.",
    "marker_locations": [
     {
      "table_number": 3,
@@ -715,7 +777,111 @@
      "row_position": 1,
      "method": "synthesized"
     }
-   ]
+   ],
+   "annotation_text_source": {
+    "method": "visual_transcription",
+    "note": "'General Instructions' paragraphs printed above the table in Section 1.3.1 on page 24 (outside the grid); image-only PDF."
+   }
+  },
+  {
+   "annotation_marker": "g2",
+   "annotation_type": "footnote",
+   "annotation_text": "Adequately record the actual collection date and time (24-hour clock; for example, 16:00, not 4 pm) on the requisition form of the sample.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "method": "synthesized"
+    }
+   ],
+   "annotation_text_source": {
+    "method": "visual_transcription",
+    "note": "'General Instructions' paragraphs printed above the table in Section 1.3.1 on page 24 (outside the grid); image-only PDF."
+   }
+  },
+  {
+   "annotation_marker": "g3",
+   "annotation_type": "footnote",
+   "annotation_text": "In case of cycle delay and/or ramucirumab dosing interruption, if possible, collect an additional unscheduled PK samples using the appropriate central lab collection kit:\n• at time as close as possible to the onset of the adverse event (AE) (if the cycle delay or ramucirumab dosing interruption is due to an AE).\n• at the time when ramucirumab dose should have been administered (if there had not been a delay or dose interruption).\n• prior to resuming the ramucirumab dosing after dosing interruption/dosing delay.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "method": "synthesized"
+    }
+   ],
+   "annotation_text_source": {
+    "method": "visual_transcription",
+    "note": "'General Instructions' paragraphs printed above the table in Section 1.3.1 on page 24 (outside the grid); image-only PDF."
+   }
+  },
+  {
+   "annotation_marker": "g4",
+   "annotation_type": "footnote",
+   "annotation_text": "Note: If the above time points for unscheduled PK sampling happen to occur at the same time as a scheduled PK time point (see table below), then only the scheduled sample will be taken.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "method": "synthesized"
+    }
+   ],
+   "annotation_text_source": {
+    "method": "visual_transcription",
+    "note": "'General Instructions' paragraphs printed above the table in Section 1.3.1 on page 24 (outside the grid); image-only PDF."
+   }
+  }
+ ],
+ "review_items": [
+  {
+   "id": "D9",
+   "severity": "medium",
+   "location": {
+    "page": 24
+   },
+   "call_made": "Typed 'subsidiary' and transcribed in its printed orientation: one row per sample ('Sample 1' ... 'Sample 14', 'End of treatment'), with Study Cycle, Day within Cycle and Collection Time Point as data columns 2-4 and the PK / Immunogenicity X marks in columns 5-6 (L=1).",
+   "alternative": "Type it 'reference' (rows are samples, not procedures), or treat cols 2-4 as row-label columns (L=4, data starting at col 5), or transpose so samples become timepoint columns and PK / IG collection become the activities.",
+   "report_section": "5.1"
+  },
+  {
+   "id": "D10",
+   "severity": "low",
+   "location": {
+    "page": 24,
+    "row_positions": [
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ]
+   },
+   "call_made": "Sample rows are named 'Sample 1' ... 'Sample 14' by combining the column heading 'Sample #' with the printed number (cell_text keeps the bare number); the last row keeps its printed name 'End of treatment'.",
+   "alternative": "Use the bare printed numbers ('1' ... '14') as activity names.",
+   "report_section": "5.2"
+  },
+  {
+   "id": "D11",
+   "severity": "medium",
+   "location": {
+    "page": 24,
+    "row_position": 1
+   },
+   "call_made": "The four 'General Instructions' paragraphs printed above the table (applies to all cycle lengths; record date/time; unscheduled PK samples on delay/interruption; scheduled sample takes precedence) are captured as table-scope footnotes g1-g4 anchored to the header row.",
+   "alternative": "Leave them out as section prose that is not part of the table.",
+   "report_section": "5.3"
   }
  ]
 }

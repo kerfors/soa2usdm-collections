@@ -60,7 +60,7 @@
 </style>
 </head>
 <body>
-    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT05259917" title="This protocol's row on the collection index">NCT05259917</a><span class="pnav-sep">›</span><span class="pnav-cur">consolidated data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT05259917_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT05259917_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT05259917_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05259917_uncertainty_report.html">extraction log</a></div></nav>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT05259917" title="This protocol's row on the collection index">NCT05259917</a><span class="pnav-sep">›</span><span class="pnav-cur">consolidated data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT05259917_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT05259917_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT05259917_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05259917_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05259917_uncertainty_report.html">extraction log</a></div></nav>
     <div class="toolbar">
         <div class="title">NCT05259917 — consolidated data</div>
         <div class="raw-link"><a href="NCT05259917_consolidated.json" download>raw json</a></div>
@@ -75,7 +75,7 @@
   "schema_version": "1.1",
   "protocol_id": "NCT05259917",
   "consolidation_metadata": {
-    "consolidated_at": "2026-08-17T19:13:16.914845+00:00",
+    "consolidated_at": "2026-09-27T15:03:41.448419+00:00",
     "consolidator": "soa2usdm.steps.consolidate v1.1",
     "source_tables": [
       {
@@ -83,9 +83,9 @@
         "table_num": 1,
         "table_type": "main_soa",
         "table_title": "Schedule of Events",
-        "table_purpose": "Primary schedule of events for the trial: screening, randomization, the three eligible HAE attack treatment encounters, and the Final/Early Termination visit.",
+        "table_purpose": "Main schedule: Screening, Randomization, three event-driven eligible-HAE-attack televisits, Final Visit/ET",
         "track_label": null,
-        "activity_count": 24,
+        "activity_count": 22,
         "column_count": 6,
         "annotation_count": 19,
         "property_hierarchy": [
@@ -93,13 +93,25 @@
             "hierarchical_level": 1,
             "property_name": "Visit",
             "property_type": "visit",
-            "property_comment": "Top header row, printed label 'Visit'. Carries the encounter names across the six data columns: Screening, Randomization, Treatment Period (one cell merged across columns 4-6), Final Visit/ET. Typed 'visit' from the source's own printed row label; note the row mixes visit names (Screening, Randomization, Final Visit/ET) with a phase name (Treatment Period) that spans the three attack columns, so the row is not purely one concept. The Screening, Randomization and Final Visit/ET cells also span down into header row 2 (no internal horizontal rule), which the schema has no field for."
+            "property_comment": "Top header row labelled 'Visit' (label cell vertically merged over header rows 1-2). Values: Screening, Randomization, Treatment Period (merged over columns 4-6), Final Visit/ET. Screening, Randomization and Final Visit/ET cells are vertically merged over header rows 1-2. Typed 'visit' from the printed row label and because three of four values are named visits; 'Treatment Period' is an epoch-like span over the three attack visits (see report D3)."
           },
           {
             "hierarchical_level": 2,
             "property_name": "Eligible HAE attack",
             "property_type": "visit",
-            "property_comment": "Second header row; the label column is blank so property_name is synthesized. Contains the three attack-level encounter identifiers ('1st eligible HAE attack', '2nd eligible HAE attack', '3rd eligible HAE attack') that subdivide the merged 'Treatment Period' cell above, so it is typed 'visit' at hierarchical level 2. Type and level come from the spanning geometry of the row above rather than from any printed label, hence structure_method inferred_from_layout. Columns 2, 3 and 7 are empty here because those header cells span vertically from row 1."
+            "property_comment": "Second header row under 'Treatment Period': 1st / 2nd / 3rd eligible HAE attack (columns 4-6), each an event-driven televisit per footnote b. Label cell empty (the 'Visit' label is vertically merged over rows 1-2), so the name is synthesised. Columns 2, 3 and 7 carry no value in this row (their row-1 cells are vertically merged into it)."
+          },
+          {
+            "hierarchical_level": null,
+            "property_name": "In-clinic",
+            "property_type": "modality",
+            "property_comment": "Visit-modality band printed as the first body row: X marks the visits conducted in clinic (Screening, Randomization, Final Visit/ET). The Randomization X is a single mark vertically merged over this row and the TeleVisit row (the Randomization Visit may be either modality, footnote a); it is emitted on both rows. Qualifies columns rather than distinguishing them, so hierarchical_level is null."
+          },
+          {
+            "hierarchical_level": null,
+            "property_name": "TeleVisit",
+            "property_type": "modality",
+            "property_comment": "Visit-modality band: X marks the visits conducted as a televisit (Randomization - vertically merged mark shared with the In-clinic row - and the three eligible HAE attack visits). Qualifies columns rather than distinguishing them, so hierarchical_level is null."
           }
         ]
       }
@@ -109,10 +121,10 @@
       "fuzzy_auto": 0,
       "fuzzy_cross_parent": 0,
       "fuzzy_review": 0,
-      "new": 24
+      "new": 22
     },
-    "source_activity_count": 24,
-    "unified_activity_count": 24,
+    "source_activity_count": 22,
+    "unified_activity_count": 22,
     "compression_percent": 0,
     "annotation_stats": {
       "source_annotation_count": 19,
@@ -130,80 +142,46 @@
       "property_type": "visit",
       "property_name": "Visit",
       "hierarchical_level": 1,
-      "property_comment": "Top header row, printed label 'Visit'. Carries the encounter names across the six data columns: Screening, Randomization, Treatment Period (one cell merged across columns 4-6), Final Visit/ET. Typed 'visit' from the source's own printed row label; note the row mixes visit names (Screening, Randomization, Final Visit/ET) with a phase name (Treatment Period) that spans the three attack columns, so the row is not purely one concept. The Screening, Randomization and Final Visit/ET cells also span down into header row 2 (no internal horizontal rule), which the schema has no field for."
+      "property_comment": "Top header row labelled 'Visit' (label cell vertically merged over header rows 1-2). Values: Screening, Randomization, Treatment Period (merged over columns 4-6), Final Visit/ET. Screening, Randomization and Final Visit/ET cells are vertically merged over header rows 1-2. Typed 'visit' from the printed row label and because three of four values are named visits; 'Treatment Period' is an epoch-like span over the three attack visits (see report D3)."
     },
     {
       "property_id": "prop-002",
       "property_type": "visit",
       "property_name": "Eligible HAE attack",
       "hierarchical_level": 2,
-      "property_comment": "Second header row; the label column is blank so property_name is synthesized. Contains the three attack-level encounter identifiers ('1st eligible HAE attack', '2nd eligible HAE attack', '3rd eligible HAE attack') that subdivide the merged 'Treatment Period' cell above, so it is typed 'visit' at hierarchical level 2. Type and level come from the spanning geometry of the row above rather than from any printed label, hence structure_method inferred_from_layout. Columns 2, 3 and 7 are empty here because those header cells span vertically from row 1."
+      "property_comment": "Second header row under 'Treatment Period': 1st / 2nd / 3rd eligible HAE attack (columns 4-6), each an event-driven televisit per footnote b. Label cell empty (the 'Visit' label is vertically merged over rows 1-2), so the name is synthesised. Columns 2, 3 and 7 carry no value in this row (their row-1 cells are vertically merged into it)."
+    },
+    {
+      "property_id": "prop-003",
+      "property_type": "modality",
+      "property_name": "In-clinic",
+      "hierarchical_level": null,
+      "property_comment": "Visit-modality band printed as the first body row: X marks the visits conducted in clinic (Screening, Randomization, Final Visit/ET). The Randomization X is a single mark vertically merged over this row and the TeleVisit row (the Randomization Visit may be either modality, footnote a); it is emitted on both rows. Qualifies columns rather than distinguishing them, so hierarchical_level is null."
+    },
+    {
+      "property_id": "prop-004",
+      "property_type": "modality",
+      "property_name": "TeleVisit",
+      "hierarchical_level": null,
+      "property_comment": "Visit-modality band: X marks the visits conducted as a televisit (Randomization - vertically merged mark shared with the In-clinic row - and the three eligible HAE attack visits). Qualifies columns rather than distinguishing them, so hierarchical_level is null."
     }
   ],
   "review_queue": [],
   "unified_activities": [
     {
       "xact_id": "xact-001",
-      "activity_name": "In-clinic",
-      "parent_name": "",
-      "parent_xact_id": null,
-      "hierarchy_level": 0,
-      "display_order": 1,
-      "qualified_key": "::In-clinic",
-      "is_section_header": false,
-      "source_refs": [
-        {
-          "table_id": "table-001",
-          "table_num": 1,
-          "activity_id": "act-001",
-          "row_position": 3
-        }
-      ],
-      "name_variations": [
-        "In-clinic"
-      ],
-      "match_status": "new",
-      "match_confidence": 1.0,
-      "table_count": 1
-    },
-    {
-      "xact_id": "xact-002",
-      "activity_name": "TeleVisit",
-      "parent_name": "",
-      "parent_xact_id": null,
-      "hierarchy_level": 0,
-      "display_order": 2,
-      "qualified_key": "::TeleVisit",
-      "is_section_header": false,
-      "source_refs": [
-        {
-          "table_id": "table-001",
-          "table_num": 1,
-          "activity_id": "act-002",
-          "row_position": 4
-        }
-      ],
-      "name_variations": [
-        "TeleVisit"
-      ],
-      "match_status": "new",
-      "match_confidence": 1.0,
-      "table_count": 1
-    },
-    {
-      "xact_id": "xact-003",
       "activity_name": "Informed Consent/Assent",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 3,
+      "display_order": 1,
       "qualified_key": "::Informed Consent/Assent",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-003",
+          "activity_id": "act-001",
           "row_position": 5
         }
       ],
@@ -215,19 +193,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-004",
+      "xact_id": "xact-002",
       "activity_name": "Eligibility Assessment",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 4,
+      "display_order": 2,
       "qualified_key": "::Eligibility Assessment",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-004",
+          "activity_id": "act-002",
           "row_position": 6
         }
       ],
@@ -239,19 +217,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-005",
+      "xact_id": "xact-003",
       "activity_name": "HAE Diagnostic Lab Test",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 5,
+      "display_order": 3,
       "qualified_key": "::HAE Diagnostic Lab Test",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-005",
+          "activity_id": "act-003",
           "row_position": 7
         }
       ],
@@ -263,19 +241,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-006",
+      "xact_id": "xact-004",
       "activity_name": "Medical History",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 6,
+      "display_order": 4,
       "qualified_key": "::Medical History",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-006",
+          "activity_id": "act-004",
           "row_position": 8
         }
       ],
@@ -287,19 +265,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-007",
+      "xact_id": "xact-005",
       "activity_name": "12-lead ECG",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 7,
+      "display_order": 5,
       "qualified_key": "::12-lead ECG",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-007",
+          "activity_id": "act-005",
           "row_position": 9
         }
       ],
@@ -311,19 +289,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-008",
+      "xact_id": "xact-006",
       "activity_name": "Demographics",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 8,
+      "display_order": 6,
       "qualified_key": "::Demographics",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-008",
+          "activity_id": "act-006",
           "row_position": 10
         }
       ],
@@ -335,19 +313,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-009",
+      "xact_id": "xact-007",
       "activity_name": "Physical Examination",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 9,
+      "display_order": 7,
       "qualified_key": "::Physical Examination",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-009",
+          "activity_id": "act-007",
           "row_position": 11
         }
       ],
@@ -359,19 +337,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-010",
+      "xact_id": "xact-008",
       "activity_name": "Vital Signs",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 10,
+      "display_order": 8,
       "qualified_key": "::Vital Signs",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-010",
+          "activity_id": "act-008",
           "row_position": 12
         }
       ],
@@ -383,19 +361,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-011",
+      "xact_id": "xact-009",
       "activity_name": "Safety Laboratory",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 11,
+      "display_order": 9,
       "qualified_key": "::Safety Laboratory",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-011",
+          "activity_id": "act-009",
           "row_position": 13
         }
       ],
@@ -407,19 +385,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-012",
+      "xact_id": "xact-010",
       "activity_name": "Pregnancy Test",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 12,
+      "display_order": 10,
       "qualified_key": "::Pregnancy Test",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-012",
+          "activity_id": "act-010",
           "row_position": 14
         }
       ],
@@ -431,19 +409,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-013",
+      "xact_id": "xact-011",
       "activity_name": "Randomize patient in RTSM",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 13,
+      "display_order": 11,
       "qualified_key": "::Randomize patient in RTSM",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-013",
+          "activity_id": "act-011",
           "row_position": 15
         }
       ],
@@ -455,19 +433,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-014",
+      "xact_id": "xact-012",
       "activity_name": "Patient diary training",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 14,
+      "display_order": 12,
       "qualified_key": "::Patient diary training",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-014",
+          "activity_id": "act-012",
           "row_position": 16
         }
       ],
@@ -479,19 +457,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-015",
+      "xact_id": "xact-013",
       "activity_name": "Patient diary retraining",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 15,
+      "display_order": 13,
       "qualified_key": "::Patient diary retraining",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-015",
+          "activity_id": "act-013",
           "row_position": 17
         }
       ],
@@ -503,19 +481,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-016",
+      "xact_id": "xact-014",
       "activity_name": "Conventional on-demand treatment washout",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 16,
+      "display_order": 14,
       "qualified_key": "::Conventional on-demand treatment washout",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-016",
+          "activity_id": "act-014",
           "row_position": 18
         }
       ],
@@ -527,19 +505,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-017",
+      "xact_id": "xact-015",
       "activity_name": "Dose",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 17,
+      "display_order": 15,
       "qualified_key": "::Dose",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-017",
+          "activity_id": "act-015",
           "row_position": 19
         }
       ],
@@ -551,19 +529,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-018",
+      "xact_id": "xact-016",
       "activity_name": "IMP dispensing/return/accountability",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 18,
+      "display_order": 16,
       "qualified_key": "::IMP dispensing/return/accountability",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-018",
+          "activity_id": "act-016",
           "row_position": 20
         }
       ],
@@ -575,19 +553,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-019",
+      "xact_id": "xact-017",
       "activity_name": "PGI-S",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 19,
+      "display_order": 17,
       "qualified_key": "::PGI-S",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-019",
+          "activity_id": "act-017",
           "row_position": 21
         }
       ],
@@ -599,19 +577,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-020",
+      "xact_id": "xact-018",
       "activity_name": "PGI-C",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 20,
+      "display_order": 18,
       "qualified_key": "::PGI-C",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-020",
+          "activity_id": "act-018",
           "row_position": 22
         }
       ],
@@ -623,19 +601,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-021",
+      "xact_id": "xact-019",
       "activity_name": "VAS",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 21,
+      "display_order": 19,
       "qualified_key": "::VAS",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-021",
+          "activity_id": "act-019",
           "row_position": 23
         }
       ],
@@ -647,19 +625,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-022",
+      "xact_id": "xact-020",
       "activity_name": "GA-NRS",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 22,
+      "display_order": 20,
       "qualified_key": "::GA-NRS",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-022",
+          "activity_id": "act-020",
           "row_position": 24
         }
       ],
@@ -671,19 +649,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-023",
+      "xact_id": "xact-021",
       "activity_name": "Concomitant Medication Review",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 23,
+      "display_order": 21,
       "qualified_key": "::Concomitant Medication Review",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-023",
+          "activity_id": "act-021",
           "row_position": 25
         }
       ],
@@ -695,19 +673,19 @@
       "table_count": 1
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "activity_name": "Adverse Event Review",
       "parent_name": "",
       "parent_xact_id": null,
       "hierarchy_level": 0,
-      "display_order": 24,
+      "display_order": 22,
       "qualified_key": "::Adverse Event Review",
       "is_section_header": false,
       "source_refs": [
         {
           "table_id": "table-001",
           "table_num": 1,
-          "activity_id": "act-024",
+          "activity_id": "act-022",
           "row_position": 26
         }
       ],
@@ -723,7 +701,7 @@
     "main": [
       {
         "xcol_id": "xcol-001",
-        "composite_label": "Screening",
+        "composite_label": "Screening / X",
         "segment": "main",
         "population_track": null,
         "property_values": [
@@ -732,6 +710,12 @@
             "property_type": "visit",
             "property_name": "Visit",
             "value": "Screening"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "In-clinic",
+            "value": "X"
           }
         ],
         "source_columns": [
@@ -745,7 +729,7 @@
       },
       {
         "xcol_id": "xcol-002",
-        "composite_label": "Randomization",
+        "composite_label": "Randomization / X / X",
         "segment": "main",
         "population_track": null,
         "property_values": [
@@ -754,6 +738,18 @@
             "property_type": "visit",
             "property_name": "Visit",
             "value": "Randomization"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "In-clinic",
+            "value": "X"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "TeleVisit",
+            "value": "X"
           }
         ],
         "source_columns": [
@@ -767,7 +763,7 @@
       },
       {
         "xcol_id": "xcol-003",
-        "composite_label": "Treatment Period / 1st eligible HAE attack",
+        "composite_label": "Treatment Period / 1st eligible HAE attack / X",
         "segment": "main",
         "population_track": null,
         "property_values": [
@@ -782,6 +778,12 @@
             "property_type": "visit",
             "property_name": "Eligible HAE attack",
             "value": "1st eligible HAE attack"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "TeleVisit",
+            "value": "X"
           }
         ],
         "source_columns": [
@@ -795,7 +797,7 @@
       },
       {
         "xcol_id": "xcol-004",
-        "composite_label": "Treatment Period / 2nd eligible HAE attack",
+        "composite_label": "Treatment Period / 2nd eligible HAE attack / X",
         "segment": "main",
         "population_track": null,
         "property_values": [
@@ -810,6 +812,12 @@
             "property_type": "visit",
             "property_name": "Eligible HAE attack",
             "value": "2nd eligible HAE attack"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "TeleVisit",
+            "value": "X"
           }
         ],
         "source_columns": [
@@ -823,7 +831,7 @@
       },
       {
         "xcol_id": "xcol-005",
-        "composite_label": "Treatment Period / 3rd eligible HAE attack",
+        "composite_label": "Treatment Period / 3rd eligible HAE attack / X",
         "segment": "main",
         "population_track": null,
         "property_values": [
@@ -838,6 +846,12 @@
             "property_type": "visit",
             "property_name": "Eligible HAE attack",
             "value": "3rd eligible HAE attack"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "TeleVisit",
+            "value": "X"
           }
         ],
         "source_columns": [
@@ -851,7 +865,7 @@
       },
       {
         "xcol_id": "xcol-006",
-        "composite_label": "Final Visit/ET",
+        "composite_label": "Final Visit/ET / X",
         "segment": "main",
         "population_track": null,
         "property_values": [
@@ -860,6 +874,12 @@
             "property_type": "visit",
             "property_name": "Visit",
             "value": "Final Visit/ET"
+          },
+          {
+            "level": null,
+            "property_type": "modality",
+            "property_name": "In-clinic",
+            "value": "X"
           }
         ],
         "source_columns": [
@@ -883,16 +903,8 @@
       }
     },
     {
-      "xact_id": "xact-001",
-      "xcol_id": "xcol-002",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-001",
-      "xcol_id": "xcol-006",
+      "xact_id": "xact-002",
+      "xcol_id": "xcol-001",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -901,30 +913,6 @@
     {
       "xact_id": "xact-002",
       "xcol_id": "xcol-002",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-002",
-      "xcol_id": "xcol-003",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-002",
-      "xcol_id": "xcol-004",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-002",
-      "xcol_id": "xcol-005",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -947,8 +935,8 @@
       }
     },
     {
-      "xact_id": "xact-004",
-      "xcol_id": "xcol-002",
+      "xact_id": "xact-005",
+      "xcol_id": "xcol-001",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -956,7 +944,7 @@
     },
     {
       "xact_id": "xact-005",
-      "xcol_id": "xcol-001",
+      "xcol_id": "xcol-006",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -995,6 +983,14 @@
       }
     },
     {
+      "xact_id": "xact-008",
+      "xcol_id": "xcol-006",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
       "xact_id": "xact-009",
       "xcol_id": "xcol-001",
       "consolidated_value": "X",
@@ -1028,15 +1024,7 @@
     },
     {
       "xact_id": "xact-011",
-      "xcol_id": "xcol-001",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-011",
-      "xcol_id": "xcol-006",
+      "xcol_id": "xcol-002",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -1052,7 +1040,7 @@
     },
     {
       "xact_id": "xact-012",
-      "xcol_id": "xcol-006",
+      "xcol_id": "xcol-002",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -1060,7 +1048,23 @@
     },
     {
       "xact_id": "xact-013",
-      "xcol_id": "xcol-002",
+      "xcol_id": "xcol-003",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-013",
+      "xcol_id": "xcol-004",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-013",
+      "xcol_id": "xcol-005",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -1068,18 +1072,26 @@
     },
     {
       "xact_id": "xact-014",
-      "xcol_id": "xcol-001",
-      "consolidated_value": "X",
+      "xcol_id": "xcol-003",
+      "consolidated_value": "↔",
       "source_values": {
-        "1": "X"
+        "1": "↔"
       }
     },
     {
       "xact_id": "xact-014",
-      "xcol_id": "xcol-002",
-      "consolidated_value": "X",
+      "xcol_id": "xcol-004",
+      "consolidated_value": "↔",
       "source_values": {
-        "1": "X"
+        "1": "↔"
+      }
+    },
+    {
+      "xact_id": "xact-014",
+      "xcol_id": "xcol-005",
+      "consolidated_value": "↔",
+      "source_values": {
+        "1": "↔"
       }
     },
     {
@@ -1108,26 +1120,18 @@
     },
     {
       "xact_id": "xact-016",
-      "xcol_id": "xcol-003",
-      "consolidated_value": "↔",
+      "xcol_id": "xcol-002",
+      "consolidated_value": "X",
       "source_values": {
-        "1": "↔"
+        "1": "X"
       }
     },
     {
       "xact_id": "xact-016",
-      "xcol_id": "xcol-004",
-      "consolidated_value": "↔",
+      "xcol_id": "xcol-006",
+      "consolidated_value": "X",
       "source_values": {
-        "1": "↔"
-      }
-    },
-    {
-      "xact_id": "xact-016",
-      "xcol_id": "xcol-005",
-      "consolidated_value": "↔",
-      "source_values": {
-        "1": "↔"
+        "1": "X"
       }
     },
     {
@@ -1156,7 +1160,7 @@
     },
     {
       "xact_id": "xact-018",
-      "xcol_id": "xcol-002",
+      "xcol_id": "xcol-003",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -1164,7 +1168,15 @@
     },
     {
       "xact_id": "xact-018",
-      "xcol_id": "xcol-006",
+      "xcol_id": "xcol-004",
+      "consolidated_value": "X",
+      "source_values": {
+        "1": "X"
+      }
+    },
+    {
+      "xact_id": "xact-018",
+      "xcol_id": "xcol-005",
       "consolidated_value": "X",
       "source_values": {
         "1": "X"
@@ -1220,54 +1232,6 @@
     },
     {
       "xact_id": "xact-021",
-      "xcol_id": "xcol-003",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-021",
-      "xcol_id": "xcol-004",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-021",
-      "xcol_id": "xcol-005",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-022",
-      "xcol_id": "xcol-003",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-022",
-      "xcol_id": "xcol-004",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-022",
-      "xcol_id": "xcol-005",
-      "consolidated_value": "X",
-      "source_values": {
-        "1": "X"
-      }
-    },
-    {
-      "xact_id": "xact-023",
       "xcol_id": "xcol-001",
       "consolidated_value": "↔",
       "source_values": {
@@ -1275,7 +1239,7 @@
       }
     },
     {
-      "xact_id": "xact-023",
+      "xact_id": "xact-021",
       "xcol_id": "xcol-002",
       "consolidated_value": "↔",
       "source_values": {
@@ -1283,7 +1247,7 @@
       }
     },
     {
-      "xact_id": "xact-023",
+      "xact_id": "xact-021",
       "xcol_id": "xcol-003",
       "consolidated_value": "↔",
       "source_values": {
@@ -1291,7 +1255,7 @@
       }
     },
     {
-      "xact_id": "xact-023",
+      "xact_id": "xact-021",
       "xcol_id": "xcol-004",
       "consolidated_value": "↔",
       "source_values": {
@@ -1299,7 +1263,7 @@
       }
     },
     {
-      "xact_id": "xact-023",
+      "xact_id": "xact-021",
       "xcol_id": "xcol-005",
       "consolidated_value": "↔",
       "source_values": {
@@ -1307,7 +1271,7 @@
       }
     },
     {
-      "xact_id": "xact-023",
+      "xact_id": "xact-021",
       "xcol_id": "xcol-006",
       "consolidated_value": "↔",
       "source_values": {
@@ -1315,7 +1279,7 @@
       }
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "xcol_id": "xcol-001",
       "consolidated_value": "↔",
       "source_values": {
@@ -1323,7 +1287,7 @@
       }
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "xcol_id": "xcol-002",
       "consolidated_value": "↔",
       "source_values": {
@@ -1331,7 +1295,7 @@
       }
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "xcol_id": "xcol-003",
       "consolidated_value": "↔",
       "source_values": {
@@ -1339,7 +1303,7 @@
       }
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "xcol_id": "xcol-004",
       "consolidated_value": "↔",
       "source_values": {
@@ -1347,7 +1311,7 @@
       }
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "xcol_id": "xcol-005",
       "consolidated_value": "↔",
       "source_values": {
@@ -1355,7 +1319,7 @@
       }
     },
     {
-      "xact_id": "xact-024",
+      "xact_id": "xact-022",
       "xcol_id": "xcol-006",
       "consolidated_value": "↔",
       "source_values": {
@@ -1438,11 +1402,11 @@
           "annotation_id": "annot-004"
         }
       ],
-      "referenced_xacts": [
-        "xact-001"
-      ],
+      "referenced_xacts": [],
       "referenced_xcols": [],
-      "referenced_props": [],
+      "referenced_props": [
+        "prop-003"
+      ],
       "cell_references": [],
       "occurrence_count": 1
     },
@@ -1458,11 +1422,11 @@
           "annotation_id": "annot-005"
         }
       ],
-      "referenced_xacts": [
-        "xact-002"
-      ],
+      "referenced_xacts": [],
       "referenced_xcols": [],
-      "referenced_props": [],
+      "referenced_props": [
+        "prop-004"
+      ],
       "cell_references": [],
       "occurrence_count": 1
     },
@@ -1479,7 +1443,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-003"
+        "xact-001"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1499,7 +1463,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-005"
+        "xact-003"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1519,7 +1483,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-006"
+        "xact-004"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1539,7 +1503,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-007"
+        "xact-005"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1559,7 +1523,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-008"
+        "xact-006"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1579,7 +1543,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-009"
+        "xact-007"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1599,7 +1563,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-010"
+        "xact-008"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1619,7 +1583,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-011"
+        "xact-009"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1639,7 +1603,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-012"
+        "xact-010"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1659,7 +1623,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-016"
+        "xact-014"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1679,7 +1643,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-017"
+        "xact-015"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1699,7 +1663,7 @@
         }
       ],
       "referenced_xacts": [
-        "xact-018"
+        "xact-016"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1719,10 +1683,10 @@
         }
       ],
       "referenced_xacts": [
+        "xact-017",
+        "xact-018",
         "xact-019",
-        "xact-020",
-        "xact-021",
-        "xact-022"
+        "xact-020"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
@@ -1742,12 +1706,59 @@
         }
       ],
       "referenced_xacts": [
-        "xact-024"
+        "xact-022"
       ],
       "referenced_xcols": [],
       "referenced_props": [],
       "cell_references": [],
       "occurrence_count": 1
+    }
+  ],
+  "review_items": [
+    {
+      "table_number": 1,
+      "id": "D1",
+      "severity": "high",
+      "location": {
+        "page": 17,
+        "row_positions": [
+          3,
+          4
+        ],
+        "annotation_marker": "d"
+      },
+      "call_made": "The 'In-clinic' and 'TeleVisit' body rows are recorded as visit-modality header properties (schedule_property rows 3-4, type modality), not as activities, because they describe how each visit is conducted rather than a procedure performed on the patient. Footnotes d and e attach to those property rows.",
+      "alternative": "Record 'In-clinic' and 'TeleVisit' as two ordinary activity rows (with their X marks in activity_schedule), keeping the table's body exactly as printed.",
+      "report_section": "2.2"
+    },
+    {
+      "table_number": 1,
+      "id": "D2",
+      "severity": "high",
+      "location": {
+        "page": 17,
+        "row_positions": [
+          3,
+          4
+        ],
+        "column_position": 3,
+        "annotation_marker": "a"
+      },
+      "call_made": "The single X in the Randomization column, printed centred across the In-clinic and TeleVisit rows (no rule line between them in that column), is emitted on both rows: the Randomization visit may be in-clinic or televisit (footnote a).",
+      "alternative": "Treat the vertically merged mark as belonging to only one of the two rows (e.g. TeleVisit only), or as an either/or condition recorded literally rather than as two marks.",
+      "report_section": "2.3"
+    },
+    {
+      "table_number": 1,
+      "id": "D3",
+      "severity": "medium",
+      "location": {
+        "page": 17,
+        "row_position": 1
+      },
+      "call_made": "Header row 1 (label 'Visit': Screening, Randomization, Treatment Period, Final Visit/ET) is typed 'visit', following its printed label; 'Treatment Period' is treated as a spanning group of the three attack visits in row 2.",
+      "alternative": "Type header row 1 as 'epoch' (Screening / Randomization / Treatment Period / Final), with row 2 as the visits within the Treatment Period.",
+      "report_section": "2.1"
     }
   ]
 };

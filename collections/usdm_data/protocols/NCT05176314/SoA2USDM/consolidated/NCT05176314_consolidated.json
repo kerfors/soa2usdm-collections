@@ -3,7 +3,7 @@
   "schema_version": "1.1",
   "protocol_id": "NCT05176314",
   "consolidation_metadata": {
-    "consolidated_at": "2026-08-17T19:13:16.900832+00:00",
+    "consolidated_at": "2026-09-27T15:03:41.218763+00:00",
     "consolidator": "soa2usdm.steps.consolidate v1.1",
     "source_tables": [
       {
@@ -11,23 +11,23 @@
         "table_num": 1,
         "table_type": "main_soa",
         "table_title": "Schedule of Activities (SoA)",
-        "table_purpose": "Single schedule for all participants covering screening (Days -42 to -2), the inpatient treatment period (Study Days -1 to 18) and the follow-up / early discontinuation visit at Day 24 (± 2 days).",
+        "table_purpose": "Main schedule: screening, in-clinic treatment period Days -1 to 18 (rosuvastatin and pirtobrutinib administration, rosuvastatin PK sampling), and FU/ED visit on Day 24",
         "track_label": null,
         "activity_count": 24,
         "column_count": 21,
-        "annotation_count": 8,
+        "annotation_count": 9,
         "property_hierarchy": [
           {
             "hierarchical_level": 1,
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "property_type": "epoch",
-            "property_comment": "Top header band. Values are the major study phases: 'Screening (D-42 to -2)' in column 2 (a cell merged vertically across both header bands), 'Treatment Period (Study Days)' merged across columns 3-21, and 'FU/ED' (follow-up / early discontinuation) in column 22. Screening / Treatment / Follow-up phases make this an epoch row. The leftmost header cell reads 'Study Procedure' and labels the activity column rather than this row, so no printed row label exists and property_name is synthesized."
+            "property_comment": "Top header band: 'Screening' (upper line of the rotated col-2 cell, which spans header rows 1-2), 'Treatment Period (Study Days)' merged across cols 3-21, and 'FU/ED' (follow-up / early discontinuation) in col 22. Study phases -> epoch. The label column holds 'Study Procedure' merged across both header rows, so the property name is synthesized."
           },
           {
             "hierarchical_level": 2,
             "property_name": "Study Day",
             "property_type": "study_day",
-            "property_comment": "Lower header band. Values are protocol day numbers -1, 1, 2 ... 18 across columns 3-21 and '24 (± 2 days)' in the follow-up / early-discontinuation column 22; the band above labels them '(Study Days)', so property_type is study_day. Column 2 carries no value in this band because the Screening cell is merged vertically up into band 1. No printed row label, so property_name is synthesized."
+            "property_comment": "Study day per column: '(D-42 to -2)' for Screening (lower line of the rotated col-2 cell), -1, 1-18 for the Treatment Period, and '24 (± 2 days)' for FU/ED. Values are protocol study days (the band header reads 'Study Days') -> study_day; the ± 2 day window is kept inside the FU/ED cell value as printed. Name synthesized (label column empty for this row)."
           }
         ]
       }
@@ -43,13 +43,13 @@
     "unified_activity_count": 24,
     "compression_percent": 0,
     "annotation_stats": {
-      "source_annotation_count": 8,
-      "unified_annotation_count": 8,
+      "source_annotation_count": 9,
+      "unified_annotation_count": 9,
       "deduplicated_count": 0,
       "deduplication_percent": 0,
       "by_type": {
         "footnote": 7,
-        "legend": 1
+        "legend": 2
       }
     }
   },
@@ -57,16 +57,16 @@
     {
       "property_id": "prop-001",
       "property_type": "epoch",
-      "property_name": "Study Period",
+      "property_name": "Epoch",
       "hierarchical_level": 1,
-      "property_comment": "Top header band. Values are the major study phases: 'Screening (D-42 to -2)' in column 2 (a cell merged vertically across both header bands), 'Treatment Period (Study Days)' merged across columns 3-21, and 'FU/ED' (follow-up / early discontinuation) in column 22. Screening / Treatment / Follow-up phases make this an epoch row. The leftmost header cell reads 'Study Procedure' and labels the activity column rather than this row, so no printed row label exists and property_name is synthesized."
+      "property_comment": "Top header band: 'Screening' (upper line of the rotated col-2 cell, which spans header rows 1-2), 'Treatment Period (Study Days)' merged across cols 3-21, and 'FU/ED' (follow-up / early discontinuation) in col 22. Study phases -> epoch. The label column holds 'Study Procedure' merged across both header rows, so the property name is synthesized."
     },
     {
       "property_id": "prop-002",
       "property_type": "study_day",
       "property_name": "Study Day",
       "hierarchical_level": 2,
-      "property_comment": "Lower header band. Values are protocol day numbers -1, 1, 2 ... 18 across columns 3-21 and '24 (± 2 days)' in the follow-up / early-discontinuation column 22; the band above labels them '(Study Days)', so property_type is study_day. Column 2 carries no value in this band because the Screening cell is merged vertically up into band 1. No printed row label, so property_name is synthesized."
+      "property_comment": "Study day per column: '(D-42 to -2)' for Screening (lower line of the rotated col-2 cell), -1, 1-18 for the Treatment Period, and '24 (± 2 days)' for FU/ED. Values are protocol study days (the band header reads 'Study Days') -> study_day; the ± 2 day window is kept inside the FU/ED cell value as printed. Name synthesized (label column empty for this row)."
     }
   ],
   "review_queue": [],
@@ -654,15 +654,21 @@
     "main": [
       {
         "xcol_id": "xcol-001",
-        "composite_label": "Screening (D-42 to -2)",
+        "composite_label": "Screening / (D-42 to -2)",
         "segment": "main",
         "population_track": null,
         "property_values": [
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
-            "value": "Screening (D-42 to -2)"
+            "property_name": "Epoch",
+            "value": "Screening"
+          },
+          {
+            "level": 2,
+            "property_type": "study_day",
+            "property_name": "Study Day",
+            "value": "(D-42 to -2)"
           }
         ],
         "source_columns": [
@@ -683,7 +689,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -711,7 +717,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -739,7 +745,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -767,7 +773,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -795,7 +801,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -823,7 +829,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -851,7 +857,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -879,7 +885,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -907,7 +913,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -935,7 +941,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -963,7 +969,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -991,7 +997,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1019,7 +1025,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1047,7 +1053,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1075,7 +1081,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1103,7 +1109,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1131,7 +1137,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1159,7 +1165,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1187,7 +1193,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "Treatment Period (Study Days)"
           },
           {
@@ -1215,7 +1221,7 @@
           {
             "level": 1,
             "property_type": "epoch",
-            "property_name": "Study Period",
+            "property_name": "Epoch",
             "value": "FU/ED"
           },
           {
@@ -2278,7 +2284,7 @@
     {
       "xannot_id": "xannot-004",
       "annotation_type": "footnote",
-      "annotation_text": "[Footnote d is not printed in the source. In the footnote block (document page 12) the slot immediately after footnote c is covered by a solid black redaction box overprinted with the label \"CCI\"; no text is legible. Remainder redacted in source.]",
+      "annotation_text": "Definition not printed in the source: the footnote block on document page 12 lists a, b, c and e as text, while the positions where footnote 'd' would print are covered by redaction boxes labelled 'CCI'. [remainder redacted in source]",
       "display_markers": "T1:d",
       "source_occurrences": [
         {
@@ -2318,7 +2324,7 @@
     {
       "xannot_id": "xannot-006",
       "annotation_type": "footnote",
-      "annotation_text": "[Footnote f is not printed in the source. In the footnote block (document page 12) the region after footnote e is covered by a solid black redaction box overprinted with the label \"CCI\"; no text is legible. Remainder redacted in source.]",
+      "annotation_text": "Definition not printed in the source: the footnote block on document page 12 lists a, b, c and e as text, while the positions where footnote 'f' would print are covered by redaction boxes labelled 'CCI'. [remainder redacted in source]",
       "display_markers": "T1:f",
       "source_occurrences": [
         {
@@ -2343,7 +2349,7 @@
     {
       "xannot_id": "xannot-007",
       "annotation_type": "footnote",
-      "annotation_text": "[Footnote g is not printed in the source. In the footnote block (document page 12) the region after footnote e is covered by a solid black redaction box overprinted with the label \"CCI\"; no text is legible. Remainder redacted in source.]",
+      "annotation_text": "Definition not printed in the source: the footnote block on document page 12 lists a, b, c and e as text, while the positions where footnote 'g' would print are covered by redaction boxes labelled 'CCI'. [remainder redacted in source]",
       "display_markers": "T1:g",
       "source_occurrences": [
         {
@@ -2431,6 +2437,166 @@
         }
       ],
       "occurrence_count": 1
+    },
+    {
+      "xannot_id": "xannot-009",
+      "annotation_type": "legend",
+      "annotation_text": "h = hours postdose",
+      "display_markers": "T1:h",
+      "source_occurrences": [
+        {
+          "table_num": 1,
+          "marker": "h",
+          "annotation_id": "annot-009"
+        }
+      ],
+      "referenced_xacts": [
+        "xact-014",
+        "xact-020"
+      ],
+      "referenced_xcols": [],
+      "referenced_props": [],
+      "cell_references": [
+        {
+          "xact_id": "xact-014",
+          "xcol_id": "xcol-003"
+        },
+        {
+          "xact_id": "xact-014",
+          "xcol_id": "xcol-004"
+        },
+        {
+          "xact_id": "xact-014",
+          "xcol_id": "xcol-008"
+        },
+        {
+          "xact_id": "xact-014",
+          "xcol_id": "xcol-009"
+        },
+        {
+          "xact_id": "xact-014",
+          "xcol_id": "xcol-015"
+        },
+        {
+          "xact_id": "xact-014",
+          "xcol_id": "xcol-016"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-003"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-004"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-005"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-006"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-007"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-008"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-009"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-010"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-011"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-012"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-013"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-015"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-016"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-017"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-018"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-019"
+        },
+        {
+          "xact_id": "xact-020",
+          "xcol_id": "xcol-020"
+        }
+      ],
+      "occurrence_count": 1
+    }
+  ],
+  "review_items": [
+    {
+      "table_number": 1,
+      "id": "D1",
+      "severity": "high",
+      "location": {
+        "page": 11,
+        "row_positions": [
+          21,
+          22,
+          23
+        ]
+      },
+      "call_made": "Two full-width black redaction bars labelled 'CCI' on page 11 (one between 'Genetic blood sample for screening' and 'Rosuvastatin PK samples', one between 'Rosuvastatin PK samples' and 'Adverse event review') are treated as hiding content, and no activity rows are created for them.",
+      "alternative": "Each bar hides one (or more) activity row with its own marks; add placeholder activity rows (e.g. '[redacted row]') so the redacted procedures are represented in the schedule.",
+      "report_section": "4"
+    },
+    {
+      "table_number": 1,
+      "id": "D2",
+      "severity": "medium",
+      "location": {
+        "page": 11,
+        "row_position": 21
+      },
+      "call_made": "The label is transcribed as 'Genetic blood sample for screening' - the three visible lines of the cell, the last line partly clipped by the redaction bar below it.",
+      "alternative": "Part of the label is hidden under the redaction bar (the text layer places the bar's 'CCI' label between 'for' and 'screening'); record the name as incomplete, e.g. 'Genetic blood sample for [redacted] screening'.",
+      "report_section": "4"
+    },
+    {
+      "table_number": 1,
+      "id": "D3",
+      "severity": "low",
+      "location": {
+        "page": 10,
+        "row_positions": [
+          1,
+          2
+        ],
+        "column_position": 2
+      },
+      "call_made": "The single rotated Screening header cell, which spans both header rows, is split by its two printed lines: 'Screening' goes on the epoch row and '(D-42 to -2)' on the study-day row.",
+      "alternative": "Keep the whole cell text 'Screening (D-42 to -2)' as one value on the epoch row and leave the study-day row empty for the Screening column.",
+      "report_section": "3"
     }
   ]
 }

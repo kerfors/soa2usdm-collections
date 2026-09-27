@@ -2,25 +2,27 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude-Opus-5 (SoA PDF->JSON prompt v3.7.2)",
+    "extracted_at": "2026-09-27T12:00:00Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT02291289_soa.pdf",
       "document_type": "protocol",
-      "document_version": "Version 9"
+      "document_version": "Protocol MO29112, Version 9"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Rule lines recovered from the 200 dpi raster; marks detected by near-black pixel count and validated against direct visual reads. This is the only table of the five whose footnotes are entirely in the text layer - no footnote text is printed on its scanned grid pages."
+    "extraction_notes": "SoA grid pages are full-page raster images with no text layer; grid, headers and labels read visually (method visual_read / visual_transcription). Footnote continuation pages carry a text layer and were read from it. Document page numbers from PAGEMAP.md.",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 4,
     "table_type": "track",
-    "track_label": "Cohort 3",
-    "table_title": "APPENDIX 4  SCHEDULE OF ASSESSMENTS DURING MAINTENANCE PHASE (COHORT 3)",
-    "table_purpose": "Maintenance Treatment Phase schedule for patients assigned to maintenance Cohort 3, plus Study Treatment Discontinuation Visit and Post-Treatment Follow-Up columns.",
+    "table_title": "Appendix 4 Schedule of Assessments during Maintenance Phase (Cohort 3)",
+    "table_purpose": "Maintenance Treatment Phase schedule for patients assigned to Cohort 3",
     "page_start": 184,
     "page_end": 188,
-    "notes": "Classified track: mutually exclusive population (patients assigned to maintenance Cohort 3) on a timeline whose columns differ from the main SoA (Table 1); its Maintenance column also splits control vs experimental cycle length, unlike the other cohort appendices. One label column (L=1); first data column position is 2; 4 data columns (2-5). Grid pages 184-185 are scanned images with no text layer; pages 186-188 carry a text layer and contribute no activity rows - they hold the whole footnote block a-u for this table."
+    "notes": "Track: Cohort 3 maintenance schedule (mutually exclusive cohort). Grid pages 184-185 image-based; all footnotes a-u from the text layer (pp186-188).",
+    "track_label": "Cohort 3"
   },
   "schedule_properties": [
     {
@@ -33,10 +35,9 @@
         "cell_value": "",
         "synthesized": true
       },
-      "structure_method": "inferred_from_layout",
       "property_type": "epoch",
-      "hierarchical_level": 1,
-      "property_comment": "Top header row naming the study phase of each column: Prior to randomization, Maintenance Treatment Phase, Study Treatment Discontinuation Visit, Post-Treatment Follow-Up Phase. These are the protocol's own phase names, hence epoch; topmost row that distinguishes columns, hence level 1. Name synthesized - the label cell is empty."
+      "property_comment": "Study phase headers (Prior to randomization, Maintenance Treatment Phase, Study Treatment Discontinuation Visit, Post-Treatment Follow-Up Phase) - major study phases, hence epoch. Label cell empty; name synthesised.",
+      "hierarchical_level": 1
     },
     {
       "table_number": 4,
@@ -48,10 +49,10 @@
         "cell_value": "",
         "synthesized": true
       },
-      "structure_method": "inferred_from_layout",
       "property_type": "other",
+      "property_comment": "Per-column timing descriptors: a window relative to completion of induction, a cycle-based recurrence, a post-dose window and a follow-up frequency. Mixed kinds, hence other. Label cell empty; name synthesised.",
       "hierarchical_level": 2,
-      "property_comment": "Second header row giving the timing/frequency under each phase. The values mix a pre-randomization window, cycle-based frequencies and a post-dose window, so no single printed concept applies - property_type=other. It is the row that carries the actual timing for each column, hence level 2. Name synthesized - the label cell is empty. In this table the Maintenance column carries two arm-specific cycle lengths in one cell ('Control arm: every 2 two-week cycles / Experimental arm: every 3-week cycle')."
+      "structure_method": "assumed"
     }
   ],
   "schedule_grid": [
@@ -111,8 +112,9 @@
       "table_number": 4,
       "row_position": 2,
       "column_position": 5,
-      "cell_value": "Every 3 months until May 31, 2019 (see Appendix 19)",
-      "method": "visual_read"
+      "cell_value": "Every 3 months until May 31, 2019",
+      "method": "visual_read",
+      "annotation_markers": "pr1"
     }
   ],
   "activities": [
@@ -133,7 +135,7 @@
       "table_number": 4,
       "row_position": 4,
       "source_page": 184,
-      "activity_name": "Cohort- specific informed consent",
+      "activity_name": "Cohort-specific informed consent",
       "activity_name_source": {
         "cell_text": "Cohort- specific informed consent",
         "indentation_level": 0,
@@ -321,7 +323,7 @@
         "method": "visual_transcription",
         "indentation_method": "assumed_flat"
       },
-      "annotation_markers": "r"
+      "annotation_markers": "r,n1"
     },
     {
       "table_number": 4,
@@ -346,7 +348,8 @@
         "indentation_level": 0,
         "method": "visual_transcription",
         "indentation_method": "assumed_flat"
-      }
+      },
+      "annotation_markers": "n1"
     },
     {
       "table_number": 4,
@@ -407,13 +410,15 @@
       "row_position": 3,
       "column_position": 2,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 4,
       "column_position": 2,
       "cell_value": "x (sites using 2 consent forms only)",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -421,62 +426,71 @@
       "row_position": 5,
       "column_position": 2,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 6,
       "column_position": 2,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 7,
       "column_position": 3,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 7,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 8,
       "column_position": 3,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 8,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 9,
       "column_position": 3,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 9,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 10,
       "column_position": 3,
       "cell_value": "Every cycle",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -484,13 +498,15 @@
       "row_position": 10,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 11,
       "column_position": 3,
       "cell_value": "Every cycle",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -498,13 +514,15 @@
       "row_position": 11,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 12,
       "column_position": 3,
       "cell_value": "According to local standard of care",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -512,6 +530,7 @@
       "row_position": 13,
       "column_position": 3,
       "cell_value": "Every cycle",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -519,13 +538,15 @@
       "row_position": 13,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 14,
       "column_position": 2,
       "cell_value": "Experimental arm only",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -533,6 +554,7 @@
       "row_position": 14,
       "column_position": 3,
       "cell_value": "Experimental arm: Cycles 4, 7, 10, 13, 16, 19, 22, 25 and every third cycle thereafter Control arm: If clinically indicated",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -540,6 +562,7 @@
       "row_position": 14,
       "column_position": 4,
       "cell_value": "Experimental arm only",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -547,6 +570,7 @@
       "row_position": 14,
       "column_position": 5,
       "cell_value": "Experimental arm only: until 7 months from last trastuzumab/pertuzumab",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -554,20 +578,23 @@
       "row_position": 15,
       "column_position": 2,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 16,
       "column_position": 2,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 16,
       "column_position": 3,
       "cell_value": "Experimental arm only: Cycle 3, 6, 10, 14, 18, 22, 26 and every 4 cycles thereafter",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -575,6 +602,7 @@
       "row_position": 16,
       "column_position": 4,
       "cell_value": "Experimental arm only",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -582,6 +610,7 @@
       "row_position": 17,
       "column_position": 3,
       "cell_value": "Up to and including May 31, 2019: Every 8 weeks regardless of treatment delays After May 31, 2019: per local practice",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -589,6 +618,7 @@
       "row_position": 17,
       "column_position": 5,
       "cell_value": "Up to and including May 31, 2019: Every 8 weeks until disease progression After May 31, 2019: per local practice",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -596,6 +626,7 @@
       "row_position": 18,
       "column_position": 2,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -603,6 +634,7 @@
       "row_position": 18,
       "column_position": 3,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -610,6 +642,7 @@
       "row_position": 19,
       "column_position": 3,
       "cell_value": "Cycles 1, 2, 4, 6, 8, 10, 12, 14 and every 2 cycles thereafter And at time of PD",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -617,6 +650,7 @@
       "row_position": 19,
       "column_position": 5,
       "cell_value": "At time of progression (if patient has not yet progressed)",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -624,6 +658,7 @@
       "row_position": 20,
       "column_position": 2,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -631,6 +666,7 @@
       "row_position": 20,
       "column_position": 4,
       "cell_value": "No sample collection Supplemental Biomarker Program CLOSED",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -638,6 +674,7 @@
       "row_position": 21,
       "column_position": 3,
       "cell_value": "Every cycle",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -645,13 +682,15 @@
       "row_position": 21,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 21,
       "column_position": 5,
       "cell_value": "x (as applicable)",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -659,6 +698,7 @@
       "row_position": 22,
       "column_position": 3,
       "cell_value": "Every cycle",
+      "source_range": "",
       "method": "visual_read"
     },
     {
@@ -666,21 +706,24 @@
       "row_position": 23,
       "column_position": 5,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 24,
       "column_position": 4,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     },
     {
       "table_number": 4,
       "row_position": 24,
       "column_position": 5,
       "cell_value": "x",
-      "method": "raster_pixel_detection"
+      "source_range": "",
+      "method": "visual_read"
     }
   ],
   "annotations": [
@@ -713,7 +756,7 @@
     {
       "annotation_marker": "c",
       "annotation_type": "footnote",
-      "annotation_text": "After discontinuation of study treatment and the Study Treatment Discontinuation Visit, patients will enter the Post-Treatment Follow-up Phase. Beginning after the Study Treatment Discontinuation Visit, patients will be followed up every 3 months. Up to and including May 31, 2019, follow-up will include recording subsequent anti-cancer therapies, disease status (until progression as applicable), survival and safety evaluations. Patients who have completed the adverse event reporting period and, if applicable, 7 month post-treatment pregnancy test will be discontinued from the study at the post- treatment follow-up visit within the 3 months prior to and including May 31, 2019 (i.e. at the visit on/after March 1, 2019). After May 31, 2019, patients who have not yet completed the adverse event reporting period (and 7 month pregnancy test as applicable) will be discontinued from the study after completion of the adverse event reporting period (and 7 month pregnancy test as applicable). Refer to Appendix 19 for the management of patients based on their study status as of May 31, 2019. Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion. Patients who discontinue study treatment prior to disease progression will be followed for PFS, with disease status followed every 8 weeks until progression or May 31, 2019, whichever comes first.",
+      "annotation_text": "After discontinuation of study treatment and the Study Treatment Discontinuation Visit, patients will enter the Post-Treatment Follow-up Phase. Beginning after the Study Treatment Discontinuation Visit, patients will be followed up every 3 months. Up to and including May 31, 2019, follow-up will include recording subsequent anti-cancer therapies, disease status (until progression as applicable), survival and safety evaluations. Patients who have completed the adverse event reporting period and, if applicable, 7 month post-treatment pregnancy test will be discontinued from the study at the post-treatment follow-up visit within the 3 months prior to and including May 31, 2019 (i.e. at the visit on/after March 1, 2019). After May 31, 2019, patients who have not yet completed the adverse event reporting period (and 7 month pregnancy test as applicable) will be discontinued from the study after completion of the adverse event reporting period (and 7 month pregnancy test as applicable). Refer to Appendix 19 for the management of patients based on their study status as of May 31, 2019. Treatment during the Post-Treatment Follow-up Phase is at the Investigator’s discretion. Patients who discontinue study treatment prior to disease progression will be followed for PFS, with disease status followed every 8 weeks until progression or May 31, 2019, whichever comes first.",
       "marker_locations": [
         {
           "table_number": 4,
@@ -861,7 +904,8 @@
         {
           "table_number": 4,
           "location_type": "activity_name",
-          "row_position": 14
+          "row_position": 14,
+          "method": "synthesized"
         }
       ]
     },
@@ -948,6 +992,48 @@
           "row_position": 22
         }
       ]
+    },
+    {
+      "annotation_marker": "n1",
+      "annotation_type": "footnote",
+      "annotation_text": "Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.",
+      "marker_locations": [
+        {
+          "table_number": 4,
+          "location_type": "activity_name",
+          "row_position": 18,
+          "method": "synthesized"
+        },
+        {
+          "table_number": 4,
+          "location_type": "activity_name",
+          "row_position": 20,
+          "method": "synthesized"
+        }
+      ],
+      "annotation_text_source": {
+        "method": "visual_transcription",
+        "note": "Text printed in the source cell (activity label sub-line or header cell) on an image page; marker synthesised."
+      }
+    },
+    {
+      "annotation_marker": "pr1",
+      "annotation_type": "source_note",
+      "annotation_text": "See Appendix 19",
+      "marker_locations": [
+        {
+          "table_number": 4,
+          "location_type": "schedule_cell",
+          "row_position": 2,
+          "column_position": 5,
+          "method": "synthesized"
+        }
+      ],
+      "annotation_text_source": {
+        "method": "visual_transcription",
+        "note": "Text printed in the source cell (activity label sub-line or header cell) on an image page; marker synthesised."
+      }
     }
-  ]
+  ],
+  "review_items": []
 }

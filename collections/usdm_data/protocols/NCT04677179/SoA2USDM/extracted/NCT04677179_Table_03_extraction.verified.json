@@ -2,25 +2,27 @@
  "schema_name": "soa-table-extraction",
  "schema_version": "1.0",
  "extraction_metadata": {
-  "extracted_at": "2026-08-17T00:00:00Z",
-  "extractor": "Claude-Opus-5",
+  "extracted_at": "2026-09-27T08:50:05Z",
+  "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+  "prompt_version": "3.8.1",
   "source_document": {
    "filename": "NCT04677179_soa.pdf",
    "document_type": "protocol",
-   "document_version": "Protocol J1P-MC-KFAH(b)"
+   "document_version": "J1P-MC-KFAH(b)"
   },
   "extraction_status": "ready_for_resolution",
-  "extraction_notes": "Marks re-derived mechanically: vertical and horizontal rule lines recovered from 200 dpi renders (pdftoppm -r 200) per prompt section 1d, cell bands taken from a DATA column (never the label column, which carries redaction bars), and every pdftotext -bbox token assigned to the band and column its centre falls in. The mechanical matrix was then diffed cell-for-cell against visual reads of rendered crops for the dense rows (Concomitant medications, Vital signs, Diary compliance check, Hematology, Clinical chemistry, Urine pregnancy, Dosing) and the sparse rows (Weight, Urinalysis, HBV DNA, the six redacted CCI rows); no disagreement was found. Marks are single-cell throughout - no merged or arrow-spanned marks exist in this table, so no source_range is set anywhere."
+  "extraction_notes": "Single-pass extraction. Tiled table: marks from both tiles unioned per row. Marks from pdftotext -bbox binned to header column centres, checked visually against renders of every page.",
+  "model": "claude-opus-5-5"
  },
  "table_metadata": {
   "table_number": 3,
   "table_type": "track",
+  "track_label": "Nonresponders",
   "table_title": "Table 3. Schedule of Activities for the Extension Induction and Extension Maintenance Treatment Periods of Study J1P-MC-KFAH",
-  "table_purpose": "Visit-by-visit schedule for the Extension Induction and Extension Maintenance Treatment Periods (V10-V29, weeks 14-52, study days 99-365) for participants who are nonresponders at Week 12.",
+  "table_purpose": "Extension induction and extension maintenance periods (V10-V29, Weeks 14-52) for participants who are nonresponders at Week 12",
   "page_start": 33,
   "page_end": 42,
-  "track_label": "Nonresponders",
-  "notes": "Horizontally TILED table, extracted as ONE logical table per prompt section 5. Tile A (document pages 33-37) carries visits V10-V19 under the title 'Table 3. Schedule of Activities for the Extension Induction and Extension Maintenance Treatment Periods of Study J1P-MC-KFAH'; tile B (document pages 38-42) carries V20-V29 under 'Table 3 (continued). Schedule of activities for ...' (lowercase 'activities' in the continued title). The two tiles share their body rows, so rows were merged by activity name and marks unioned: V10-V19 occupy column_position 2-11 and V20-V29 occupy column_position 12-21 of one 20-column logical table. There is a single leading label column (L=1), so the first data column is position 2. The right-hand 'Comment' column is a notes column, not a schedule column and not an activity (prompt section 6): its cells were transcribed as footnote annotations and it holds no column_position. table_type 'track' with track_label 'Nonresponders' is taken as given from the study-level structure pass and is corroborated on this table's own face: 'This schedule applies to study participants who are nonresponders at Week 12.' is printed under the title on all 10 pages, the exact complement of the responder table; the identical V10-V29 numbering in the two tables is a reused numbering scheme, not shared attendance. No disagreement with the agreed structure was found. SOURCE DEFECT - REDACTION: six body rows are black redaction bars whose only visible text is the watermark 'CCI' (rows 14, 31, 34, 37, 42, 43). They are transcribed as activity_name 'CCI' and they DO carry marks, which are transcribed as printed; the hidden activity names were not repaired or guessed. Row boundaries were therefore recovered from a data column's rule lines, never from the label column, whose black bars swallow the internal rules (prompt section 1d). PER-TILE ROW DIFFERENCE: 'Diary return' (row 18) prints ONLY in tile B (document page 39); it is absent from the tile A spread, so its source_page is 39 and its single mark is at V29. Every other body row prints in both tiles. 'Fasting visit' is modelled as a schedule_property (row 5), not an activity: it is a bold grey band inside the reprinted header block on all 10 pages. Text layer alternates clean and glyph-spread; document pages 34, 39 and 42 are clean, the other seven are letter-spaced and were word-reconstructed (section 1c) and checked against 200 dpi renders."
+  "notes": "Typed track: applies only to nonresponders at Week 12 (mutually exclusive with Table 2's responders) although the visit numbering V10-V29 is identical. Horizontally tiled: pages 33-37 carry V10-V19 and pages 38-42 ('Table 3 (continued)') carry V20-V29; rows unioned, marks merged. No printed row separates Extension Induction from Extension Maintenance, so no epoch property is recorded. L=1; data columns positions 2-21. Only 'Diary return' is printed in the second tile alone."
  },
  "schedule_properties": [
   {
@@ -33,9 +35,9 @@
     "cell_value": "Visit number"
    },
    "property_type": "visit",
-   "property_comment": "Visit identifiers for the 20 scheduled visits of this table (V10 through V19 in the first column-block tile, V20 through V29 in the '(continued)' tile). Named visit labels, so property_type 'visit'. Topmost header row of the grid, hence hierarchical_level 1.",
+   "property_comment": "Visit identifiers V10-V19 (first column tile, document pages 33-37) and V20-V29 (second tile, headed 'Table 3 (continued)'); property_type visit.",
    "hierarchical_level": 1,
-   "annotation_markers": "t1,t3,pr2,pr3"
+   "annotation_markers": "t1,t2,t4"
   },
   {
    "table_number": 3,
@@ -47,7 +49,7 @@
     "cell_value": "Weeks from randomization"
    },
    "property_type": "week",
-   "property_comment": "Week number counted from randomization (14 to 32 in tile A, 34 to 52 in tile B). Week numbers, so property_type 'week'. Second header row; needed together with the visit row to tell the columns apart.",
+   "property_comment": "Week offset from randomization, Week 14 to Week 52 in 2-week steps; property_type week.",
    "hierarchical_level": 2
   },
   {
@@ -60,7 +62,7 @@
     "cell_value": "Study day"
    },
    "property_type": "study_day",
-   "property_comment": "Protocol study day for each visit (99 to 225 in tile A, 239 to 365 in tile B). Numbered protocol days, so property_type 'study_day'.",
+   "property_comment": "Protocol study day, Day 99 to Day 365; property_type study_day.",
    "hierarchical_level": 3
   },
   {
@@ -73,7 +75,7 @@
     "cell_value": "Visit interval tolerance (days)"
    },
    "property_type": "window",
-   "property_comment": "Permitted visit window in days, printed as ±3 for every one of the 20 columns. A visit window, so property_type 'window'.",
+   "property_comment": "Visit window ±3 days at every visit; property_type window.",
    "hierarchical_level": 4
   },
   {
@@ -85,8 +87,8 @@
     "column_position": 1,
     "cell_value": "Fasting visit"
    },
-   "property_type": "condition",
-   "property_comment": "Bold, grey-shaded qualifier band printed directly under the tolerance row on every page of both tiles, carrying an X in the columns where the visit is a fasting visit (V16 and V29). It qualifies visits rather than distinguishing them, so property_type 'condition' and hierarchical_level null. Treated as a schedule_property, not an activity, because it reprints in the header block of all 10 pages of the table (prompt section 1b names Fasting bands as schedule_property rows).",
+   "property_type": "other",
+   "property_comment": "Shaded header-band row reprinted on every page marking the fasting visits (X at V16 and V29). Visit attribute rather than a timing level, so hierarchical_level null and property_type other.",
    "hierarchical_level": null
   }
  ],
@@ -132,79 +134,91 @@
    "row_position": 1,
    "column_position": 8,
    "cell_value": "V16",
-   "annotation_markers": "t2"
+   "annotation_markers": "t7"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 9,
-   "cell_value": "V17"
+   "cell_value": "V17",
+   "annotation_markers": "t5"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 10,
-   "cell_value": "V18"
+   "cell_value": "V18",
+   "annotation_markers": "t5"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 11,
-   "cell_value": "V19"
+   "cell_value": "V19",
+   "annotation_markers": "t5"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 12,
-   "cell_value": "V20"
+   "cell_value": "V20",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 13,
-   "cell_value": "V21"
+   "cell_value": "V21",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 14,
-   "cell_value": "V22"
+   "cell_value": "V22",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 15,
-   "cell_value": "V23"
+   "cell_value": "V23",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 16,
-   "cell_value": "V24"
+   "cell_value": "V24",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 17,
-   "cell_value": "V25"
+   "cell_value": "V25",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 18,
-   "cell_value": "V26"
+   "cell_value": "V26",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 19,
-   "cell_value": "V27"
+   "cell_value": "V27",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
    "row_position": 1,
    "column_position": 20,
-   "cell_value": "V28"
+   "cell_value": "V28",
+   "annotation_markers": "t6"
   },
   {
    "table_number": 3,
@@ -575,8 +589,116 @@
   {
    "table_number": 3,
    "row_position": 5,
+   "column_position": 2,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 3,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 4,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 5,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 6,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 7,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
    "column_position": 8,
    "cell_value": "X"
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 9,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 10,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 11,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 12,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 13,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 14,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 15,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 16,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 17,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 18,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 19,
+   "cell_value": ""
+  },
+  {
+   "table_number": 3,
+   "row_position": 5,
+   "column_position": 20,
+   "cell_value": ""
   },
   {
    "table_number": 3,
@@ -594,7 +716,7 @@
    "activity_name_source": {
     "cell_text": "Concomitant medications",
     "indentation_level": 0,
-    "indentation_method": "font_signal",
+    "indentation_method": "visual_estimate",
     "method": "glyph_reconstruction"
    }
   },
@@ -606,10 +728,10 @@
    "activity_name_source": {
     "cell_text": "Adverse events",
     "indentation_level": 0,
-    "indentation_method": "font_signal",
+    "indentation_method": "visual_estimate",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n1"
+   "annotation_markers": "c5"
   },
   {
    "table_number": 3,
@@ -619,7 +741,7 @@
    "activity_name_source": {
     "cell_text": "Review modified Mayo score (MMS)",
     "indentation_level": 0,
-    "indentation_method": "font_signal",
+    "indentation_method": "visual_estimate",
     "method": "glyph_reconstruction"
    }
   },
@@ -631,7 +753,7 @@
    "activity_name_source": {
     "cell_text": "Tobacco use",
     "indentation_level": 0,
-    "indentation_method": "font_signal",
+    "indentation_method": "visual_estimate",
     "method": "glyph_reconstruction"
    }
   },
@@ -644,6 +766,9 @@
     "cell_text": "Physical Evaluation",
     "indentation_level": 0,
     "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ],
     "method": "glyph_reconstruction"
    }
   },
@@ -670,7 +795,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n2"
+   "annotation_markers": "c7"
   },
   {
    "table_number": 3,
@@ -683,7 +808,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "pr1"
+   "annotation_markers": "c9"
   },
   {
    "table_number": 3,
@@ -708,7 +833,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n3"
+   "annotation_markers": "c10"
   },
   {
    "table_number": 3,
@@ -719,6 +844,9 @@
     "cell_text": "Patient Diary (Electronic)",
     "indentation_level": 0,
     "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ],
     "method": "glyph_reconstruction"
    }
   },
@@ -732,7 +860,7 @@
     "indentation_level": 1,
     "indentation_method": "font_signal"
    },
-   "annotation_markers": "n4"
+   "annotation_markers": "c12"
   },
   {
    "table_number": 3,
@@ -753,7 +881,10 @@
    "activity_name_source": {
     "cell_text": "Patient-Reported Outcomes (Electronic)",
     "indentation_level": 0,
-    "indentation_method": "font_signal"
+    "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ]
    }
   },
   {
@@ -797,7 +928,10 @@
    "activity_name_source": {
     "cell_text": "Clinician-Administered Questionnaires (Paper)",
     "indentation_level": 0,
-    "indentation_method": "font_signal"
+    "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ]
    }
   },
   {
@@ -820,6 +954,9 @@
     "cell_text": "Laboratory Tests and Sample Collections",
     "indentation_level": 0,
     "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ],
     "method": "glyph_reconstruction"
    }
   },
@@ -858,7 +995,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n5"
+   "annotation_markers": "c15"
   },
   {
    "table_number": 3,
@@ -883,7 +1020,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n6"
+   "annotation_markers": "c17"
   },
   {
    "table_number": 3,
@@ -908,7 +1045,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n7"
+   "annotation_markers": "c22"
   },
   {
    "table_number": 3,
@@ -921,7 +1058,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n8"
+   "annotation_markers": "c23"
   },
   {
    "table_number": 3,
@@ -934,7 +1071,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n8"
+   "annotation_markers": "c23"
   },
   {
    "table_number": 3,
@@ -959,7 +1096,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n9"
+   "annotation_markers": "c24"
   },
   {
    "table_number": 3,
@@ -982,6 +1119,9 @@
     "cell_text": "Endoscopic Procedure",
     "indentation_level": 0,
     "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ],
     "method": "glyph_reconstruction"
    }
   },
@@ -1008,7 +1148,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n10"
+   "annotation_markers": "c26"
   },
   {
    "table_number": 3,
@@ -1019,6 +1159,9 @@
     "cell_text": "Stool Samples",
     "indentation_level": 0,
     "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ],
     "method": "glyph_reconstruction"
    }
   },
@@ -1055,6 +1198,9 @@
     "cell_text": "Randomization and Dosing",
     "indentation_level": 0,
     "indentation_method": "font_signal",
+    "text_formatting": [
+     "bold"
+    ],
     "method": "glyph_reconstruction"
    }
   },
@@ -1069,7 +1215,7 @@
     "indentation_method": "font_signal",
     "method": "glyph_reconstruction"
    },
-   "annotation_markers": "n11"
+   "annotation_markers": "c29"
   }
  ],
  "activity_schedule": [
@@ -2356,6 +2502,130 @@
   },
   {
    "annotation_marker": "t2",
+   "annotation_type": "source_note",
+   "annotation_text": "For procedures at an ETV, see ETV in Table 4.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "method": "synthesized"
+    }
+   ]
+  },
+  {
+   "annotation_marker": "t4",
+   "annotation_type": "source_note",
+   "annotation_text": "For procedures at an unscheduled visit, see V997 in Table 4.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_property",
+     "row_position": 1,
+     "method": "synthesized"
+    }
+   ]
+  },
+  {
+   "annotation_marker": "t5",
+   "annotation_type": "footnote",
+   "annotation_text": "Visits 17 through 28 are eligible to be conducted remotely (that is, by telephone, IT-assisted virtual visit, mobile healthcare, or a combination thereof) if written approval is provided by the sponsor and according to the preferences of the participant and the study site. However, no more than 34 days can elapse without an on-site study visit occurring.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 9,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 10,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 11,
+     "method": "text_match"
+    }
+   ]
+  },
+  {
+   "annotation_marker": "t6",
+   "annotation_type": "footnote",
+   "annotation_text": "Visits 17 through 28 are eligible to be conducted remotely (that is, by telephone, IT-assisted virtual visit, mobile healthcare, or a combination thereof) if written approval is provided by the sponsor and according to the preferences of the participant and the study site. However, no more than 34 days can elapse without an on-site study visit occurring",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 12,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 13,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 14,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 15,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 16,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 17,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 18,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 19,
+     "method": "text_match"
+    },
+    {
+     "table_number": 3,
+     "location_type": "schedule_cell",
+     "row_position": 1,
+     "column_position": 20,
+     "method": "text_match"
+    }
+   ]
+  },
+  {
+   "annotation_marker": "t7",
    "annotation_type": "footnote",
    "annotation_text": "V16 procedures may be conducted over more than 1 day as long as all activities are completed within the allowable visit tolerance and all scheduled activities are completed prior to dosing",
    "marker_locations": [
@@ -2369,232 +2639,240 @@
    ]
   },
   {
-   "annotation_marker": "t3",
-   "annotation_type": "footnote",
-   "annotation_text": "Visits 17 through 28 are eligible to be conducted remotely (that is, by telephone, IT-assisted virtual visit, mobile healthcare, or a combination thereof) if written approval is provided by the sponsor and according to the preferences of the participant and the study site. However, no more than 34 days can elapse without an on-site study visit occurring.",
-   "marker_locations": [
-    {
-     "table_number": 3,
-     "location_type": "schedule_property",
-     "row_position": 1,
-     "method": "synthesized"
-    }
-   ]
-  },
-  {
-   "annotation_marker": "pr2",
-   "annotation_type": "source_note",
-   "annotation_text": "For procedures at an ETV, see ETV in Table 4.",
-   "marker_locations": [
-    {
-     "table_number": 3,
-     "location_type": "schedule_property",
-     "row_position": 1,
-     "method": "synthesized"
-    }
-   ]
-  },
-  {
-   "annotation_marker": "pr3",
-   "annotation_type": "source_note",
-   "annotation_text": "For procedures at an unscheduled visit, see V997 in Table 4.",
-   "marker_locations": [
-    {
-     "table_number": 3,
-     "location_type": "schedule_property",
-     "row_position": 1,
-     "method": "synthesized"
-    }
-   ]
-  },
-  {
-   "annotation_marker": "pr1",
-   "annotation_type": "source_note",
-   "annotation_text": "See Section 8.2.2.",
-   "marker_locations": [
-    {
-     "table_number": 3,
-     "location_type": "activity_name",
-     "row_position": 13
-    }
-   ],
-   "annotation_text_source": {
-    "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
-   }
-  },
-  {
-   "annotation_marker": "n1",
+   "annotation_marker": "c5",
    "annotation_type": "footnote",
    "annotation_text": "For AESIs, additional data are collected (Section 8.3.6).",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 7
+     "row_position": 7,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n2",
+   "annotation_marker": "c7",
    "annotation_type": "footnote",
    "annotation_text": "Blood pressure, body temperature, and pulse rate. Vital signs should be measured after participant has been sitting for at least 5 minutes.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 12
+     "row_position": 12,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n3",
+   "annotation_marker": "c9",
+   "annotation_type": "source_note",
+   "annotation_text": "See Section 8.2.2.",
+   "marker_locations": [
+    {
+     "table_number": 3,
+     "location_type": "activity_name",
+     "row_position": 13,
+     "method": "synthesized"
+    }
+   ],
+   "annotation_text_source": {
+    "method": "deglyph_reconstruction",
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
+   }
+  },
+  {
+   "annotation_marker": "c10",
    "annotation_type": "footnote",
    "annotation_text": "Locally performed.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 15
+     "row_position": 15,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n4",
+   "annotation_marker": "c12",
    "annotation_type": "footnote",
-   "annotation_text": "Check compliance for Stool Frequency Rectal Bleeding Nocturnal Stools Bristol Stool Scale Urgency NRS Abdominal Pain NRS Fatigue NRS, and Patient Global Rating of Severity (PGR-S).",
+   "annotation_text": "Check compliance for\nStool Frequency\nRectal Bleeding\nNocturnal Stools\nBristol Stool Scale\nUrgency NRS\nAbdominal Pain NRS\nFatigue NRS, and\nPatient Global Rating of Severity (PGR-S).",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 17
+     "row_position": 17,
+     "method": "synthesized"
     }
    ]
   },
   {
-   "annotation_marker": "n5",
+   "annotation_marker": "c15",
    "annotation_type": "footnote",
    "annotation_text": "Fasting samples are preferred, but if participant is nonfasting at time of collection, this is not a protocol deviation.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 28
+     "row_position": 28,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n6",
+   "annotation_marker": "c17",
    "annotation_type": "footnote",
    "annotation_text": "Perform only for women of childbearing potential and women with a history of tubal ligation. At dosing visits which have pregnancy testing, the pregnancy test result must be confirmed to be negative prior to dosing. Pregnancy testing may be performed more frequently than designated on the SoA if local laws or regulations require more frequent testing.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 30
+     "row_position": 30,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n7",
+   "annotation_marker": "c22",
    "annotation_type": "footnote",
-   "annotation_text": "Only for participants who are positive for anti‑HBc at screening.",
+   "annotation_text": "Only for participants who are positive for anti-HBc at screening.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 32
+     "row_position": 32,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n8",
+   "annotation_marker": "c23",
    "annotation_type": "footnote",
    "annotation_text": "Collect samples before dosing, if dosing is scheduled. Collect additional samples at specified times relative to onset of hypersensitivity events.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 33
+     "row_position": 33,
+     "method": "synthesized"
     },
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 34
+     "row_position": 34,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n9",
+   "annotation_marker": "c24",
    "annotation_type": "footnote",
    "annotation_text": "Blood sample for DNA pharmacogenetics can be obtained any time at or after V2.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 36
+     "row_position": 36,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n10",
+   "annotation_marker": "c26",
    "annotation_type": "footnote",
    "annotation_text": "Performed at time of endoscopy. Instructions for collection are provided in the lab manual. Flexible sigmoidoscopy is recommended, except for protocol-specified reasons when a colonoscopy should be performed.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 40
+     "row_position": 40,
+     "method": "synthesized"
     }
    ],
    "annotation_text_source": {
     "method": "deglyph_reconstruction",
-    "note": "Comment-column cell read from a glyph-spread text layer (one glyph per token); words re-segmented from the raster-recovered cell band and re-read against a 200 dpi render of the page."
+    "note": "Text rebuilt from glyph-spread text layer over a full-page raster; cell bounds confirmed against the rendered page grid."
    }
   },
   {
-   "annotation_marker": "n11",
+   "annotation_marker": "c29",
    "annotation_type": "footnote",
    "annotation_text": "No dosing at V29.",
    "marker_locations": [
     {
      "table_number": 3,
      "location_type": "activity_name",
-     "row_position": 45
+     "row_position": 45,
+     "method": "synthesized"
     }
    ]
+  }
+ ],
+ "review_items": [
+  {
+   "id": "D8",
+   "severity": "medium",
+   "location": {
+    "page": 33
+   },
+   "call_made": "Table 3 is typed 'track' (track_label 'Nonresponders'): it applies only to participants who are nonresponders at Week 12, mutually exclusive with Table 2, although both number their visits V10-V29.",
+   "alternative": "Type it 'domain' of Table 2 (same visit columns) or 'main_soa'.",
+   "report_section": "T3.1"
+  },
+  {
+   "id": "D9",
+   "severity": "high",
+   "location": {
+    "page": 38
+   },
+   "call_made": "'Table 3 (continued)' (pages 38-42, V20-V29) is treated as the second column tile of one tiled Table 3; rows unioned by name, redacted 'CCI' rows matched across tiles by position.",
+   "alternative": "Extract 'Table 3 (continued)' as a separate continuation table, or match redacted rows differently.",
+   "report_section": "T3.2"
+  },
+  {
+   "id": "D10",
+   "severity": "medium",
+   "location": {
+    "page": 33,
+    "row_position": 1,
+    "annotation_marker": "t5"
+   },
+   "call_made": "The remote-visit note 'Visits 17 through 28…' is bound to the V17-V19 cells (tile 1, t5) and V20-V28 cells (tile 2, t6; tile-2 text lacks the final period); the V16 multi-day note (t7) is bound to the V16 cell.",
+   "alternative": "Bind both notes to the Visit number row as table-wide notes, or merge the two remote-visit variants.",
+   "report_section": "T3.5"
   }
  ]
 }

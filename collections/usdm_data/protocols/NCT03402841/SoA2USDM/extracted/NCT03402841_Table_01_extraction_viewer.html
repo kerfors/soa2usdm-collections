@@ -60,7 +60,7 @@
 </style>
 </head>
 <body>
-    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03402841" title="This protocol's row on the collection index">NCT03402841</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 1 extraction data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <span class="pnav-cur">T1</span> <a href="../../SoA2USDM/extracted/NCT03402841_Table_02_extraction_viewer.html">T2</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03402841_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT03402841_Table_02_resolved.html">T2</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03402841_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03402841_uncertainty_report.html">extraction log</a></div></nav>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03402841" title="This protocol's row on the collection index">NCT03402841</a><span class="pnav-sep">›</span><span class="pnav-cur">Table 1 extraction data</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <span class="pnav-cur">T1</span> <a href="../../SoA2USDM/extracted/NCT03402841_Table_02_extraction_viewer.html">T2</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03402841_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT03402841_Table_02_resolved.html">T2</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03402841_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03402841_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03402841_uncertainty_report.html">extraction log</a></div></nav>
     <div class="toolbar">
         <div class="title">NCT03402841 — Table 1 extraction data</div>
         <div class="raw-link"><a href="NCT03402841_Table_01_extraction.json" download>raw json</a></div>
@@ -74,8 +74,9 @@
   "schema_name": "soa-table-extraction",
   "schema_version": "1.0",
   "extraction_metadata": {
-    "extracted_at": "2026-08-17T00:00:00Z",
-    "extractor": "Claude Opus 5 (claude-opus-5) — prompt v3.7.3 single-pass",
+    "extracted_at": "2026-09-27T13:02:07Z",
+    "extractor": "Claude, PDF_TO_JSON_PROMPT single-pass",
+    "prompt_version": "3.8.1",
     "source_document": {
       "filename": "NCT03402841_soa.pdf",
       "document_type": "protocol",
@@ -83,16 +84,17 @@
       "document_date": "26 October 2018"
     },
     "extraction_status": "ready_for_resolution",
-    "extraction_notes": "Table 1 is the screening schedule. One leading label column (L=1: the activity-name column, which also carries the 'Day' header-row label); first data column position is 2. Column boundaries confirmed from the page raster rule lines at x=85.0, 442.6, 497.8, 551.0 pt on both pages — three columns, no merged cells anywhere in the table. Header row reprints on document page 41 and was de-duplicated. The unmarked 'Note: MRI/ CT scan ...' line printed between footnotes e and f carries the synthesised marker 'note1'."
+    "extraction_notes": "Text-layer PDF with vector rule lines; marks verified by pdftotext -bbox column binning against visual read of 300 dpi renders. Only non-empty body cells are emitted in activity_schedule. Document page numbers from PAGEMAP.md (PDF p1-5 = doc p40-44).",
+    "model": "claude-opus-5-5"
   },
   "table_metadata": {
     "table_number": 1,
     "table_type": "main_soa",
     "table_title": "Study Schedule – Screening (Visit 1)",
-    "table_purpose": "Screening-visit (Visit 1) assessments, split between activities performed before the screening period opens and activities performed on Days -28 to -1.",
+    "table_purpose": "Screening procedures (Visit 1)",
     "page_start": 40,
     "page_end": 41,
-    "notes": "Typed main_soa rather than a track of Table 2: the taxonomy states that where a protocol carries independent Screening and Treatment schedules with different column structures, each is main_soa. Table 1 has its own two-column screening timeline ('Before screening period', '-28 to -1') that shares no visit with Table 2, and both tables schedule the same participants (all enrolled patients), so it is neither a domain nor a track of Table 2. Body rows run across document pages 40 and 41 under one repeated header; extracted as one table rather than a parent + continuation pair."
+    "notes": "Independent screening schedule with its own column structure (Before screening period / Day -28 to -1); Table 2 covers on-study visits with different columns. Per taxonomy, independent Screening and Treatment tables with different column structures are each main_soa. Header row reprinted on p41 and de-duplicated."
   },
   "schedule_properties": [
     {
@@ -105,8 +107,8 @@
         "cell_value": "Day"
       },
       "property_type": "study_day",
-      "property_comment": "Single header row. The row label cell reads 'Day'; its two data cells give the screening timing of each activity — 'Before screening period' (activities done before the -28 to -1 window opens) and '-28 to -1' (study days relative to Day 1). Typed study_day because the printed row label is 'Day' and the second value is an explicit study-day range; the first value ('Before screening period') is a phase-style qualifier rather than a day number, which is noted in the uncertainty report.",
-      "hierarchical_level": 1
+      "hierarchical_level": 1,
+      "property_comment": "Only header row: timing of screening procedures relative to Day 1 ('Before screening period', '-28 to -1'). Labelled 'Day' in the source and the second value is a day range, so study_day."
     }
   ],
   "schedule_grid": [
@@ -292,7 +294,7 @@
         "indentation_level": 0,
         "indentation_method": "assumed_flat"
       },
-      "annotation_markers": "e,note1"
+      "annotation_markers": "e,n1"
     },
     {
       "table_number": 1,
@@ -507,7 +509,7 @@
       ]
     },
     {
-      "annotation_marker": "note1",
+      "annotation_marker": "n1",
       "annotation_type": "footnote",
       "annotation_text": "Note: MRI/ CT scan more than 28 days prior to Day 1 may be acceptable, please consult with AstraZeneca.",
       "marker_locations": [
@@ -515,7 +517,7 @@
           "table_number": 1,
           "location_type": "activity_name",
           "row_position": 16,
-          "method": "synthesized"
+          "method": "proximity"
         }
       ]
     },
@@ -543,8 +545,33 @@
         }
       ]
     }
+  ],
+  "review_items": [
+    {
+      "id": "D1",
+      "severity": "medium",
+      "location": {
+        "page": 41,
+        "row_position": 16,
+        "annotation_marker": "n1"
+      },
+      "call_made": "The unmarked line 'Note: MRI/ CT scan more than 28 days prior to Day 1 may be acceptable...' printed directly under footnote e is kept as its own footnote (synthesised marker n1) and attached to the Tumour assessment row by proximity to footnote e.",
+      "alternative": "Treat the Note as the tail of footnote e (append its text to e and drop n1), or leave it unattached as a table-level note.",
+      "report_section": "2.3"
+    },
+    {
+      "id": "D2",
+      "severity": "medium",
+      "location": {
+        "page": 40
+      },
+      "call_made": "Table 1 (screening) and Table 2 (on-study) are both typed main_soa, as two independent schedules with different columns for the same participants.",
+      "alternative": "Type Table 1 as the single main_soa and Table 2 as a track (treatment/follow-up phase), or vice versa.",
+      "report_section": "1"
+    }
   ]
-};
+}
+;
     
     function escHtml(s) {
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

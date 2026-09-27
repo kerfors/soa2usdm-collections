@@ -1,266 +1,92 @@
 # NCT04573309 — SoA extraction uncertainty report
 
-Source: `NCT04573309_soa.pdf` (4 PDF pages), "Protocol Amendment 3.1 (US)", "18 Mar 2022",
-sponsor study "ALXN1840-WD-204". Document pages taken from `PAGEMAP.md`
-(PDF 1-4 = document pages 14-17); the printed footers happen to agree with the map on this
-excerpt, but the map was used throughout.
+Source: NCT04573309_soa.pdf (4 PDF pages = document pages 14–17 per PAGEMAP.md; Protocol Amendment 3.1 (US), ALXN1840-WD-204, 18 Mar 2022). No protocol markdown was available, so all text comes from the PDF text layer.
+Prompt version 3.8.1. Two tables extracted.
 
-Two tables were found and extracted:
+## Decisions needed (4)
 
-| File | Table | Type | Doc pages | Label cols (L) | First data col | Data cols | Activities | Annotations |
-|---|---|---|---|---|---|---|---|---|
-| `NCT04573309_Table_01_extraction.json` | Table 1 "Schedule of Activities" | `main_soa` | 14-16 | 1 | 2 | 24 (positions 2-25) | 44 | 24 |
-| `NCT04573309_Table_02_extraction.json` | Table 2 "Schedule of Pharmacokinetic and Pharmacodynamic Assessments on Days 1, 25, 29, and 39" | `subsidiary` | 17 | 1 | 2 | 11 (positions 2-12) | 2 | 3 |
+| # | where | call made | alternative | detail |
+|---|---|---|---|---|
+| D1 | Table 1, p.14, header rows 1–2 | The top header band (Screening / C-I / UNS / EOS or ET) is typed as study phase (epoch, level 1) and the second band (Inpatient Period 1 / OP / Inpatient Period 2) as sub-periods (period, level 2). Both names are synthesised because the only label cell reads "Study Procedures". | Type the top band as visit categories (visit), since Screening, Check-in, Unscheduled and EOS/ET read like visit names, and keep the second band as epoch. | 2.2 |
+| D2 | Table 1, p.14, rows 23–24 (Discontinue chelation therapy / Discontinue zinc therapy) | The arrow after each X is spread as "→" over every following column through the EOS column (chelation: X at Day -4 through -1, → over columns 8:25; zinc: X at Day -21, → over 4:25), including the UNS column, because the drawn arrowhead ends inside the EOS column. | Stop the span at Day 40 (column 23) and treat the arrowhead running into UNS/EOS as drawing slack. Or keep only the X and read the arrow as "stays discontinued for the rest of the study", with no per-column entries. | 2.3 |
+| D3 | Table 1, p.15, row 31 (PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu) | The row is transcribed with no marks, exactly as printed. | Treat it as the second half of the PK blood-sampling row (row 30), split by the page break (Table 2 prints PK and PD in one cell that shares its marks), and copy row 30's marks onto it: Days 1, 4-7, 25, 26-28, 29, 30-35, 36, 37-38, 39 and 40, with footnote p at Days 1, 25, 29 and 39. | 2.4 |
+| D4 | Table 2, p.17, rows 2–3 | The single body cell, which lists the PK sampling label and the PD label on separate lines under one set of marks, is split into two activities that match the two Table 1 rows, and every mark is emitted on both. | Keep one combined activity ("Blood sampling for PK … / PD: …") that carries the marks once. | 3.2 |
 
----
+## Recorded, not open (9)
 
-## 1. Per table
+- §2 classification: Table 1 = main_soa. Table 2 = subsidiary: it gives hour-level timing for the Table 1 PK/PD sampling activities on Days 1, 25, 29 and 39, and Table 1 footnotes o and p point to it.
+- §2 / type definitions (a page break inside one printed table is not a continuation): Table 1 runs from p.14 to p.15 under a reprinted header. It is extracted as one table and the header is de-duplicated.
+- §5 label columns: L = 1 in both tables. The first data column is position 2. Table 1 uses data positions 2–25 and Table 2 uses 2–12.
+- §5 merged header cells: row 1 "Screening" 2:3, blank 5:23; row 2 "Screening" 2:3, "Inpatient Period 1" 5:12, "Inpatient Period 2" 15:23. All spans come from the raster rule lines.
+- §6 header-cell footnotes: a (Screening, on both covered cells 2 and 3), b (C-I, col 4), d (UNS, col 24) and e (EOS or ET, col 25) sit on row-1 grid cells. c (OP, col 13) sits on a row-2 grid cell.
+- §6 abbreviations: the abbreviation blocks under Tables 1 and 2 have no term printed as a marker, so no abbreviation annotations were emitted.
+- §6 the "Note:" paragraph under Table 2 has no printed marker. It is emitted as footnote n1 (a synthesised marker), bound table-wide to the time-point property row with method "synthesized".
+- §3 literal header: in row 2, the Day 23 cell (col 14) is blank and not part of "Inpatient Period 2", although footnote v puts Period 2 at Day 23 to Day 40. It is transcribed as printed.
+- §5 vertical merge: the Table 2 marks sit in one cell that spans both activity lines, so each mark is emitted on both activities. See D4 for the split itself.
 
-### Table 1 — `main_soa`, document pages 14-16
+## 1. Method
 
-Primary anchor grid: rows are procedures performed on participants, columns are the study's
-own day/period timeline. No competing anchor exists, so `main_soa` needs no further argument.
+- Both pages have a normal text layer and vector rule lines. The text is not glyph-spread, so no §1c reconstruction was needed.
+- Column boundaries came from vertical rules detected in a 200 dpi raster (identical on pp.14 and 15). Horizontal spans and the Table 2 single body cell came from the raster rules too.
+- **Mechanical mark-check (§1b):** pdftotext -bbox X-tokens were binned to the rule-line columns and compared with the delivered matrix. Table 1 has 212 X marks (including the 2 X marks where the arrows start), and the bbox and delivered matrices agree exactly (0 differences). Table 2 has 8 X positions, bbox-binned with no difference.
+- Footnoted marks tokenise as a separate small glyph ("X" + "g"). The markers were attached from those glyphs and from the visual read.
+- The arrows are vector lines, so their extents were measured from the raster (method `raster_pixel_detection` on the "→" cells). Chelation line: x 349–711 pt. Zinc line: x 235–711 pt. The EOS column spans 692.8–742.3 pt.
 
-**Activity rows per page across the declared range**
+## 2. Table 1 — Schedule of Activities (main_soa), pp.14–16
 
-| Doc page | Activity rows |
-|---|---|
-| 14 | 27 (rows 4-30, `Eligibility` … `Blood sampling for PK: Plasma total Mo and PUF-Mo`) |
-| 15 | 17 (rows 31-47, `PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu` … `Concomitant medication and non-pharmacologic therapy/procedure`) |
-| 16 | **0 — declared exception.** Page 16 carries no grid at all: it is the tail of the footnote block (markers i through x) plus the abbreviation block, beginning "Parameters include age and sex." and ending "…WD = Wilson disease." It is inside the page range because the table's footnotes run onto it. |
+### 2.1 Counts and page coverage
+- 25 columns (1 label + 24 data columns: 22 day columns, UNS, EOS/ET). 3 schedule_property rows.
+- 44 activity rows (rows 4–47), including 8 mark-free section headers: Eligibility, Study Administration, Enrollment, Administration of Study Intervention, PK/PD Analyses, Safety Assessments / Laboratory Analyses, Balance assessments, Other.
+- Activity rows per page: p.14 = 27 (rows 4–30); p.15 = 17 (rows 31–47); **p.16 = 0**. Page 16 carries only footnotes i–x and the abbreviation list, which is why page_end = 16.
+- 24 footnote annotations (a–x). All are footnotes, since none is a bare "See …" pointer.
 
-The three header rows are **reprinted verbatim** at the top of page 15. They were counted once
-(row positions 1-3) and are not duplicated in `schedule_properties` / `schedule_grid`.
+### 2.2 Header typing (D1)
+The label column for header rows 1–2 is one merged cell reading "Study Procedures", so "Study Phase" (row 1) and "Period" (row 2) are synthesised names (`structure_method: inferred_from_layout`). Row 3 is labelled "Days" (study_day). The UNS column has an empty Days cell and is told apart only by row 1.
 
-**One table or two?** The page-15 grid repeats the identical header and simply continues the
-row list; the source labels only one "Table 1". It is emitted as ONE table spanning pages 14-16
-rather than as a parent plus a `continuation` table. Either modelling reconstructs the same
-consolidated grid; flagging it because the choice is visible in the file count.
+### 2.3 Arrows (D2)
+Two rows carry arrows:
+- Row 23: X at col 7, then "→" over 8:25.
+- Row 24: X at col 3, then "→" over 4:25.
 
-### Table 2 — `subsidiary`, document page 17
+In the zinc row the arrow line is drawn over the X marks of other rows' columns with slight vertical drift, but it runs continuously from col 3 to col 25.
 
-`subsidiary` rather than `reference` or `track`: its rows are assessments performed on
-participants (so not `reference`), it schedules the same participants in the same treatment
-period (so not `track`), and its columns are a finer timing grid — hours post-dose — for
-activities that Table 1 carries as whole rows. Table 1 footnote o points at it explicitly:
-"…See Table 2 for PK/PD sampling on Days 1, 25, 29," and footnote p repeats the pointer. This is
-the PK-sampling ambiguity named in prompt §2 and is recorded in `table_metadata.notes`.
+### 2.4 PK/PD rows across the page break (D3)
+The last row on p.14 is the PK sampling row, which carries marks. The first row on p.15 is the PD row, which has none. Table 2 prints the same two labels inside one cell that shares its marks, so the Table 1 PD row may originally have been part of the same row. Only what is printed was transcribed.
 
-Page 17 contributes both activity rows.
+### 2.5 Activity labels and markers
+- Markers were stripped from the labels: "Discharge from unit" (f); "Follicle-stimulating hormone (post-menopausal females only)" (h, printed inside the parenthesis); "Medical history/demographics" (i); "WD history" and "Prior WD treatment" (j); "Physical examination" (k); "Height, weight, and BMI" (l, printed after "Height"); "Chemistry, hematology, Coagulation" (q); "Retained serum sample (safety)" (t); "Vitals sign measurements" (u, spelling as printed); "Cu/Mo-controlled meals" (v); "24-hour urine for Cu and Mo" (w); "Feces for Cu and Mo" (x). Footnote m sits on the section header "Administration of Study Intervention" and footnote o on "PK/PD Analyses".
+- **Marker s:** bbox confirms that the final "s" in "Urine/serum pregnancy tests" and "menstruation checks" is a separate superscript glyph. It is therefore footnote s, and the names are "Urine/serum pregnancy test" and "… menstruation check". Footnote s covers both topics, which supports this reading.
+- **Cell markers:** g on row 8/col 13, row 33/col 13 and row 34/col 13. n on row 28/col 13. p on row 30 at cols 8, 16, 18 and 22. r on row 33 at cols 7 and 17.
+- Indentation comes from the font signal: section headers are bold on grey shading (level 0) and the rest are level 1.
+- Section references appear only inside footnote text (Section 8 in note a, Section 10.2 in note s), not in activity labels, so no source_note annotations were emitted.
 
----
+## 3. Table 2 — PK/PD Assessments on Days 1, 25, 29, 39 (subsidiary), p.17
 
-## 2. Structure decisions that changed the row/column count
+### 3.1 Counts
+- 12 columns (1 label + 11 time points: −0.5 to 24 h). 1 schedule_property row ("Time point (hours)", timepoint, marker a).
+- 2 activity rows (p.17 = 2), with 8 marks each at −0.5, 2, 4, 5, 6, 8, 12 and 24 h. The 24 h mark carries marker b.
+- 3 annotations: a, b and n1 (synthesised).
+- The 0, 1 and 3 h cells are empty and were left empty.
 
-### 2a. Table 2 — one printed cell, two emitted activities (biggest single judgement call)
-
-Rule-line recovery on page 17 finds only three horizontal rules (table top, below the header,
-table bottom): the body is **one** rule-bounded row. Its label cell holds four text lines naming
-two assessments — "Blood sampling for PK: Plasma total Mo and PUF-Mo" and
-"PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu" — with a single row of
-marks vertically centred across all four lines (which is why the text layer prints the marks
-*between* the two names).
-
-Decision: emitted as two activities (`row_position` 2 and 3) with the centred marks applied to
-both, per the vertically-merged-mark convention (§5). Rationale: those are two separate activity
-rows in Table 1, so a fused single name would match neither parent activity downstream. **This is
-an extraction decision, not a printed row split** — a reviewer who prefers strict row fidelity
-should collapse rows 2 and 3 into one. Recorded in `table_metadata.notes`.
-
-### 2b. Table 1 — the PK/PD mark row split by the page break (marks left where printed)
-
-Row 30 "Blood sampling for PK: Plasma total Mo and PUF-Mo" is the last body row on page 14 and
-carries 10 marks. Row 31 "PD: Plasma total and PUF-Cu, LBC, ceruloplasmin, ceruloplasmin-bound Cu"
-is the first body row on page 15 and carries **none**. In Table 2 the same two assessments share
-one merged mark cell, so this is probably the same vertical merge, broken by the page break — but
-the page break puts the two cells on different pages, so the merge cannot be confirmed from
-rule-line geometry, and every internal vertical rule is present in both bands.
-
-Decision: **transcribed as printed** — the marks stay on row 30 and row 31 is empty. If a reviewer
-resolves this as a vertical merge, row 31 should receive the same 10 marks
-(columns 8, 10, 16, 17, 18, 19, 20, 21, 22, 23). Recorded in `table_metadata.notes`.
-
----
-
-## 3. Merged cells and distributed marks
-
-### Header merges (Table 1) — all confirmed from per-band rule-line presence, not from glyph position
-
-| Row | Cell | Columns | `merged_cell_range` |
-|---|---|---|---|
-| 1 | "Screening" (marker a) | 2-3 | `2:3` |
-| 1 | *empty* | 5-23 | `5:23` |
-| 2 | "Screening" | 2-3 | `2:3` |
-| 2 | "Inpatient Period 1" | 5-12 | `5:12` |
-| 2 | "Inpatient Period 2" | 15-23 | `15:23` |
-
-`C-I` (col 4), `OP` (col 13), `UNS` (col 24) and `EOS or ET` (col 25) are single-column cells.
-
-**Transcribed, not repaired:** in header row 2 the Day 23 column (position 14) has an **empty**
-period cell — "Inpatient Period 2" starts at Day 24 (col 15) — while footnote v states the diet
-runs "…throughout both the inpatient Period 1 (Day -8 to Day 9) and inpatient Period 2 (Day 23 to Day 40); during this time participants will be strongly encouraged to…"
-and footnote c says participants may be "…readmitted on Day 22 with all procedures starting on Day 23."
-The empty cell is what the rules and the page render both show; it was left empty.
-
-### Body merges (Table 1)
-
-**None.** For every one of the 44 body bands on both grid pages, all 24 internal vertical rules
-are present at ≥85% contiguous coverage of the band. No mark was distributed across columns by
-merge.
-
-### Arrows (Table 1) — distributed per §5
-
-Two rows carry a drawn horizontal arrow (vector graphics, invisible to the text layer); extents
-were measured from the raster and confirmed on a rendered crop.
-
-| Row | Activity | Printed X | Arrow columns | `source_range` | `cell_value` |
-|---|---|---|---|---|---|
-| 23 | "Discontinue chelation therapy" | col 7 (Days -4 through -1) | 8-25 | `8:25` | `→` |
-| 24 | "Discontinue zinc therapy" | col 3 (Day -21) | 4-25 | `4:25` | `→` |
-
-Both arrowheads terminate **inside** the last column (25, `EOS or ET`); both lines cross the
-`UNS` column (24) continuously, so column 24 carries the arrow as drawn. Cells method =
-`visual_read` (40 cells).
-
-### Table 2
-
-The single centred mark row was applied to both emitted activity rows (see 2a). No column-level
-merge exists in Table 2; marks are at hours −0.5, 2, 4, 5, 6, 8, 12, 24 (columns 2, 5, 7, 8, 9,
-10, 11, 12). Hours 0, 1 and 3 are **unmarked in the source** and were left unmarked.
-
----
+### 3.2 Combined cell (D4)
+There is no horizontal rule between the PK and PD labels in any data column (raster rules found only at y=130 and y=181 pt), so this is one cell. The labels match the separate Table 1 rows 30 and 31.
 
 ## 4. Synthesised values
+- Property names: T1 row 1 "Study Phase" and T1 row 2 "Period".
+- Annotation marker: T2 "n1" (the Note paragraph).
 
-**Synthesised `property_name` (Table 1, 2):** header rows 1 and 2 have no printed row label — the
-label column carries "Study Procedures" merged over both. Names synthesised as **"Visit"**
-(row 1: `Screening`, `C-I`, `UNS`, `EOS or ET`) and **"Study Period"** (row 2: `Screening`, `C-I`,
-`Inpatient Period 1`, `OP`, `Inpatient Period 2`), both with
-`property_name_source.synthesized: true` and `structure_method: "inferred_from_layout"`.
-Row 3's label "Days" is printed, so it carries no synthesis flag.
+## 5. Annotation text integrity
+- The text layer is clean, not glyph-spread. Footnote text is joined from the line-wrapped text layer.
+- No annotation's text is contained in another's. Footnotes o and p both reference Table 2, but their wording is distinct and both are source-faithful.
+- Every footnote is bounded by its printed marker, so no proximity bounding was used.
 
-**Synthesised annotation marker (Table 2, 1):** the unmarked paragraph beginning
-"Note: Windows for PK/PD time points will be defined as ±10% of the nominal time point." carries no
-printed marker. Marker synthesised as **`note1`**, bound to `schedule_property` row 1 with
-`method: "synthesized"`, and mirrored in that property's `annotation_markers` so `resolve` can
-link it.
+## 6. Orphan risk
+- None. Every annotation has at least one marker_location, and every location's marker also appears on its element's annotation_markers (checked programmatically).
+- No marker is referenced without a definition.
 
-**No synthesised markers in Table 1** — every one of its 24 annotations has a printed marker
-(a-x).
-
----
-
-## 5. Mechanical mark-check
-
-Method (both tables, one method for the whole document):
-
-1. **Rule-line geometry from the raster (§1d)** — pages rendered at 200 dpi (`pdftoppm -r 200`),
-   ink = pixels below 50% grey. Vertical rules = image columns with ink over ≥50% of the table
-   height; horizontal rules = image rows with ≥85% ink **within the label column's x-range**
-   (a text column, per §1d) applied across the row.
-   * Pages 14 and 15 give the **identical** 26 vertical rules → 1 label column + 24 data columns,
-     which is itself the check that the page-15 header is the same grid.
-   * Page 17 gives 13 vertical rules → 1 label + 11 timepoint columns, and 3 horizontal rules.
-2. **Column identity fixed from the header** (`Days` row / `Time point (hours)` row), never from
-   body marks.
-3. **Mark matrix from `pdftotext -bbox`** — every token's box centre binned to the column band it
-   falls in and to the row band it falls in. A trailing single-letter token inside the same cell
-   (e.g. the `p` of `X`+`p`) is taken as an annotation marker, not as part of `cell_value`, so
-   footnoted marks are never dropped.
-4. **Per-band merge test** — for every row band, each internal vertical rule is tested for a
-   contiguous ink run covering ≥85% of the band. This is what produced the header merge table in
-   §3 and what established that no body cell is merged.
-5. **Diff against visual reads** of the full-page renders and of two header crops.
-
-**Disagreements between the mechanical matrix and the visual read: none.** Spot checks that were
-resolved in favour of the mechanical read (my first eyeball estimate of the column was off by one
-in each case, the bbox x-centre was right): `Vitals sign measurements` Day 9 (col 12, x-centre
-1193.5 px, band 1174-1212) and `Chemistry, hematology, Coagulation` Day 8 (col 11, x-centre
-1156.3 px, band 1137-1174).
-
-Totals: Table 1 — 212 `X` cells + 40 arrow cells = 252 `activity_schedule` entries; Table 2 — 16.
-
----
-
-## 6. Annotation text integrity
-
-* **The text layer is not glyph-spread.** Words come out whole from `pdftotext`; no
-  de-glyphing was needed and no `deglyph_reconstruction` provenance is recorded. Footnote text was
-  read from the text layer and joined across printed line wraps only.
-* **Containment / overlap check: clean.** No annotation's text is contained in another's, and no
-  pair shares a run of ≥6 words, in either table.
-* **One boundary needed care.** In the text layer footnote x is immediately followed, with no
-  blank line, by the abbreviation block
-  ("Abbreviations: AE = adverse event; BMI = body mass index; C-I = check-in;…"). Footnote x was
-  cut at its own last word — "For fecal samples, each individual sample will be independently collected with record of date, time, and weight of the sample." — and the abbreviation list was
-  **not** appended to it. Verified against the page 16 render.
-* **Abbreviation blocks yielded zero annotations, in both tables** (§6): no term in either block
-  is printed as a *marker* on a grid cell, a header cell or an activity label. Terms such as
-  `C-I`, `OP`, `UNS` are header cell *contents*, and those columns already carry their own printed
-  footnote markers (b, c, d); binding the abbreviation entries to activities whose names contain
-  the term would be exactly the `text_match` binding §6 forbids. Terms `AE`, `D` and `HR` do not
-  appear in either grid at all.
-* All 27 annotations are typed `footnote`. Nothing is a bare pointer: footnote a explains and then
-  cites ("…are detailed in Section 8."), and footnotes o and p both explain before pointing at
-  Table 2. No activity label carries an inline section/appendix reference, so no `source_note` was
-  emitted.
-
----
-
-## 7. Low-confidence calls
-
-1. **Table 2 = two activities from one printed cell** (§2a) — the single most reviewable decision.
-2. **Table 1 row 31 left empty** (§2b) — probable cross-page vertical merge, deliberately not
-   resolved.
-3. **Page 16 inside Table 1's range** — the page has no grid; included because the footnote block
-   continues onto it. Contributes 0 activity rows by design.
-4. **Table 1 emitted as one table, not parent + `continuation`** (§1).
-5. **`property_type` for the two synthesised header rows** — row 1 typed `visit` (its distinctive
-   values `UNS` and `EOS or ET` are encounters; it is the only row that tells column 24 from its
-   neighbours) and row 2 typed `period` (the source's own word: "Inpatient Period 2"). Both rows
-   also repeat `Screening` and `C-I`, so an alternative reading types row 1 `epoch`. The
-   hierarchy 1=Visit / 2=Period / 3=Days follows the printed stacking, which puts the visit-ish
-   row above the period row.
-6. **Arrows crossing the `UNS` column** — columns 24 and 25 receive the arrow because the drawn
-   line crosses column 24 and the arrowhead lands in column 25. A reader who treats `UNS` as
-   out-of-timeline would stop the span at 23.
-7. **Source-internal inconsistencies transcribed as printed, not repaired** (no data changed):
-   * Header row 2 leaves Day 23 outside "Inpatient Period 2" (§3) although footnote v and
-     footnote c both put Day 23 inside it.
-   * "ALXN1840 30 mg/day" carries no mark at Day 40 (col 23), though Day 40 is a dosing/discharge
-     day elsewhere in the table.
-   * "Cu/Mo-controlled mealsv" carries no mark at Day -8 (col 4) or Day 9 (col 12), though
-     footnote v says the diet runs Day -8 to Day 9.
-   * Footnote r reads "Laboratory assessment including chemistry, hematology, and coagulation parameters should be performed on Days -8, -1, 8, 23, and 28 only." while its two `X`+`r`
-     cells sit on the ranged columns "-4 through -1" (col 7) and "26-28" (col 17); the un-footnoted
-     `X`s on that row cover Days -8, 8 and 23. Consistent, but worth a reviewer's eye.
-8. **No full-protocol markdown was supplied**, so no PDF/markdown text comparison was possible;
-   all text comes from the PDF text layer, all structure from the PDF rule geometry.
-
----
-
-## 8. Orphan risk
-
-**None.** All 27 annotations (24 in Table 1, 3 in Table 2) carry ≥1 `marker_locations` entry, and
-every location was verified programmatically to (a) point at an element that exists and (b) have
-its marker present in that element's own `annotation_markers` string — the binding `resolve`
-actually uses. No marker is referenced without a printed definition, and no footnote definition
-is unused.
-
-Marker a in Table 1 sits on a header cell merged across columns 2-3; it is recorded on **both**
-covered `schedule_grid` positions. Per-column header markers (a on cols 2-3, b on col 4, c on
-col 13, d on col 24, e on col 25) are on the grid cells, not on the `schedule_property` rows, so
-each footnote keeps the column it governs.
-
-## 9. Method provenance (every non-default method recorded)
-
-| Where | Field | Value | Count |
-|---|---|---|---|
-| Table 1, header rows 1-2 | `schedule_property.structure_method` | `inferred_from_layout` | 2 |
-| Table 1, all activities | `activity_name_source.indentation_method` | `font_signal` (bold + grey shading marks the 8 section headers as level 0; no leading whitespace exists in the text layer) | 44 |
-| Table 1, arrow cells | `activity_schedule.method` | `visual_read` (vector arrows are absent from the text layer) | 40 |
-| Table 2, both activities | `activity_name_source.indentation_method` | `assumed_flat` | 2 |
-| Table 2, `note1` | `marker_locations[].method` | `synthesized` | 1 |
-
-**`unresolved` marker locations: none.** No annotation target was guessed; every location is a
-printed marker except the one synthesised `note1` anchor above.
+## 7. Method provenance (non-default)
+- T1 rows 23 and 24: the "→" cells use `method: raster_pixel_detection` (arrow extents measured from the raster).
+- T1 and T2 activities: `indentation_method` is `font_signal` (T1) and `assumed_flat` (T2).
+- T1 schedule_property rows 1–2: `structure_method: inferred_from_layout`.
+- T2 annotation n1: its marker_location uses `method: synthesized`.
+- There are no `unresolved` locations.
