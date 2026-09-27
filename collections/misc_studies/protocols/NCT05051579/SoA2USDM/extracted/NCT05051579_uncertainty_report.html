@@ -35,100 +35,147 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">misc_studies</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT05051579" title="This protocol's row on the collection index">NCT05051579</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT05051579_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT05051579_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT05051579_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05051579_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT05051579 — SoA extraction uncertainty report
-
-Prompt 3.8.1, single pass. Source: NCT05051579_soa.pdf (6 PDF pages = document pages 13-18 per PAGEMAP.md; printed footers read 12-17, i.e. one lower, and were ignored). No protocol markdown was available, so all text comes from the PDF text layer.
-
-## Decisions needed (6)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p.17, rows 67-69 (Pharmacokinetic (PK) sample / Predose / Postdose) | The PK row is split into a parent row with no marks and two child activities, &quot;Predose&quot; and &quot;Postdose&quot;, each with its own X marks. The words Predose/Postdose sit where the Visit 1 (Screening) column is, but they are read as row sub-labels, so Visit 1 gets no PK entry. | Treat &quot;Predose&quot;/&quot;Postdose&quot; as the Visit 1 cell content, or emit two flat activities &quot;Pharmacokinetic (PK) sample - Predose&quot; / &quot;- Postdose&quot;. | 4.2 |
-| D2 | p.16, rows 49-51, note n11 | The note &quot;Collect serum estradiol, FSH, and LH in women whose menopausal status needs to be determined...&quot; is printed under the FSH row only. It is bound to FSH by position, and also to LH and Estradiol because it names those tests. | Bind the note only to the FSH row it sits under. | 4.4 |
-| D3 | p.13, header row 1, note n1 | The sentence inside the &quot;Study Period II Treatment Period&quot; header cell (&quot;For early terminations ... Shaded columns represent the dose escalation period Weeks 0-16.&quot;) is moved out of the header value and recorded as a note on each Treatment Period column (Visits 3-18). | Keep the sentence as part of the header text, or scope it to the whole table (or only to the ET column / shaded columns it mentions). | 4.4 |
-| D4 | p.13, header row 6 (Fasting Visit) | &quot;Fasting Visit&quot; is recorded as a header row that marks which visits are fasting visits, not as an activity. | Record &quot;Fasting Visit&quot; as an activity row with X marks. | 4.1 |
-| D5 | p.15, row 37 (Participant Survey), note n10 | The note &quot;administer at early termination if it occurs before 26 weeks&quot; is bound to the Participant Survey activity as a whole. | Bind it only to the Participant Survey ET cell (column 20), because it governs the ET mark. | 4.4 |
-| D6 | p.13, header row 2 | The second header band (&quot;Screening&quot; over Visit 1, &quot;Lead-In&quot; over Visit 2) is typed as `period` (sub-phases of Study Period I) at level 2. | Type it as `epoch`, or as visit names. | 4.1 |
-
-## Recorded, not open (6)
-
-- One table, not continuations (taxonomy &quot;a page break inside ONE printed table is not a continuation&quot;): the header reprints on pages 14-18 with no new table number or caption.
-- De-duplication (§1b): the header rows and the Fasting Visit row reprint on all 6 pages and are counted once.
-- Leading label columns (§5): L = 1, so the first data position is 2. Visit 1-18 map to positions 2-19, ET to 20 and 801 to 21.
-- Abbreviation list (§6): the &quot;Abbreviations:&quot; block under the table on p.18 has no in-grid markers, so it yields 0 annotations.
-- Notes without printed markers (§6): full-width note sub-rows were given synthesised markers n1-n13 and bound with `method: synthesized` to the row they sit under.
-- Section membership across page breaks (§4): &quot;Vital signs&quot; (p.14) continues the Physical Evaluation section and &quot;C-SSRS&quot; (p.16) continues Clinician-Administered Assessments. Neither page reprints a section header, so these rows are indentation 1 under the previous section.
-
-## 1. Table summary
-
-- Table 01: `main_soa`, &quot;Schedule of Activities (SoA)&quot; (Section 1.3), document pages 13-18.
-- 20 data columns (positions 2-21) and 6 header rows (schedule_properties 1-6).
-- 71 activity rows (row positions 7-77): 9 section headers at level 0, 60 activities at level 1, and 2 PK sub-rows at level 2 (D1).
-- 372 X marks and 13 annotations.
-- Activity rows per page: p13 = 12, p14 = 10, p15 = 11, p16 = 16, p17 = 14, p18 = 8. Every page in the range contributed rows.
-
-## 2. Merged marks
-
-- No body mark is merged across columns. Every X sits in its own ruled cell, and the per-column bbox binning matched the visual read.
-- Merged spans appear only in the header:
-  - Row 1: &quot;Study Period I Screening/Lead-in&quot; spans 2:3. It also extends into the label column, so the row name is synthesised.
-  - Row 1: &quot;Study Period II Treatment Period&quot; spans 4:19.
-  - Row 2: the blank cell spans 4:19.
-- The ET column (20) has no study-period label in row 1. It is left empty.
-- Grey shading of the Visit 4-12 cells (the dose-escalation period, per the header text) is presentation only. It is not recorded, and no cell content was changed because of it.
-
-## 3. Synthesised items
-
-- Synthesised property names:
-  - Row 1 &quot;Study Period&quot; (epoch, level 1)
-  - Row 2 &quot;Screening/Lead-in sub-period&quot; (period, level 2)
-- Both rows carry `structure_method: inferred_from_layout`. Row 5 (window) is level 5. Row 6 (Fasting Visit, `other`) is level null.
-- Synthesised annotation markers:
-  - n1: Treatment Period header text, on grid cells row 1, columns 4-19
-  - n2: Vital signs
-  - n3: Symptom-directed physical examination
-  - n4: 12-Lead ECG
-  - n5: Return ABPM device
-  - n6: Record ABPM measurements
-  - n7: Explain diet and physical activity plan
-  - n8: Discuss diet and physical activity progress
-  - n9: Dispense study drug administration log
-  - n10: Participant Survey
-  - n11: FSH, plus LH and Estradiol by text_match (D2)
-  - n12: PK note, bound to the Predose and Postdose rows
-  - n13: Dispense study intervention capsules
-
-## 4. Details
-
-### 4.1 Header structure
-- The header has five timing rows plus &quot;Fasting Visit&quot;. Row 2 typing is D6.
-- Fasting Visit is a schedule property (D4). It is X at every visit except Visit 2 (Lead-In).
-- The &quot;Lead -In&quot; line wrap is normalised to &quot;Lead-In&quot;.
-
-### 4.2 PK sample row (p.17)
-- The label cell &quot;Pharmacokinetic (PK) sample&quot; spans three sub-rows: Predose, Postdose, and a one-cell note. The raster check found no internal horizontal rules inside the 471-515 pt band, which confirms the note is one cell.
-- Predose marks: Visits 3, 8, 10, 13, 18. Postdose marks: Visits 6, 8, 12, 15, ET.
-- Modelling as parent plus children is D1.
-
-### 4.3 Mechanical mark-check
-- The PDF has a text layer and vector rules, and it is not glyph-spread.
-- Marks were binned with `pdftotext -bbox`. Every X token was assigned to the nearest header Visit Number x-centre on each page, and every token fell well within one column.
-- The bbox matrix (372 body marks, Fasting rows excluded) agrees cell-for-cell with the visual read of all six page renders. There were no disagreements.
-
-### 4.4 Annotation text integrity and scope
-- Each note was taken as the full text of its ruled full-width sub-row cell. No note pair overlaps or contains another.
-- Notes n2 and n4 contain inline cross-references (Section 10.7, Section 8.2.3). They also carry instructions, so they stay `footnote`. No separate source_note was emitted.
-- The capsule-dispensing note (n13) spans only the Visit 3-17 columns in the source. It is bound to its activity.
-- Open scope calls: D2 (n11), D3 (n1) and D5 (n10).
-- The paragraph above the table that refers to Section 10.11 (Appendix 11) is outside the table. It was not captured.
-
-### 4.5 Orphan risk and provenance
-- There are no orphans. Every annotation has at least one location, and every activity_name location&#x27;s marker also appears in that row&#x27;s `annotation_markers`.
-- Non-default methods recorded:
-  - `indentation_method: visual_estimate` on all activities, because hierarchy comes from the bold grey section bands and the PK sub-label layout.
-  - `method: synthesized` on the n1-n13 locations.
-  - `method: text_match` on the n11 locations for LH (row 50) and Estradiol (row 51).
-- No `unresolved` locations.
-</pre>
+    <h1>NCT05051579 — SoA extraction uncertainty report</h1>
+<p>Prompt 3.8.1, single pass. Source: NCT05051579_soa.pdf (6 PDF pages = document pages 13-18 per PAGEMAP.md; printed footers read 12-17, i.e. one lower, and were ignored). No protocol markdown was available, so all text comes from the PDF text layer.</p>
+<h2>Decisions needed (6)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p.17, rows 67-69 (Pharmacokinetic (PK) sample / Predose / Postdose)</td>
+<td>The PK row is split into a parent row with no marks and two child activities, "Predose" and "Postdose", each with its own X marks. The words Predose/Postdose sit where the Visit 1 (Screening) column is, but they are read as row sub-labels, so Visit 1 gets no PK entry.</td>
+<td>Treat "Predose"/"Postdose" as the Visit 1 cell content, or emit two flat activities "Pharmacokinetic (PK) sample - Predose" / "- Postdose".</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p.16, rows 49-51, note n11</td>
+<td>The note "Collect serum estradiol, FSH, and LH in women whose menopausal status needs to be determined..." is printed under the FSH row only. It is bound to FSH by position, and also to LH and Estradiol because it names those tests.</td>
+<td>Bind the note only to the FSH row it sits under.</td>
+<td>4.4</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p.13, header row 1, note n1</td>
+<td>The sentence inside the "Study Period II Treatment Period" header cell ("For early terminations ... Shaded columns represent the dose escalation period Weeks 0-16.") is moved out of the header value and recorded as a note on each Treatment Period column (Visits 3-18).</td>
+<td>Keep the sentence as part of the header text, or scope it to the whole table (or only to the ET column / shaded columns it mentions).</td>
+<td>4.4</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>p.13, header row 6 (Fasting Visit)</td>
+<td>"Fasting Visit" is recorded as a header row that marks which visits are fasting visits, not as an activity.</td>
+<td>Record "Fasting Visit" as an activity row with X marks.</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>p.15, row 37 (Participant Survey), note n10</td>
+<td>The note "administer at early termination if it occurs before 26 weeks" is bound to the Participant Survey activity as a whole.</td>
+<td>Bind it only to the Participant Survey ET cell (column 20), because it governs the ET mark.</td>
+<td>4.4</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>p.13, header row 2</td>
+<td>The second header band ("Screening" over Visit 1, "Lead-In" over Visit 2) is typed as <code>period</code> (sub-phases of Study Period I) at level 2.</td>
+<td>Type it as <code>epoch</code>, or as visit names.</td>
+<td>4.1</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (6)</h2>
+<ul>
+<li>One table, not continuations (taxonomy "a page break inside ONE printed table is not a continuation"): the header reprints on pages 14-18 with no new table number or caption.</li>
+<li>De-duplication (§1b): the header rows and the Fasting Visit row reprint on all 6 pages and are counted once.</li>
+<li>Leading label columns (§5): L = 1, so the first data position is 2. Visit 1-18 map to positions 2-19, ET to 20 and 801 to 21.</li>
+<li>Abbreviation list (§6): the "Abbreviations:" block under the table on p.18 has no in-grid markers, so it yields 0 annotations.</li>
+<li>Notes without printed markers (§6): full-width note sub-rows were given synthesised markers n1-n13 and bound with <code>method: synthesized</code> to the row they sit under.</li>
+<li>Section membership across page breaks (§4): "Vital signs" (p.14) continues the Physical Evaluation section and "C-SSRS" (p.16) continues Clinician-Administered Assessments. Neither page reprints a section header, so these rows are indentation 1 under the previous section.</li>
+</ul>
+<h2>1. Table summary</h2>
+<ul>
+<li>Table 01: <code>main_soa</code>, "Schedule of Activities (SoA)" (Section 1.3), document pages 13-18.</li>
+<li>20 data columns (positions 2-21) and 6 header rows (schedule_properties 1-6).</li>
+<li>71 activity rows (row positions 7-77): 9 section headers at level 0, 60 activities at level 1, and 2 PK sub-rows at level 2 (D1).</li>
+<li>372 X marks and 13 annotations.</li>
+<li>Activity rows per page: p13 = 12, p14 = 10, p15 = 11, p16 = 16, p17 = 14, p18 = 8. Every page in the range contributed rows.</li>
+</ul>
+<h2>2. Merged marks</h2>
+<ul>
+<li>No body mark is merged across columns. Every X sits in its own ruled cell, and the per-column bbox binning matched the visual read.</li>
+<li>Merged spans appear only in the header:</li>
+<li>Row 1: "Study Period I Screening/Lead-in" spans 2:3. It also extends into the label column, so the row name is synthesised.</li>
+<li>Row 1: "Study Period II Treatment Period" spans 4:19.</li>
+<li>Row 2: the blank cell spans 4:19.</li>
+<li>The ET column (20) has no study-period label in row 1. It is left empty.</li>
+<li>Grey shading of the Visit 4-12 cells (the dose-escalation period, per the header text) is presentation only. It is not recorded, and no cell content was changed because of it.</li>
+</ul>
+<h2>3. Synthesised items</h2>
+<ul>
+<li>Synthesised property names:</li>
+<li>Row 1 "Study Period" (epoch, level 1)</li>
+<li>Row 2 "Screening/Lead-in sub-period" (period, level 2)</li>
+<li>Both rows carry <code>structure_method: inferred_from_layout</code>. Row 5 (window) is level 5. Row 6 (Fasting Visit, <code>other</code>) is level null.</li>
+<li>Synthesised annotation markers:</li>
+<li>n1: Treatment Period header text, on grid cells row 1, columns 4-19</li>
+<li>n2: Vital signs</li>
+<li>n3: Symptom-directed physical examination</li>
+<li>n4: 12-Lead ECG</li>
+<li>n5: Return ABPM device</li>
+<li>n6: Record ABPM measurements</li>
+<li>n7: Explain diet and physical activity plan</li>
+<li>n8: Discuss diet and physical activity progress</li>
+<li>n9: Dispense study drug administration log</li>
+<li>n10: Participant Survey</li>
+<li>n11: FSH, plus LH and Estradiol by text_match (D2)</li>
+<li>n12: PK note, bound to the Predose and Postdose rows</li>
+<li>n13: Dispense study intervention capsules</li>
+</ul>
+<h2>4. Details</h2>
+<h3>4.1 Header structure</h3>
+<ul>
+<li>The header has five timing rows plus "Fasting Visit". Row 2 typing is D6.</li>
+<li>Fasting Visit is a schedule property (D4). It is X at every visit except Visit 2 (Lead-In).</li>
+<li>The "Lead -In" line wrap is normalised to "Lead-In".</li>
+</ul>
+<h3>4.2 PK sample row (p.17)</h3>
+<ul>
+<li>The label cell "Pharmacokinetic (PK) sample" spans three sub-rows: Predose, Postdose, and a one-cell note. The raster check found no internal horizontal rules inside the 471-515 pt band, which confirms the note is one cell.</li>
+<li>Predose marks: Visits 3, 8, 10, 13, 18. Postdose marks: Visits 6, 8, 12, 15, ET.</li>
+<li>Modelling as parent plus children is D1.</li>
+</ul>
+<h3>4.3 Mechanical mark-check</h3>
+<ul>
+<li>The PDF has a text layer and vector rules, and it is not glyph-spread.</li>
+<li>Marks were binned with <code>pdftotext -bbox</code>. Every X token was assigned to the nearest header Visit Number x-centre on each page, and every token fell well within one column.</li>
+<li>The bbox matrix (372 body marks, Fasting rows excluded) agrees cell-for-cell with the visual read of all six page renders. There were no disagreements.</li>
+</ul>
+<h3>4.4 Annotation text integrity and scope</h3>
+<ul>
+<li>Each note was taken as the full text of its ruled full-width sub-row cell. No note pair overlaps or contains another.</li>
+<li>Notes n2 and n4 contain inline cross-references (Section 10.7, Section 8.2.3). They also carry instructions, so they stay <code>footnote</code>. No separate source_note was emitted.</li>
+<li>The capsule-dispensing note (n13) spans only the Visit 3-17 columns in the source. It is bound to its activity.</li>
+<li>Open scope calls: D2 (n11), D3 (n1) and D5 (n10).</li>
+<li>The paragraph above the table that refers to Section 10.11 (Appendix 11) is outside the table. It was not captured.</li>
+</ul>
+<h3>4.5 Orphan risk and provenance</h3>
+<ul>
+<li>There are no orphans. Every annotation has at least one location, and every activity_name location's marker also appears in that row's <code>annotation_markers</code>.</li>
+<li>Non-default methods recorded:</li>
+<li><code>indentation_method: visual_estimate</code> on all activities, because hierarchy comes from the bold grey section bands and the PK sub-label layout.</li>
+<li><code>method: synthesized</code> on the n1-n13 locations.</li>
+<li><code>method: text_match</code> on the n11 locations for LH (row 50) and Estradiol (row 51).</li>
+<li>No <code>unresolved</code> locations.</li>
+</ul>
 </body>
 </html>

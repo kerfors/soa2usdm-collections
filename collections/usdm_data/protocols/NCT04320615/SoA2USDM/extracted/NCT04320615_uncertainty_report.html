@@ -35,103 +35,183 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT04320615" title="This protocol's row on the collection index">NCT04320615</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT04320615_Table_01_extraction_viewer.html">T1</a> <a href="../../SoA2USDM/extracted/NCT04320615_Table_02_extraction_viewer.html">T2</a> <a href="../../SoA2USDM/extracted/NCT04320615_Table_03_extraction_viewer.html">T3</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT04320615_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT04320615_Table_02_resolved.html">T2</a> <a href="../../SoA2USDM/resolved/NCT04320615_Table_03_resolved.html">T3</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT04320615_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT04320615_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT04320615 — SoA extraction uncertainty report
-
-Source: NCT04320615_soa.pdf (9 PDF pages = document pages 77–85 per PAGEMAP.md; printed footers happen to agree). No protocol markdown was available. Prompt v3.8.1, single pass.
-
-## Decisions needed (6)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p78, T1 rows 25–31 (also T2 rows 13–19, T3 rows 13–16) | Rows printed below the bold &quot;Central Labs&quot; header, down to the end of the table, are recorded as its children (level 1). All other rows are level 0. The source prints no visual indent. | Treat each table as flat: every row at level 0, with &quot;Central Labs&quot; as a mark-free row that groups nothing | 4.1 |
-| D2 | p77, T1 row 15 PaO2/FiO2 (also p81, T2 row 5) | The &quot;← Optional →&quot; cell drawn across merged columns is recorded as the value &quot;← Optional →&quot; on every covered column (T1 cols 3–6; T2 cols 2–27). T2 col 28 has its own separate &quot;Optional&quot;. | Treat &quot;Optional&quot; as a condition on the activity, not as a scheduled value, and leave those cells unscheduled | 4.2 |
-| D3 | p77, T1 header row 1 | The top band (Screening / Baseline / blank over cols 4–6) is typed epoch, with a synthesized name &quot;Study Period&quot;. The blank span is left empty. | Type it as visit (&quot;Baseline&quot; is a visit name), or read the blank span as an unlabelled treatment epoch | 4.3 |
-| D4 | p81 / p84, T2 and T3 | Appendix 2 and Appendix 3 are each typed main_soa: they are independent, sequential schedules for the same participants, like separate Screening and Treatment tables | Type T2 and/or T3 as track (same participants, different study phase, own visit structure), with labels &quot;Days 3–28&quot; / &quot;After Day 28&quot; | 5.1 |
-| D5 | p81, T2 header row 1 | The top band (&quot;Days 3–28&quot; over the daily columns, &quot;Study Completion/Discontinuation&quot; over col 28) is typed period, with a synthesized name &quot;Period&quot; | Type it as epoch, or as visit | 5.2 |
-| D6 | p84, T3 header row 1 | The top band (blank over Days 35/45, &quot;Study Completion&quot; over Day 60) is typed visit at level 1, with a synthesized name &quot;Visit&quot; | Type it as epoch, or give it hierarchical_level null, since Study Day alone already tells the columns apart | 6.1 |
-
-## Recorded, not open (9)
-
-- §5 leading label columns: each table has L = 1 label column, so the first data column is position 2 in all three tables.
-- §5 merged header cells: T1 row 1 cols 4:6 (blank), T1 row 2 &quot;1&quot; 3:4 and &quot;2&quot; 5:6, T2 row 1 &quot;Days 3–28&quot; 2:27, T3 row 1 blank 2:3. All are confirmed from raster rule lines.
-- §6 header-cell footnotes: T1 &quot;Screening a, b&quot; goes on grid cell (1,2). T2 &quot;Days 3–28 a&quot; goes on every covered grid cell (row 1, cols 2–27, 26 locations). T3 &quot;35 a&quot; and &quot;45 a&quot; go on grid cells (2,2) and (2,3).
-- §6 table-wide &quot;Note:&quot; paragraphs (T1 and T2) have no printed marker. Each gets the synthesized marker `tn1`, anchored to header row 1 with `method: synthesized`, and the marker is also added to that row&#x27;s annotation_markers.
-- §6 abbreviation blocks (T1 p78, T2 p82, T3 p84) are dropped. No term is printed as a marker anywhere, so they yield zero annotations.
-- §6 footnotes that end with &quot;(see Section 5.6)&quot; (T1 j, T2 e, T3 e) are typed footnote, not source_note, because they explain as well as point.
-- §4 header and &quot;Study Day&quot; rows reprinted on continuation pages p78 and p82 are de-duplicated.
-- §1b symbol-font glyphs in the text layer (U+F02D, U+F02B, U+F0B1, U+F0DF/F0E0, U+F022) are mapped to what the rendered page shows: − / – (minus in header windows, en dash in ranges &quot;0–4&quot;, &quot;8–24&quot;, &quot;3–28&quot;), +, ±, ← / →, and ®. Subscripts in PaO2/FiO2 and SpO2 are flattened.
-- §5 glyph case: every mark is a lowercase &quot;x&quot; in the source and is kept as &quot;x&quot;.
-
-## 1. Table inventory
-
-| Table | Title | type | pages | data cols | activities | scheduled cells | annotations |
-|---|---|---|---|---|---|---|---|
-| 1 | Appendix 1 Schedule of Activities: Days 1 and 2 | main_soa | 77–80 | 5 (pos 2–6) | 28 | 56 | 21 |
-| 2 | Appendix 2 Schedule of Activities: Days 3–28 | main_soa | 81–83 | 27 (pos 2–28) | 17 | 220 | 12 |
-| 3 | Appendix 3 Schedule of Activities: After Day 28 | main_soa | 84–85 | 3 (pos 2–4) | 14 | 32 | 8 |
-
-Activity rows per page:
+    <h1>NCT04320615 — SoA extraction uncertainty report</h1>
+<p>Source: NCT04320615_soa.pdf (9 PDF pages = document pages 77–85 per PAGEMAP.md; printed footers happen to agree). No protocol markdown was available. Prompt v3.8.1, single pass.</p>
+<h2>Decisions needed (6)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p78, T1 rows 25–31 (also T2 rows 13–19, T3 rows 13–16)</td>
+<td>Rows printed below the bold "Central Labs" header, down to the end of the table, are recorded as its children (level 1). All other rows are level 0. The source prints no visual indent.</td>
+<td>Treat each table as flat: every row at level 0, with "Central Labs" as a mark-free row that groups nothing</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p77, T1 row 15 PaO2/FiO2 (also p81, T2 row 5)</td>
+<td>The "← Optional →" cell drawn across merged columns is recorded as the value "← Optional →" on every covered column (T1 cols 3–6; T2 cols 2–27). T2 col 28 has its own separate "Optional".</td>
+<td>Treat "Optional" as a condition on the activity, not as a scheduled value, and leave those cells unscheduled</td>
+<td>4.2</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p77, T1 header row 1</td>
+<td>The top band (Screening / Baseline / blank over cols 4–6) is typed epoch, with a synthesized name "Study Period". The blank span is left empty.</td>
+<td>Type it as visit ("Baseline" is a visit name), or read the blank span as an unlabelled treatment epoch</td>
+<td>4.3</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>p81 / p84, T2 and T3</td>
+<td>Appendix 2 and Appendix 3 are each typed main_soa: they are independent, sequential schedules for the same participants, like separate Screening and Treatment tables</td>
+<td>Type T2 and/or T3 as track (same participants, different study phase, own visit structure), with labels "Days 3–28" / "After Day 28"</td>
+<td>5.1</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>p81, T2 header row 1</td>
+<td>The top band ("Days 3–28" over the daily columns, "Study Completion/Discontinuation" over col 28) is typed period, with a synthesized name "Period"</td>
+<td>Type it as epoch, or as visit</td>
+<td>5.2</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>p84, T3 header row 1</td>
+<td>The top band (blank over Days 35/45, "Study Completion" over Day 60) is typed visit at level 1, with a synthesized name "Visit"</td>
+<td>Type it as epoch, or give it hierarchical_level null, since Study Day alone already tells the columns apart</td>
+<td>6.1</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (9)</h2>
+<ul>
+<li>§5 leading label columns: each table has L = 1 label column, so the first data column is position 2 in all three tables.</li>
+<li>§5 merged header cells: T1 row 1 cols 4:6 (blank), T1 row 2 "1" 3:4 and "2" 5:6, T2 row 1 "Days 3–28" 2:27, T3 row 1 blank 2:3. All are confirmed from raster rule lines.</li>
+<li>§6 header-cell footnotes: T1 "Screening a, b" goes on grid cell (1,2). T2 "Days 3–28 a" goes on every covered grid cell (row 1, cols 2–27, 26 locations). T3 "35 a" and "45 a" go on grid cells (2,2) and (2,3).</li>
+<li>§6 table-wide "Note:" paragraphs (T1 and T2) have no printed marker. Each gets the synthesized marker <code>tn1</code>, anchored to header row 1 with <code>method: synthesized</code>, and the marker is also added to that row's annotation_markers.</li>
+<li>§6 abbreviation blocks (T1 p78, T2 p82, T3 p84) are dropped. No term is printed as a marker anywhere, so they yield zero annotations.</li>
+<li>§6 footnotes that end with "(see Section 5.6)" (T1 j, T2 e, T3 e) are typed footnote, not source_note, because they explain as well as point.</li>
+<li>§4 header and "Study Day" rows reprinted on continuation pages p78 and p82 are de-duplicated.</li>
+<li>§1b symbol-font glyphs in the text layer (U+F02D, U+F02B, U+F0B1, U+F0DF/F0E0, U+F022) are mapped to what the rendered page shows: − / – (minus in header windows, en dash in ranges "0–4", "8–24", "3–28"), +, ±, ← / →, and ®. Subscripts in PaO2/FiO2 and SpO2 are flattened.</li>
+<li>§5 glyph case: every mark is a lowercase "x" in the source and is kept as "x".</li>
+</ul>
+<h2>1. Table inventory</h2>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Title</th>
+<th>type</th>
+<th>pages</th>
+<th>data cols</th>
+<th>activities</th>
+<th>scheduled cells</th>
+<th>annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Appendix 1 Schedule of Activities: Days 1 and 2</td>
+<td>main_soa</td>
+<td>77–80</td>
+<td>5 (pos 2–6)</td>
+<td>28</td>
+<td>56</td>
+<td>21</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Appendix 2 Schedule of Activities: Days 3–28</td>
+<td>main_soa</td>
+<td>81–83</td>
+<td>27 (pos 2–28)</td>
+<td>17</td>
+<td>220</td>
+<td>12</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Appendix 3 Schedule of Activities: After Day 28</td>
+<td>main_soa</td>
+<td>84–85</td>
+<td>3 (pos 2–4)</td>
+<td>14</td>
+<td>32</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<p>Activity rows per page:
 - T1: p77 17 rows, p78 11 rows. p79 and p80 contribute none: they hold only footnotes b–m and n–t.
 - T2: p81 16 rows, p82 1 row (Whole blood in PAXgene®). p83 contributes none: footnotes g–k only.
-- T3: p84 14 rows. p85 contributes none: footnotes b–h only.
-
-No page was skipped. None of the tables is horizontally tiled.
-
-## 4. Table 1
-
-- **4.1 Hierarchy (D1).** &quot;Central Labs&quot; is bold and underlined and carries no marks. The rows under it have no indent in the source, so their level is inferred from the font signal (`indentation_method: font_signal` on all rows). The same call applies to T2 (underlined bold) and T3 (bold only).
-- **4.2 Merged marks (D2).** PaO2/FiO2 has an &quot;x&quot; at Screening (col 2). &quot;← Optional →&quot; spans cols 3–6: the raster shows no internal vertical rules in that row. It is distributed as 4 entries with `source_range &quot;3:6&quot;` and `method: visual_read`, because the arrows are symbol-font glyphs read from the render.
-- **4.3 Header typing (D3).** Row 1 is epoch (L1). Row 2 is Study Day (study_day, L2). Row 3 is &quot;Time Post Initial Treatment (Assessment Window)&quot; (timepoint, L3), and each timepoint cell keeps its window text, e.g. &quot;0 Pre-dose (−4 hrs)&quot;.
-- **4.4 Cell markers.** Serum PD &quot;x o&quot; at cols 3 and 4. Serum PK &quot;x q&quot; at cols 3 and 4, plus marker p on its label.
-
-## 5. Table 2
-
-- **5.1 Classification (D4).** The three appendices split one continuous timeline for the same participants into consecutive phases, each with its own column structure. The type definitions give &quot;Screening table and Treatment table with different column structures&quot; as main_soa, so main_soa was chosen. Track is the recorded alternative.
-- **5.2 Header typing (D5).** Row 1 is period (L1, synthesized name). Row 2 is Study Day 3…28 (study_day, L2). Col 28 is blank in row 2.
-- **5.3 Merged marks (D2).** PaO2/FiO2 &quot;← Optional →&quot; spans cols 2–27 (no internal rules, raster-confirmed): 26 entries with `source_range &quot;2:27&quot;` and `method: visual_read`. Col 28 holds &quot;Optional&quot; in its own cell.
-
-## 6. Table 3
-
-- **6.1 Header typing (D6).** Row 1 is visit (L1, synthesized). Row 2 is &quot;Study Day (Assessment Window)&quot; (study_day, L2), with values like &quot;35 (±3 days)&quot;.
-- The row &quot;Serum SARS-Cov-2 antibody titer&quot; is transcribed with the source&#x27;s own casing (&quot;Cov&quot;).
-- The continuation heading on p85 reads &quot;After Days 28 (Cont.)&quot;. This is source wording and is recorded in table notes only.
-
-## Synthesised items
-
-- property_name, all with `synthesized: true`: T1 row 1 &quot;Study Period&quot;, T2 row 1 &quot;Period&quot;, T3 row 1 &quot;Visit&quot;.
-- Annotation marker `tn1`: T1 (&quot;Note: On treatment days, all assessments should be performed prior to dosing, unless otherwise specified.&quot;) and T2 (&quot;Note: For patients who have been discharged, all assessments should be performed within ±3 days of the scheduled onsite visit.&quot;).
-
-## Mechanical mark-check
-
-- **Method.** This is a text-layer PDF, checked with `pdftotext -bbox` (§1b):
-  - Column centres were fixed from the header day and timepoint labels, and the T2 completion column centre from its marks.
-  - Every `^[Xx]…` token was binned to its nearest column and nearest label row.
-  - Merged spans were confirmed by detecting vertical rules in the raster per row band (§1d).
-- **Result.** The bbox matrix agreed cell-for-cell with the visual read in all three tables:
-  - T1: 56 cells, including 4 &quot;Optional&quot; cells.
-  - T2: 220 cells, including 27 Optional cells.
-  - T3: 32 cells.
-- **Disagreements.** None.
-- **Multi-line labels.** Serum PD, Serum sample…, Serum SARS-CoV-2 antibody titer and Whole blood… carry one vertically-centred mark per row. Each was bound to its own single row, not merged across rows.
-
-## Annotation text integrity
-
-- **Glyph spacing.** The text layer is not glyph-spread, so no word reconstruction was needed. The only glyph fixes are the symbol-font mappings listed above.
-- **Source typos kept literally.** &quot;Patents receiving…&quot; in T1 footnotes o and p.
-- **Containment within a table.** No annotation&#x27;s text is contained in another&#x27;s within the same table.
-- **Near-duplicates across tables (checked against the pages).**
-  - T2 b = T1 h plus two extra sentences about discharge and telephone visits. This matches the source.
-  - T3 g and h add a &quot;will not be performed if follow-up visits are conducted by telephone&quot; sentence, and T3 g drops &quot;if the test is available at the site&quot;. This matches the source.
-
-## Low-confidence calls / orphan risk / method provenance
-
-- **Orphans.** None: every annotation has at least one marker_location, and every location&#x27;s marker also appears on its element&#x27;s annotation_markers.
-- **Undefined markers.** None: every in-table marker has printed text.
-- **Non-default methods recorded:**
-  - `activity_schedule.method = visual_read` on the 4 T1 and 26 T2 &quot;← Optional →&quot; cells.
-  - `indentation_method = font_signal` on all activities.
-  - `marker_locations.method = synthesized` on the two `tn1` locations.
-- **Unresolved locations.** None.
-</pre>
+- T3: p84 14 rows. p85 contributes none: footnotes b–h only.</p>
+<p>No page was skipped. None of the tables is horizontally tiled.</p>
+<h2>4. Table 1</h2>
+<ul>
+<li><strong>4.1 Hierarchy (D1).</strong> "Central Labs" is bold and underlined and carries no marks. The rows under it have no indent in the source, so their level is inferred from the font signal (<code>indentation_method: font_signal</code> on all rows). The same call applies to T2 (underlined bold) and T3 (bold only).</li>
+<li><strong>4.2 Merged marks (D2).</strong> PaO2/FiO2 has an "x" at Screening (col 2). "← Optional →" spans cols 3–6: the raster shows no internal vertical rules in that row. It is distributed as 4 entries with <code>source_range "3:6"</code> and <code>method: visual_read</code>, because the arrows are symbol-font glyphs read from the render.</li>
+<li><strong>4.3 Header typing (D3).</strong> Row 1 is epoch (L1). Row 2 is Study Day (study_day, L2). Row 3 is "Time Post Initial Treatment (Assessment Window)" (timepoint, L3), and each timepoint cell keeps its window text, e.g. "0 Pre-dose (−4 hrs)".</li>
+<li><strong>4.4 Cell markers.</strong> Serum PD "x o" at cols 3 and 4. Serum PK "x q" at cols 3 and 4, plus marker p on its label.</li>
+</ul>
+<h2>5. Table 2</h2>
+<ul>
+<li><strong>5.1 Classification (D4).</strong> The three appendices split one continuous timeline for the same participants into consecutive phases, each with its own column structure. The type definitions give "Screening table and Treatment table with different column structures" as main_soa, so main_soa was chosen. Track is the recorded alternative.</li>
+<li><strong>5.2 Header typing (D5).</strong> Row 1 is period (L1, synthesized name). Row 2 is Study Day 3…28 (study_day, L2). Col 28 is blank in row 2.</li>
+<li><strong>5.3 Merged marks (D2).</strong> PaO2/FiO2 "← Optional →" spans cols 2–27 (no internal rules, raster-confirmed): 26 entries with <code>source_range "2:27"</code> and <code>method: visual_read</code>. Col 28 holds "Optional" in its own cell.</li>
+</ul>
+<h2>6. Table 3</h2>
+<ul>
+<li><strong>6.1 Header typing (D6).</strong> Row 1 is visit (L1, synthesized). Row 2 is "Study Day (Assessment Window)" (study_day, L2), with values like "35 (±3 days)".</li>
+<li>The row "Serum SARS-Cov-2 antibody titer" is transcribed with the source's own casing ("Cov").</li>
+<li>The continuation heading on p85 reads "After Days 28 (Cont.)". This is source wording and is recorded in table notes only.</li>
+</ul>
+<h2>Synthesised items</h2>
+<ul>
+<li>property_name, all with <code>synthesized: true</code>: T1 row 1 "Study Period", T2 row 1 "Period", T3 row 1 "Visit".</li>
+<li>Annotation marker <code>tn1</code>: T1 ("Note: On treatment days, all assessments should be performed prior to dosing, unless otherwise specified.") and T2 ("Note: For patients who have been discharged, all assessments should be performed within ±3 days of the scheduled onsite visit.").</li>
+</ul>
+<h2>Mechanical mark-check</h2>
+<ul>
+<li><strong>Method.</strong> This is a text-layer PDF, checked with <code>pdftotext -bbox</code> (§1b):</li>
+<li>Column centres were fixed from the header day and timepoint labels, and the T2 completion column centre from its marks.</li>
+<li>Every <code>^[Xx]…</code> token was binned to its nearest column and nearest label row.</li>
+<li>Merged spans were confirmed by detecting vertical rules in the raster per row band (§1d).</li>
+<li><strong>Result.</strong> The bbox matrix agreed cell-for-cell with the visual read in all three tables:</li>
+<li>T1: 56 cells, including 4 "Optional" cells.</li>
+<li>T2: 220 cells, including 27 Optional cells.</li>
+<li>T3: 32 cells.</li>
+<li><strong>Disagreements.</strong> None.</li>
+<li><strong>Multi-line labels.</strong> Serum PD, Serum sample…, Serum SARS-CoV-2 antibody titer and Whole blood… carry one vertically-centred mark per row. Each was bound to its own single row, not merged across rows.</li>
+</ul>
+<h2>Annotation text integrity</h2>
+<ul>
+<li><strong>Glyph spacing.</strong> The text layer is not glyph-spread, so no word reconstruction was needed. The only glyph fixes are the symbol-font mappings listed above.</li>
+<li><strong>Source typos kept literally.</strong> "Patents receiving…" in T1 footnotes o and p.</li>
+<li><strong>Containment within a table.</strong> No annotation's text is contained in another's within the same table.</li>
+<li><strong>Near-duplicates across tables (checked against the pages).</strong></li>
+<li>T2 b = T1 h plus two extra sentences about discharge and telephone visits. This matches the source.</li>
+<li>T3 g and h add a "will not be performed if follow-up visits are conducted by telephone" sentence, and T3 g drops "if the test is available at the site". This matches the source.</li>
+</ul>
+<h2>Low-confidence calls / orphan risk / method provenance</h2>
+<ul>
+<li><strong>Orphans.</strong> None: every annotation has at least one marker_location, and every location's marker also appears on its element's annotation_markers.</li>
+<li><strong>Undefined markers.</strong> None: every in-table marker has printed text.</li>
+<li><strong>Non-default methods recorded:</strong></li>
+<li><code>activity_schedule.method = visual_read</code> on the 4 T1 and 26 T2 "← Optional →" cells.</li>
+<li><code>indentation_method = font_signal</code> on all activities.</li>
+<li><code>marker_locations.method = synthesized</code> on the two <code>tn1</code> locations.</li>
+<li><strong>Unresolved locations.</strong> None.</li>
+</ul>
 </body>
 </html>

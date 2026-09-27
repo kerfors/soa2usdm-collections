@@ -35,82 +35,117 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03817853" title="This protocol's row on the collection index">NCT03817853</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT03817853_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03817853_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03817853_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT03817853 — SoA extraction uncertainty report
-
-Prompt 3.8.1, schema soa-table-extraction 1.0. Source: NCT03817853_soa.pdf (3 PDF pages = document pages 100–102 per PAGEMAP.md). No protocol markdown available; all text comes from the PDF text layer.
-
-## Decisions needed (3)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p.100, rows 24–26 (Study drug administration / obinutuzumab / chemotherapy) | &quot;Study drug administration&quot; (a label cell spanning two sub-rows) is a mark-free parent row (level 0); &quot;obinutuzumab&quot; and &quot;chemotherapy&quot; are child activities (level 1) that carry the marks. | Two flat level-0 activities, &quot;Study drug administration – obinutuzumab&quot; and &quot;Study drug administration – chemotherapy&quot;, with no separate parent row. | 3.2 |
-| D2 | p.100, header row 2 (Induction / EOI / Maintenance / EOM) | The row is typed `period` (sub-phases of Treatment). EOI and EOM are single-column entries in that row. | Type the row `visit` or `other`, because EOI and EOM are end-of-phase visits rather than periods. | 3.3 |
-| D3 | p.100, header rows 1–4 | A header cell that spans several header rows (Screening rows 1–3; EOI, Maintenance and EOM rows 2–4; Follow-up rows 1–4) is recorded only on the top row it occupies. The lower cells it covers are left empty. | Repeat the label in every header row the cell covers (for example, &quot;EOI&quot; also in the Cycle and Day rows). | 3.3 |
-
-## Recorded, not open (6)
-
-- §2: The single table is `main_soa`, because it is the only SoA grid and it is the anchor.
-- §4: Pages 101–102 contribute no activity rows. They are footnote pages that continue the table&#x27;s own notes (the general &quot;Notes:&quot; paragraph and footnotes a–aa).
-- §5: There is L = 1 label column, so the first data column is position 2. The split label area of the Study drug administration row counts as the same label column (see D1).
-- §6: The abbreviation paragraph under the grid (&quot;(a)PTT=…; D=day; … PT=prothrombin time.&quot;) is not emitted. None of its terms appears as a marker in the grid, so it yielded zero annotations.
-- §6: The unmarked general &quot;Notes:&quot; paragraph (top of p.101) is a table-scope `footnote` with the synthesized marker `gn1`. Its one `schedule_property` location (row 1) has `method: &quot;synthesized&quot;`. Following the Notes-header table-scope convention, the marker is deliberately NOT added to any element&#x27;s `annotation_markers`.
-- §6: Footnotes b, c, d, s and w contain &quot;see Section/Table …&quot; references but also explain something, so they are typed `footnote`, not `source_note`.
-
-## 1. Tables
-
-| Table | type | pages | data columns | activities | activity_schedule entries | annotations |
-|---|---|---|---|---|---|---|
-| 1 &quot;Appendix 1 Schedule of Activities&quot; | main_soa | 100–102 | 11 (positions 2–12) | 27 (incl. 1 mark-free parent) | 89 | 28 (a–z, aa, gn1) |
-
-Activity rows per page: p.100 = 27, p.101 = 0, p.102 = 0. Pages 101–102 hold footnotes only, which is expected and not a skipped page.
-
-Columns: 2 = Screening D–28 to D–1; 3 = Screening D–7 to D–1; 4/5/6 = Cycle 1 D1/D8/D15; 7 = Cycle 2 D1; 8 = Cycles 3–6/8 D1; 9 = EOI; 10 = Maintenance (every 8 weeks ± 10 days); 11 = EOM; 12 = Follow-up (3 months).
-
-## 2. Merged-mark decisions
-
-- There are no merged body cells. Every body row has all internal vertical rules (checked on the 200 dpi raster), so every mark is a single-column entry and no `source_range` is set.
-- The header cells span columns: Screening 2:3, Treatment 4:11, Induction (6–8 cycles) 4:8, Cycle 1 4:6. The printed markers a (Screening) and b (Induction) are placed on every column their merged cell covers.
-
-## 3. Synthesised / interpretation
-
-3.1 The synthesized `property_name`s are &quot;Study period&quot; (row 1), &quot;Treatment phase&quot; (row 2) and &quot;Cycle&quot; (row 3), because their label cells are empty. Row 4 uses its printed label &quot;Day&quot;. The synthesized annotation marker is `gn1`.
-
-3.2 (D1) In the label area, &quot;Study drug administration&quot; is printed in its own sub-column, vertically spanning two sub-rows, with &quot;obinutuzumab r&quot; and &quot;chemotherapy s&quot; beside it. All other rows are flat level-0 activities that carry marks, so their `indentation_method` is left at the default, since the table has no indentation. Rows 24–26 have `indentation_method: visual_estimate`.
-
-3.3 (D2, D3) The header hierarchy is epoch (1) → period (2) → cycle (3) → study_day (4). Row 2 has `structure_method: inferred_from_layout`.
-
-## 4. Mechanical mark-check
-
-This is a text-layer page with vector rules. I ran `pdftotext -bbox` and binned each `x` token into the column bands bounded by vertical rules recovered from the 200 dpi raster. The bbox matrix agreed with the visual read cell for cell in all 27 rows, and I found no disagreements. Notable cells:
-
-- Chemistry has no mark in C1D1 (col 4), while Hematology does.
-- Patient-reported measures has no marks in C1D8, C1D15 or Screening.
-- Provider-reported measures has one mark, in col 8 (Cycles 3–6/8), carrying the superscript footnote marker &quot;x&quot;. This lowercase marker is the same letter as the grid mark &quot;x&quot;. The bbox layer separates the two (a small superscript token above a regular token), so the cell is `cell_value: &quot;x&quot;`, `annotation_markers: &quot;x&quot;`.
-- Marks are lowercase &quot;x&quot; throughout and were transcribed literally.
-
-## 5. Annotation text integrity
-
-- The text layer is not glyph-spread, so no reconstruction was needed. Footnote text was taken from `pdftotext -layout` of pp.101–102, with hanging-indent lines joined.
-- No annotation&#x27;s text is contained in another&#x27;s.
-- Wording was transcribed literally even where it looks like a source typo: &quot;G-chemo indication therapy&quot; (b; probably &quot;induction&quot;), &quot;administered according a 90-minute&quot; (d), &quot;on Days, 1, 8 and 15&quot; (r).
-- The general &quot;Notes:&quot; text keeps its leading &quot;Notes:&quot; label.
-
-## 6. Low-confidence calls
-
-- Footnote v (&quot;Concomitant medications and adverse events will be collected throughout the study&quot;) is printed as a marker only on the Concomitant medications label, not on Adverse events. It is bound as printed and was not extended to row 29.
-- Footnote x refers to &quot;Cycle 4 Day 1&quot;, but its mark sits in the combined &quot;Cycles 3–6/8 D1&quot; column (col 8). It is transcribed as printed.
-- Footnote u markers appear on the label and on the Screening/C1D1 cells (cols 2–4) of Concomitant medications. Footnote w markers appear on the label and on cols 2–4 of Adverse events. All are bound as printed.
-
-## 7. Orphan risk
-
-None. Every one of the 28 annotations has at least one marker_location, and every non-synthesized location&#x27;s marker is also in that element&#x27;s `annotation_markers`. Every marker used in the grid has a printed definition.
-
-## 8. Method provenance
-
-- `activity_name_source.indentation_method: visual_estimate` is set on rows 24, 25 and 26.
-- `structure_method: inferred_from_layout` is set on schedule_property row 2.
-- `marker_locations[].method: synthesized` is set once, on gn1 → schedule_property row 1.
-- No `unresolved` locations, no proximity-bounded notes, and no raster or visual-read cell methods (marks read from the bbox text layer).
-</pre>
+    <h1>NCT03817853 — SoA extraction uncertainty report</h1>
+<p>Prompt 3.8.1, schema soa-table-extraction 1.0. Source: NCT03817853_soa.pdf (3 PDF pages = document pages 100–102 per PAGEMAP.md). No protocol markdown available; all text comes from the PDF text layer.</p>
+<h2>Decisions needed (3)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p.100, rows 24–26 (Study drug administration / obinutuzumab / chemotherapy)</td>
+<td>"Study drug administration" (a label cell spanning two sub-rows) is a mark-free parent row (level 0); "obinutuzumab" and "chemotherapy" are child activities (level 1) that carry the marks.</td>
+<td>Two flat level-0 activities, "Study drug administration – obinutuzumab" and "Study drug administration – chemotherapy", with no separate parent row.</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p.100, header row 2 (Induction / EOI / Maintenance / EOM)</td>
+<td>The row is typed <code>period</code> (sub-phases of Treatment). EOI and EOM are single-column entries in that row.</td>
+<td>Type the row <code>visit</code> or <code>other</code>, because EOI and EOM are end-of-phase visits rather than periods.</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p.100, header rows 1–4</td>
+<td>A header cell that spans several header rows (Screening rows 1–3; EOI, Maintenance and EOM rows 2–4; Follow-up rows 1–4) is recorded only on the top row it occupies. The lower cells it covers are left empty.</td>
+<td>Repeat the label in every header row the cell covers (for example, "EOI" also in the Cycle and Day rows).</td>
+<td>3.3</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (6)</h2>
+<ul>
+<li>§2: The single table is <code>main_soa</code>, because it is the only SoA grid and it is the anchor.</li>
+<li>§4: Pages 101–102 contribute no activity rows. They are footnote pages that continue the table's own notes (the general "Notes:" paragraph and footnotes a–aa).</li>
+<li>§5: There is L = 1 label column, so the first data column is position 2. The split label area of the Study drug administration row counts as the same label column (see D1).</li>
+<li>§6: The abbreviation paragraph under the grid ("(a)PTT=…; D=day; … PT=prothrombin time.") is not emitted. None of its terms appears as a marker in the grid, so it yielded zero annotations.</li>
+<li>§6: The unmarked general "Notes:" paragraph (top of p.101) is a table-scope <code>footnote</code> with the synthesized marker <code>gn1</code>. Its one <code>schedule_property</code> location (row 1) has <code>method: "synthesized"</code>. Following the Notes-header table-scope convention, the marker is deliberately NOT added to any element's <code>annotation_markers</code>.</li>
+<li>§6: Footnotes b, c, d, s and w contain "see Section/Table …" references but also explain something, so they are typed <code>footnote</code>, not <code>source_note</code>.</li>
+</ul>
+<h2>1. Tables</h2>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>type</th>
+<th>pages</th>
+<th>data columns</th>
+<th>activities</th>
+<th>activity_schedule entries</th>
+<th>annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 "Appendix 1 Schedule of Activities"</td>
+<td>main_soa</td>
+<td>100–102</td>
+<td>11 (positions 2–12)</td>
+<td>27 (incl. 1 mark-free parent)</td>
+<td>89</td>
+<td>28 (a–z, aa, gn1)</td>
+</tr>
+</tbody>
+</table>
+<p>Activity rows per page: p.100 = 27, p.101 = 0, p.102 = 0. Pages 101–102 hold footnotes only, which is expected and not a skipped page.</p>
+<p>Columns: 2 = Screening D–28 to D–1; 3 = Screening D–7 to D–1; 4/5/6 = Cycle 1 D1/D8/D15; 7 = Cycle 2 D1; 8 = Cycles 3–6/8 D1; 9 = EOI; 10 = Maintenance (every 8 weeks ± 10 days); 11 = EOM; 12 = Follow-up (3 months).</p>
+<h2>2. Merged-mark decisions</h2>
+<ul>
+<li>There are no merged body cells. Every body row has all internal vertical rules (checked on the 200 dpi raster), so every mark is a single-column entry and no <code>source_range</code> is set.</li>
+<li>The header cells span columns: Screening 2:3, Treatment 4:11, Induction (6–8 cycles) 4:8, Cycle 1 4:6. The printed markers a (Screening) and b (Induction) are placed on every column their merged cell covers.</li>
+</ul>
+<h2>3. Synthesised / interpretation</h2>
+<p>3.1 The synthesized <code>property_name</code>s are "Study period" (row 1), "Treatment phase" (row 2) and "Cycle" (row 3), because their label cells are empty. Row 4 uses its printed label "Day". The synthesized annotation marker is <code>gn1</code>.</p>
+<p>3.2 (D1) In the label area, "Study drug administration" is printed in its own sub-column, vertically spanning two sub-rows, with "obinutuzumab r" and "chemotherapy s" beside it. All other rows are flat level-0 activities that carry marks, so their <code>indentation_method</code> is left at the default, since the table has no indentation. Rows 24–26 have <code>indentation_method: visual_estimate</code>.</p>
+<p>3.3 (D2, D3) The header hierarchy is epoch (1) → period (2) → cycle (3) → study_day (4). Row 2 has <code>structure_method: inferred_from_layout</code>.</p>
+<h2>4. Mechanical mark-check</h2>
+<p>This is a text-layer page with vector rules. I ran <code>pdftotext -bbox</code> and binned each <code>x</code> token into the column bands bounded by vertical rules recovered from the 200 dpi raster. The bbox matrix agreed with the visual read cell for cell in all 27 rows, and I found no disagreements. Notable cells:</p>
+<ul>
+<li>Chemistry has no mark in C1D1 (col 4), while Hematology does.</li>
+<li>Patient-reported measures has no marks in C1D8, C1D15 or Screening.</li>
+<li>Provider-reported measures has one mark, in col 8 (Cycles 3–6/8), carrying the superscript footnote marker "x". This lowercase marker is the same letter as the grid mark "x". The bbox layer separates the two (a small superscript token above a regular token), so the cell is <code>cell_value: "x"</code>, <code>annotation_markers: "x"</code>.</li>
+<li>Marks are lowercase "x" throughout and were transcribed literally.</li>
+</ul>
+<h2>5. Annotation text integrity</h2>
+<ul>
+<li>The text layer is not glyph-spread, so no reconstruction was needed. Footnote text was taken from <code>pdftotext -layout</code> of pp.101–102, with hanging-indent lines joined.</li>
+<li>No annotation's text is contained in another's.</li>
+<li>Wording was transcribed literally even where it looks like a source typo: "G-chemo indication therapy" (b; probably "induction"), "administered according a 90-minute" (d), "on Days, 1, 8 and 15" (r).</li>
+<li>The general "Notes:" text keeps its leading "Notes:" label.</li>
+</ul>
+<h2>6. Low-confidence calls</h2>
+<ul>
+<li>Footnote v ("Concomitant medications and adverse events will be collected throughout the study") is printed as a marker only on the Concomitant medications label, not on Adverse events. It is bound as printed and was not extended to row 29.</li>
+<li>Footnote x refers to "Cycle 4 Day 1", but its mark sits in the combined "Cycles 3–6/8 D1" column (col 8). It is transcribed as printed.</li>
+<li>Footnote u markers appear on the label and on the Screening/C1D1 cells (cols 2–4) of Concomitant medications. Footnote w markers appear on the label and on cols 2–4 of Adverse events. All are bound as printed.</li>
+</ul>
+<h2>7. Orphan risk</h2>
+<p>None. Every one of the 28 annotations has at least one marker_location, and every non-synthesized location's marker is also in that element's <code>annotation_markers</code>. Every marker used in the grid has a printed definition.</p>
+<h2>8. Method provenance</h2>
+<ul>
+<li><code>activity_name_source.indentation_method: visual_estimate</code> is set on rows 24, 25 and 26.</li>
+<li><code>structure_method: inferred_from_layout</code> is set on schedule_property row 2.</li>
+<li><code>marker_locations[].method: synthesized</code> is set once, on gn1 → schedule_property row 1.</li>
+<li>No <code>unresolved</code> locations, no proximity-bounded notes, and no raster or visual-read cell methods (marks read from the bbox text layer).</li>
+</ul>
 </body>
 </html>

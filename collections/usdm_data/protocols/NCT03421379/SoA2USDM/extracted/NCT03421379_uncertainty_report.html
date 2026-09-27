@@ -35,94 +35,119 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03421379" title="This protocol's row on the collection index">NCT03421379</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT03421379_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03421379_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT03421379_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03421379_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT03421379 — SoA extraction uncertainty report
-
-Prompt v3.8.1, single pass. Source: NCT03421379_soa.pdf (8 PDF pages = document pages 11–18 per PAGEMAP.md). No protocol markdown was available, so all text comes from the PDF text layer.
-
-## Decisions needed (3)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p.11, header row 2 (label cell &quot;Procedure&quot;) | This header row is recorded as a study-day row named &quot;Study Day&quot;. Its washout entry (&quot;3 to 14 days&quot;) is really a duration, and its follow-up entry (&quot;Within 28±2 days after last study treatment&quot;) is really a window. | Type the row as &quot;other&quot; because the content is mixed, or keep the printed label &quot;Procedure&quot; as its name. | 3 |
-| D2 | p.18, unmarked &quot;Note:&quot; below the table (marker n1) | The general note on procedure order (ECG, vital signs, venipuncture) is kept as a note for the whole table, anchored to the top header row with a synthesised marker n1. | Bind it only to the activities it names (the ECG, vital signs and blood-sampling rows). | 5 |
-| D3 | p.16–17, rows 31–34 (PK (Glucagon), Plasma Glucose for PD, Genetic Sample (Stored), Anti-glucagon Antibodies) | These rows are placed at level 1 under the &quot;Laboratory Tests&quot; section header, because no other header comes between them. | Treat them as ungrouped rows, since the source prints no separate header (for example &quot;PK/PD&quot;) for them. | 4 |
-
-## Recorded, not open (8)
-
-- §2 / type definitions: one printed table with its header repeated on every page is extracted as ONE `main_soa` table covering pp.11–18. It is not split into continuations, and the repeated header rows are counted once.
-- §5: there is one label column (L = 1), so the data columns are positions 2–9. The right-hand &quot;Comments&quot; column (position 10) is a notes column. It is not a schedule column and it is not an activity.
-- §6 notes column: each non-empty Comments cell becomes one annotation. The markers c1–c25 are synthesised in printed order, and each is bound to the row it sits beside (`activity_name`, `method: synthesized`). Notes with identical text are merged into one annotation (c15 covers rows 24 and 26; c19 covers rows 29 and 30).
-- §6 bare pointers: &quot;Refer to Section 9.5.5.1.&quot; (c5) and &quot;See Appendix 2, Clinical Laboratory Tests, for details.&quot; (c15) are typed `source_note`. The notes that point and also explain (c16 and c23) stay `footnote`.
-- §6 header-cell footnote: the marker &quot;a&quot; printed on &quot;Additional Follow-up for TE ADAᵃ&quot; is attached to that schedule_grid cell (row 1, column 9), not to the whole header row.
-- §6 abbreviations: the abbreviation list (CRU, ECG, ED, FSH, HbA1c, IMG, min, PD, PG, PK, TE ADA) has no in-grid markers. Those terms appear only inside running text or labels, so the list yields zero annotations.
-- §5 text cells: timing text in grid cells (for example &quot;240 min&quot; and &quot;Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min&quot;) is copied literally as `cell_value`. It is not split up and not turned into X marks.
-- §4 section headers: &quot;Clinical Assessments&quot;, &quot;Laboratory Tests&quot; and &quot;Health Outcome Instruments&quot; are bold, grey-shaded rows at level 0 with no marks. All other rows are level 1 (`indentation_method: font_signal`).
-
-## 1. Table summary
-
-- **Table 01**: `main_soa`, &quot;Study Schedule Protocol I8R-JE-IGBJ&quot;, document pages 11–18. This is the only SoA table in the excerpt.
-- **Columns**: 8 data columns (positions 2–9): Screening (Days -28 to -2), Period 1 Day -1, Period 1 Day 1, Wash out (3 to 14 days), Period 2 Day -1, Period 2 Day 1, Follow-up/ED (within 28±2 days after last study treatment), and Additional Follow-up for TE ADA.
-- **Header rows**: 2.
-- **Activities**: 36 rows (rows 3–38), of which 3 are section headers. There are 80 non-empty schedule cells and 27 annotations (25 footnotes, including a and n1, and 2 source_notes).
-- **Rows per page**: p11: 8, p12: 4, p13: 3, p14: 7, p15: 5, p16: 4, p17: 4, p18: 1. Every page in the range contributed rows. Page 18 also carries the abbreviation list, footnote a and the general Note.
-- The &quot;Additional Follow-up for TE ADA&quot; column applies only to patients with TE ADA, per footnote a. It is kept as an ordinary column of the same table: it is one column inside the main grid, not a separate schedule.
-
-## 2. Merged marks / spans
-
-- **Body**: there are no merged body cells. Every internal vertical rule is present in every body row, and each mark or text cell sits inside a single column.
-- **Header row 1**: &quot;Period 1&quot; spans columns 3:4 and &quot;Period 2&quot; spans columns 6:7. This is recorded as `is_merged_cell` / `merged_cell_range` on each column the header covers.
-
-## 3. Schedule properties
-
-- **Row 1, &quot;Study Period&quot;** (synthesised name, because the label cell is empty): type `epoch`, level 1.
-- **Row 2, &quot;Study Day&quot;** (synthesised name; the label cell prints &quot;Procedure&quot;, which is the heading of the activity column): type `study_day`, level 2. See D1. Column 9 is empty in this row.
-
-## 4. Hierarchy
-
-- The three shaded, bold rows are the section headers.
-- The rows that follow &quot;Laboratory Tests&quot; run from Clinical Serology Tests to Anti-glucagon Antibodies, including the PK, PD glucose and genetic rows (see D3).
-
-## 5. Synthesised items
-
-- **Property names**: &quot;Study Period&quot; (row 1) and &quot;Study Day&quot; (row 2).
-- **Annotation markers**: c1–c25 for the Comments column, and n1 for the unmarked general &quot;Note:&quot; (see D2).
-
-## 6. Mechanical mark-check
-
-- **Page type**: the pages have a text layer and vector rule rectangles, so the table is not image-based.
-- **How the check was done**:
-  - Column boundaries came from the vertical rules. They are identical on all 8 pages, at x = 70, 176, 226, 251, 331, 375, 402, 482, 546, 613 and 722 pt.
-  - Row bands came from the horizontal rules in the label column. Those bands match the rules in the Comments column exactly on every page.
-  - X tokens were matched with `^[Xx][*a-zA-Z0-9]?$` and binned into the column they fall in.
-  - Cell text was collected by band and column.
-- **Result**: the resulting matrix agrees cell for cell with a visual read of every rendered page. There were no disagreements.
-- **Text-layer check**: the text layer reads &quot;≥90 mg/dL&quot; in c9, where the page renders an underlined &quot;&gt;&quot;. The text-layer value was kept.
-
-## 7. Annotation text integrity
-
-- **Letter-spacing**: the source is not glyph-spread, so no text was reconstructed.
-- **Note boundaries**: every Comments note was bounded by its cell&#x27;s horizontal rules. No note spans more than one row.
-- **Containment pairs**: two were found, both re-checked against the page. Both are faithful to the source, meaning they are separate cells and not one cell split across rows.
-  - c15 &quot;See Appendix 2, Clinical Laboratory Tests, for details.&quot; (Clinical Serology Tests on p.14 and HbA1c on p.15) is contained in c16 (Clinical Lab Tests, p.15). c16 opens with the same sentence and then adds instructions about fasting.
-  - c20 (PK (Glucagon), p.16) is contained in c21 (Plasma Glucose for PD, p.16). c21 prefixes it with &quot;-5 mins = stop insulin infusion.&quot;
-- **Shared opening, not containment**: c24 and c25 begin with the same sentence as c20 (&quot;Sampling times are relative to the time of study treatment administration (0 min).&quot;) and then add different text. Each is a separate cell.
-- **Footnote a**: its source text contains the grammatical oddity &quot;immunogenicity, should&quot;, which is kept verbatim.
-
-## 8. Low-confidence calls
-
-- **Header row 2 typing**: see D1.
-- **Genetic Sample (Stored)**: the X is printed only in the Period 1 Day -1 column, although its note says &quot;taken prior to/on Period 1 Day -1&quot;. It is copied as printed (column 3 only), and nothing was inferred for Screening.
-
-## 9. Orphan risk
-
-- None. Every annotation has at least one marker_location, and every marker in a marker_location also appears in that row&#x27;s `annotation_markers`. The one exception is `a`, which is carried on its schedule_grid cell.
-- Every marker printed in the table has its definition printed in the source.
-
-## 10. Method provenance
-
-- `activity_name_source.indentation_method: font_signal` on all 36 activities. The hierarchy comes from bold and shading, because the text layer has no leading whitespace.
-- `marker_locations[].method: synthesized` on every location of c1–c25 (the Comments column notes) and on n1.
-- There are no `unresolved` locations, no `proximity_bounded` text and no `raster_pixel_detection` / `visual_read` cells.
-</pre>
+    <h1>NCT03421379 — SoA extraction uncertainty report</h1>
+<p>Prompt v3.8.1, single pass. Source: NCT03421379_soa.pdf (8 PDF pages = document pages 11–18 per PAGEMAP.md). No protocol markdown was available, so all text comes from the PDF text layer.</p>
+<h2>Decisions needed (3)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p.11, header row 2 (label cell "Procedure")</td>
+<td>This header row is recorded as a study-day row named "Study Day". Its washout entry ("3 to 14 days") is really a duration, and its follow-up entry ("Within 28±2 days after last study treatment") is really a window.</td>
+<td>Type the row as "other" because the content is mixed, or keep the printed label "Procedure" as its name.</td>
+<td>3</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p.18, unmarked "Note:" below the table (marker n1)</td>
+<td>The general note on procedure order (ECG, vital signs, venipuncture) is kept as a note for the whole table, anchored to the top header row with a synthesised marker n1.</td>
+<td>Bind it only to the activities it names (the ECG, vital signs and blood-sampling rows).</td>
+<td>5</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p.16–17, rows 31–34 (PK (Glucagon), Plasma Glucose for PD, Genetic Sample (Stored), Anti-glucagon Antibodies)</td>
+<td>These rows are placed at level 1 under the "Laboratory Tests" section header, because no other header comes between them.</td>
+<td>Treat them as ungrouped rows, since the source prints no separate header (for example "PK/PD") for them.</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (8)</h2>
+<ul>
+<li>§2 / type definitions: one printed table with its header repeated on every page is extracted as ONE <code>main_soa</code> table covering pp.11–18. It is not split into continuations, and the repeated header rows are counted once.</li>
+<li>§5: there is one label column (L = 1), so the data columns are positions 2–9. The right-hand "Comments" column (position 10) is a notes column. It is not a schedule column and it is not an activity.</li>
+<li>§6 notes column: each non-empty Comments cell becomes one annotation. The markers c1–c25 are synthesised in printed order, and each is bound to the row it sits beside (<code>activity_name</code>, <code>method: synthesized</code>). Notes with identical text are merged into one annotation (c15 covers rows 24 and 26; c19 covers rows 29 and 30).</li>
+<li>§6 bare pointers: "Refer to Section 9.5.5.1." (c5) and "See Appendix 2, Clinical Laboratory Tests, for details." (c15) are typed <code>source_note</code>. The notes that point and also explain (c16 and c23) stay <code>footnote</code>.</li>
+<li>§6 header-cell footnote: the marker "a" printed on "Additional Follow-up for TE ADAᵃ" is attached to that schedule_grid cell (row 1, column 9), not to the whole header row.</li>
+<li>§6 abbreviations: the abbreviation list (CRU, ECG, ED, FSH, HbA1c, IMG, min, PD, PG, PK, TE ADA) has no in-grid markers. Those terms appear only inside running text or labels, so the list yields zero annotations.</li>
+<li>§5 text cells: timing text in grid cells (for example "240 min" and "Pre-hypoglycemia induction, Predose, 15, 30, 60, 120, 240 min") is copied literally as <code>cell_value</code>. It is not split up and not turned into X marks.</li>
+<li>§4 section headers: "Clinical Assessments", "Laboratory Tests" and "Health Outcome Instruments" are bold, grey-shaded rows at level 0 with no marks. All other rows are level 1 (<code>indentation_method: font_signal</code>).</li>
+</ul>
+<h2>1. Table summary</h2>
+<ul>
+<li><strong>Table 01</strong>: <code>main_soa</code>, "Study Schedule Protocol I8R-JE-IGBJ", document pages 11–18. This is the only SoA table in the excerpt.</li>
+<li><strong>Columns</strong>: 8 data columns (positions 2–9): Screening (Days -28 to -2), Period 1 Day -1, Period 1 Day 1, Wash out (3 to 14 days), Period 2 Day -1, Period 2 Day 1, Follow-up/ED (within 28±2 days after last study treatment), and Additional Follow-up for TE ADA.</li>
+<li><strong>Header rows</strong>: 2.</li>
+<li><strong>Activities</strong>: 36 rows (rows 3–38), of which 3 are section headers. There are 80 non-empty schedule cells and 27 annotations (25 footnotes, including a and n1, and 2 source_notes).</li>
+<li><strong>Rows per page</strong>: p11: 8, p12: 4, p13: 3, p14: 7, p15: 5, p16: 4, p17: 4, p18: 1. Every page in the range contributed rows. Page 18 also carries the abbreviation list, footnote a and the general Note.</li>
+<li>The "Additional Follow-up for TE ADA" column applies only to patients with TE ADA, per footnote a. It is kept as an ordinary column of the same table: it is one column inside the main grid, not a separate schedule.</li>
+</ul>
+<h2>2. Merged marks / spans</h2>
+<ul>
+<li><strong>Body</strong>: there are no merged body cells. Every internal vertical rule is present in every body row, and each mark or text cell sits inside a single column.</li>
+<li><strong>Header row 1</strong>: "Period 1" spans columns 3:4 and "Period 2" spans columns 6:7. This is recorded as <code>is_merged_cell</code> / <code>merged_cell_range</code> on each column the header covers.</li>
+</ul>
+<h2>3. Schedule properties</h2>
+<ul>
+<li><strong>Row 1, "Study Period"</strong> (synthesised name, because the label cell is empty): type <code>epoch</code>, level 1.</li>
+<li><strong>Row 2, "Study Day"</strong> (synthesised name; the label cell prints "Procedure", which is the heading of the activity column): type <code>study_day</code>, level 2. See D1. Column 9 is empty in this row.</li>
+</ul>
+<h2>4. Hierarchy</h2>
+<ul>
+<li>The three shaded, bold rows are the section headers.</li>
+<li>The rows that follow "Laboratory Tests" run from Clinical Serology Tests to Anti-glucagon Antibodies, including the PK, PD glucose and genetic rows (see D3).</li>
+</ul>
+<h2>5. Synthesised items</h2>
+<ul>
+<li><strong>Property names</strong>: "Study Period" (row 1) and "Study Day" (row 2).</li>
+<li><strong>Annotation markers</strong>: c1–c25 for the Comments column, and n1 for the unmarked general "Note:" (see D2).</li>
+</ul>
+<h2>6. Mechanical mark-check</h2>
+<ul>
+<li><strong>Page type</strong>: the pages have a text layer and vector rule rectangles, so the table is not image-based.</li>
+<li><strong>How the check was done</strong>:</li>
+<li>Column boundaries came from the vertical rules. They are identical on all 8 pages, at x = 70, 176, 226, 251, 331, 375, 402, 482, 546, 613 and 722 pt.</li>
+<li>Row bands came from the horizontal rules in the label column. Those bands match the rules in the Comments column exactly on every page.</li>
+<li>X tokens were matched with <code>^[Xx][*a-zA-Z0-9]?$</code> and binned into the column they fall in.</li>
+<li>Cell text was collected by band and column.</li>
+<li><strong>Result</strong>: the resulting matrix agrees cell for cell with a visual read of every rendered page. There were no disagreements.</li>
+<li><strong>Text-layer check</strong>: the text layer reads "≥90 mg/dL" in c9, where the page renders an underlined "&gt;". The text-layer value was kept.</li>
+</ul>
+<h2>7. Annotation text integrity</h2>
+<ul>
+<li><strong>Letter-spacing</strong>: the source is not glyph-spread, so no text was reconstructed.</li>
+<li><strong>Note boundaries</strong>: every Comments note was bounded by its cell's horizontal rules. No note spans more than one row.</li>
+<li><strong>Containment pairs</strong>: two were found, both re-checked against the page. Both are faithful to the source, meaning they are separate cells and not one cell split across rows.</li>
+<li>c15 "See Appendix 2, Clinical Laboratory Tests, for details." (Clinical Serology Tests on p.14 and HbA1c on p.15) is contained in c16 (Clinical Lab Tests, p.15). c16 opens with the same sentence and then adds instructions about fasting.</li>
+<li>c20 (PK (Glucagon), p.16) is contained in c21 (Plasma Glucose for PD, p.16). c21 prefixes it with "-5 mins = stop insulin infusion."</li>
+<li><strong>Shared opening, not containment</strong>: c24 and c25 begin with the same sentence as c20 ("Sampling times are relative to the time of study treatment administration (0 min).") and then add different text. Each is a separate cell.</li>
+<li><strong>Footnote a</strong>: its source text contains the grammatical oddity "immunogenicity, should", which is kept verbatim.</li>
+</ul>
+<h2>8. Low-confidence calls</h2>
+<ul>
+<li><strong>Header row 2 typing</strong>: see D1.</li>
+<li><strong>Genetic Sample (Stored)</strong>: the X is printed only in the Period 1 Day -1 column, although its note says "taken prior to/on Period 1 Day -1". It is copied as printed (column 3 only), and nothing was inferred for Screening.</li>
+</ul>
+<h2>9. Orphan risk</h2>
+<ul>
+<li>None. Every annotation has at least one marker_location, and every marker in a marker_location also appears in that row's <code>annotation_markers</code>. The one exception is <code>a</code>, which is carried on its schedule_grid cell.</li>
+<li>Every marker printed in the table has its definition printed in the source.</li>
+</ul>
+<h2>10. Method provenance</h2>
+<ul>
+<li><code>activity_name_source.indentation_method: font_signal</code> on all 36 activities. The hierarchy comes from bold and shading, because the text layer has no leading whitespace.</li>
+<li><code>marker_locations[].method: synthesized</code> on every location of c1–c25 (the Comments column notes) and on n1.</li>
+<li>There are no <code>unresolved</code> locations, no <code>proximity_bounded</code> text and no <code>raster_pixel_detection</code> / <code>visual_read</code> cells.</li>
+</ul>
 </body>
 </html>

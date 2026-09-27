@@ -35,104 +35,187 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT04184622" title="This protocol's row on the collection index">NCT04184622</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT04184622_Table_01_extraction_viewer.html">T1</a> <a href="../../SoA2USDM/extracted/NCT04184622_Table_02_extraction_viewer.html">T2</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT04184622_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT04184622_Table_02_resolved.html">T2</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT04184622_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT04184622_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT04184622 — SoA extraction uncertainty report
-
-Protocol I8F-MC-GPHK(b). Source: NCT04184622_soa.pdf (11 PDF pages = document pages 18–28 per PAGEMAP.md). Prompt v3.8.1, single pass, no protocol markdown.
-
-## Decisions needed (7)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | Tables 1–2, every &#x27;*&#x27; (e.g. p.18 &quot;Visit*&quot;) | Every &#x27;*&#x27; is read as pointing to one specific note in the &quot;Additional Information&quot; table (pp. 25–28). Each note got its own id (n1–n27) and is attached to the starred row, visit or cell whose name matches that note&#x27;s Activity cell. | Treat &#x27;*&#x27; as one generic pointer (&quot;see table below&quot;) and emit a single annotation attached to every starred element. The note-to-element matching is then left to a later step. | 3.1 |
-| D2 | p.19, Table 1 row 25 &quot;Dispense study drug&quot;, Visit 21 cell &quot;X*&quot; | The note &quot;Dispense study drug Visit 72&quot; (applies only to participants going into the prediabetes 2-year period) is attached only to the one starred cell, Visit 21 / Week 72. | Attach it to the whole Dispense study drug row. The note&#x27;s own label names &quot;Visit 72&quot;, and no visit has that number. | 3.2 |
-| D3 | p.20, Table 1 rows 38, 39, 40, 41, 44 (UACR, Cystatin-c, Calcitonin, Hematology, TSH), Visit 1 cells &quot;X*&quot; | The eligibility note (&quot;Screening visit assessment will be used to confirm eligibility …&quot;) is attached only to the five starred Visit 1 cells, where the &#x27;*&#x27; is printed. It is not attached in Table 2, where these rows have no &#x27;*&#x27;. | Attach it to the five activity rows as a whole (all visits), and/or to the same-named rows in Table 2. | 3.2 |
-| D4 | pp.18–24, header rows 4–5 of both tables | &quot;Fasting Visit&quot; and &quot;Telephone Visit&quot; (blue header rows reprinted on every page) are recorded as header properties: Fasting = other, Telephone = modality, hierarchical_level null. | Record them as activity rows with X marks. | 3.3 |
-| D5 | p.21, Table 1 row 51 | The label is transcribed literally as printed: &quot;C-SSRS (Baseline/Screening) Version)&quot;, stray parenthesis included. | Normalise it to &quot;C-SSRS (Baseline/Screening Version)&quot;, the spelling used in the Additional Information table. | 3.4 |
-| D6 | p.22, Table 2 | Section 1.3.2 is typed `track` with track_label &quot;Prediabetes&quot;. | Type it `main_soa` (an independent schedule with its own columns) rather than a population/phase track. | 4.1 |
-| D7 | p.24, Table 2, line &quot;*Please see table below for corresponding additional information&quot; | This pointer line is not emitted as an annotation of its own. Its content is carried by the per-note annotations it points to. | Emit it as an extra `source_note` with marker &#x27;*&#x27;, attached at table level. | 4.3 |
-
-## Recorded, not open (8)
-
-- Additional Information table (pp. 25–28) was converted into annotations rather than a table. Rule: taxonomy &quot;reference only if rows key to nothing in the schedule&quot; / prompt §2.
-- Both abbreviation lists (p.24 and p.28) were dropped. No abbreviation is printed as a marker in any cell (prompt §6: an abbreviation block normally yields zero annotations).
-- Header-cell stars (Visit 3*, 99*, 199*, ED*, 801*, 802*) are encoded on the Visit-row `schedule_grid` cell of that column, not on the property row (§6 header-cell footnotes).
-- n1 (Visit / Fasting Visit note) is bound to the whole &quot;Visit*&quot; and &quot;Fasting Visit*&quot; property rows. n6 is bound to the &quot;Allowable Deviation (days)*&quot; row. These are whole-row notes (§6).
-- Table 2, p.24, Self-Harm Follow-up Form, Visit 199: the X is printed near the top of its cell. The raster rule lines place it inside the Follow-up Form row, and it is transcribed there. The Supplement Form row already has its own X at Visit 199.
-- Rows before the first section band (Table 1 rows 6–8; Table 2 row 6: Informed consent, Randomization, Register study visit in IWRS) are indentation 0 and carry marks. Section bands are 0 and carry no marks. Children are 1 (§4).
-- L = 1 label column in both tables, so the first data column is position 2. Table 1: 24 data columns (2–25). Table 2: 19 data columns (2–20).
-- No merged marks, arrows or spans exist in the body. The only merged rows are the full-width section bands, confirmed from raster rule lines (§5).
-
-## 1. Method
-
-- The text layer is clean on all pages: no glyph spreading and no scanned grid. The pages have raster-detectable ruling.
-- Row bands: horizontal rules were detected in the label column from a 200-dpi render (§1d). Every text-layer word was assigned to the band holding its centre.
-- Columns: per page, each mark token was binned to the nearest Visit-row header centre (§1b). The regex allowed `X*`.
-- Merge check: every band was tested for missing internal vertical rules. Only the section-header bands (full-width) lack them.
-- Cross-check: the header-centre binning was diffed against the rule-line cell assignment. The two agree on every cell except p.20&#x27;s last two columns (ED, 801). There the raster detector missed the thin ED/801 vertical rule and pooled both columns. The header-centre read was used, and it was checked visually against the render: the OGTT row has X at ED only, and all other rows have X at both ED and 801.
-- Spot checks against the render: several dense and sparse rows per page (Weight, ECG, Dispense study drug, Immunogenicity, TZP PK, C-SSRS, PGIS; Table 2 Dispense, OGTT, Self-Harm Follow-up). All matched.
-- Method provenance recorded:
-  - `indentation_method: visual_estimate` on all activities (hierarchy taken from shaded full-width section bands).
-  - `structure_method: inferred_from_layout` on Fasting Visit and Telephone Visit.
-  - `method: text_match` on every marker location (see 3.1).
-  - No `unresolved` locations and no proximity-bounded notes.
-
-## 2. Tables
-
-| Table | Type | Pages | Data columns | Activity rows (incl. section bands) | Marks | Annotations |
-|---|---|---|---|---|---|---|
-| 1 — 1.3.1 SoA covering visits to primary study endpoint | main_soa | 18–21 | 24 (Visits 1–21, 99, ED, 801) | 54 | 414 | 27 |
-| 2 — 1.3.2 SoA for additional 2-year treatment period, prediabetes | track (&quot;Prediabetes&quot;) | 22–24 | 19 (Visits 101–116, 199, ED, 802) | 39 | 311 | 18 |
-
-- Rows per page, Table 1: p.18 = 15, p.19 = 11, p.20 = 16, p.21 = 12.
-- Rows per page, Table 2: p.22 = 14, p.23 = 17, p.24 = 8.
-- Every page in both ranges contributed rows.
-- Pages 25–28 lie outside both declared ranges. They hold only the Additional Information notes table and abbreviations, which supplied annotation text.
-- The five header rows (Visit, Week of Treatment, Allowable Deviation, Fasting Visit, Telephone Visit) are reprinted on every page. They were de-duplicated after a check that each reprint is identical to the first.
-- Header levels: Visit = 1 (visit), Week = 2 (week), Allowable Deviation = 3 (window), Fasting and Telephone = null.
-- No synthesized property names.
-
-## 3. Table 1 details
-
-### 3.1 Marker disambiguation (D1)
-- The source uses a single &#x27;*&#x27; for all footnotes. Its meaning is given on p.24 as &quot;*Please see table below for corresponding additional information&quot;.
-- Each row of the Additional Information table became one `footnote` annotation, with synthesized marker ids n1–n27 in printed order. The ids are the same in both tables.
-- Each &#x27;*&#x27; was bound by matching the starred label to the note&#x27;s Activity cell, so every location carries `method: text_match`. The &#x27;*&#x27; itself is printed at every location.
-- In cell_text and property_name_source, the raw &#x27;*&#x27; is preserved.
-- All 27 notes bind at least once in Table 1. No starred element lacks a note.
-
-### 3.2 Cell-scoped notes (D2, D3)
-- n16 (Dispense study drug Visit 72) → the X* at row 25, col 22 (Visit 21, Week 72). The source label &quot;Visit 72&quot; is evidently a week reference.
-- n22 → the Visit 1 X* cells of rows 38–41 and 44.
-
-### 3.3 Fasting / Telephone rows (D4)
-- Grey-shaded body columns coincide with the Telephone Visit X&#x27;s. The shading was treated as formatting only.
-
-### 3.4 Text
-- Hyphenated line breaks were joined in activity_name: &quot;study-drug&quot;, &quot;c-peptide&quot;.
-- cell_text keeps the printed line joins.
-- The C-SSRS row keeps the source typo (D5).
-
-## 4. Table 2 details
-
-### 4.1 Classification (D6)
-- It has its own section number (1.3.2), title, visits (101–116, 199, ED, 802) and weeks (78–176).
-- It schedules only participants with prediabetes at randomization. This is a separate phase for a sub-population, hence `track`.
-- It is not `continuation` or `domain`: the columns differ.
-
-### 4.2 Bindings
-- 18 of the 27 notes apply (the others concern rows that are absent from, or unstarred in, Table 2).
-- The UACR/Cystatin-c/Calcitonin/Hematology rows carry no &#x27;*&#x27; here, so n22 is not bound (see D3).
-
-### 4.3 Pointer note (D7)
-- The &quot;*Please see table below…&quot; line prints only on p.24 (below Table 2). It is not emitted as a separate annotation.
-
-## 5. Annotation text integrity
-- The notes were read from the vector-ruled Additional Information table (cells bounded by rule lines, so the default method applies).
-- The text layer on p.28 reads &quot;assignedby&quot; in the TZP PK note. The render shows &quot;assigned by&quot;, and &quot;assigned by&quot; was used.
-- Printed spellings were kept: &quot;study drug (s)&quot; and &quot;Counselling&quot;.
-- The underlined italic &quot;after&quot; in n26 is rendered as plain text.
-- Containment pairs: n11 (&quot;All training should be repeated as needed to ensure participant compliance.&quot;) is contained in n14 and in n15 (n15 lacks the final period). Re-verified against pp.26–27: these are three separate rule-bounded cells for three different activities. They are source-faithful, not a split note.
-- Orphan risk: none. Every annotation has at least one location, and every marker in a location appears on that element&#x27;s `annotation_markers`.
-</pre>
+    <h1>NCT04184622 — SoA extraction uncertainty report</h1>
+<p>Protocol I8F-MC-GPHK(b). Source: NCT04184622_soa.pdf (11 PDF pages = document pages 18–28 per PAGEMAP.md). Prompt v3.8.1, single pass, no protocol markdown.</p>
+<h2>Decisions needed (7)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>Tables 1–2, every '<em>' (e.g. p.18 "Visit</em>")</td>
+<td>Every '*' is read as pointing to one specific note in the "Additional Information" table (pp. 25–28). Each note got its own id (n1–n27) and is attached to the starred row, visit or cell whose name matches that note's Activity cell.</td>
+<td>Treat '*' as one generic pointer ("see table below") and emit a single annotation attached to every starred element. The note-to-element matching is then left to a later step.</td>
+<td>3.1</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p.19, Table 1 row 25 "Dispense study drug", Visit 21 cell "X*"</td>
+<td>The note "Dispense study drug Visit 72" (applies only to participants going into the prediabetes 2-year period) is attached only to the one starred cell, Visit 21 / Week 72.</td>
+<td>Attach it to the whole Dispense study drug row. The note's own label names "Visit 72", and no visit has that number.</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p.20, Table 1 rows 38, 39, 40, 41, 44 (UACR, Cystatin-c, Calcitonin, Hematology, TSH), Visit 1 cells "X*"</td>
+<td>The eligibility note ("Screening visit assessment will be used to confirm eligibility …") is attached only to the five starred Visit 1 cells, where the '<em>' is printed. It is not attached in Table 2, where these rows have no '</em>'.</td>
+<td>Attach it to the five activity rows as a whole (all visits), and/or to the same-named rows in Table 2.</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>pp.18–24, header rows 4–5 of both tables</td>
+<td>"Fasting Visit" and "Telephone Visit" (blue header rows reprinted on every page) are recorded as header properties: Fasting = other, Telephone = modality, hierarchical_level null.</td>
+<td>Record them as activity rows with X marks.</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>p.21, Table 1 row 51</td>
+<td>The label is transcribed literally as printed: "C-SSRS (Baseline/Screening) Version)", stray parenthesis included.</td>
+<td>Normalise it to "C-SSRS (Baseline/Screening Version)", the spelling used in the Additional Information table.</td>
+<td>3.4</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>p.22, Table 2</td>
+<td>Section 1.3.2 is typed <code>track</code> with track_label "Prediabetes".</td>
+<td>Type it <code>main_soa</code> (an independent schedule with its own columns) rather than a population/phase track.</td>
+<td>4.1</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>p.24, Table 2, line "*Please see table below for corresponding additional information"</td>
+<td>This pointer line is not emitted as an annotation of its own. Its content is carried by the per-note annotations it points to.</td>
+<td>Emit it as an extra <code>source_note</code> with marker '*', attached at table level.</td>
+<td>4.3</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (8)</h2>
+<ul>
+<li>Additional Information table (pp. 25–28) was converted into annotations rather than a table. Rule: taxonomy "reference only if rows key to nothing in the schedule" / prompt §2.</li>
+<li>Both abbreviation lists (p.24 and p.28) were dropped. No abbreviation is printed as a marker in any cell (prompt §6: an abbreviation block normally yields zero annotations).</li>
+<li>Header-cell stars (Visit 3<em>, 99</em>, 199<em>, ED</em>, 801<em>, 802</em>) are encoded on the Visit-row <code>schedule_grid</code> cell of that column, not on the property row (§6 header-cell footnotes).</li>
+<li>n1 (Visit / Fasting Visit note) is bound to the whole "Visit<em>" and "Fasting Visit</em>" property rows. n6 is bound to the "Allowable Deviation (days)*" row. These are whole-row notes (§6).</li>
+<li>Table 2, p.24, Self-Harm Follow-up Form, Visit 199: the X is printed near the top of its cell. The raster rule lines place it inside the Follow-up Form row, and it is transcribed there. The Supplement Form row already has its own X at Visit 199.</li>
+<li>Rows before the first section band (Table 1 rows 6–8; Table 2 row 6: Informed consent, Randomization, Register study visit in IWRS) are indentation 0 and carry marks. Section bands are 0 and carry no marks. Children are 1 (§4).</li>
+<li>L = 1 label column in both tables, so the first data column is position 2. Table 1: 24 data columns (2–25). Table 2: 19 data columns (2–20).</li>
+<li>No merged marks, arrows or spans exist in the body. The only merged rows are the full-width section bands, confirmed from raster rule lines (§5).</li>
+</ul>
+<h2>1. Method</h2>
+<ul>
+<li>The text layer is clean on all pages: no glyph spreading and no scanned grid. The pages have raster-detectable ruling.</li>
+<li>Row bands: horizontal rules were detected in the label column from a 200-dpi render (§1d). Every text-layer word was assigned to the band holding its centre.</li>
+<li>Columns: per page, each mark token was binned to the nearest Visit-row header centre (§1b). The regex allowed <code>X*</code>.</li>
+<li>Merge check: every band was tested for missing internal vertical rules. Only the section-header bands (full-width) lack them.</li>
+<li>Cross-check: the header-centre binning was diffed against the rule-line cell assignment. The two agree on every cell except p.20's last two columns (ED, 801). There the raster detector missed the thin ED/801 vertical rule and pooled both columns. The header-centre read was used, and it was checked visually against the render: the OGTT row has X at ED only, and all other rows have X at both ED and 801.</li>
+<li>Spot checks against the render: several dense and sparse rows per page (Weight, ECG, Dispense study drug, Immunogenicity, TZP PK, C-SSRS, PGIS; Table 2 Dispense, OGTT, Self-Harm Follow-up). All matched.</li>
+<li>Method provenance recorded:</li>
+<li><code>indentation_method: visual_estimate</code> on all activities (hierarchy taken from shaded full-width section bands).</li>
+<li><code>structure_method: inferred_from_layout</code> on Fasting Visit and Telephone Visit.</li>
+<li><code>method: text_match</code> on every marker location (see 3.1).</li>
+<li>No <code>unresolved</code> locations and no proximity-bounded notes.</li>
+</ul>
+<h2>2. Tables</h2>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Type</th>
+<th>Pages</th>
+<th>Data columns</th>
+<th>Activity rows (incl. section bands)</th>
+<th>Marks</th>
+<th>Annotations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — 1.3.1 SoA covering visits to primary study endpoint</td>
+<td>main_soa</td>
+<td>18–21</td>
+<td>24 (Visits 1–21, 99, ED, 801)</td>
+<td>54</td>
+<td>414</td>
+<td>27</td>
+</tr>
+<tr>
+<td>2 — 1.3.2 SoA for additional 2-year treatment period, prediabetes</td>
+<td>track ("Prediabetes")</td>
+<td>22–24</td>
+<td>19 (Visits 101–116, 199, ED, 802)</td>
+<td>39</td>
+<td>311</td>
+<td>18</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Rows per page, Table 1: p.18 = 15, p.19 = 11, p.20 = 16, p.21 = 12.</li>
+<li>Rows per page, Table 2: p.22 = 14, p.23 = 17, p.24 = 8.</li>
+<li>Every page in both ranges contributed rows.</li>
+<li>Pages 25–28 lie outside both declared ranges. They hold only the Additional Information notes table and abbreviations, which supplied annotation text.</li>
+<li>The five header rows (Visit, Week of Treatment, Allowable Deviation, Fasting Visit, Telephone Visit) are reprinted on every page. They were de-duplicated after a check that each reprint is identical to the first.</li>
+<li>Header levels: Visit = 1 (visit), Week = 2 (week), Allowable Deviation = 3 (window), Fasting and Telephone = null.</li>
+<li>No synthesized property names.</li>
+</ul>
+<h2>3. Table 1 details</h2>
+<h3>3.1 Marker disambiguation (D1)</h3>
+<ul>
+<li>The source uses a single '<em>' for all footnotes. Its meaning is given on p.24 as "</em>Please see table below for corresponding additional information".</li>
+<li>Each row of the Additional Information table became one <code>footnote</code> annotation, with synthesized marker ids n1–n27 in printed order. The ids are the same in both tables.</li>
+<li>Each '<em>' was bound by matching the starred label to the note's Activity cell, so every location carries <code>method: text_match</code>. The '</em>' itself is printed at every location.</li>
+<li>In cell_text and property_name_source, the raw '*' is preserved.</li>
+<li>All 27 notes bind at least once in Table 1. No starred element lacks a note.</li>
+</ul>
+<h3>3.2 Cell-scoped notes (D2, D3)</h3>
+<ul>
+<li>n16 (Dispense study drug Visit 72) → the X* at row 25, col 22 (Visit 21, Week 72). The source label "Visit 72" is evidently a week reference.</li>
+<li>n22 → the Visit 1 X* cells of rows 38–41 and 44.</li>
+</ul>
+<h3>3.3 Fasting / Telephone rows (D4)</h3>
+<ul>
+<li>Grey-shaded body columns coincide with the Telephone Visit X's. The shading was treated as formatting only.</li>
+</ul>
+<h3>3.4 Text</h3>
+<ul>
+<li>Hyphenated line breaks were joined in activity_name: "study-drug", "c-peptide".</li>
+<li>cell_text keeps the printed line joins.</li>
+<li>The C-SSRS row keeps the source typo (D5).</li>
+</ul>
+<h2>4. Table 2 details</h2>
+<h3>4.1 Classification (D6)</h3>
+<ul>
+<li>It has its own section number (1.3.2), title, visits (101–116, 199, ED, 802) and weeks (78–176).</li>
+<li>It schedules only participants with prediabetes at randomization. This is a separate phase for a sub-population, hence <code>track</code>.</li>
+<li>It is not <code>continuation</code> or <code>domain</code>: the columns differ.</li>
+</ul>
+<h3>4.2 Bindings</h3>
+<ul>
+<li>18 of the 27 notes apply (the others concern rows that are absent from, or unstarred in, Table 2).</li>
+<li>The UACR/Cystatin-c/Calcitonin/Hematology rows carry no '*' here, so n22 is not bound (see D3).</li>
+</ul>
+<h3>4.3 Pointer note (D7)</h3>
+<ul>
+<li>The "*Please see table below…" line prints only on p.24 (below Table 2). It is not emitted as a separate annotation.</li>
+</ul>
+<h2>5. Annotation text integrity</h2>
+<ul>
+<li>The notes were read from the vector-ruled Additional Information table (cells bounded by rule lines, so the default method applies).</li>
+<li>The text layer on p.28 reads "assignedby" in the TZP PK note. The render shows "assigned by", and "assigned by" was used.</li>
+<li>Printed spellings were kept: "study drug (s)" and "Counselling".</li>
+<li>The underlined italic "after" in n26 is rendered as plain text.</li>
+<li>Containment pairs: n11 ("All training should be repeated as needed to ensure participant compliance.") is contained in n14 and in n15 (n15 lacks the final period). Re-verified against pp.26–27: these are three separate rule-bounded cells for three different activities. They are source-faithful, not a split note.</li>
+<li>Orphan risk: none. Every annotation has at least one location, and every marker in a location appears on that element's <code>annotation_markers</code>.</li>
+</ul>
 </body>
 </html>

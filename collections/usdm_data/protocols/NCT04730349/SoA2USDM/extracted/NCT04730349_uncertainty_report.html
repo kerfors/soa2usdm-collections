@@ -35,87 +35,153 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT04730349" title="This protocol's row on the collection index">NCT04730349</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT04730349_Table_01_extraction_viewer.html">T1</a> <a href="../../SoA2USDM/extracted/NCT04730349_Table_02_extraction_viewer.html">T2</a> <a href="../../SoA2USDM/extracted/NCT04730349_Table_03_extraction_viewer.html">T3</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT04730349_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT04730349_Table_02_resolved.html">T2</a> <a href="../../SoA2USDM/resolved/NCT04730349_Table_03_resolved.html">T3</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT04730349_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT04730349_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT04730349 — SoA extraction uncertainty report
-
-Prompt: PDF_TO_JSON_PROMPT v3.8.1, run in one pass without stopping. Source: NCT04730349_soa.pdf (16 PDF pages = document pages 27–42, per PAGEMAP.md). No protocol markdown was provided, so all text comes from the PDF text layer and was checked against rendered pages.
-
-## Decisions needed (3)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p.31, Table 2-2 row 4 (Targeted Physical Examination…), Day 8 cell (col 5), marker `*` | The Notes-cell line &quot;*At Day 8 visits collect vital signs only.&quot; is its own annotation `*`, bound to the Day 8 cell that shows &quot;X*&quot;. The rest of that Notes cell is annotation n1, bound to the activity. | Keep the whole Notes cell, including the `*` line, as one activity-level note (n1). The `*` would then stay only as a mark on the cell. | 3.3 |
-| D2 | p.37, Table 2-2 row 29 (Oral Hydration Follow-up), col 4 | &quot;X (Day 3-5)&quot; is recorded only in the Cycle 1 Day 5 column (col 4), where it is printed. The rule line between Day 3 and Day 5 is present in that row, so this is not a merged cell. The qualifier stays in the cell text. | Treat &quot;(Day 3-5)&quot; as naming the Cycle 1 Day 3 and Day 5 columns, and spread the X over cols 3:4. | 3.2 |
-| D3 | p.31, Table 2-2 header rows 1–2 | The cycle-length lines (&quot;Cycle = 3 wks&quot;, &quot;Each cycle = 3 wks&quot;) and the visit windows (&quot;± 1 day&quot;, &quot;- 1 day&quot;) stay inside the cycle and day header cells. This gives two header properties (cycle, study_day). | Split them out into separate header properties (a cycle-length row and a `window` row). | 3.1 |
-
-## Recorded, not open (7)
-
-- All three tables typed `main_soa`. Rule: taxonomy &quot;multiple independent schedules (e.g. Screening table and Treatment table with different column structures) → each main_soa&quot;. Section 2 (p.27) presents Tables 2-1, 2-2 and 2-3 as three schedules (Screening, On Treatment, Long-term Follow-up). Each has its own column set, and all three cover the same participants.
-- Each table has one label column (Procedure), so L = 1 and the first data column is position 2. The right-hand Notes column is not a schedule column (§5, §6).
-- Each non-empty Notes cell is one annotation, bounded by rule lines, with a synthesised marker (n1, n2, …) bound by `method: synthesized` to the activity row beside it (§6).
-- Merged text cells are distributed over their span with `source_range` (§5). This covers &quot;Continuously&quot;, imaging instruction text, &quot;Performed … as clinically indicated&quot;, &quot;See Section 9.5.1 …&quot;, &quot;See Notes&quot; and &quot;As clinically indicated&quot;.
-- Qualified marks are kept as literal cell values because the qualifier is a condition, not a column span (§5): &quot;X (Cycle 5 only)&quot; (T2 row 5, col 7), &quot;If toxicities are present.&quot; / &quot;If toxicities are present&quot; (T3 row 10, cols 3–4).
-- Footnote c of Table 2-3 is printed on the Notes column header. It is treated as table-scope: one `schedule_property` location with `method: synthesized`, and no marker placed on any element (§6).
-- Abbreviation blocks (pp.30, 37, 42) produced no annotations. None of their terms is printed as a marker (§6).
-
-## 1. Per-table summary
-
-| Table | Source | type | pages | data cols | activities (incl. headers) | activity rows per page |
-|---|---|---|---|---|---|---|
-| 1 | Table 2-1 Screening Procedural Outline | main_soa | 28–30 | 1 (pos 2) | 21 | 28: 12 · 29: 6 · 30: 3 |
-| 2 | Table 2-2 On-treatment Procedural Outline | main_soa | 31–38 | 6 (pos 2–7) | 27 | 31: 4 · 32: 4 · 33: 2 · 34: 4 · 35: 5 · 36: 6 · 37: 2 · 38: 0 |
-| 3 | Table 2-3 Long-term Follow-up Period | main_soa | 39–42 | 4 (pos 2–5) | 19 | 39: 7 · 40: 3 · 41: 3 · 42: 6 |
-
-- Page 27 holds only the Section 2 introduction, so no table starts there. Table 1 starts on page 28.
-- Page 38 contributes no activity rows. It holds only footnotes d and e of Table 2-2, and that is expected.
-- Section-header rows (bold, no marks) are at indentation 0 and procedures at 1 (`indentation_method: font_signal`). Table 1 headers: Eligibility Assessments, Safety Assessments, Laboratory Tests, Tumor Assessment. Table 2 headers: Safety, Laboratory Tests, Efficacy, PK/Immunogenicity (marker e), Health Outcomes, Study Drug. Table 3 headers: Safety, Laboratory Tests, Efficacy, PK/Immunogenicity.
-
-### 3.1 Header structure (Table 2)
-- Row 1 is `cycle`: &quot;Cycle 1 Only&quot; is merged over 2:5 with markers a,b, and &quot;Cycle 2 and Beyond&quot; is merged over 6:7 with markers a,b,c.
-- Row 2 is `study_day`: Day 1, Day 3 (± 1 day) with marker d, Day 5 (± 1 day), Day 8 (- 1 day), Day 1, Day 3-5.
-- Both property names are synthesised (&quot;Cycle&quot;, &quot;Day&quot;) because the label cell is the merged &quot;Procedure&quot; heading.
-- Tables 1 and 3 each have one `visit` header row with the name &quot;Visit&quot; synthesised.
-- The Survival Follow-up window &quot;(± 14 Days)&quot; is kept in its cell value.
-- Header footnote markers are on the specific `schedule_grid` cells. Their locations are `schedule_property` entries with a `column_position`.
-
-### 3.2 Merged-mark decisions
-The spans were confirmed from 200-dpi raster rule lines: the internal vertical rules are missing across each span.
-- Table 2, span 3:7 (the Cycle 1 Day 1 column stays empty, and its rule line is present): row 6 AE Assessment (&quot;Continuously&quot;), row 7 Concomitant Medication Use (&quot;Continuously&quot;), row 12 Body Imaging (bullet text), row 13 Brain Imaging (bullet text), row 14 CSF - Solid tumors, row 15 Bone Marrow- Solid tumors, row 16 CSF - Leukemia, row 17 Bone Marrow - Leukemia, rows 19–21 PK/Immunogenicity samples (&quot;See Section 9.5.1 for further details.&quot;), row 23 PRO (&quot;See Notes&quot;).
-- Table 3, span 2:5: row 13 Body Imaging, row 14 Brain Imaging, row 15 CSF (&quot;As clinically indicated.&quot;), row 16 Bone marrow aspirate (&quot;As clinically indicated&quot;), rows 19–20 PK and Immunogenicity samples.
-- Oral Hydration Follow-up (T2 row 29): every rule line is present, so the mark is a single cell in col 4 (see D2).
-
-### 3.3 Synthesised items
-- Property names &quot;Visit&quot; (T1, T3), &quot;Cycle&quot; and &quot;Day&quot; (T2).
-- Notes-column markers: T1 n1–n17, T2 n1–n17, T3 n1–n12.
-- For D1, the `*` note text was taken out of the Notes cell of T2 row 4. The `*` marker itself is printed in the grid (&quot;X*&quot;), so its location is not synthesised.
-
-## 4. Mechanical mark-check
-- Every SoA page has a text layer and vector rule lines. The text layer is not glyph-spread, so no word reconstruction was needed.
-- Marks: `pdftotext -bbox` tokens matching `^[Xx][*a-zA-Z0-9]?$` were binned to the nearest header column centre on every page. The resulting matrix matched the visual read cell for cell, including &quot;X*&quot; (T2 row 4, Day 8) and the &quot;X&quot; parts of &quot;X (Cycle 5 only)&quot; and &quot;X (Day 3-5)&quot;. There were no disagreements.
-- Row and cell bands were recovered from raster rule lines, as in §1d, to confirm spans and Notes-cell extents.
-
-## 5. Annotation text integrity
-- Containment pairs were checked against the page, and both are source-faithful. They are separate Notes cells in the source, not one cell split across rows:
-  - T2 n4 &quot;Record at each visit.&quot; (Concomitant Medication Use, p.32) is contained in T2 n3 (AE Assessment, p.31).
-  - T3 n8 &quot;See Section 9.1.1 for further details.&quot; (Body Imaging) is contained in T3 n9 (Brain Imaging, p.41).
-- Redacted content was transcribed up to the black box, with &quot;[remainder redacted in source]&quot; appended:
-  - Table 1 notes n14–n17.
-  - Table 2 notes n9–n12.
-  - T2 footnote e has an inline redaction, written as &quot;[redacted in source]&quot;.
-- The superscript in &quot;[18F]fluorodeoxyglucose&quot; was flattened to &quot;[18F]&quot;. Bullets are rendered as &quot;•&quot; on separate lines. &quot;±&quot; was restored from the rendered page because the text layer maps it to a private-use glyph.
-- The label of T2 row 23 is printed in grey font (&quot;Patient-reported Outcomes (PRO) Version of the CTCAE&quot;). It is kept as a normal activity, and the grey is recorded in `font_info`.
-
-## 6. Source defects / orphan risk
-- Redaction blocks that may conceal activity rows:
-  - T1: a full-width block below the last row on p.30.
-  - T2: a block covering the table bottom on p.35 (roughly 5 rows&#x27; height), and a full-width band just under the header on p.36.
-  - T3: a full-width block below Pregnancy Test on p.40.
-- No rows were emitted for any of these regions. The reviewer should confirm against an unredacted source if one is available.
-- Every annotation has at least one marker location, and no marker is used without a definition. T3 marker c is intentionally not placed on any element (table-scope).
-
-## 7. Method provenance
-- `activity_name_source.indentation_method: font_signal` on all activities (bold headers = level 0).
-- `marker_locations[].method: synthesized` on all Notes-column annotations (n*) and on T3 footnote c.
-- No `unresolved` locations. No `proximity_bounded`, `raster_band_cells` or `visual_transcription` text.
-</pre>
+    <h1>NCT04730349 — SoA extraction uncertainty report</h1>
+<p>Prompt: PDF_TO_JSON_PROMPT v3.8.1, run in one pass without stopping. Source: NCT04730349_soa.pdf (16 PDF pages = document pages 27–42, per PAGEMAP.md). No protocol markdown was provided, so all text comes from the PDF text layer and was checked against rendered pages.</p>
+<h2>Decisions needed (3)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p.31, Table 2-2 row 4 (Targeted Physical Examination…), Day 8 cell (col 5), marker <code>*</code></td>
+<td>The Notes-cell line "<em>At Day 8 visits collect vital signs only." is its own annotation <code>*</code>, bound to the Day 8 cell that shows "X</em>". The rest of that Notes cell is annotation n1, bound to the activity.</td>
+<td>Keep the whole Notes cell, including the <code>*</code> line, as one activity-level note (n1). The <code>*</code> would then stay only as a mark on the cell.</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p.37, Table 2-2 row 29 (Oral Hydration Follow-up), col 4</td>
+<td>"X (Day 3-5)" is recorded only in the Cycle 1 Day 5 column (col 4), where it is printed. The rule line between Day 3 and Day 5 is present in that row, so this is not a merged cell. The qualifier stays in the cell text.</td>
+<td>Treat "(Day 3-5)" as naming the Cycle 1 Day 3 and Day 5 columns, and spread the X over cols 3:4.</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p.31, Table 2-2 header rows 1–2</td>
+<td>The cycle-length lines ("Cycle = 3 wks", "Each cycle = 3 wks") and the visit windows ("± 1 day", "- 1 day") stay inside the cycle and day header cells. This gives two header properties (cycle, study_day).</td>
+<td>Split them out into separate header properties (a cycle-length row and a <code>window</code> row).</td>
+<td>3.1</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (7)</h2>
+<ul>
+<li>All three tables typed <code>main_soa</code>. Rule: taxonomy "multiple independent schedules (e.g. Screening table and Treatment table with different column structures) → each main_soa". Section 2 (p.27) presents Tables 2-1, 2-2 and 2-3 as three schedules (Screening, On Treatment, Long-term Follow-up). Each has its own column set, and all three cover the same participants.</li>
+<li>Each table has one label column (Procedure), so L = 1 and the first data column is position 2. The right-hand Notes column is not a schedule column (§5, §6).</li>
+<li>Each non-empty Notes cell is one annotation, bounded by rule lines, with a synthesised marker (n1, n2, …) bound by <code>method: synthesized</code> to the activity row beside it (§6).</li>
+<li>Merged text cells are distributed over their span with <code>source_range</code> (§5). This covers "Continuously", imaging instruction text, "Performed … as clinically indicated", "See Section 9.5.1 …", "See Notes" and "As clinically indicated".</li>
+<li>Qualified marks are kept as literal cell values because the qualifier is a condition, not a column span (§5): "X (Cycle 5 only)" (T2 row 5, col 7), "If toxicities are present." / "If toxicities are present" (T3 row 10, cols 3–4).</li>
+<li>Footnote c of Table 2-3 is printed on the Notes column header. It is treated as table-scope: one <code>schedule_property</code> location with <code>method: synthesized</code>, and no marker placed on any element (§6).</li>
+<li>Abbreviation blocks (pp.30, 37, 42) produced no annotations. None of their terms is printed as a marker (§6).</li>
+</ul>
+<h2>1. Per-table summary</h2>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Source</th>
+<th>type</th>
+<th>pages</th>
+<th>data cols</th>
+<th>activities (incl. headers)</th>
+<th>activity rows per page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Table 2-1 Screening Procedural Outline</td>
+<td>main_soa</td>
+<td>28–30</td>
+<td>1 (pos 2)</td>
+<td>21</td>
+<td>28: 12 · 29: 6 · 30: 3</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Table 2-2 On-treatment Procedural Outline</td>
+<td>main_soa</td>
+<td>31–38</td>
+<td>6 (pos 2–7)</td>
+<td>27</td>
+<td>31: 4 · 32: 4 · 33: 2 · 34: 4 · 35: 5 · 36: 6 · 37: 2 · 38: 0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Table 2-3 Long-term Follow-up Period</td>
+<td>main_soa</td>
+<td>39–42</td>
+<td>4 (pos 2–5)</td>
+<td>19</td>
+<td>39: 7 · 40: 3 · 41: 3 · 42: 6</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Page 27 holds only the Section 2 introduction, so no table starts there. Table 1 starts on page 28.</li>
+<li>Page 38 contributes no activity rows. It holds only footnotes d and e of Table 2-2, and that is expected.</li>
+<li>Section-header rows (bold, no marks) are at indentation 0 and procedures at 1 (<code>indentation_method: font_signal</code>). Table 1 headers: Eligibility Assessments, Safety Assessments, Laboratory Tests, Tumor Assessment. Table 2 headers: Safety, Laboratory Tests, Efficacy, PK/Immunogenicity (marker e), Health Outcomes, Study Drug. Table 3 headers: Safety, Laboratory Tests, Efficacy, PK/Immunogenicity.</li>
+</ul>
+<h3>3.1 Header structure (Table 2)</h3>
+<ul>
+<li>Row 1 is <code>cycle</code>: "Cycle 1 Only" is merged over 2:5 with markers a,b, and "Cycle 2 and Beyond" is merged over 6:7 with markers a,b,c.</li>
+<li>Row 2 is <code>study_day</code>: Day 1, Day 3 (± 1 day) with marker d, Day 5 (± 1 day), Day 8 (- 1 day), Day 1, Day 3-5.</li>
+<li>Both property names are synthesised ("Cycle", "Day") because the label cell is the merged "Procedure" heading.</li>
+<li>Tables 1 and 3 each have one <code>visit</code> header row with the name "Visit" synthesised.</li>
+<li>The Survival Follow-up window "(± 14 Days)" is kept in its cell value.</li>
+<li>Header footnote markers are on the specific <code>schedule_grid</code> cells. Their locations are <code>schedule_property</code> entries with a <code>column_position</code>.</li>
+</ul>
+<h3>3.2 Merged-mark decisions</h3>
+<p>The spans were confirmed from 200-dpi raster rule lines: the internal vertical rules are missing across each span.
+- Table 2, span 3:7 (the Cycle 1 Day 1 column stays empty, and its rule line is present): row 6 AE Assessment ("Continuously"), row 7 Concomitant Medication Use ("Continuously"), row 12 Body Imaging (bullet text), row 13 Brain Imaging (bullet text), row 14 CSF - Solid tumors, row 15 Bone Marrow- Solid tumors, row 16 CSF - Leukemia, row 17 Bone Marrow - Leukemia, rows 19–21 PK/Immunogenicity samples ("See Section 9.5.1 for further details."), row 23 PRO ("See Notes").
+- Table 3, span 2:5: row 13 Body Imaging, row 14 Brain Imaging, row 15 CSF ("As clinically indicated."), row 16 Bone marrow aspirate ("As clinically indicated"), rows 19–20 PK and Immunogenicity samples.
+- Oral Hydration Follow-up (T2 row 29): every rule line is present, so the mark is a single cell in col 4 (see D2).</p>
+<h3>3.3 Synthesised items</h3>
+<ul>
+<li>Property names "Visit" (T1, T3), "Cycle" and "Day" (T2).</li>
+<li>Notes-column markers: T1 n1–n17, T2 n1–n17, T3 n1–n12.</li>
+<li>For D1, the <code>*</code> note text was taken out of the Notes cell of T2 row 4. The <code>*</code> marker itself is printed in the grid ("X*"), so its location is not synthesised.</li>
+</ul>
+<h2>4. Mechanical mark-check</h2>
+<ul>
+<li>Every SoA page has a text layer and vector rule lines. The text layer is not glyph-spread, so no word reconstruction was needed.</li>
+<li>Marks: <code>pdftotext -bbox</code> tokens matching <code>^[Xx][*a-zA-Z0-9]?$</code> were binned to the nearest header column centre on every page. The resulting matrix matched the visual read cell for cell, including "X*" (T2 row 4, Day 8) and the "X" parts of "X (Cycle 5 only)" and "X (Day 3-5)". There were no disagreements.</li>
+<li>Row and cell bands were recovered from raster rule lines, as in §1d, to confirm spans and Notes-cell extents.</li>
+</ul>
+<h2>5. Annotation text integrity</h2>
+<ul>
+<li>Containment pairs were checked against the page, and both are source-faithful. They are separate Notes cells in the source, not one cell split across rows:</li>
+<li>T2 n4 "Record at each visit." (Concomitant Medication Use, p.32) is contained in T2 n3 (AE Assessment, p.31).</li>
+<li>T3 n8 "See Section 9.1.1 for further details." (Body Imaging) is contained in T3 n9 (Brain Imaging, p.41).</li>
+<li>Redacted content was transcribed up to the black box, with "[remainder redacted in source]" appended:</li>
+<li>Table 1 notes n14–n17.</li>
+<li>Table 2 notes n9–n12.</li>
+<li>T2 footnote e has an inline redaction, written as "[redacted in source]".</li>
+<li>The superscript in "[18F]fluorodeoxyglucose" was flattened to "[18F]". Bullets are rendered as "•" on separate lines. "±" was restored from the rendered page because the text layer maps it to a private-use glyph.</li>
+<li>The label of T2 row 23 is printed in grey font ("Patient-reported Outcomes (PRO) Version of the CTCAE"). It is kept as a normal activity, and the grey is recorded in <code>font_info</code>.</li>
+</ul>
+<h2>6. Source defects / orphan risk</h2>
+<ul>
+<li>Redaction blocks that may conceal activity rows:</li>
+<li>T1: a full-width block below the last row on p.30.</li>
+<li>T2: a block covering the table bottom on p.35 (roughly 5 rows' height), and a full-width band just under the header on p.36.</li>
+<li>T3: a full-width block below Pregnancy Test on p.40.</li>
+<li>No rows were emitted for any of these regions. The reviewer should confirm against an unredacted source if one is available.</li>
+<li>Every annotation has at least one marker location, and no marker is used without a definition. T3 marker c is intentionally not placed on any element (table-scope).</li>
+</ul>
+<h2>7. Method provenance</h2>
+<ul>
+<li><code>activity_name_source.indentation_method: font_signal</code> on all activities (bold headers = level 0).</li>
+<li><code>marker_locations[].method: synthesized</code> on all Notes-column annotations (n*) and on T3 footnote c.</li>
+<li>No <code>unresolved</code> locations. No <code>proximity_bounded</code>, <code>raster_band_cells</code> or <code>visual_transcription</code> text.</li>
+</ul>
 </body>
 </html>

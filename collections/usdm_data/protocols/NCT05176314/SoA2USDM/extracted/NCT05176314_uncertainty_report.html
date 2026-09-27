@@ -35,75 +35,99 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT05176314" title="This protocol's row on the collection index">NCT05176314</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT05176314_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT05176314_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT05176314_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT05176314_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT05176314 - SoA extraction uncertainty report
-
-Prompt 3.8.1, single pass. Source: NCT05176314_soa.pdf (3 PDF pages = document pages 10, 11, 12 per PAGEMAP.md). No protocol markdown was available, so all text comes from the PDF text layer.
-
-## Decisions needed (3)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p. 11, between rows 21/22 and rows 22/23 | The two full-width black redaction bars labelled &quot;CCI&quot; on page 11 are treated as hidden content. No activity rows are created for them. | Each bar hides one or more activity rows, with their own marks. Add placeholder rows (e.g. &quot;[redacted row]&quot;) so the hidden procedures are represented. | 4 |
-| D2 | p. 11, row 21 &quot;Genetic blood sample for screening&quot; | The label is transcribed from its three visible lines as &quot;Genetic blood sample for screening&quot;. The last line is partly clipped by the redaction bar below it. | Part of the label is under the bar (the text layer places the bar&#x27;s &quot;CCI&quot; label between &quot;for&quot; and &quot;screening&quot;). Record the name as incomplete, e.g. &quot;Genetic blood sample for [redacted] screening&quot;. | 4 |
-| D3 | p. 10, header rows 1-2, column 2 | The rotated Screening header cell covers both header rows. It is split by its two printed lines: &quot;Screening&quot; goes on the epoch row and &quot;(D-42 to -2)&quot; on the study-day row. | Keep the whole text &quot;Screening (D-42 to -2)&quot; as one value on the epoch row, and leave the Screening column empty on the study-day row. | 3 |
-
-## Recorded, not open (7)
-
-- §2 / type definitions: one table was printed across pages 10-11, with the header reprinted on page 11. It was extracted as a single `main_soa`, not as a `continuation`, because the source gives the overflow no number or caption of its own. The reprinted header was de-duplicated (§1b).
-- §6 source defect: markers d (Supine vital signs), f (on &quot;P&quot; in the Day 6 PK cell) and g (Rosuvastatin PK samples) are printed in the table, but their footnote text is not. On page 12 their positions are covered by &quot;CCI&quot; redaction boxes. Each marker got an annotation whose text says the definition is not printed, ending in &quot;[remainder redacted in source]&quot;. No text was made up.
-- §6 abbreviations: the abbreviation block (BP, CRU, D, ECG, ED, FU, h, P, PK, PR) produced only two annotations, P = predose and h = hours postdose. Both are typed `legend` because they are in-grid scheduling marks, and each is bound to every cell that uses it (P: 12 cells, h: 23 cells). The other terms appear only in labels or header text, so they were dropped. No text_match or synthesized bindings were used.
-- §6 / §5: P and h stay in `cell_value` as scheduling marks. To keep binding consistent, they are also listed in those cells&#x27; `annotation_markers`.
-- §6 header-cell footnotes: marker a sits on the Day 18 header cell (row 2, col 21) and marker b on the FU/ED header cell (row 1, col 22). Each was put on that column&#x27;s `schedule_grid` cell, not on the property row.
-- §4: page 12 is outside the declared SoA range (PAGEMAP). It was used only for footnote text, and `page_end` = 11.
-- §5: there is L = 1 label column (&quot;Study Procedure&quot;), so the first data column is position 2. Columns: 2 = Screening, 3 = Day -1, 4-21 = Days 1-18, 22 = FU/ED Day 24 (± 2 days).
-
-## 1. Per table
-
-**Table 01**: `main_soa`, &quot;Schedule of Activities (SoA)&quot; (Section 1.3), document pages 10-11.
-
-- 21 data columns (positions 2-22), 2 header rows, 22 activities, 122 non-empty schedule cells, 9 annotations.
-- Activity rows per page: p. 10 contributed 15 (rows 3-17) and p. 11 contributed 7 (rows 18-24). Page 12 is outside the range and holds footnotes only.
-
-## 2. Merged-mark decisions
-
-- No body cell is merged. Raster rule lines show every internal vertical boundary present in every body band on both pages.
-- Header: &quot;Treatment Period (Study Days)&quot; is merged across columns 3-21 (`merged_cell_range` &quot;3:21&quot;). The span was confirmed by the missing vertical rules in the header band.
-- The Screening cell (col 2) is merged vertically across both header rows (see D3).
-- Pirtobrutinib administration (Days 6-17) is 12 separate X cells, not a span.
-
-## 3. Synthesised
-
-- Property names &quot;Epoch&quot; (row 1) and &quot;Study Day&quot; (row 2) were synthesised because the label column holds &quot;Study Procedure&quot; merged across both header rows. Row 1 has `structure_method: inferred_from_layout`.
-- No annotation markers were synthesised.
-
-## 4. Mechanical mark-check and redactions
-
-- **Method:** the text layer is present and not glyph-spread. Cell boundaries were recovered from 200-dpi raster rule lines (§1d): 23 vertical rules on each page, and horizontal rules taken from the label column. Each pdftotext -bbox token was assigned to its cell.
-- **Result:** the mechanical matrix matched the visual read cell for cell on both pages. There were no disagreements.
-- **Text values transcribed literally:** &quot;P, 2 h&quot; and &quot;24 h&quot; (vital signs), &quot;P&quot; (ECG and clinical labs on Days 1, 6 and 13), and &quot;P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h&quot; and &quot;24 h&quot;-&quot;120 h&quot; (PK). The wrapped lines &quot;24 / h&quot; were joined into &quot;24 h&quot;. PK on Day 12 (col 15) is empty in the source.
-- **Redactions (D1):** on page 11, the two full-width bars cover the row bands they sit in, so the label-column horizontal rules merge there. Row boundaries were therefore read from the unredacted bands. No text exists under either bar in the text layer (only the &quot;CCI&quot; labels). Rows may be hidden there.
-- **D2:** the bottom of the Genetic blood sample label cell is clipped by the first bar.
-
-## 5. Annotation text integrity
-
-- Footnotes a, b, c and e were read directly from the page 12 text layer. There is no glyph spreading, and none of the texts contains another.
-- d, f and g are placeholders stating that the source does not print their text. The page 12 text layer has no hidden text under the redaction boxes.
-
-## 6. Low-confidence calls
-
-- The FU/ED column&#x27;s &quot;24 (± 2 days)&quot; is kept whole on the study_day row. No separate window row was created, because the source prints none.
-- Row 1 is typed `epoch`, since it holds Screening, Treatment Period and FU/ED.
-
-## 7. Orphan risk
-
-- Every annotation has at least one marker location, and each location&#x27;s marker is also in that element&#x27;s `annotation_markers`.
-- d, f and g are referenced but have no printed definition (see above).
-
-## 8. Method provenance
-
-- `structure_method: inferred_from_layout` on schedule_property row 1 (&quot;Epoch&quot;), whose type and level come from the band layout, not a printed label.
-- Every other value was read by the default method (bbox text layer).
-- No `unresolved` locations and no proximity or text_match bindings.
-</pre>
+    <h1>NCT05176314 - SoA extraction uncertainty report</h1>
+<p>Prompt 3.8.1, single pass. Source: NCT05176314_soa.pdf (3 PDF pages = document pages 10, 11, 12 per PAGEMAP.md). No protocol markdown was available, so all text comes from the PDF text layer.</p>
+<h2>Decisions needed (3)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p. 11, between rows 21/22 and rows 22/23</td>
+<td>The two full-width black redaction bars labelled "CCI" on page 11 are treated as hidden content. No activity rows are created for them.</td>
+<td>Each bar hides one or more activity rows, with their own marks. Add placeholder rows (e.g. "[redacted row]") so the hidden procedures are represented.</td>
+<td>4</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p. 11, row 21 "Genetic blood sample for screening"</td>
+<td>The label is transcribed from its three visible lines as "Genetic blood sample for screening". The last line is partly clipped by the redaction bar below it.</td>
+<td>Part of the label is under the bar (the text layer places the bar's "CCI" label between "for" and "screening"). Record the name as incomplete, e.g. "Genetic blood sample for [redacted] screening".</td>
+<td>4</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p. 10, header rows 1-2, column 2</td>
+<td>The rotated Screening header cell covers both header rows. It is split by its two printed lines: "Screening" goes on the epoch row and "(D-42 to -2)" on the study-day row.</td>
+<td>Keep the whole text "Screening (D-42 to -2)" as one value on the epoch row, and leave the Screening column empty on the study-day row.</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (7)</h2>
+<ul>
+<li>§2 / type definitions: one table was printed across pages 10-11, with the header reprinted on page 11. It was extracted as a single <code>main_soa</code>, not as a <code>continuation</code>, because the source gives the overflow no number or caption of its own. The reprinted header was de-duplicated (§1b).</li>
+<li>§6 source defect: markers d (Supine vital signs), f (on "P" in the Day 6 PK cell) and g (Rosuvastatin PK samples) are printed in the table, but their footnote text is not. On page 12 their positions are covered by "CCI" redaction boxes. Each marker got an annotation whose text says the definition is not printed, ending in "[remainder redacted in source]". No text was made up.</li>
+<li>§6 abbreviations: the abbreviation block (BP, CRU, D, ECG, ED, FU, h, P, PK, PR) produced only two annotations, P = predose and h = hours postdose. Both are typed <code>legend</code> because they are in-grid scheduling marks, and each is bound to every cell that uses it (P: 12 cells, h: 23 cells). The other terms appear only in labels or header text, so they were dropped. No text_match or synthesized bindings were used.</li>
+<li>§6 / §5: P and h stay in <code>cell_value</code> as scheduling marks. To keep binding consistent, they are also listed in those cells' <code>annotation_markers</code>.</li>
+<li>§6 header-cell footnotes: marker a sits on the Day 18 header cell (row 2, col 21) and marker b on the FU/ED header cell (row 1, col 22). Each was put on that column's <code>schedule_grid</code> cell, not on the property row.</li>
+<li>§4: page 12 is outside the declared SoA range (PAGEMAP). It was used only for footnote text, and <code>page_end</code> = 11.</li>
+<li>§5: there is L = 1 label column ("Study Procedure"), so the first data column is position 2. Columns: 2 = Screening, 3 = Day -1, 4-21 = Days 1-18, 22 = FU/ED Day 24 (± 2 days).</li>
+</ul>
+<h2>1. Per table</h2>
+<p><strong>Table 01</strong>: <code>main_soa</code>, "Schedule of Activities (SoA)" (Section 1.3), document pages 10-11.</p>
+<ul>
+<li>21 data columns (positions 2-22), 2 header rows, 22 activities, 122 non-empty schedule cells, 9 annotations.</li>
+<li>Activity rows per page: p. 10 contributed 15 (rows 3-17) and p. 11 contributed 7 (rows 18-24). Page 12 is outside the range and holds footnotes only.</li>
+</ul>
+<h2>2. Merged-mark decisions</h2>
+<ul>
+<li>No body cell is merged. Raster rule lines show every internal vertical boundary present in every body band on both pages.</li>
+<li>Header: "Treatment Period (Study Days)" is merged across columns 3-21 (<code>merged_cell_range</code> "3:21"). The span was confirmed by the missing vertical rules in the header band.</li>
+<li>The Screening cell (col 2) is merged vertically across both header rows (see D3).</li>
+<li>Pirtobrutinib administration (Days 6-17) is 12 separate X cells, not a span.</li>
+</ul>
+<h2>3. Synthesised</h2>
+<ul>
+<li>Property names "Epoch" (row 1) and "Study Day" (row 2) were synthesised because the label column holds "Study Procedure" merged across both header rows. Row 1 has <code>structure_method: inferred_from_layout</code>.</li>
+<li>No annotation markers were synthesised.</li>
+</ul>
+<h2>4. Mechanical mark-check and redactions</h2>
+<ul>
+<li><strong>Method:</strong> the text layer is present and not glyph-spread. Cell boundaries were recovered from 200-dpi raster rule lines (§1d): 23 vertical rules on each page, and horizontal rules taken from the label column. Each pdftotext -bbox token was assigned to its cell.</li>
+<li><strong>Result:</strong> the mechanical matrix matched the visual read cell for cell on both pages. There were no disagreements.</li>
+<li><strong>Text values transcribed literally:</strong> "P, 2 h" and "24 h" (vital signs), "P" (ECG and clinical labs on Days 1, 6 and 13), and "P, 0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 12 h" and "24 h"-"120 h" (PK). The wrapped lines "24 / h" were joined into "24 h". PK on Day 12 (col 15) is empty in the source.</li>
+<li><strong>Redactions (D1):</strong> on page 11, the two full-width bars cover the row bands they sit in, so the label-column horizontal rules merge there. Row boundaries were therefore read from the unredacted bands. No text exists under either bar in the text layer (only the "CCI" labels). Rows may be hidden there.</li>
+<li><strong>D2:</strong> the bottom of the Genetic blood sample label cell is clipped by the first bar.</li>
+</ul>
+<h2>5. Annotation text integrity</h2>
+<ul>
+<li>Footnotes a, b, c and e were read directly from the page 12 text layer. There is no glyph spreading, and none of the texts contains another.</li>
+<li>d, f and g are placeholders stating that the source does not print their text. The page 12 text layer has no hidden text under the redaction boxes.</li>
+</ul>
+<h2>6. Low-confidence calls</h2>
+<ul>
+<li>The FU/ED column's "24 (± 2 days)" is kept whole on the study_day row. No separate window row was created, because the source prints none.</li>
+<li>Row 1 is typed <code>epoch</code>, since it holds Screening, Treatment Period and FU/ED.</li>
+</ul>
+<h2>7. Orphan risk</h2>
+<ul>
+<li>Every annotation has at least one marker location, and each location's marker is also in that element's <code>annotation_markers</code>.</li>
+<li>d, f and g are referenced but have no printed definition (see above).</li>
+</ul>
+<h2>8. Method provenance</h2>
+<ul>
+<li><code>structure_method: inferred_from_layout</code> on schedule_property row 1 ("Epoch"), whose type and level come from the band layout, not a printed label.</li>
+<li>Every other value was read by the default method (bbox text layer).</li>
+<li>No <code>unresolved</code> locations and no proximity or text_match bindings.</li>
+</ul>
 </body>
 </html>

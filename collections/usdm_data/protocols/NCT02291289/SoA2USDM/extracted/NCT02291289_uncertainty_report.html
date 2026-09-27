@@ -35,125 +35,270 @@
 </head>
 <body>
     <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT02291289" title="This protocol's row on the collection index">NCT02291289</a><span class="pnav-sep">›</span><span class="pnav-cur">Extraction log</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT02291289_Table_01_extraction_viewer.html">T1</a> <a href="../../SoA2USDM/extracted/NCT02291289_Table_02_extraction_viewer.html">T2</a> <a href="../../SoA2USDM/extracted/NCT02291289_Table_03_extraction_viewer.html">T3</a> <a href="../../SoA2USDM/extracted/NCT02291289_Table_04_extraction_viewer.html">T4</a> <a href="../../SoA2USDM/extracted/NCT02291289_Table_05_extraction_viewer.html">T5</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT02291289_Table_01_resolved.html">T1</a> <a href="../../SoA2USDM/resolved/NCT02291289_Table_02_resolved.html">T2</a> <a href="../../SoA2USDM/resolved/NCT02291289_Table_03_resolved.html">T3</a> <a href="../../SoA2USDM/resolved/NCT02291289_Table_04_resolved.html">T4</a> <a href="../../SoA2USDM/resolved/NCT02291289_Table_05_resolved.html">T5</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/consolidated/NCT02291289_consolidated.html">consolidated</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT02291289_review.html">review</a> <span class="pnav-sep">·</span> <span class="pnav-cur">extraction log</span></div></nav>
-    <pre style="white-space: pre-wrap; font-family: inherit;"># NCT02291289 — SoA extraction uncertainty report
-
-Source: NCT02291289_soa.pdf (Protocol MO29112, Version 9, Appendices 1–5). 26 PDF pages map to document pages 169–194 (PAGEMAP.md). Page 194 (Appendix 6, FOLFOX regimens) is outside the SoA range and was not extracted. The printed footers match PAGEMAP on every page checked.
-Prompt version 3.8.1. There are 5 tables and 5 JSON files.
-
-## Decisions needed (3)
-
-| # | where | call made | alternative | detail |
-|---|---|---|---|---|
-| D1 | p170 rows 17, 20 (Table 1); Tables 2/3/5 &quot;(Experimental Arm only)&quot; rows; Tables 2–5 Metastatic tumour tissue / Stool sample rows | Explanatory sub-lines printed inside an activity label cell were moved out of `activity_name` into footnote annotations with synthesised markers `n1`/`n2`, bound to that activity. Examples are &quot;Collection of these samples discontinued as of May 2018&quot;, the Supplemental Biomarker Program closure sentence and &quot;(Experimental Arm only)&quot;. The raw text stays in `cell_text`. | Keep the sub-line as part of the activity name, e.g. &quot;Pulse oximetry (Experimental Arm only)&quot;. No synthesised note is then needed. | 3.3 |
-| D2 | p169 row 3 (Table 1); row 2 of Tables 2–5 | The per-column timing header row is typed `other`. It mixes windows (&quot;≤ 28 days&quot;), an anchor (&quot;Day 1 Cycle 1&quot;), recurrence frequencies (&quot;Every 2 cycles…&quot;, &quot;Every 3 months…&quot;) and a post-dose window. | Type the row as `visit` (one column = one encounter) or as `window`. | 3.2 |
-| D3 | p174 (Tables 2–5) | Appendices 2–5 (maintenance schedules for Cohorts 1–4) are each typed `track`, with track_label &quot;Cohort 1&quot; … &quot;Cohort 4&quot;. Each schedules a mutually exclusive, biomarker-assigned cohort. Appendix 1 (induction for all patients) is `main_soa`. | Type Tables 2–5 as independent `main_soa` tables. The identical column labels of Cohorts 1 and 4 could also invite a `domain` reading, but the populations differ. | 3.1 |
-
-## Recorded, not open (10)
-
-- §1a: all grid pages are full-page raster images with no text layer or vector rules. Cells are therefore visual reads (`method: visual_read`), and labels have `activity_name_source.method: visual_transcription`.
-- §1d: merged cells were confirmed from raster rule lines (200 dpi). The only body merge is Table 1, row 22, cols 4:5.
-- §3: the condition band in Table 1 (row 1, cols 6:7, &quot;Patients who have PD…&quot;) has `property_type: condition` and `hierarchical_level: null`.
-- §3: every `property_name` is synthesised, because the label column of the header rows is empty.
-- §4: all tables are flat. `indentation_method: assumed_flat` and every row is level 0.
-- §5: there is one label column (L = 1), so the first data column is position 2.
-- §5: qualified marks are kept literally: &quot;x (as applicable)&quot;, &quot;x (sites using 2 consent forms only)&quot; and &quot;x Administered every 2 weeks&quot;.
-- §5: glyph case is kept as printed. Capital `X` appears only in Table 3 (rows 15, 16 col 4; row 18 col 2) and Table 5 (rows 19, 20 col 2). Everywhere else the mark is lower-case `x`.
-- §6: header-cell footnotes [a]/[b]/[c] sit on the epoch-row `schedule_grid` cells they are printed on. In Table 1, [a] is on both covered positions 4 and 5.
-- §6: bare-pointer notes are typed `source_note`. These are &quot;See Appendix 8.&quot; (Table 2 m; Tables 3/4/5 i) and the synthesised `pr1` &quot;See Appendix 19&quot;. `pr1` comes from the header text &quot;(see Appendix 19)&quot;, which was stripped from the follow-up column header in Tables 1, 3 and 4.
-
-## 1. Method
-
-- **Text layer:** pages 169–171, 174–176, 179–181, 184–185, 189–191 are single 1682×1192 RGB images. `pdftotext` returns nothing on them. Pages 172–173, 177–178, 182–183, 186–188 and 192–193 are footnote continuation pages with a real text layer. Footnote wording on those pages was taken from the text layer. Two line-break hyphens were re-joined: &quot;protocol-mandated&quot; (T1 s) and &quot;post-treatment&quot; (T4 c). &quot;3- week&quot; is kept as printed.
-- **Mechanical check (§1a/§1d):** each grid page was rendered at 200 dpi. Vertical and horizontal rules were recovered from ink fractions, and each internal column rule was tested for presence in every body band.
-  - Results: the true column rules were found on every page; T1 has 8 rules (7 columns) and T2–T5 have 6 rules (5 columns). The only missing internal rule in a body band is T1 p170 &quot;Study medication administration&quot; at the col 4|5 boundary, which confirms the merge 4:5. No other body merges exist.
-  - The matrix of which cells hold ink agrees with the visual read. The single-row pages 176, 181 and 191 were checked by eye only, because the automatic band detector needs at least two body rows.
-- **Glyph-spread:** not applicable. There is no text layer on the grid, and the footnote text layers are normally spaced.
-
-## 2. Per table
-
-| Table | Title | Type | Pages | Data cols | Activities | Rows per page |
-|---|---|---|---|---|---|---|
-| 1 | Appendix 1 Schedule of Assessments for All Patients (Screening / Baseline and Induction Treatment Phase) | main_soa | 169–173 | 6 (pos 2–7) | 21 | 169: 12, 170: 7, 171: 2, 172: 0, 173: 0 |
-| 2 | Appendix 2 … Maintenance Phase (Cohort 1) | track &quot;Cohort 1&quot; | 174–178 | 4 (pos 2–5) | 25 | 174: 14, 175: 10, 176: 1, 177: 0, 178: 0 |
-| 3 | Appendix 3 … (Cohort 2) | track &quot;Cohort 2&quot; | 179–183 | 4 | 24 | 179: 14, 180: 8, 181: 2, 182: 0, 183: 0 |
-| 4 | Appendix 4 … (Cohort 3) | track &quot;Cohort 3&quot; | 184–188 | 4 | 22 | 184: 13, 185: 9, 186–188: 0 |
-| 5 | Appendix 5 … (Cohort 4) | track &quot;Cohort 4&quot; | 189–193 | 4 | 26 | 189: 16, 190: 8, 191: 2, 192: 0, 193: 0 |
-
-- Every page that contributes no activity rows (172–173, 177–178, 182–183, 186–188, 192–193) holds only footnote text. They are included in the range because they carry the table&#x27;s footnotes.
-- Header rows reprinted on the continuation pages were de-duplicated.
-
-## 3. Interpretation calls
-
-### 3.1 Table types (D3)
-
-- Table 1 covers every patient through screening and induction, so it is the anchor table.
-- Tables 2–5 each cover one maintenance cohort. A patient is assigned to exactly one cohort by biomarker status (footnote d), so the four tables are separate timelines for mutually exclusive populations, which makes them tracks.
-- The reasoning is also recorded in `table_metadata.notes`.
-
-### 3.2 Header rows (D2)
-
-- **Table 1:** row 1 is the condition band, row 2 is the epoch row (level 1) and row 3 is the timing row (level 2, typed `other`, `structure_method: assumed`).
-- **Tables 2–5:** row 1 is the epoch row (level 1) and row 2 is the timing row (level 2, `other`).
-- **Merged header cells in Table 1:**
-  - &quot;Screening / Baseline&quot; spans 2:3.
-  - &quot;Induction Treatment Phase&quot; spans 4:5.
-  - The condition band spans 6:7.
-  - The blank cells of the condition row span 2:3 and 4:5.
-- In Table 4, the col 3 timing cell holds two arm-specific frequencies (&quot;Control arm: every 2 two-week cycles Experimental arm: every 3-week cycle&quot;). It is kept as one literal value.
-
-### 3.3 Synthesised markers (D1)
-
-| Table | Marker | Text | Bound to |
-|---|---|---|---|
-| T1 | n1 | &quot;Collection of these samples discontinued as of May 2018&quot; | row 17 |
-| T1 | n2 | Supplemental Biomarker Program closure sentence | row 20 |
-| T1 | pr1 | &quot;See Appendix 19&quot; | header row 3, col 7 |
-| T2 | n1 | closure sentence | rows 21, 23 |
-| T2 | n2 | &quot;Experimental Arm only&quot; | rows 9–12 |
-| T3 | n1 | closure sentence | rows 20, 22 |
-| T3 | n2 | &quot;Experimental Arm only&quot; | rows 15, 16 |
-| T3 | pr1 | &quot;See Appendix 19&quot; | header row 2, col 5 |
-| T4 | n1 | closure sentence | rows 18, 20 |
-| T4 | pr1 | &quot;See Appendix 19&quot; | header row 2, col 5 |
-| T5 | n1 | closure sentence | rows 22, 24 |
-| T5 | n2 | &quot;Experimental Arm only&quot; | rows 15, 16 |
-
-- All of these locations carry `method: synthesized`.
-- `activity_name` &quot;Cohort-specific informed consent&quot; is normalised from the printed &quot;Cohort- specific informed consent&quot;, which is kept in `cell_text`. This row has no footnote marker in any table.
-
-## 4. Merged-mark decisions
-
-- There is one distributed span: Table 1, row 22 &quot;Study medication administration&quot;. &quot;x / Administered every 2 weeks&quot; spans cols 4:5 (`source_range` &quot;4:5&quot;). The span was confirmed by the missing rule line.
-
-## 5. Annotation text integrity
-
-- **Visual transcriptions (`annotation_text_source.method: visual_transcription`):**
-  - T1 a–e (p171)
-  - T2 a–j (p176)
-  - T3 a–e (p181)
-  - T5 a–f (p191)
-  - T5 g, which starts on p191 as an image and continues on p192 in the text layer
-  - all synthesised n1/n2/pr1 texts
-- **Superscript:** in T1 c, the superscript &quot;mut&quot; in &quot;BRAFmut/MSS&quot; and &quot;BRAFmut/MSI-H&quot; is written inline as &quot;BRAFmut&quot;.
-- **Containment pairs, re-checked against the pages:** the n1 closure sentence (&quot;Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.&quot;) is almost wholly contained in footnotes T2 u, T3 r, T4 r and T5 t, which add &quot;(see Appendix 18)&quot;.
-  - This is source-faithful, not a split note. One text is printed inside the label cell and the other in the footnote list.
-- **Cross-table wording differences:** the cohorts&#x27; footnotes differ slightly in wording (e.g. d says &quot;further enrolment&quot; in T2 and &quot;further accrual&quot; in T3/T5). Each is transcribed as printed per table.
-
-## 6. Low-confidence / orphan risk
-
-- None of the footnote text could be taken from a text layer on the image pages. Visual transcriptions should get a spot-check against the rendered pages 171, 176, 181 and 191.
-- No marker lacks its definition. Every in-grid or label marker in each table has printed footnote text in that table&#x27;s own footnote list, and there are no orphan annotations.
-- Glyph case (x vs X) was checked on zoomed renders.
-
-## 7. Method provenance (non-default)
-
-- **All tables:**
-  - `schedule_grid` and `activity_schedule` cells use `method: visual_read`.
-  - Activity labels use `method: visual_transcription` and `indentation_method: assumed_flat`.
-  - The timing header rows use `structure_method: assumed`.
-- **Footnote text:** visual transcriptions are listed in §5.
-- **Synthesised marker locations:** listed in §3.3.
-- **Unresolved locations:** none.
-</pre>
+    <h1>NCT02291289 — SoA extraction uncertainty report</h1>
+<p>Source: NCT02291289_soa.pdf (Protocol MO29112, Version 9, Appendices 1–5). 26 PDF pages map to document pages 169–194 (PAGEMAP.md). Page 194 (Appendix 6, FOLFOX regimens) is outside the SoA range and was not extracted. The printed footers match PAGEMAP on every page checked.
+Prompt version 3.8.1. There are 5 tables and 5 JSON files.</p>
+<h2>Decisions needed (3)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>where</th>
+<th>call made</th>
+<th>alternative</th>
+<th>detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>p170 rows 17, 20 (Table 1); Tables 2/3/5 "(Experimental Arm only)" rows; Tables 2–5 Metastatic tumour tissue / Stool sample rows</td>
+<td>Explanatory sub-lines printed inside an activity label cell were moved out of <code>activity_name</code> into footnote annotations with synthesised markers <code>n1</code>/<code>n2</code>, bound to that activity. Examples are "Collection of these samples discontinued as of May 2018", the Supplemental Biomarker Program closure sentence and "(Experimental Arm only)". The raw text stays in <code>cell_text</code>.</td>
+<td>Keep the sub-line as part of the activity name, e.g. "Pulse oximetry (Experimental Arm only)". No synthesised note is then needed.</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>p169 row 3 (Table 1); row 2 of Tables 2–5</td>
+<td>The per-column timing header row is typed <code>other</code>. It mixes windows ("≤ 28 days"), an anchor ("Day 1 Cycle 1"), recurrence frequencies ("Every 2 cycles…", "Every 3 months…") and a post-dose window.</td>
+<td>Type the row as <code>visit</code> (one column = one encounter) or as <code>window</code>.</td>
+<td>3.2</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>p174 (Tables 2–5)</td>
+<td>Appendices 2–5 (maintenance schedules for Cohorts 1–4) are each typed <code>track</code>, with track_label "Cohort 1" … "Cohort 4". Each schedules a mutually exclusive, biomarker-assigned cohort. Appendix 1 (induction for all patients) is <code>main_soa</code>.</td>
+<td>Type Tables 2–5 as independent <code>main_soa</code> tables. The identical column labels of Cohorts 1 and 4 could also invite a <code>domain</code> reading, but the populations differ.</td>
+<td>3.1</td>
+</tr>
+</tbody>
+</table>
+<h2>Recorded, not open (10)</h2>
+<ul>
+<li>§1a: all grid pages are full-page raster images with no text layer or vector rules. Cells are therefore visual reads (<code>method: visual_read</code>), and labels have <code>activity_name_source.method: visual_transcription</code>.</li>
+<li>§1d: merged cells were confirmed from raster rule lines (200 dpi). The only body merge is Table 1, row 22, cols 4:5.</li>
+<li>§3: the condition band in Table 1 (row 1, cols 6:7, "Patients who have PD…") has <code>property_type: condition</code> and <code>hierarchical_level: null</code>.</li>
+<li>§3: every <code>property_name</code> is synthesised, because the label column of the header rows is empty.</li>
+<li>§4: all tables are flat. <code>indentation_method: assumed_flat</code> and every row is level 0.</li>
+<li>§5: there is one label column (L = 1), so the first data column is position 2.</li>
+<li>§5: qualified marks are kept literally: "x (as applicable)", "x (sites using 2 consent forms only)" and "x Administered every 2 weeks".</li>
+<li>§5: glyph case is kept as printed. Capital <code>X</code> appears only in Table 3 (rows 15, 16 col 4; row 18 col 2) and Table 5 (rows 19, 20 col 2). Everywhere else the mark is lower-case <code>x</code>.</li>
+<li>§6: header-cell footnotes [a]/[b]/[c] sit on the epoch-row <code>schedule_grid</code> cells they are printed on. In Table 1, [a] is on both covered positions 4 and 5.</li>
+<li>§6: bare-pointer notes are typed <code>source_note</code>. These are "See Appendix 8." (Table 2 m; Tables 3/4/5 i) and the synthesised <code>pr1</code> "See Appendix 19". <code>pr1</code> comes from the header text "(see Appendix 19)", which was stripped from the follow-up column header in Tables 1, 3 and 4.</li>
+</ul>
+<h2>1. Method</h2>
+<ul>
+<li><strong>Text layer:</strong> pages 169–171, 174–176, 179–181, 184–185, 189–191 are single 1682×1192 RGB images. <code>pdftotext</code> returns nothing on them. Pages 172–173, 177–178, 182–183, 186–188 and 192–193 are footnote continuation pages with a real text layer. Footnote wording on those pages was taken from the text layer. Two line-break hyphens were re-joined: "protocol-mandated" (T1 s) and "post-treatment" (T4 c). "3- week" is kept as printed.</li>
+<li><strong>Mechanical check (§1a/§1d):</strong> each grid page was rendered at 200 dpi. Vertical and horizontal rules were recovered from ink fractions, and each internal column rule was tested for presence in every body band.</li>
+<li>Results: the true column rules were found on every page; T1 has 8 rules (7 columns) and T2–T5 have 6 rules (5 columns). The only missing internal rule in a body band is T1 p170 "Study medication administration" at the col 4|5 boundary, which confirms the merge 4:5. No other body merges exist.</li>
+<li>The matrix of which cells hold ink agrees with the visual read. The single-row pages 176, 181 and 191 were checked by eye only, because the automatic band detector needs at least two body rows.</li>
+<li><strong>Glyph-spread:</strong> not applicable. There is no text layer on the grid, and the footnote text layers are normally spaced.</li>
+</ul>
+<h2>2. Per table</h2>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Title</th>
+<th>Type</th>
+<th>Pages</th>
+<th>Data cols</th>
+<th>Activities</th>
+<th>Rows per page</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Appendix 1 Schedule of Assessments for All Patients (Screening / Baseline and Induction Treatment Phase)</td>
+<td>main_soa</td>
+<td>169–173</td>
+<td>6 (pos 2–7)</td>
+<td>21</td>
+<td>169: 12, 170: 7, 171: 2, 172: 0, 173: 0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Appendix 2 … Maintenance Phase (Cohort 1)</td>
+<td>track "Cohort 1"</td>
+<td>174–178</td>
+<td>4 (pos 2–5)</td>
+<td>25</td>
+<td>174: 14, 175: 10, 176: 1, 177: 0, 178: 0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Appendix 3 … (Cohort 2)</td>
+<td>track "Cohort 2"</td>
+<td>179–183</td>
+<td>4</td>
+<td>24</td>
+<td>179: 14, 180: 8, 181: 2, 182: 0, 183: 0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Appendix 4 … (Cohort 3)</td>
+<td>track "Cohort 3"</td>
+<td>184–188</td>
+<td>4</td>
+<td>22</td>
+<td>184: 13, 185: 9, 186–188: 0</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Appendix 5 … (Cohort 4)</td>
+<td>track "Cohort 4"</td>
+<td>189–193</td>
+<td>4</td>
+<td>26</td>
+<td>189: 16, 190: 8, 191: 2, 192: 0, 193: 0</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Every page that contributes no activity rows (172–173, 177–178, 182–183, 186–188, 192–193) holds only footnote text. They are included in the range because they carry the table's footnotes.</li>
+<li>Header rows reprinted on the continuation pages were de-duplicated.</li>
+</ul>
+<h2>3. Interpretation calls</h2>
+<h3>3.1 Table types (D3)</h3>
+<ul>
+<li>Table 1 covers every patient through screening and induction, so it is the anchor table.</li>
+<li>Tables 2–5 each cover one maintenance cohort. A patient is assigned to exactly one cohort by biomarker status (footnote d), so the four tables are separate timelines for mutually exclusive populations, which makes them tracks.</li>
+<li>The reasoning is also recorded in <code>table_metadata.notes</code>.</li>
+</ul>
+<h3>3.2 Header rows (D2)</h3>
+<ul>
+<li><strong>Table 1:</strong> row 1 is the condition band, row 2 is the epoch row (level 1) and row 3 is the timing row (level 2, typed <code>other</code>, <code>structure_method: assumed</code>).</li>
+<li><strong>Tables 2–5:</strong> row 1 is the epoch row (level 1) and row 2 is the timing row (level 2, <code>other</code>).</li>
+<li><strong>Merged header cells in Table 1:</strong></li>
+<li>"Screening / Baseline" spans 2:3.</li>
+<li>"Induction Treatment Phase" spans 4:5.</li>
+<li>The condition band spans 6:7.</li>
+<li>The blank cells of the condition row span 2:3 and 4:5.</li>
+<li>In Table 4, the col 3 timing cell holds two arm-specific frequencies ("Control arm: every 2 two-week cycles Experimental arm: every 3-week cycle"). It is kept as one literal value.</li>
+</ul>
+<h3>3.3 Synthesised markers (D1)</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Marker</th>
+<th>Text</th>
+<th>Bound to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T1</td>
+<td>n1</td>
+<td>"Collection of these samples discontinued as of May 2018"</td>
+<td>row 17</td>
+</tr>
+<tr>
+<td>T1</td>
+<td>n2</td>
+<td>Supplemental Biomarker Program closure sentence</td>
+<td>row 20</td>
+</tr>
+<tr>
+<td>T1</td>
+<td>pr1</td>
+<td>"See Appendix 19"</td>
+<td>header row 3, col 7</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>n1</td>
+<td>closure sentence</td>
+<td>rows 21, 23</td>
+</tr>
+<tr>
+<td>T2</td>
+<td>n2</td>
+<td>"Experimental Arm only"</td>
+<td>rows 9–12</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>n1</td>
+<td>closure sentence</td>
+<td>rows 20, 22</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>n2</td>
+<td>"Experimental Arm only"</td>
+<td>rows 15, 16</td>
+</tr>
+<tr>
+<td>T3</td>
+<td>pr1</td>
+<td>"See Appendix 19"</td>
+<td>header row 2, col 5</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>n1</td>
+<td>closure sentence</td>
+<td>rows 18, 20</td>
+</tr>
+<tr>
+<td>T4</td>
+<td>pr1</td>
+<td>"See Appendix 19"</td>
+<td>header row 2, col 5</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>n1</td>
+<td>closure sentence</td>
+<td>rows 22, 24</td>
+</tr>
+<tr>
+<td>T5</td>
+<td>n2</td>
+<td>"Experimental Arm only"</td>
+<td>rows 15, 16</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>All of these locations carry <code>method: synthesized</code>.</li>
+<li><code>activity_name</code> "Cohort-specific informed consent" is normalised from the printed "Cohort- specific informed consent", which is kept in <code>cell_text</code>. This row has no footnote marker in any table.</li>
+</ul>
+<h2>4. Merged-mark decisions</h2>
+<ul>
+<li>There is one distributed span: Table 1, row 22 "Study medication administration". "x / Administered every 2 weeks" spans cols 4:5 (<code>source_range</code> "4:5"). The span was confirmed by the missing rule line.</li>
+</ul>
+<h2>5. Annotation text integrity</h2>
+<ul>
+<li><strong>Visual transcriptions (<code>annotation_text_source.method: visual_transcription</code>):</strong></li>
+<li>T1 a–e (p171)</li>
+<li>T2 a–j (p176)</li>
+<li>T3 a–e (p181)</li>
+<li>T5 a–f (p191)</li>
+<li>T5 g, which starts on p191 as an image and continues on p192 in the text layer</li>
+<li>all synthesised n1/n2/pr1 texts</li>
+<li><strong>Superscript:</strong> in T1 c, the superscript "mut" in "BRAFmut/MSS" and "BRAFmut/MSI-H" is written inline as "BRAFmut".</li>
+<li><strong>Containment pairs, re-checked against the pages:</strong> the n1 closure sentence ("Supplemental Biomarker Program closed as of May 2018. Collection of these samples has been discontinued.") is almost wholly contained in footnotes T2 u, T3 r, T4 r and T5 t, which add "(see Appendix 18)".</li>
+<li>This is source-faithful, not a split note. One text is printed inside the label cell and the other in the footnote list.</li>
+<li><strong>Cross-table wording differences:</strong> the cohorts' footnotes differ slightly in wording (e.g. d says "further enrolment" in T2 and "further accrual" in T3/T5). Each is transcribed as printed per table.</li>
+</ul>
+<h2>6. Low-confidence / orphan risk</h2>
+<ul>
+<li>None of the footnote text could be taken from a text layer on the image pages. Visual transcriptions should get a spot-check against the rendered pages 171, 176, 181 and 191.</li>
+<li>No marker lacks its definition. Every in-grid or label marker in each table has printed footnote text in that table's own footnote list, and there are no orphan annotations.</li>
+<li>Glyph case (x vs X) was checked on zoomed renders.</li>
+</ul>
+<h2>7. Method provenance (non-default)</h2>
+<ul>
+<li><strong>All tables:</strong></li>
+<li><code>schedule_grid</code> and <code>activity_schedule</code> cells use <code>method: visual_read</code>.</li>
+<li>Activity labels use <code>method: visual_transcription</code> and <code>indentation_method: assumed_flat</code>.</li>
+<li>The timing header rows use <code>structure_method: assumed</code>.</li>
+<li><strong>Footnote text:</strong> visual transcriptions are listed in §5.</li>
+<li><strong>Synthesised marker locations:</strong> listed in §3.3.</li>
+<li><strong>Unresolved locations:</strong> none.</li>
+</ul>
 </body>
 </html>
