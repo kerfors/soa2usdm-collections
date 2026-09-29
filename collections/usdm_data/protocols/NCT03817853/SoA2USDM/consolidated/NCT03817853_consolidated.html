@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NCT03817853 · Consolidated SoA · usdm_data</title>
     <style>
+        :root { --blue:#1F4788; --blue2:#2E75B6; --ink:#1f2933; --muted:#5f6b7a;
+                 --line:#d9dee5; --bg:#f5f7fa; --head:#fafbfc; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-                body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #f5f5f5; padding: 20px; font-size: 11px;
-            max-width: 1800px; margin: 0 auto;
+        body {
+            font: 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            color: var(--ink); background: var(--bg);
         }
-        
+
         
     .pnav { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
             padding: 8px 16px; margin-bottom: 14px; font-size: 12px;
@@ -24,130 +25,127 @@
     .pnav-sib { margin-top: 4px; }
     .pnav-grp { color: #888; font-size: 11px; }
 
+        /* nav: the review page's full-bleed bar (markup shared, skin local) */
+        .pnav { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none;
+                 margin: 0; padding: 8px 22px; color: var(--muted); }
+        .pnav a { color: var(--blue2); }
+        .pnav-cur { color: var(--ink); }
+        .pnav-sep { color: #9aa4af; }
+        .pnav-grp { color: #8a94a0; }
 
-        .header {
-            background: linear-gradient(135deg, #1F4788 0%, #2E5EA8 100%);
-            color: white; padding: 25px 30px; border-radius: 8px; margin-bottom: 20px;
-        }
-        .header h1 { font-size: 22px; margin-bottom: 8px; }
-        .header .sub { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
-        .header .meta { font-size: 11px; opacity: 0.8; }
-        
+        .header { background: var(--blue); color: #fff; padding: 14px 22px; }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .sub { font-size: 13px; opacity: .85; margin-top: 3px; }
+        .content { padding: 14px 22px 20px; }
+
         .toolbar {
-            background: white; border-radius: 8px; padding: 10px 20px;
-            margin-bottom: 15px; display: flex; gap: 10px;
+            background: #fff; border: 1px solid var(--line); border-radius: 6px;
+            padding: 8px 12px; margin-bottom: 10px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
         }
         .toolbar button {
-            padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;
-            background: #f5f5f5; cursor: pointer; font-size: 11px;
+            font: inherit; font-size: 12px; padding: 3px 9px; border: 1px solid var(--line);
+            border-radius: 4px; background: #fff; color: var(--ink); cursor: pointer;
         }
-        .toolbar button:hover { background: #e0e0e0; }
-        
-        .comp {
-            background: white; border-radius: 8px; margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
+        .toolbar button:hover { border-color: var(--blue2); }
+
+        .comp, .section {
+            background: #fff; border: 1px solid var(--line); border-radius: 6px;
+            margin-bottom: 14px; overflow: hidden;
         }
-        .comp-header {
-            color: white; padding: 12px 20px; display: flex;
-            justify-content: space-between; align-items: center;
-            cursor: pointer; user-select: none;
+        /* section bars: one neutral panel heading (inline per-section colours are overridden) */
+        .comp-header, .section-title {
+            background: var(--head) !important; color: var(--ink);
+            border-bottom: 1px solid var(--line); padding: 9px 12px; cursor: pointer; user-select: none;
         }
-        .comp-header:hover { filter: brightness(1.1); }
-        .comp-title { font-weight: bold; font-size: 14px; }
-        .comp-desc { font-size: 11px; opacity: 0.9; }
-        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; }
+        .comp-header { display: flex; justify-content: space-between; align-items: center; }
+        .comp-header:hover, .section-title:hover { background: #f0f4f9 !important; }
+        .comp-title, .section-title { font-weight: 600; font-size: 13px; }
+        .comp-desc { font-size: 12px; color: var(--muted); }
+        .toggle-icon { display: inline-block; transition: transform 0.2s; margin-right: 8px; color: var(--muted); }
         .comp.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .comp.collapsed .comp-header { border-bottom: 0; }
         .comp-body { overflow: hidden; transition: max-height 0.3s; padding: 0; }
         .comp.collapsed .comp-body { max-height: 0 !important; }
-        .comp-note { padding: 12px 15px; color: #444; font-size: 11px; border-bottom: 1px solid #eee; background: #f9f9f9; }
-        
-        .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .comp-note { padding: 10px 12px; color: var(--muted); font-size: 12px; border-bottom: 1px solid var(--line); background: var(--head); }
+
+        .comp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .comp-table th {
-            background: #f5f5f5; padding: 8px 10px; text-align: left;
-            font-weight: 600; border-bottom: 2px solid #ddd; white-space: nowrap;
+            background: var(--head); padding: 6px 10px; text-align: left;
+            font-weight: 600; border-bottom: 1px solid var(--line); white-space: nowrap;
         }
         .comp-table td {
-            padding: 6px 10px; border-bottom: 1px solid #eee;
+            padding: 5px 10px; border-bottom: 1px solid #eef1f4;
             vertical-align: top; word-wrap: break-word;
         }
-        .comp-table tr:hover { background: #fafafa; }
-        
+        .comp-table tr:hover { background: #eef4fb; }
+
         .prop-comparison th.table-col { text-align: center; min-width: 320px; }
-        .prop-comparison .track-small { font-size: 9px; font-weight: normal; color: #666; }
-        .prop-comparison .level-cell { font-weight: bold; text-align: center; width: 60px; font-size: 11px; }
+        .prop-comparison .track-small { font-size: 10px; font-weight: normal; color: var(--muted); }
+        .prop-comparison .level-cell { font-weight: 600; text-align: center; width: 60px; font-size: 12px; }
         .prop-comparison .prop-data { text-align: left; vertical-align: top; padding: 10px 12px !important; }
-        .prop-comparison .prop-empty { text-align: center; color: #ccc; background: #fafafa; font-size: 11px; }
+        .prop-comparison .prop-empty { text-align: center; color: #ccc; background: var(--head); font-size: 12px; }
         .prop-cell-content { }
-        .prop-cell-content .prop-name { font-weight: bold; font-size: 11px; margin-bottom: 2px; }
-        .prop-cell-content .prop-type { font-size: 10px; opacity: 0.85; margin-bottom: 6px; }
-        .prop-cell-content .prop-comment { font-size: 10px; opacity: 0.9; font-style: normal; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 6px; margin-top: 4px; }
-        
+        .prop-cell-content .prop-name { font-weight: 600; font-size: 12px; margin-bottom: 2px; }
+        .prop-cell-content .prop-type { font-size: 11px; opacity: 0.85; margin-bottom: 6px; }
+        .prop-cell-content .prop-comment { font-size: 11px; opacity: 0.9; font-style: normal; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 6px; margin-top: 4px; }
+
         .title-full { max-width: 600px; }
-        .purpose-text { font-size: 9px; color: #666; font-style: italic; }
-        
+        .purpose-text { font-size: 11px; color: var(--muted); font-style: italic; }
+
         .conclusion-col { min-width: 120px; text-align: center; }
-        .conclusion-cell { text-align: center; font-size: 11px; background: #fafafa; padding: 10px !important; }
-        .conc-match { color: #28a745; font-weight: bold; }
-        .conc-similar { color: #17a2b8; font-weight: bold; }
-        .conc-differ { color: #dc3545; font-weight: bold; }
-        .conc-partial { color: #fd7e14; font-weight: bold; }
+        .conclusion-cell { text-align: center; font-size: 12px; background: var(--head); padding: 10px !important; }
+        .conc-match { color: #2e7d32; font-weight: 600; }
+        .conc-similar { color: #0277bd; font-weight: 600; }
+        .conc-differ { color: #c62828; font-weight: 600; }
+        .conc-partial { color: #c77700; font-weight: 600; }
         .conc-empty { color: #ccc; }
-        
-        .id { font-family: 'SF Mono', Monaco, monospace; font-size: 10px; color: #1F4788; font-weight: bold; }
-        .field { font-weight: 600; color: #333; white-space: nowrap; }
-        .type { font-size: 10px; color: #666; }
-        .trace { color: #999; font-size: 10px; }
-        .bool { font-size: 10px; }
+
+        .id { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; color: var(--blue); }
+        .field { font-weight: 600; color: var(--ink); white-space: nowrap; }
+        .type { font-size: 11px; color: var(--muted); }
+        .trace { color: #8a94a0; font-size: 11px; }
+        .bool { font-size: 11px; }
         .text-full { max-width: 400px; }
-        .variations { font-size: 9px; color: #666; font-style: italic; }
-        .track-label { padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; }
-        .data.null { color: #999; font-style: italic; }
-        .data.bool { color: #0066cc; }
-        
-        .annot-section { margin-bottom: 15px; }
+        .variations { font-size: 10px; color: var(--muted); font-style: italic; }
+        .track-label { padding: 1px 7px; border-radius: 9px; font-size: 11px; font-weight: 500; }
+        .data.null { color: #8a94a0; font-style: italic; }
+        .data.bool { color: var(--blue2); }
+
+        .annot-section { margin: 0 0 12px; }
         .annot-type-header {
-            color: white; padding: 8px 15px; font-size: 12px; font-weight: bold;
-            border-radius: 4px 4px 0 0;
+            background: var(--head) !important; color: var(--ink); padding: 7px 12px;
+            font-size: 12px; font-weight: 600; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
         }
-        .annot-section .comp-table { border-radius: 0 0 4px 4px; }
-        
+
         .scope-acts { color: #C65911; }
-        .scope-cols { color: #17a2b8; font-style: italic; }
-        .scope-props { color: #7030A0; font-style: italic; }
-        .scope-cells { color: #538135; }
-        .scope-table { color: #999; font-style: italic; }
-        
-        .section {
-            background: white; border-radius: 8px; margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;
-        }
-        .section-title {
-            color: white; padding: 12px 20px; font-size: 13px; font-weight: bold;
-            cursor: pointer; user-select: none;
-        }
-        .section-title:hover { filter: brightness(1.1); }
-        .section-title .toggle-icon { 
-            display: inline-block; transition: transform 0.2s; margin-right: 8px; 
+        .scope-cols { color: #0277bd; font-style: italic; }
+        .scope-props { color: #6a1b9a; font-style: italic; }
+        .scope-cells { color: #2e7d32; }
+        .scope-table { color: #8a94a0; font-style: italic; }
+
+        .section-title .toggle-icon {
+            display: inline-block; transition: transform 0.2s; margin-right: 8px;
         }
         .collapsible-section.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .collapsible-section.collapsed .section-title { border-bottom: 0; }
         .collapsible-section.collapsed .grid-container { display: none; }
         .grid-container { overflow-x: auto; padding: 10px; }
-        
-        .table-border { border-left: 3px solid #333 !important; }
-        
-        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 10px; }
-        .grid-table th, .grid-table td { border: 1px solid #ddd; padding: 3px 5px; }
-        .grid-table th { background: #f0f0f0; font-weight: bold; font-size: 9px; }
+
+        .table-border { border-left: 2px solid var(--muted) !important; }
+
+        .grid-table { border-collapse: separate; border-spacing: 0; font-size: 12px; }
+        .grid-table th, .grid-table td { border: 1px solid #e4e8ed; padding: 2px 6px; }
+        .grid-table th { background: var(--head); font-weight: 600; font-size: 11px; }
         .grid-table th.activity-header { text-align: left; }
-        
+
         .frozen-col1 {
             position: sticky;
             left: 0;
             z-index: 2;
             min-width: 340px;
             max-width: 340px;
-            background: #f0f0f0;
-            border-right: 2px solid #999 !important;
+            background: var(--head);
+            border-right: 1px solid var(--line) !important;
         }
         .frozen-col2 {
             position: sticky;
@@ -155,8 +153,8 @@
             z-index: 2;
             min-width: 60px;
             max-width: 60px;
-            background: #f0f0f0;
-            border-right: 2px solid #999 !important;
+            background: var(--head);
+            border-right: 1px solid var(--line) !important;
             text-align: center;
         }
         .grid-table th.frozen-col1,
@@ -170,30 +168,42 @@
             right: -6px;
             bottom: 0;
             width: 6px;
-            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent);
+            background: linear-gradient(to right, rgba(0,0,0,0.06), transparent);
             pointer-events: none;
         }
-        
-        .activity-name { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .activity-name.section-header { font-weight: bold; }
+
+        .activity-name { text-align: left; white-space: normal; }
+        .grid-table th.table-run { background: var(--blue); color: #fff; font-size: 11px; text-align: center; }
+        sup.mk { font-size: 9px; margin-left: 2px; font-weight: 600; }
+        sup.mk a { color: #6a1b9a; text-decoration: none; }
+        sup.mk a:hover { text-decoration: underline; }
+        .grid-table th[style*="color: white"] sup.mk a, .grid-table td[style*="color: white"] sup.mk a { color: #f3e5ff; }
+        span.mk { color: #6a1b9a; font-weight: 600; margin-left: 4px; }
+        tr:target td { background: #fff3d6 !important; }
+        a.ingrid { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px;
+                    color: var(--blue2); text-decoration: none; }
+        a.ingrid:hover { text-decoration: underline; }
+        .grid-table .hit { outline: 2px solid #ffb300; outline-offset: -2px; box-shadow: inset 0 0 0 40px rgba(255,179,0,.25); }
+        .activity-name.section-header { font-weight: 600; }
         .activity-name.child { padding-left: 15px; }
-        
+
         .legend {
-            background: white; border-radius: 8px; padding: 12px 20px;
-            margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; font-size: 10px;
+            background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px;
+            margin-bottom: 14px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+            font-size: 12px; color: var(--muted);
         }
         .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-color { width: 16px; height: 12px; border-radius: 2px; border: 1px solid #ddd; }
-        .legend-section { font-weight: bold; color: #666; margin-left: 10px; }
+        .legend-color { width: 16px; height: 12px; border-radius: 2px; border: 1px solid var(--line); }
+        .legend-section { font-weight: 600; color: var(--ink); margin-left: 6px; }
     </style>
 </head>
 <body>
-    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03817853" title="This protocol's row on the collection index">NCT03817853</a><span class="pnav-sep">›</span><span class="pnav-cur">Consolidated SoA</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT03817853_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03817853_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-cur">consolidated</span> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_uncertainty_report.html">extraction log</a></div></nav>
     <div class="header">
-        <h1>NCT03817853 - Consolidated Schedule of Activities</h1>
-        <div class="sub">study-schedule-consolidated v1.0 | Layer 3</div>
-        <div class="meta">1 tables | 27 activities (0% compression) | 11 columns</div>
+        <h1>NCT03817853 — consolidated Schedule of Activities</h1>
+        <div class="sub">usdm_data · 1 tables · 27 activities (0% compression) · 11 columns · study-schedule-consolidated v1.0 · Layer 3</div>
     </div>
+    <nav class="pnav" aria-label="Breadcrumb"><div class="pnav-crumb"><a href="../../../../../../index.html">Collections</a><span class="pnav-sep">›</span><a href="../../../index.html">usdm_data</a><span class="pnav-sep">›</span><a href="../../../index.html#NCT03817853" title="This protocol's row on the collection index">NCT03817853</a><span class="pnav-sep">›</span><span class="pnav-cur">Consolidated SoA</span></div><div class="pnav-sib"><span class="pnav-grp">extraction data:</span> <a href="../../SoA2USDM/extracted/NCT03817853_Table_01_extraction_viewer.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-grp">resolved:</span> <a href="../../SoA2USDM/resolved/NCT03817853_Table_01_resolved.html">T1</a> <span class="pnav-sep">·</span> <span class="pnav-cur">consolidated</span> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_review.html">review</a> <span class="pnav-sep">·</span> <a href="../../SoA2USDM/extracted/NCT03817853_uncertainty_report.html">extraction log</a></div></nav>
+    <div class="content">
     
     <div class="toolbar">
         <button onclick="expandAll()">▼ Expand All</button>
@@ -202,10 +212,11 @@
     
     <div class="legend">
         <span class="legend-section">Activities:</span>
-        <div class="legend-item"><div class="legend-color" style="background:#d4edda;"></div>Multi-table exact</div>
-        <div class="legend-item"><div class="legend-color" style="background:#cce5ff;"></div>Multi-table fuzzy</div>
-        <div class="legend-item"><div class="legend-color" style="background:#e1bee7;"></div>Cross-parent</div>
-        <div class="legend-item"><div class="legend-color" style="background:#f0f0f0;"></div>Single table</div>
+        <div class="legend-item"><div class="legend-color" style="background:#e1f2fb;"></div>Near match across tables</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f1e7f7;"></div>Near match, different parent</div>
+        <span class="legend-section">|</span>
+        <span class="legend-section">Notes:</span>
+        <div class="legend-item"><sup class="mk"><a>3</a></sup>&nbsp;unified annotation, click for the text</div>
         <span class="legend-section">|</span>
         <span class="legend-section">Cells:</span>
         <div class="legend-item"><div class="legend-color" style="background:#BDD7EE;"></div>Common</div>
@@ -213,13 +224,22 @@
     </div>
     
     
+    <div class="section collapsible-section">
+        <div class="section-title" style="background: #1F4788;" onclick="toggleGrid(this)">
+            <span class="toggle-icon">▼</span> Main Schedule (11 columns)
+        </div>
+        <div class="grid-container">
+            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th colspan="11" class="table-run">Table 1</th></tr><tr><th class="frozen-col1" style="background: #1F4788; color: white; text-align: left; font-size: 9px;">Study period<br/><span style="font-size: 8px; opacity: 0.8;">[epoch] L1</span></th><th class="frozen-col2" style="background: #1F4788;"></th><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Screening<sup class="mk"><a href="#xannot-002" title="Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the defined window may be used; such tests do not need to be repeated for screening.">2</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Screening<sup class="mk"><a href="#xannot-002" title="Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the defined window may be used; such tests do not need to be repeated for screening.">2</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment<sup class="mk"><a href="#xannot-003" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">3</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment<sup class="mk"><a href="#xannot-003" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">3</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment<sup class="mk"><a href="#xannot-003" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">3</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment<sup class="mk"><a href="#xannot-003" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">3</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment<sup class="mk"><a href="#xannot-003" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">3</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment<sup class="mk"><a href="#xannot-006" title="Patients who achieve at least a partial response (PR) following the completion of induction therapy will receive obinutuzumab maintenance therapy (1000 mg as single agent every 8 weeks (± 10 days) for 2 years or until disease progression). The first administration of obinutuzumab maintenance therapy">6</a></sup></td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #1F4788; color: white; text-align: center; font-size: 9px;">Follow-up (3 months)<sup class="mk"><a href="#xannot-028" title="Safety follow-up assessment at 3 months (90 days (+/- 10 days)) after the final dose of obinutuzumab. If a patient discontinues obinutuzumab early and requires another anticancer therapy, then a safety follow up visit must be performed prior to the initiation of the new anticancer therapy.">28</a></sup></td></tr><tr><th class="frozen-col1" style="background: #2E75B6; color: white; text-align: left; font-size: 9px;">Treatment phase<br/><span style="font-size: 8px; opacity: 0.8;">[period] L2</span></th><th class="frozen-col2" style="background: #2E75B6;"></th><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">EOI</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">Maintenance (every 8 weeks ± 10 days)</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;">EOM</td><td class="" style="background: #2E75B6; color: white; text-align: center; font-size: 9px;"></td></tr><tr><th class="frozen-col1" style="background: #6A9BD1; color: #333; text-align: left; font-size: 9px;">Cycle<br/><span style="font-size: 8px; opacity: 0.8;">[cycle] L3</span></th><th class="frozen-col2" style="background: #6A9BD1;"></th><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;">Cycle 1</td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;">Cycle 1</td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;">Cycle 1</td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;">Cycle 2</td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;">Cycles 3–6/8</td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #6A9BD1; color: #333; text-align: center; font-size: 9px;"></td></tr><tr><th class="frozen-col1" style="background: #A9C6E6; color: #333; text-align: left; font-size: 9px;">Day<br/><span style="font-size: 8px; opacity: 0.8;">[study_day] L4</span></th><th class="frozen-col2" style="background: #A9C6E6;"></th><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D–28 to D–1</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D–7 to D–1</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D1</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D8</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D15</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D1</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;">D1</td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #A9C6E6; color: #333; text-align: center; font-size: 9px;"></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Informed consent">Informed consent</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-007" title="Informed consent must be documented before any study-specific screening procedure is performed, and may be obtained more than 28 days before initiation of study treatment.">7</a></sup></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Demographic data">Demographic data</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Medical history and baseline conditions">Medical history and baseline conditions</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Ann Arbor, FLIPI, and FLIPI2">Ann Arbor, FLIPI, and FLIPI2</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::ECOG performance status">ECOG performance status</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Vital signs">Vital signs<sup class="mk"><a href="#xannot-008" title="Includes blood pressure, pulse rate and temperature. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">8</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Weight">Weight</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Height">Height</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::ECG">ECG</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::LVEF (echocardiography or MUGA scan)">LVEF (echocardiography or MUGA scan)<sup class="mk"><a href="#xannot-027" title="LVEF required for patients who receive CHOP only.">27</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Complete physical examination">Complete physical examination<sup class="mk"><a href="#xannot-009" title="Includes evaluation of the head, eyes, ears, nose, and throat, and the cardiovascular, dermatologic, musculoskeletal, respiratory, gastrointestinal, genitourinary, and neurologic systems. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subseq">9</a>,<a href="#xannot-010" title="As part of tumor assessment, the physical examination should include evaluation for the presence of enlarged nodes, palpable hepatomegaly, and splenomegaly. This information will be recorded on the appropriate tumor assessment eCRF.">10</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Targeted physical examination">Targeted physical examination<sup class="mk"><a href="#xannot-011" title="Includes systems of primary relevance (e.g., cardiovascular and respiratory systems), systems associated with symptoms (newly emergent or monitored from baseline), and areas associated with tumor assessment (lymph nodes, liver, spleen, and any other areas identified at baseline). Record new or worse">11</a>,<a href="#xannot-012" title="Perform at the same time as tumor assessments after the end of induction treatment.">12</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::B symptoms">B symptoms<sup class="mk"><a href="#xannot-013" title="Unexplained fever &gt;38ºC, night sweats, unexplained weight loss &gt;10% of body weight over 6 months.">13</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Hematology">Hematology<sup class="mk"><a href="#xannot-014" title="Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, and differential count (neutrophils, eosinophils, basophils, monocytes, lymphocytes, other cells).">14</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Chemistry">Chemistry<sup class="mk"><a href="#xannot-015" title="Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered standard of care for the region), sodium, potassium, chloride, glucose, BUN or urea, creatinine, total protein, albumin, phosphate, calcium, total and direct bilirubin, ALP, ALT, AST, urate, beta-2 microglo">15</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Pregnancy test">Pregnancy test<sup class="mk"><a href="#xannot-016" title="All women of childbearing potential will have a serum pregnancy test at screening.">16</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Coagulation INR, aPTT or PTT and PT">Coagulation INR, aPTT or PTT and PT</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Urinalysis">Urinalysis<sup class="mk"><a href="#xannot-017" title="Includes dipstick (pH, specific gravity, glucose, protein, ketones, blood) and microscopic examination if routinely performed (sediment, RBCs, WBCs, casts, crystals, epithelial cells, bacteria).">17</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::HIV, HTLV-1, Hep B / C testing">HIV, HTLV-1, Hep B / C testing<sup class="mk"><a href="#xannot-018" title="To include assessment of HBV/HCV DNA PCR in patients with resolved HBV/HCV infection at baseline. HBV DNA PCR testing at least every 3 months should also be conducted (during the study and for at least 1 year after completion of lymphoma treatment) for patients with prior HBV infection or who are ca">18</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #ffffff;" title="::Study drug administration">Study drug administration</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #ffffff;" title="Study drug administration::obinutuzumab">obinutuzumab<sup class="mk"><a href="#xannot-019" title="Obinutuzumab administered on Days, 1, 8 and 15 of cycle 1 and Day 1 of subsequent cycles.">19</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-004" title="Obinutuzumab administered according to the regular infusion rate (see Table 1, Section 3.1).">4</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-004" title="Obinutuzumab administered according to the regular infusion rate (see Table 1, Section 3.1).">4</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-004" title="Obinutuzumab administered according to the regular infusion rate (see Table 1, Section 3.1).">4</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-005" title="Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who do not experience any Grade ≥3 IRRs during the first or previous cycle. If a patient experiences any Grade 3 IRRs during any SDI administrations of obinutuzumab (i.e. after Cycle 1, Da">5</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-005" title="Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who do not experience any Grade ≥3 IRRs during the first or previous cycle. If a patient experiences any Grade 3 IRRs during any SDI administrations of obinutuzumab (i.e. after Cycle 1, Da">5</a></sup></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-005" title="Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who do not experience any Grade ≥3 IRRs during the first or previous cycle. If a patient experiences any Grade 3 IRRs during any SDI administrations of obinutuzumab (i.e. after Cycle 1, Da">5</a></sup></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #ffffff;" title="Study drug administration::chemotherapy">chemotherapy<sup class="mk"><a href="#xannot-020" title="Chemotherapy comprises either bendamustine (Days 1 and 2, Cycles 1–6; 28-day cycles), CHOP (Days 1–5, Cycles 1–6; 21-day cycles; followed by 2 cycles of obinutuzumab alone), or CVP (Days 1–5, Cycles 1–8; 21-day cycles). See Section 4.3.2.2 Combination chemotherapy.">20</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Tumor assessment">Tumor assessment<sup class="mk"><a href="#xannot-021" title="By the investigator according to local practice and according to the guidelines used at the site (Lugano [Cheson et al 2014], Cheson et al 2007, or Cheson et al 1999). Including bone marrow where applicable. If bone marrow data are available in the patient’s medical record that were obtained within ">21</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Concomitant medications">Concomitant medications<sup class="mk"><a href="#xannot-023" title="Concomitant medications and adverse events will be collected throughout the study.">23</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-022" title="Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to study entry until 3 months after the final dose of study drug.">22</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-022" title="Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to study entry until 3 months after the final dose of study drug.">22</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-022" title="Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to study entry until 3 months after the final dose of study drug.">22</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Adverse events">Adverse events</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-024" title="After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 3 months (90 days (± 10 days)) after the final dose of ">24</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-024" title="After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 3 months (90 days (± 10 days)) after the final dose of ">24</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-024" title="After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 3 months (90 days (± 10 days)) after the final dose of ">24</a></sup></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Provider-reported measures">Provider-reported measures</td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x<sup class="mk"><a href="#xannot-025" title="After administration of SDI at Cycle 4 Day 1, providers will complete the evaluation of site experience questionnaire.">25</a></sup></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #ffffff;" title="::Patient-reported measures">Patient-reported measures<sup class="mk"><a href="#xannot-026" title="Before administration of treatment at Day 1 of Cycles 1–6, at the end of induction, during maintenance, at end of maintenance, and at end of study, patients will complete the MDASI. The MDASI will be self-administered before the patient receives any information on disease status, prior to the perfor">26</a></sup></td><td class="frozen-col2" style="background: #ffffff; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr></table>
+        </div>
+    </div>
+    
     <div class="comp">
         <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
             <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
             <span class="comp-desc">Process information</span>
         </div>
         <div class="comp-body">
-            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-09-27T18:17:46.333192+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">27</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">27</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 27</td></tr></tbody></table>
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-09-28T13:18:41.702320+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">27</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">27</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 27</td></tr></tbody></table>
         </div>
     </div>
     
@@ -255,224 +275,224 @@
         <div class="comp-body">
             <table class="comp-table">
                 <thead><tr>
-                    <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>header</th>
+                    <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>row kind</th>
                 </tr></thead>
-                <tbody><tr style="background: #f0f0f0;">
+                <tbody><tr style="background: #ffffff;">
             <td class="id">xact-001</td>
             <td class="text-full">Informed consent</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-002</td>
             <td class="text-full">Demographic data</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-003</td>
             <td class="text-full">Medical history and baseline conditions</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-004</td>
             <td class="text-full">Ann Arbor, FLIPI, and FLIPI2</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-005</td>
             <td class="text-full">ECOG performance status</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-006</td>
             <td class="text-full">Vital signs</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-007</td>
             <td class="text-full">Weight</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-008</td>
             <td class="text-full">Height</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-009</td>
             <td class="text-full">ECG</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-010</td>
             <td class="text-full">LVEF (echocardiography or MUGA scan)</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-011</td>
             <td class="text-full">Complete physical examination</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-012</td>
             <td class="text-full">Targeted physical examination</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-013</td>
             <td class="text-full">B symptoms</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-014</td>
             <td class="text-full">Hematology</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-015</td>
             <td class="text-full">Chemistry</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-016</td>
             <td class="text-full">Pregnancy test</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-017</td>
             <td class="text-full">Coagulation INR, aPTT or PTT and PT</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-018</td>
             <td class="text-full">Urinalysis</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-019</td>
             <td class="text-full">HIV, HTLV-1, Hep B / C testing</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-020</td>
             <td class="text-full">Study drug administration</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">true</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type">section</td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-021</td>
             <td class="text-full">obinutuzumab</td>
             <td class="trace">Study drug administration</td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-022</td>
             <td class="text-full">chemotherapy</td>
             <td class="trace">Study drug administration</td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-023</td>
             <td class="text-full">Tumor assessment</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-024</td>
             <td class="text-full">Concomitant medications</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-025</td>
             <td class="text-full">Adverse events</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-026</td>
             <td class="text-full">Provider-reported measures</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
-        </tr><tr style="background: #f0f0f0;">
+            <td class="type"></td>
+        </tr><tr style="background: #ffffff;">
             <td class="id">xact-027</td>
             <td class="text-full">Patient-reported measures</td>
             <td class="trace"></td>
-            <td class="type">new</td>
+            <td class="type" title="match_status: new">one table</td>
             <td class="trace">1</td>
             <td class="trace">T1</td>
-            <td class="bool">false</td>
+            <td class="type"></td>
         </tr></tbody>
             </table>
         </div>
@@ -491,173 +511,173 @@
                     <thead><tr>
                         <th>xannot_id</th><th>markers</th><th>#</th><th>text</th><th>scope</th>
                     </tr></thead>
-                    <tbody><tr style="background: #fff;">
-                <td class="id">xannot-001</td>
+                    <tbody><tr id="xannot-001" style="background: #fff;">
+                <td class="id">xannot-001 <span class="mk">1</span></td>
                 <td class="trace">T1:gn1</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit date, with the exception of C1D1 which should take place within 28 days of the patient entering screening. All assessments should be performed within 2 days of the scheduled visit, unless otherwise specified. On treatment days, all assessments should be performed prior to dosing, unless otherwise specified. Results from hematology and biochemistry must be reviewed, and the review documented, prior to study drug administration.">Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit d...</td>
+                <td class="text-full" title="Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit date, with the exception of C1D1 which should take place within 28 days of the patient entering screening. All assessments should be performed within 2 days of the scheduled visit, unless otherwise specified. On treatment days, all assessments should be performed prior to dosing, unless otherwise specified. Results from hematology and biochemistry must be reviewed, and the review documented, prior to study drug administration.">Notes: Dosing (i.e., Day 1 of each cycle), in induction phase should be done within ± 2 days of the scheduled visit date, with the exception of C1D1 which should take place within 28 days of the patient entering screening. All assessments should be performed within 2 days of the scheduled visit, unless otherwise specified. On treatment days, all assessments should be performed prior to dosing, unless otherwise specified. Results from hematology and biochemistry must be reviewed, and the review documented, prior to study drug administration.</td>
                 <td class="trace"><span class="scope-table" title="Table-level">table</span></td>
-            </tr><tr style="background: #f3e8f8;">
-                <td class="id">xannot-002</td>
+            </tr><tr id="xannot-002" style="background: #f3e8f8;">
+                <td class="id">xannot-002 <span class="mk">2</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-002&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:a</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the defined window may be used; such tests do not need to be repeated for screening.">Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the define...</td>
+                <td class="text-full" title="Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the defined window may be used; such tests do not need to be repeated for screening.">Results of standard-of-care tests or examinations performed prior to obtaining informed consent and within the defined window may be used; such tests do not need to be repeated for screening.</td>
                 <td class="trace"><span class="scope-cols" title="Timeline columns: 2 total">D–28 to D–1 | D–7 to D–1</span></td>
-            </tr><tr style="background: #f3e8f8;">
-                <td class="id">xannot-003</td>
+            </tr><tr id="xannot-003" style="background: #f3e8f8;">
+                <td class="id">xannot-003 <span class="mk">3</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-003&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:b</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for...</td>
+                <td class="text-full" title="The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).">The total number of cycles of G-chemo indication therapy and the cycles length depends on the chemotherapy chosen for each patient (see Section 4.3.2.2 Combination chemotherapy).</td>
                 <td class="trace"><span class="scope-cols" title="Timeline columns: 5 total">Cycle 1 | Cycle 1 | Cycle 1 | Cycle 2 | Cycles 3–6/8</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-004</td>
+            </tr><tr id="xannot-004" style="background: #fff;">
+                <td class="id">xannot-004 <span class="mk">4</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-004&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:c</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="Obinutuzumab administered according to the regular infusion rate (see Table 1, Section 3.1).">Obinutuzumab administered according to the regular infusion rate (see Table 1, Section 3.1).</td>
                 <td class="trace"><span class="scope-acts" title="Activities">obinutuzumab</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-005</td>
+            </tr><tr id="xannot-005" style="background: #fff;">
+                <td class="id">xannot-005 <span class="mk">5</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-005&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:d</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who do not experience any Grade ≥3 IRRs during the first or previous cycle. If a patient experiences any Grade 3 IRRs during any SDI administrations of obinutuzumab (i.e. after Cycle 1, Day 1), the next dose of obinutuzumab will be administered at the regular infusion rate. If the patient experiences a second occurrence of a Grade 3 IRR, the obinutuzumab infusion must be stopped and the therapy must be permanently discontinued.">Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who d...</td>
+                <td class="text-full" title="Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who do not experience any Grade ≥3 IRRs during the first or previous cycle. If a patient experiences any Grade 3 IRRs during any SDI administrations of obinutuzumab (i.e. after Cycle 1, Day 1), the next dose of obinutuzumab will be administered at the regular infusion rate. If the patient experiences a second occurrence of a Grade 3 IRR, the obinutuzumab infusion must be stopped and the therapy must be permanently discontinued.">Obinutuzumab administered according a 90-minute short duration infusion (see Table 1, Section 3.1) for patients who do not experience any Grade ≥3 IRRs during the first or previous cycle. If a patient experiences any Grade 3 IRRs during any SDI administrations of obinutuzumab (i.e. after Cycle 1, Day 1), the next dose of obinutuzumab will be administered at the regular infusion rate. If the patient experiences a second occurrence of a Grade 3 IRR, the obinutuzumab infusion must be stopped and the therapy must be permanently discontinued.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">obinutuzumab</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
-            </tr><tr style="background: #f3e8f8;">
-                <td class="id">xannot-006</td>
+            </tr><tr id="xannot-006" style="background: #f3e8f8;">
+                <td class="id">xannot-006 <span class="mk">6</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-006&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:e</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Patients who achieve at least a partial response (PR) following the completion of induction therapy will receive obinutuzumab maintenance therapy (1000 mg as single agent every 8 weeks (± 10 days) for 2 years or until disease progression). The first administration of obinutuzumab maintenance therapy is expected to start 8 weeks ± 10 days from Day 1 of the last induction cycle. Patients with stable disease or progressive disease will go to safety follow-up. For the timing of the safety follow-up assessment, please see footnote aa.">Patients who achieve at least a partial response (PR) following the completion of induction therapy will receive obin...</td>
+                <td class="text-full" title="Patients who achieve at least a partial response (PR) following the completion of induction therapy will receive obinutuzumab maintenance therapy (1000 mg as single agent every 8 weeks (± 10 days) for 2 years or until disease progression). The first administration of obinutuzumab maintenance therapy is expected to start 8 weeks ± 10 days from Day 1 of the last induction cycle. Patients with stable disease or progressive disease will go to safety follow-up. For the timing of the safety follow-up assessment, please see footnote aa.">Patients who achieve at least a partial response (PR) following the completion of induction therapy will receive obinutuzumab maintenance therapy (1000 mg as single agent every 8 weeks (± 10 days) for 2 years or until disease progression). The first administration of obinutuzumab maintenance therapy is expected to start 8 weeks ± 10 days from Day 1 of the last induction cycle. Patients with stable disease or progressive disease will go to safety follow-up. For the timing of the safety follow-up assessment, please see footnote aa.</td>
                 <td class="trace"><span class="scope-cols" title="Timeline columns: 1 total">Treatment</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-007</td>
+            </tr><tr id="xannot-007" style="background: #fff;">
+                <td class="id">xannot-007 <span class="mk">7</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-007&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:f</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Informed consent must be documented before any study-specific screening procedure is performed, and may be obtained more than 28 days before initiation of study treatment.">Informed consent must be documented before any study-specific screening procedure is performed, and may be obtained m...</td>
+                <td class="text-full" title="Informed consent must be documented before any study-specific screening procedure is performed, and may be obtained more than 28 days before initiation of study treatment.">Informed consent must be documented before any study-specific screening procedure is performed, and may be obtained more than 28 days before initiation of study treatment.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Informed consent</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-008</td>
+            </tr><tr id="xannot-008" style="background: #fff;">
+                <td class="id">xannot-008 <span class="mk">8</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-008&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:g</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Includes blood pressure, pulse rate and temperature. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">Includes blood pressure, pulse rate and temperature. Record abnormalities observed at baseline on the General Medical...</td>
+                <td class="text-full" title="Includes blood pressure, pulse rate and temperature. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">Includes blood pressure, pulse rate and temperature. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Vital signs</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-009</td>
+            </tr><tr id="xannot-009" style="background: #fff;">
+                <td class="id">xannot-009 <span class="mk">9</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-009&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:h</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Includes evaluation of the head, eyes, ears, nose, and throat, and the cardiovascular, dermatologic, musculoskeletal, respiratory, gastrointestinal, genitourinary, and neurologic systems. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">Includes evaluation of the head, eyes, ears, nose, and throat, and the cardiovascular, dermatologic, musculoskeletal,...</td>
+                <td class="text-full" title="Includes evaluation of the head, eyes, ears, nose, and throat, and the cardiovascular, dermatologic, musculoskeletal, respiratory, gastrointestinal, genitourinary, and neurologic systems. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">Includes evaluation of the head, eyes, ears, nose, and throat, and the cardiovascular, dermatologic, musculoskeletal, respiratory, gastrointestinal, genitourinary, and neurologic systems. Record abnormalities observed at baseline on the General Medical History and Baseline Conditions eCRF. At subsequent visits, record new or worsened clinically significant abnormalities on the Adverse Event eCRF.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Complete physical examination</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-010</td>
+            </tr><tr id="xannot-010" style="background: #fff;">
+                <td class="id">xannot-010 <span class="mk">10</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-010&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:i</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="As part of tumor assessment, the physical examination should include evaluation for the presence of enlarged nodes, palpable hepatomegaly, and splenomegaly. This information will be recorded on the appropriate tumor assessment eCRF.">As part of tumor assessment, the physical examination should include evaluation for the presence of enlarged nodes, p...</td>
+                <td class="text-full" title="As part of tumor assessment, the physical examination should include evaluation for the presence of enlarged nodes, palpable hepatomegaly, and splenomegaly. This information will be recorded on the appropriate tumor assessment eCRF.">As part of tumor assessment, the physical examination should include evaluation for the presence of enlarged nodes, palpable hepatomegaly, and splenomegaly. This information will be recorded on the appropriate tumor assessment eCRF.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Complete physical examination</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-011</td>
+            </tr><tr id="xannot-011" style="background: #fff;">
+                <td class="id">xannot-011 <span class="mk">11</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-011&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:j</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Includes systems of primary relevance (e.g., cardiovascular and respiratory systems), systems associated with symptoms (newly emergent or monitored from baseline), and areas associated with tumor assessment (lymph nodes, liver, spleen, and any other areas identified at baseline). Record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">Includes systems of primary relevance (e.g., cardiovascular and respiratory systems), systems associated with symptom...</td>
+                <td class="text-full" title="Includes systems of primary relevance (e.g., cardiovascular and respiratory systems), systems associated with symptoms (newly emergent or monitored from baseline), and areas associated with tumor assessment (lymph nodes, liver, spleen, and any other areas identified at baseline). Record new or worsened clinically significant abnormalities on the Adverse Event eCRF.">Includes systems of primary relevance (e.g., cardiovascular and respiratory systems), systems associated with symptoms (newly emergent or monitored from baseline), and areas associated with tumor assessment (lymph nodes, liver, spleen, and any other areas identified at baseline). Record new or worsened clinically significant abnormalities on the Adverse Event eCRF.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Targeted physical examination</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-012</td>
+            </tr><tr id="xannot-012" style="background: #fff;">
+                <td class="id">xannot-012 <span class="mk">12</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-012&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:k</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="Perform at the same time as tumor assessments after the end of induction treatment.">Perform at the same time as tumor assessments after the end of induction treatment.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Targeted physical examination</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-013</td>
+            </tr><tr id="xannot-013" style="background: #fff;">
+                <td class="id">xannot-013 <span class="mk">13</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-013&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:l</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="Unexplained fever &gt;38ºC, night sweats, unexplained weight loss &gt;10% of body weight over 6 months.">Unexplained fever &gt;38ºC, night sweats, unexplained weight loss &gt;10% of body weight over 6 months.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">B symptoms</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-014</td>
+            </tr><tr id="xannot-014" style="background: #fff;">
+                <td class="id">xannot-014 <span class="mk">14</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-014&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:m</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, and differential count (neutrophils, eosinophils, basophils, monocytes, lymphocytes, other cells).">Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, and differential count (neutrophils...</td>
+                <td class="text-full" title="Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, and differential count (neutrophils, eosinophils, basophils, monocytes, lymphocytes, other cells).">Hematology includes WBC count, RBC count, hemoglobin, hematocrit, platelet count, and differential count (neutrophils, eosinophils, basophils, monocytes, lymphocytes, other cells).</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Hematology</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-015</td>
+            </tr><tr id="xannot-015" style="background: #fff;">
+                <td class="id">xannot-015 <span class="mk">15</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-015&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:n</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered standard of care for the region), sodium, potassium, chloride, glucose, BUN or urea, creatinine, total protein, albumin, phosphate, calcium, total and direct bilirubin, ALP, ALT, AST, urate, beta-2 microglobulin (at screening and EOI only) and LDH.">Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered standard of care for th...</td>
+                <td class="text-full" title="Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered standard of care for the region), sodium, potassium, chloride, glucose, BUN or urea, creatinine, total protein, albumin, phosphate, calcium, total and direct bilirubin, ALP, ALT, AST, urate, beta-2 microglobulin (at screening and EOI only) and LDH.">Chemistry panel (serum or plasma) includes bicarbonate or total carbon dioxide (if considered standard of care for the region), sodium, potassium, chloride, glucose, BUN or urea, creatinine, total protein, albumin, phosphate, calcium, total and direct bilirubin, ALP, ALT, AST, urate, beta-2 microglobulin (at screening and EOI only) and LDH.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Chemistry</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-016</td>
+            </tr><tr id="xannot-016" style="background: #fff;">
+                <td class="id">xannot-016 <span class="mk">16</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-016&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:o</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="All women of childbearing potential will have a serum pregnancy test at screening.">All women of childbearing potential will have a serum pregnancy test at screening.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Pregnancy test</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-017</td>
+            </tr><tr id="xannot-017" style="background: #fff;">
+                <td class="id">xannot-017 <span class="mk">17</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-017&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:p</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Includes dipstick (pH, specific gravity, glucose, protein, ketones, blood) and microscopic examination if routinely performed (sediment, RBCs, WBCs, casts, crystals, epithelial cells, bacteria).">Includes dipstick (pH, specific gravity, glucose, protein, ketones, blood) and microscopic examination if routinely p...</td>
+                <td class="text-full" title="Includes dipstick (pH, specific gravity, glucose, protein, ketones, blood) and microscopic examination if routinely performed (sediment, RBCs, WBCs, casts, crystals, epithelial cells, bacteria).">Includes dipstick (pH, specific gravity, glucose, protein, ketones, blood) and microscopic examination if routinely performed (sediment, RBCs, WBCs, casts, crystals, epithelial cells, bacteria).</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Urinalysis</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-018</td>
+            </tr><tr id="xannot-018" style="background: #fff;">
+                <td class="id">xannot-018 <span class="mk">18</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-018&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:q</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="To include assessment of HBV/HCV DNA PCR in patients with resolved HBV/HCV infection at baseline. HBV DNA PCR testing at least every 3 months should also be conducted (during the study and for at least 1 year after completion of lymphoma treatment) for patients with prior HBV infection or who are carriers of HBV. HTLV-1 testing will be performed at baseline in patients from endemic countries only. HIV testing will be performed at baseline if required by local regulations.">To include assessment of HBV/HCV DNA PCR in patients with resolved HBV/HCV infection at baseline. HBV DNA PCR testing...</td>
+                <td class="text-full" title="To include assessment of HBV/HCV DNA PCR in patients with resolved HBV/HCV infection at baseline. HBV DNA PCR testing at least every 3 months should also be conducted (during the study and for at least 1 year after completion of lymphoma treatment) for patients with prior HBV infection or who are carriers of HBV. HTLV-1 testing will be performed at baseline in patients from endemic countries only. HIV testing will be performed at baseline if required by local regulations.">To include assessment of HBV/HCV DNA PCR in patients with resolved HBV/HCV infection at baseline. HBV DNA PCR testing at least every 3 months should also be conducted (during the study and for at least 1 year after completion of lymphoma treatment) for patients with prior HBV infection or who are carriers of HBV. HTLV-1 testing will be performed at baseline in patients from endemic countries only. HIV testing will be performed at baseline if required by local regulations.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">HIV, HTLV-1, Hep B / C testing</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-019</td>
+            </tr><tr id="xannot-019" style="background: #fff;">
+                <td class="id">xannot-019 <span class="mk">19</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-019&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:r</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="Obinutuzumab administered on Days, 1, 8 and 15 of cycle 1 and Day 1 of subsequent cycles.">Obinutuzumab administered on Days, 1, 8 and 15 of cycle 1 and Day 1 of subsequent cycles.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">obinutuzumab</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-020</td>
+            </tr><tr id="xannot-020" style="background: #fff;">
+                <td class="id">xannot-020 <span class="mk">20</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-020&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:s</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Chemotherapy comprises either bendamustine (Days 1 and 2, Cycles 1–6; 28-day cycles), CHOP (Days 1–5, Cycles 1–6; 21-day cycles; followed by 2 cycles of obinutuzumab alone), or CVP (Days 1–5, Cycles 1–8; 21-day cycles). See Section 4.3.2.2 Combination chemotherapy.">Chemotherapy comprises either bendamustine (Days 1 and 2, Cycles 1–6; 28-day cycles), CHOP (Days 1–5, Cycles 1–6; 21-...</td>
+                <td class="text-full" title="Chemotherapy comprises either bendamustine (Days 1 and 2, Cycles 1–6; 28-day cycles), CHOP (Days 1–5, Cycles 1–6; 21-day cycles; followed by 2 cycles of obinutuzumab alone), or CVP (Days 1–5, Cycles 1–8; 21-day cycles). See Section 4.3.2.2 Combination chemotherapy.">Chemotherapy comprises either bendamustine (Days 1 and 2, Cycles 1–6; 28-day cycles), CHOP (Days 1–5, Cycles 1–6; 21-day cycles; followed by 2 cycles of obinutuzumab alone), or CVP (Days 1–5, Cycles 1–8; 21-day cycles). See Section 4.3.2.2 Combination chemotherapy.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">chemotherapy</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-021</td>
+            </tr><tr id="xannot-021" style="background: #fff;">
+                <td class="id">xannot-021 <span class="mk">21</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-021&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:t</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="By the investigator according to local practice and according to the guidelines used at the site (Lugano [Cheson et al 2014], Cheson et al 2007, or Cheson et al 1999). Including bone marrow where applicable. If bone marrow data are available in the patient’s medical record that were obtained within 3 months prior to study inclusion, these data can be used instead, and the patient does not need to undergo a new bone marrow biopsy with or without aspirate at screening.">By the investigator according to local practice and according to the guidelines used at the site (Lugano [Cheson et a...</td>
+                <td class="text-full" title="By the investigator according to local practice and according to the guidelines used at the site (Lugano [Cheson et al 2014], Cheson et al 2007, or Cheson et al 1999). Including bone marrow where applicable. If bone marrow data are available in the patient’s medical record that were obtained within 3 months prior to study inclusion, these data can be used instead, and the patient does not need to undergo a new bone marrow biopsy with or without aspirate at screening.">By the investigator according to local practice and according to the guidelines used at the site (Lugano [Cheson et al 2014], Cheson et al 2007, or Cheson et al 1999). Including bone marrow where applicable. If bone marrow data are available in the patient’s medical record that were obtained within 3 months prior to study inclusion, these data can be used instead, and the patient does not need to undergo a new bone marrow biopsy with or without aspirate at screening.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Tumor assessment</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-022</td>
+            </tr><tr id="xannot-022" style="background: #fff;">
+                <td class="id">xannot-022 <span class="mk">22</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-022&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:u</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to study entry until 3 months after the final dose of study drug.">Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional s...</td>
+                <td class="text-full" title="Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to study entry until 3 months after the final dose of study drug.">Medication (e.g., prescription drugs, over-the-counter drugs, vaccines, herbal or homeopathic remedies, nutritional supplements) used by a patient in addition to protocol-mandated treatment from 7 days prior to study entry until 3 months after the final dose of study drug.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Concomitant medications</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-023</td>
+            </tr><tr id="xannot-023" style="background: #fff;">
+                <td class="id">xannot-023 <span class="mk">23</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-023&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:v</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="Concomitant medications and adverse events will be collected throughout the study.">Concomitant medications and adverse events will be collected throughout the study.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Concomitant medications</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-024</td>
+            </tr><tr id="xannot-024" style="background: #fff;">
+                <td class="id">xannot-024 <span class="mk">24</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-024&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:w</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 3 months (90 days (± 10 days)) after the final dose of study drug. After this period, the Sponsor should be notified if the investigator becomes aware of any serious adverse event that is believed to be related to prior study treatment (see Section 5.6). An exception is made for Grade 3–4 infections (related and unrelated), which should be reported until resolution or until up to 2 years after the last dose of obinutuzumab and secondary malignancies should be reported indefinitely. The investigator should follow each adverse event until the event has resolved to baseline grade or better, the event is assessed as stable by the investigator, the patient is lost to follow-up, or the patient withdraws consent.">After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by...</td>
+                <td class="text-full" title="After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 3 months (90 days (± 10 days)) after the final dose of study drug. After this period, the Sponsor should be notified if the investigator becomes aware of any serious adverse event that is believed to be related to prior study treatment (see Section 5.6). An exception is made for Grade 3–4 infections (related and unrelated), which should be reported until resolution or until up to 2 years after the last dose of obinutuzumab and secondary malignancies should be reported indefinitely. The investigator should follow each adverse event until the event has resolved to baseline grade or better, the event is assessed as stable by the investigator, the patient is lost to follow-up, or the patient withdraws consent.">After informed consent has been obtained but prior to initiation of study drug, only serious adverse events caused by a protocol-mandated intervention should be reported. After initiation of study drug, all adverse events will be reported until 3 months (90 days (± 10 days)) after the final dose of study drug. After this period, the Sponsor should be notified if the investigator becomes aware of any serious adverse event that is believed to be related to prior study treatment (see Section 5.6). An exception is made for Grade 3–4 infections (related and unrelated), which should be reported until resolution or until up to 2 years after the last dose of obinutuzumab and secondary malignancies should be reported indefinitely. The investigator should follow each adverse event until the event has resolved to baseline grade or better, the event is assessed as stable by the investigator, the patient is lost to follow-up, or the patient withdraws consent.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Adverse events</span> <span class="scope-cells" title="Specific cells">3 cells</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-025</td>
+            </tr><tr id="xannot-025" style="background: #fff;">
+                <td class="id">xannot-025 <span class="mk">25</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-025&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:x</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="After administration of SDI at Cycle 4 Day 1, providers will complete the evaluation of site experience questionnaire.">After administration of SDI at Cycle 4 Day 1, providers will complete the evaluation of site experience questionnaire.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Provider-reported measures</span> <span class="scope-cells" title="Specific cells">1 cells</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-026</td>
+            </tr><tr id="xannot-026" style="background: #fff;">
+                <td class="id">xannot-026 <span class="mk">26</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-026&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:y</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Before administration of treatment at Day 1 of Cycles 1–6, at the end of induction, during maintenance, at end of maintenance, and at end of study, patients will complete the MDASI. The MDASI will be self-administered before the patient receives any information on disease status, prior to the performance of non-PRO assessments, and prior to the administration of study treatment.">Before administration of treatment at Day 1 of Cycles 1–6, at the end of induction, during maintenance, at end of mai...</td>
+                <td class="text-full" title="Before administration of treatment at Day 1 of Cycles 1–6, at the end of induction, during maintenance, at end of maintenance, and at end of study, patients will complete the MDASI. The MDASI will be self-administered before the patient receives any information on disease status, prior to the performance of non-PRO assessments, and prior to the administration of study treatment.">Before administration of treatment at Day 1 of Cycles 1–6, at the end of induction, during maintenance, at end of maintenance, and at end of study, patients will complete the MDASI. The MDASI will be self-administered before the patient receives any information on disease status, prior to the performance of non-PRO assessments, and prior to the administration of study treatment.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">Patient-reported measures</span></td>
-            </tr><tr style="background: #fff;">
-                <td class="id">xannot-027</td>
+            </tr><tr id="xannot-027" style="background: #fff;">
+                <td class="id">xannot-027 <span class="mk">27</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-027&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:z</td>
                 <td class="trace">1</td>
                 <td class="text-full" title="LVEF required for patients who receive CHOP only.">LVEF required for patients who receive CHOP only.</td>
                 <td class="trace"><span class="scope-acts" title="Activities">LVEF (echocardiography or MUGA scan)</span></td>
-            </tr><tr style="background: #f3e8f8;">
-                <td class="id">xannot-028</td>
+            </tr><tr id="xannot-028" style="background: #f3e8f8;">
+                <td class="id">xannot-028 <span class="mk">28</span><br/><a class="ingrid" href="#" onclick="showInGrid(&quot;xannot-028&quot;); return false;" title="Highlight where this note is anchored in the schedule">show in grid</a></td>
                 <td class="trace">T1:aa</td>
                 <td class="trace">1</td>
-                <td class="text-full" title="Safety follow-up assessment at 3 months (90 days (+/- 10 days)) after the final dose of obinutuzumab. If a patient discontinues obinutuzumab early and requires another anticancer therapy, then a safety follow up visit must be performed prior to the initiation of the new anticancer therapy.">Safety follow-up assessment at 3 months (90 days (+/- 10 days)) after the final dose of obinutuzumab. If a patient di...</td>
+                <td class="text-full" title="Safety follow-up assessment at 3 months (90 days (+/- 10 days)) after the final dose of obinutuzumab. If a patient discontinues obinutuzumab early and requires another anticancer therapy, then a safety follow up visit must be performed prior to the initiation of the new anticancer therapy.">Safety follow-up assessment at 3 months (90 days (+/- 10 days)) after the final dose of obinutuzumab. If a patient discontinues obinutuzumab early and requires another anticancer therapy, then a safety follow up visit must be performed prior to the initiation of the new anticancer therapy.</td>
                 <td class="trace"><span class="scope-cols" title="Timeline columns: 1 total">Follow-up (3 months)</span></td>
             </tr></tbody>
                 </table>
@@ -666,13 +686,6 @@
         </div>
     </div>
 
-    <div class="section collapsible-section">
-        <div class="section-title" style="background: #1F4788;" onclick="toggleGrid(this)">
-            <span class="toggle-icon">▼</span> Main Schedule (11 columns)
-        </div>
-        <div class="grid-container">
-            <table class="grid-table"><tr><th class="frozen-col1 activity-header">Activity</th><th class="frozen-col2">In</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th><th class="" style="background: #1F4788; color: white; font-size: 9px;">T1</th></tr><tr><th class="frozen-col1" style="background: #375623; color: white; text-align: left; font-size: 9px;">Study period<br/><span style="font-size: 8px; opacity: 0.8;">[epoch] L1</span></th><th class="frozen-col2" style="background: #375623;"></th><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Screening</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Screening</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Treatment</td><td class="" style="background: #375623; color: white; text-align: center; font-size: 9px;">Follow-up (3 months)</td></tr><tr><th class="frozen-col1" style="background: #548235; color: white; text-align: left; font-size: 9px;">Treatment phase<br/><span style="font-size: 8px; opacity: 0.8;">[period] L2</span></th><th class="frozen-col2" style="background: #548235;"></th><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Induction (6–8 cycles)</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">EOI</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">Maintenance (every 8 weeks ± 10 days)</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;">EOM</td><td class="" style="background: #548235; color: white; text-align: center; font-size: 9px;"></td></tr><tr><th class="frozen-col1" style="background: #70AD47; color: #333; text-align: left; font-size: 9px;">Cycle<br/><span style="font-size: 8px; opacity: 0.8;">[cycle] L3</span></th><th class="frozen-col2" style="background: #70AD47;"></th><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;">Cycle 1</td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;">Cycle 1</td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;">Cycle 1</td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;">Cycle 2</td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;">Cycles 3–6/8</td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #70AD47; color: #333; text-align: center; font-size: 9px;"></td></tr><tr><th class="frozen-col1" style="background: #A9D08E; color: #333; text-align: left; font-size: 9px;">Day<br/><span style="font-size: 8px; opacity: 0.8;">[study_day] L4</span></th><th class="frozen-col2" style="background: #A9D08E;"></th><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D–28 to D–1</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D–7 to D–1</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D1</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D8</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D15</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D1</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;">D1</td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;"></td><td class="" style="background: #A9D08E; color: #333; text-align: center; font-size: 9px;"></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Informed consent">Informed consent</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Demographic data">Demographic data</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Medical history and baseline conditions">Medical history and baseline conditions</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Ann Arbor, FLIPI, and FLIPI2">Ann Arbor, FLIPI, and FLIPI2</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::ECOG performance status">ECOG performance status</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Vital signs">Vital signs</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Weight">Weight</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Height">Height</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::ECG">ECG</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::LVEF (echocardiography or MUGA scan)">LVEF (echocardiography or MUGA scan)</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Complete physical examination">Complete physical examination</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Targeted physical examination">Targeted physical examination</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::B symptoms">B symptoms</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Hematology">Hematology</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Chemistry">Chemistry</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Pregnancy test">Pregnancy test</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Coagulation INR, aPTT or PTT and PT">Coagulation INR, aPTT or PTT and PT</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Urinalysis">Urinalysis</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::HIV, HTLV-1, Hep B / C testing">HIV, HTLV-1, Hep B / C testing</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name section-header" style="background: #f0f0f0;" title="::Study drug administration">Study drug administration</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study drug administration::obinutuzumab">obinutuzumab</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name  child" style="background: #f0f0f0;" title="Study drug administration::chemotherapy">chemotherapy</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Tumor assessment">Tumor assessment</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Concomitant medications">Concomitant medications</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Adverse events">Adverse events</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Provider-reported measures">Provider-reported measures</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class=""></td><td class=""></td></tr><tr><td class="frozen-col1 activity-name " style="background: #f0f0f0;" title="::Patient-reported measures">Patient-reported measures</td><td class="frozen-col2" style="background: #f0f0f0; font-size: 8px;">T1</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class=""></td><td class=""></td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td><td class="" style="background: #BDD7EE; color: #1F4788; font-weight: bold; text-align: center;">x</td></tr></table>
-        </div>
     </div>
     <script>
         function toggleSection(header) {
@@ -691,6 +704,28 @@
         }
         // Start with component sections collapsed, grids expanded
         document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        // Note markers link to #xannot-NNN: open its section, then scroll to the row
+        function showNote() {
+            const row = location.hash && document.getElementById(location.hash.slice(1));
+            if (!row) return;
+            const comp = row.closest('.comp');
+            if (comp) comp.classList.remove('collapsed');
+            row.scrollIntoView({block: 'center'});
+        }
+        window.addEventListener('hashchange', showNote);
+        showNote();
+        // And back: highlight every grid place carrying this note's marker, scroll to the first
+        function showInGrid(xid) {
+            document.querySelectorAll('.hit').forEach(e => e.classList.remove('hit'));
+            const places = [...document.querySelectorAll('.grid-table sup.mk a[href="#' + xid + '"]')]
+                .map(a => a.closest('td, th'));
+            places.forEach(e => {
+                e.classList.add('hit');
+                const sec = e.closest('.collapsible-section');
+                if (sec) sec.classList.remove('collapsed');
+            });
+            if (places.length) places[0].scrollIntoView({block: 'center', inline: 'center'});
+        }
     </script>
 </body>
 </html>
