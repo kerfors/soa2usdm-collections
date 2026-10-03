@@ -78,6 +78,15 @@
             vertical-align: top; word-wrap: break-word;
         }
         .comp-table tr:hover { background: #eef4fb; }
+        .comp-table tr.refined-by td { color: var(--muted); padding-left: 28px; }
+        .comp-table tr.group-row td { background: var(--head); }
+        .pill { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+        .pill.open { border-color: #c77700; color: #8a5300; background: #fff6e5; }
+        .pill.done { border-color: #2e7d32; color: #1b5e20; background: #edf7ee; }
+        #matches button, #matches select { font-size: 11px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; cursor: pointer; }
+        #matches button.on { background: var(--blue2); border-color: var(--blue2); color: #fff; }
+        #matches-by { display: block; width: 320px; margin: 8px 0 4px; font-size: 12px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; }
+        #matches-draft { display: block; width: 100%; height: 200px; font: 11px/1.35 ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 6px; }
 
         .prop-comparison th.table-col { text-align: center; min-width: 320px; }
         .prop-comparison .track-small { font-size: 10px; font-weight: normal; color: var(--muted); }
@@ -234,13 +243,74 @@
         </div>
     </div>
     
+    <div class="comp" id="matches">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Matches across tables</span>
+            <span class="comp-desc">no matches to review</span>
+        </div>
+        <div class="comp-body" id="matches-body">
+            <div class="comp-note">Rows that consolidation merged on name similarity, or kept separate from a near match. Whether two rows are the same activity is the reviewer's call: choosing drafts an entry for <code>NCT03548935_consolidation_corrections.json</code> below; nothing is saved from here. Rows merged on an identical name are not listed.</div>
+            
+            
+            <div class="comp-note">Draft — new file <code>consolidated/NCT03548935_consolidation_corrections.json</code>; replace each <code>&lt;why&gt;</code>, then re-run consolidation.
+                <input id="matches-by" placeholder="your name, as it should appear in the sidecar">
+                <textarea id="matches-draft" readonly placeholder="Choose a decision above to draft sidecar entries here."></textarea>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function () {
+        const M = {"protocol_id": "NCT03548935", "sidecar": "NCT03548935_consolidation_corrections.json", "sidecar_exists": false, "next_id": 1, "items": [], "relations": [], "candidates": [], "open": 0};
+        const choice = {}, picked = {};
+        const body = document.getElementById('matches-body');
+        const fmt = r => 'T' + r.table_number + (r.activity_id ? ' ' + r.activity_id : '');
+        function entries() {
+            const by = document.getElementById('matches-by').value || '<reviewer>';
+            const at = new Date().toISOString().slice(0, 19) + 'Z';
+            const out = []; let n = M.next_id;
+            const id = () => 'ccorr-' + String(n++).padStart(3, '0');
+            M.items.forEach((it, i) => {
+                if (!choice[i]) return;
+                out.push({id: id(), op: choice[i], source: it.source, target: it.target,
+                          reason: '<why>', by: by, at: at});
+            });
+            M.candidates.forEach((c, k) => {
+                if (!picked[k]) return;
+                c.rows.forEach(r => out.push({id: id(), op: 'refines', source: {table_number: picked[k]},
+                                              target: r, reason: '<why>', by: by, at: at}));
+            });
+            return out;
+        }
+        function render() {
+            const e = entries(), el = document.getElementById('matches-draft');
+            if (!e.length) { el.value = ''; return; }
+            el.value = JSON.stringify(M.sidecar_exists ? e : {schema_name: 'soa-consolidation-corrections',
+                schema_version: '1.0', protocol_id: M.protocol_id, corrections: e}, null, 2);
+        }
+        function choose(i, op) {
+            choice[i] = choice[i] === op ? null : op;
+            body.querySelectorAll('button[data-i="' + i + '"]').forEach(
+                b => b.classList.toggle('on', b.dataset.op === choice[i]));
+        }
+        body.querySelectorAll('button[data-i]').forEach(b => b.onclick = () => { choose(+b.dataset.i, b.dataset.op); render(); });
+        body.querySelectorAll('button[data-group]').forEach(b => b.onclick = () => {
+            b.dataset.group.split(',').forEach(i => { if (choice[+i] !== b.dataset.op) choose(+i, b.dataset.op); });
+            render();
+        });
+        body.querySelectorAll('select[data-k]').forEach(sel => sel.onchange = () => {
+            picked[+sel.dataset.k] = sel.value ? +sel.value : null; render();
+        });
+        document.getElementById('matches-by').oninput = render;
+    })();
+    </script>
+    
     <div class="comp">
         <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
             <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
             <span class="comp-desc">Process information</span>
         </div>
         <div class="comp-body">
-            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-09-27T18:25:06.562561+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">78</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">78</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 78</td></tr></tbody></table>
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-10-03T08:24:26.899832+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">78</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">78</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 78</td></tr></tbody></table>
         </div>
     </div>
     
@@ -278,7 +348,7 @@
                 <thead><tr>
                     <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>row kind</th>
                 </tr></thead>
-                <tbody><tr style="background: #ffffff;">
+                <tbody><tr id="xact-001" style="background: #ffffff;">
             <td class="id">xact-001</td>
             <td class="text-full">SUBJECT RELATED INFORMATION AND ASSESSMENTS</td>
             <td class="trace"></td>
@@ -286,7 +356,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-002" style="background: #ffffff;">
             <td class="id">xact-002</td>
             <td class="text-full">Informed consent and Demography</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -294,7 +364,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-003" style="background: #ffffff;">
             <td class="id">xact-003</td>
             <td class="text-full">Childbearing potential</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -302,7 +372,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-004" style="background: #ffffff;">
             <td class="id">xact-004</td>
             <td class="text-full">Inclusion criteria</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -310,7 +380,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-005" style="background: #ffffff;">
             <td class="id">xact-005</td>
             <td class="text-full">Exclusion criteria</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -318,7 +388,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-006" style="background: #ffffff;">
             <td class="id">xact-006</td>
             <td class="text-full">Randomisation criteria and randomisation</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -326,7 +396,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-007" style="background: #ffffff;">
             <td class="id">xact-007</td>
             <td class="text-full">Medical history/Concomitant illness</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -334,7 +404,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-008" style="background: #ffffff;">
             <td class="id">xact-008</td>
             <td class="text-full">Weight History</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -342,7 +412,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-009" style="background: #ffffff;">
             <td class="id">xact-009</td>
             <td class="text-full">History of Gallbladder Disease</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -350,7 +420,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-010" style="background: #ffffff;">
             <td class="id">xact-010</td>
             <td class="text-full">History of Breast Neoplasm</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -358,7 +428,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-011" style="background: #ffffff;">
             <td class="id">xact-011</td>
             <td class="text-full">History of Colon Neoplasm</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -366,7 +436,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-012" style="background: #ffffff;">
             <td class="id">xact-012</td>
             <td class="text-full">History of Skin Cancer</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -374,7 +444,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-013" style="background: #ffffff;">
             <td class="id">xact-013</td>
             <td class="text-full">History of Psychiatric Disorder</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -382,7 +452,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-014" style="background: #ffffff;">
             <td class="id">xact-014</td>
             <td class="text-full">Tobacco Use</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -390,7 +460,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-015" style="background: #ffffff;">
             <td class="id">xact-015</td>
             <td class="text-full">Concomitant medication</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -398,7 +468,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-016" style="background: #ffffff;">
             <td class="id">xact-016</td>
             <td class="text-full">Trial Product Compliance</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -406,7 +476,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-017" style="background: #ffffff;">
             <td class="id">xact-017</td>
             <td class="text-full">Evaluation of lipid-lowering treatment</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -414,7 +484,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-018" style="background: #ffffff;">
             <td class="id">xact-018</td>
             <td class="text-full">Evaluation of antihypertensive treatment</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -422,7 +492,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-019" style="background: #ffffff;">
             <td class="id">xact-019</td>
             <td class="text-full">Evaluation of glycaemic status</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -430,7 +500,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-020" style="background: #ffffff;">
             <td class="id">xact-020</td>
             <td class="text-full">Evaluation of diet and physical activity</td>
             <td class="trace">SUBJECT RELATED INFORMATION AND ASSESSME</td>
@@ -438,7 +508,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-021" style="background: #ffffff;">
             <td class="id">xact-021</td>
             <td class="text-full">EFFICACY</td>
             <td class="trace"></td>
@@ -446,7 +516,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-022" style="background: #ffffff;">
             <td class="id">xact-022</td>
             <td class="text-full">Body measurements</td>
             <td class="trace">EFFICACY</td>
@@ -454,7 +524,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-023" style="background: #ffffff;">
             <td class="id">xact-023</td>
             <td class="text-full">Height</td>
             <td class="trace">Body measurements</td>
@@ -462,7 +532,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-024" style="background: #ffffff;">
             <td class="id">xact-024</td>
             <td class="text-full">Body Weight</td>
             <td class="trace">Body measurements</td>
@@ -470,7 +540,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-025" style="background: #ffffff;">
             <td class="id">xact-025</td>
             <td class="text-full">Waist Circumference</td>
             <td class="trace">Body measurements</td>
@@ -478,7 +548,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-026" style="background: #ffffff;">
             <td class="id">xact-026</td>
             <td class="text-full">HbA1c</td>
             <td class="trace">EFFICACY</td>
@@ -486,7 +556,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-027" style="background: #ffffff;">
             <td class="id">xact-027</td>
             <td class="text-full">Fasting plasma glucose</td>
             <td class="trace">EFFICACY</td>
@@ -494,7 +564,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-028" style="background: #ffffff;">
             <td class="id">xact-028</td>
             <td class="text-full">Fasting serum insulin</td>
             <td class="trace">EFFICACY</td>
@@ -502,7 +572,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-029" style="background: #ffffff;">
             <td class="id">xact-029</td>
             <td class="text-full">Lipids</td>
             <td class="trace">EFFICACY</td>
@@ -510,7 +580,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-030" style="background: #ffffff;">
             <td class="id">xact-030</td>
             <td class="text-full">Biomarkers</td>
             <td class="trace">EFFICACY</td>
@@ -518,7 +588,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-031" style="background: #ffffff;">
             <td class="id">xact-031</td>
             <td class="text-full">Vital Signs</td>
             <td class="trace">EFFICACY</td>
@@ -526,7 +596,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-032" style="background: #ffffff;">
             <td class="id">xact-032</td>
             <td class="text-full">Systolic blood Pressure</td>
             <td class="trace">Vital Signs</td>
@@ -534,7 +604,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-033" style="background: #ffffff;">
             <td class="id">xact-033</td>
             <td class="text-full">Diastolic Blood Pressure</td>
             <td class="trace">Vital Signs</td>
@@ -542,7 +612,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-054" style="background: #ffffff;">
             <td class="id">xact-054</td>
             <td class="text-full">Pulse</td>
             <td class="trace">Vital Signs</td>
@@ -550,7 +620,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-034" style="background: #ffffff;">
             <td class="id">xact-034</td>
             <td class="text-full">Clinical Outcome Assessments</td>
             <td class="trace">EFFICACY</td>
@@ -558,7 +628,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-035" style="background: #ffffff;">
             <td class="id">xact-035</td>
             <td class="text-full">Short Form-36 (SF-36)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -566,7 +636,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-036" style="background: #ffffff;">
             <td class="id">xact-036</td>
             <td class="text-full">Impact of weight on quality of life – Lite Clinical Trials version (IWQoL-Lite for CT)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -574,7 +644,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-037" style="background: #ffffff;">
             <td class="id">xact-037</td>
             <td class="text-full">Patient Global Impression of Status (PGI-S)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -582,7 +652,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-038" style="background: #ffffff;">
             <td class="id">xact-038</td>
             <td class="text-full">Patient Global Impression of Change (PGI-C)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -590,7 +660,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-039" style="background: #ffffff;">
             <td class="id">xact-039</td>
             <td class="text-full">Stanford Presenteeism Scale-6 (SPS-6)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -598,7 +668,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-040" style="background: #ffffff;">
             <td class="id">xact-040</td>
             <td class="text-full">International Consultation on Incontinence Questionnaire-Urinary Incontinence-Short Form (ICIQ-UI-SF)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -606,7 +676,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-056" style="background: #ffffff;">
             <td class="id">xact-056</td>
             <td class="text-full">Patient Health Questionnaire–9 (PHQ-9)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -614,7 +684,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-057" style="background: #ffffff;">
             <td class="id">xact-057</td>
             <td class="text-full">Columbia-Suicide Severity Rating Scale (C-SSRS)</td>
             <td class="trace">Clinical Outcome Assessments</td>
@@ -622,7 +692,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-041" style="background: #ffffff;">
             <td class="id">xact-041</td>
             <td class="text-full">DEXA scan</td>
             <td class="trace">EFFICACY</td>
@@ -630,7 +700,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-042" style="background: #ffffff;">
             <td class="id">xact-042</td>
             <td class="text-full">SAFETY</td>
             <td class="trace"></td>
@@ -638,7 +708,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-043" style="background: #ffffff;">
             <td class="id">xact-043</td>
             <td class="text-full">Physical examination</td>
             <td class="trace">SAFETY</td>
@@ -646,7 +716,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-044" style="background: #ffffff;">
             <td class="id">xact-044</td>
             <td class="text-full">Pregnancy test</td>
             <td class="trace">SAFETY</td>
@@ -654,7 +724,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-045" style="background: #ffffff;">
             <td class="id">xact-045</td>
             <td class="text-full">ECG</td>
             <td class="trace">SAFETY</td>
@@ -662,7 +732,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-046" style="background: #ffffff;">
             <td class="id">xact-046</td>
             <td class="text-full">Adverse event</td>
             <td class="trace">SAFETY</td>
@@ -670,7 +740,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-047" style="background: #ffffff;">
             <td class="id">xact-047</td>
             <td class="text-full">Technical complaint</td>
             <td class="trace">SAFETY</td>
@@ -678,7 +748,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-048" style="background: #ffffff;">
             <td class="id">xact-048</td>
             <td class="text-full">Breast neoplasms follow-up</td>
             <td class="trace">SAFETY</td>
@@ -686,7 +756,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-049" style="background: #ffffff;">
             <td class="id">xact-049</td>
             <td class="text-full">Colon neoplasms follow-up</td>
             <td class="trace">SAFETY</td>
@@ -694,7 +764,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-050" style="background: #ffffff;">
             <td class="id">xact-050</td>
             <td class="text-full">Haematology</td>
             <td class="trace">SAFETY</td>
@@ -702,7 +772,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-051" style="background: #ffffff;">
             <td class="id">xact-051</td>
             <td class="text-full">Biochemistry</td>
             <td class="trace">SAFETY</td>
@@ -710,7 +780,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-052" style="background: #ffffff;">
             <td class="id">xact-052</td>
             <td class="text-full">Anti-Semaglutide Antibody</td>
             <td class="trace">SAFETY</td>
@@ -718,7 +788,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-053" style="background: #ffffff;">
             <td class="id">xact-053</td>
             <td class="text-full">Vital Signs</td>
             <td class="trace">SAFETY</td>
@@ -726,7 +796,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-055" style="background: #ffffff;">
             <td class="id">xact-055</td>
             <td class="text-full">Clinical Outcome Assessments</td>
             <td class="trace">SAFETY</td>
@@ -734,7 +804,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-058" style="background: #ffffff;">
             <td class="id">xact-058</td>
             <td class="text-full">OTHER ASSESSMENTS</td>
             <td class="trace"></td>
@@ -742,7 +812,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-059" style="background: #ffffff;">
             <td class="id">xact-059</td>
             <td class="text-full">Semaglutide plasma concentration</td>
             <td class="trace">OTHER ASSESSMENTS</td>
@@ -750,7 +820,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-060" style="background: #ffffff;">
             <td class="id">xact-060</td>
             <td class="text-full">Biosamples for future analysis</td>
             <td class="trace">OTHER ASSESSMENTS</td>
@@ -758,7 +828,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-061" style="background: #ffffff;">
             <td class="id">xact-061</td>
             <td class="text-full">TRIAL MATERIAL</td>
             <td class="trace"></td>
@@ -766,7 +836,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-062" style="background: #ffffff;">
             <td class="id">xact-062</td>
             <td class="text-full">First date on trial product</td>
             <td class="trace">TRIAL MATERIAL</td>
@@ -774,7 +844,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-063" style="background: #ffffff;">
             <td class="id">xact-063</td>
             <td class="text-full">IWRS session</td>
             <td class="trace">TRIAL MATERIAL</td>
@@ -782,7 +852,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-064" style="background: #ffffff;">
             <td class="id">xact-064</td>
             <td class="text-full">Administration of trial product</td>
             <td class="trace">TRIAL MATERIAL</td>
@@ -790,7 +860,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-065" style="background: #ffffff;">
             <td class="id">xact-065</td>
             <td class="text-full">Dispensing visit</td>
             <td class="trace">Administration of trial product</td>
@@ -798,7 +868,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-066" style="background: #ffffff;">
             <td class="id">xact-066</td>
             <td class="text-full">Drug accountability</td>
             <td class="trace">Administration of trial product</td>
@@ -806,7 +876,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-067" style="background: #ffffff;">
             <td class="id">xact-067</td>
             <td class="text-full">REMINDERS</td>
             <td class="trace"></td>
@@ -814,7 +884,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-068" style="background: #ffffff;">
             <td class="id">xact-068</td>
             <td class="text-full">Criteria for discontinuation</td>
             <td class="trace">REMINDERS</td>
@@ -822,7 +892,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-069" style="background: #ffffff;">
             <td class="id">xact-069</td>
             <td class="text-full">Barriers and motivation interview</td>
             <td class="trace">REMINDERS</td>
@@ -830,7 +900,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-070" style="background: #ffffff;">
             <td class="id">xact-070</td>
             <td class="text-full">Diet and physical activity counselling</td>
             <td class="trace">REMINDERS</td>
@@ -838,7 +908,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-071" style="background: #ffffff;">
             <td class="id">xact-071</td>
             <td class="text-full">Training in trial product, pen-handling</td>
             <td class="trace">REMINDERS</td>
@@ -846,7 +916,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-072" style="background: #ffffff;">
             <td class="id">xact-072</td>
             <td class="text-full">Hand out direction for use</td>
             <td class="trace">REMINDERS</td>
@@ -854,7 +924,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-073" style="background: #ffffff;">
             <td class="id">xact-073</td>
             <td class="text-full">Hand out dose reminder card</td>
             <td class="trace">REMINDERS</td>
@@ -862,7 +932,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-074" style="background: #ffffff;">
             <td class="id">xact-074</td>
             <td class="text-full">Hand out and instruct in food diary</td>
             <td class="trace">REMINDERS</td>
@@ -870,7 +940,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-075" style="background: #ffffff;">
             <td class="id">xact-075</td>
             <td class="text-full">Hand out and instruct in PK dairy</td>
             <td class="trace">REMINDERS</td>
@@ -878,7 +948,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-076" style="background: #ffffff;">
             <td class="id">xact-076</td>
             <td class="text-full">Collect, review and transcribe diaries</td>
             <td class="trace">REMINDERS</td>
@@ -886,7 +956,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-077" style="background: #ffffff;">
             <td class="id">xact-077</td>
             <td class="text-full">Hand out ID card</td>
             <td class="trace">REMINDERS</td>
@@ -894,7 +964,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-078" style="background: #ffffff;">
             <td class="id">xact-078</td>
             <td class="text-full">Attend visit fasting</td>
             <td class="trace">REMINDERS</td>
@@ -1176,7 +1246,7 @@
             document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
         }
         // Start with component sections collapsed, grids expanded
-        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        document.querySelectorAll('.comp:not(.start-open)').forEach(c => c.classList.add('collapsed'));
         // Note markers link to #xannot-NNN: open its section, then scroll to the row
         function showNote() {
             const row = location.hash && document.getElementById(location.hash.slice(1));

@@ -78,6 +78,15 @@
             vertical-align: top; word-wrap: break-word;
         }
         .comp-table tr:hover { background: #eef4fb; }
+        .comp-table tr.refined-by td { color: var(--muted); padding-left: 28px; }
+        .comp-table tr.group-row td { background: var(--head); }
+        .pill { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+        .pill.open { border-color: #c77700; color: #8a5300; background: #fff6e5; }
+        .pill.done { border-color: #2e7d32; color: #1b5e20; background: #edf7ee; }
+        #matches button, #matches select { font-size: 11px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; cursor: pointer; }
+        #matches button.on { background: var(--blue2); border-color: var(--blue2); color: #fff; }
+        #matches-by { display: block; width: 320px; margin: 8px 0 4px; font-size: 12px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; }
+        #matches-draft { display: block; width: 100%; height: 200px; font: 11px/1.35 ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 6px; }
 
         .prop-comparison th.table-col { text-align: center; min-width: 320px; }
         .prop-comparison .track-small { font-size: 10px; font-weight: normal; color: var(--muted); }
@@ -242,13 +251,105 @@
         </div>
     </div>
     
+    <div class="comp start-open" id="matches">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Matches across tables</span>
+            <span class="comp-desc">4 open of 4</span>
+        </div>
+        <div class="comp-body" id="matches-body">
+            <div class="comp-note">Rows that consolidation merged on name similarity, or kept separate from a near match. Whether two rows are the same activity is the reviewer's call: choosing drafts an entry for <code>NCT01847274_consolidation_corrections.json</code> below; nothing is saved from here. Rows merged on an identical name are not listed.</div>
+            <table class="comp-table">
+                <thead><tr><th>state</th><th>row</th><th>consolidation</th><th>other row</th><th>activity</th><th>decision</th></tr></thead>
+                <tbody><tr>
+            <td><span class='pill open'>open</span></td>
+            <td class="text-full"><span class='trace'>T2 act-003</span> Medical, cancer, surgical, medication history</td>
+            <td class="type">merged with <span class='trace'>1.00</span></td>
+            <td class="text-full"><span class='trace'>T1 act-003</span> Medical, surgical, cancer, medication history</td>
+            <td class="id"><a href="#xact-003">xact-003</a></td>
+            <td><button data-i="0" data-op="keep">keep the merge</button> <button data-i="0" data-op="split">split</button></td>
+        </tr><tr>
+            <td><span class='pill open'>open</span></td>
+            <td class="text-full"><span class='trace'>T3 act-002</span> Vital signs, weight</td>
+            <td class="type">merged with <span class='trace'>0.90</span></td>
+            <td class="text-full"><span class='trace'>T1 act-010</span> Vital signs, height, weight</td>
+            <td class="id"><a href="#xact-010">xact-010</a></td>
+            <td><button data-i="1" data-op="keep">keep the merge</button> <button data-i="1" data-op="split">split</button></td>
+        </tr><tr>
+            <td><span class='pill open'>open</span></td>
+            <td class="text-full"><span class='trace'>T3 act-006</span> Serum chemistry</td>
+            <td class="type">merged with <span class='trace'>0.87</span></td>
+            <td class="text-full"><span class='trace'>T1 act-014</span> Coagulation/serum chemistry</td>
+            <td class="id"><a href="#xact-014">xact-014</a></td>
+            <td><button data-i="2" data-op="keep">keep the merge</button> <button data-i="2" data-op="split">split</button></td>
+        </tr><tr>
+            <td><span class='pill open'>open</span></td>
+            <td class="text-full"><span class='trace'>T2 act-011</span> Hematology/serum chemistry</td>
+            <td class="type">kept separate from <span class='trace'>0.60</span></td>
+            <td class="text-full"><span class='trace'>T1 act-014</span> Coagulation/serum chemistry</td>
+            <td class="id"><a href="#xact-030">xact-030</a></td>
+            <td><button data-i="3" data-op="keep">keep separate</button> <button data-i="3" data-op="merge">merge</button></td>
+        </tr></tbody>
+            </table>
+            
+            <div class="comp-note">Draft — new file <code>consolidated/NCT01847274_consolidation_corrections.json</code>; replace each <code>&lt;why&gt;</code>, then re-run consolidation.
+                <input id="matches-by" placeholder="your name, as it should appear in the sidecar">
+                <textarea id="matches-draft" readonly placeholder="Choose a decision above to draft sidecar entries here."></textarea>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function () {
+        const M = {"protocol_id": "NCT01847274", "sidecar": "NCT01847274_consolidation_corrections.json", "sidecar_exists": false, "next_id": 1, "items": [{"kind": "merged", "xact_id": "xact-003", "source": {"table_number": 2, "activity_id": "act-003", "activity_name": "Medical, cancer, surgical, medication history"}, "target": {"table_number": 1, "activity_id": "act-003", "activity_name": "Medical, surgical, cancer, medication history"}, "status": "fuzzy_auto", "score": 1.0, "decision": null}, {"kind": "merged", "xact_id": "xact-010", "source": {"table_number": 3, "activity_id": "act-002", "activity_name": "Vital signs, weight"}, "target": {"table_number": 1, "activity_id": "act-010", "activity_name": "Vital signs, height, weight"}, "status": "fuzzy_auto", "score": 0.9, "decision": null}, {"kind": "merged", "xact_id": "xact-014", "source": {"table_number": 3, "activity_id": "act-006", "activity_name": "Serum chemistry"}, "target": {"table_number": 1, "activity_id": "act-014", "activity_name": "Coagulation/serum chemistry"}, "status": "fuzzy_auto", "score": 0.8666666666666667, "decision": null}, {"kind": "separate", "xact_id": "xact-030", "source": {"table_number": 2, "activity_id": "act-011", "activity_name": "Hematology/serum chemistry"}, "target": {"table_number": 1, "activity_id": "act-014", "activity_name": "Coagulation/serum chemistry"}, "target_xact_id": "xact-014", "status": "near_match", "score": 0.6, "decision": null}], "relations": [], "candidates": [], "open": 4};
+        const choice = {}, picked = {};
+        const body = document.getElementById('matches-body');
+        const fmt = r => 'T' + r.table_number + (r.activity_id ? ' ' + r.activity_id : '');
+        function entries() {
+            const by = document.getElementById('matches-by').value || '<reviewer>';
+            const at = new Date().toISOString().slice(0, 19) + 'Z';
+            const out = []; let n = M.next_id;
+            const id = () => 'ccorr-' + String(n++).padStart(3, '0');
+            M.items.forEach((it, i) => {
+                if (!choice[i]) return;
+                out.push({id: id(), op: choice[i], source: it.source, target: it.target,
+                          reason: '<why>', by: by, at: at});
+            });
+            M.candidates.forEach((c, k) => {
+                if (!picked[k]) return;
+                c.rows.forEach(r => out.push({id: id(), op: 'refines', source: {table_number: picked[k]},
+                                              target: r, reason: '<why>', by: by, at: at}));
+            });
+            return out;
+        }
+        function render() {
+            const e = entries(), el = document.getElementById('matches-draft');
+            if (!e.length) { el.value = ''; return; }
+            el.value = JSON.stringify(M.sidecar_exists ? e : {schema_name: 'soa-consolidation-corrections',
+                schema_version: '1.0', protocol_id: M.protocol_id, corrections: e}, null, 2);
+        }
+        function choose(i, op) {
+            choice[i] = choice[i] === op ? null : op;
+            body.querySelectorAll('button[data-i="' + i + '"]').forEach(
+                b => b.classList.toggle('on', b.dataset.op === choice[i]));
+        }
+        body.querySelectorAll('button[data-i]').forEach(b => b.onclick = () => { choose(+b.dataset.i, b.dataset.op); render(); });
+        body.querySelectorAll('button[data-group]').forEach(b => b.onclick = () => {
+            b.dataset.group.split(',').forEach(i => { if (choice[+i] !== b.dataset.op) choose(+i, b.dataset.op); });
+            render();
+        });
+        body.querySelectorAll('select[data-k]').forEach(sel => sel.onchange = () => {
+            picked[+sel.dataset.k] = sel.value ? +sel.value : null; render();
+        });
+        document.getElementById('matches-by').oninput = render;
+    })();
+    </script>
+    
     <div class="comp">
         <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
             <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
             <span class="comp-desc">Process information</span>
         </div>
         <div class="comp-body">
-            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-10-02T20:57:01.469436+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">60</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">31</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">48</span></td></tr><tr><td class="field">match_stats</td><td>exact: 26, fuzzy_auto: 3, new: 31</td></tr></tbody></table>
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-10-03T08:24:21.656178+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">60</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">31</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">48</span></td></tr><tr><td class="field">match_stats</td><td>exact: 26, fuzzy_auto: 3, new: 31</td></tr></tbody></table>
         </div>
     </div>
     
@@ -302,7 +403,7 @@
                 <thead><tr>
                     <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>row kind</th>
                 </tr></thead>
-                <tbody><tr style="background: #ffffff;">
+                <tbody><tr id="xact-001" style="background: #ffffff;">
             <td class="id">xact-001</td>
             <td class="text-full">Informed Consent</td>
             <td class="trace"></td>
@@ -310,7 +411,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-002" style="background: #ffffff;">
             <td class="id">xact-002</td>
             <td class="text-full">Demographics</td>
             <td class="trace"></td>
@@ -318,7 +419,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #e1f2fb;">
+        </tr><tr id="xact-003" style="background: #e1f2fb;">
             <td class="id">xact-003</td>
             <td class="text-full"><strong>Medical, surgical, cancer, medication history</strong><br/><span class='variations'>≈ Medical, cancer, surgical, medication history</span></td>
             <td class="trace"></td>
@@ -326,7 +427,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-004" style="background: #ffffff;">
             <td class="id">xact-004</td>
             <td class="text-full">Record local gBRCA mutation result, if done</td>
             <td class="trace"></td>
@@ -334,7 +435,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-005" style="background: #ffffff;">
             <td class="id">xact-005</td>
             <td class="text-full">Blood sample for centralized gBRCA mutation testing</td>
             <td class="trace"></td>
@@ -342,7 +443,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-006" style="background: #ffffff;">
             <td class="id">xact-006</td>
             <td class="text-full">Blood sample for DNA repair typing</td>
             <td class="trace"></td>
@@ -350,7 +451,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-007" style="background: #ffffff;">
             <td class="id">xact-007</td>
             <td class="text-full">Pregnancy test</td>
             <td class="trace"></td>
@@ -358,7 +459,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-008" style="background: #ffffff;">
             <td class="id">xact-008</td>
             <td class="text-full">Randomization</td>
             <td class="trace"></td>
@@ -366,7 +467,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-009" style="background: #ffffff;">
             <td class="id">xact-009</td>
             <td class="text-full">Physical examination</td>
             <td class="trace"></td>
@@ -374,7 +475,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #e1f2fb;">
+        </tr><tr id="xact-010" style="background: #e1f2fb;">
             <td class="id">xact-010</td>
             <td class="text-full"><strong>Vital signs, height, weight</strong><br/><span class='variations'>≈ Vital signs, weight</span></td>
             <td class="trace"></td>
@@ -382,7 +483,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-011" style="background: #ffffff;">
             <td class="id">xact-011</td>
             <td class="text-full">ECOG performance status</td>
             <td class="trace"></td>
@@ -390,7 +491,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-012" style="background: #ffffff;">
             <td class="id">xact-012</td>
             <td class="text-full">Adverse event monitoring</td>
             <td class="trace"></td>
@@ -398,7 +499,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-013" style="background: #ffffff;">
             <td class="id">xact-013</td>
             <td class="text-full">Concomitant medications</td>
             <td class="trace"></td>
@@ -406,7 +507,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #e1f2fb;">
+        </tr><tr id="xact-014" style="background: #e1f2fb;">
             <td class="id">xact-014</td>
             <td class="text-full"><strong>Coagulation/serum chemistry</strong><br/><span class='variations'>≈ Serum chemistry</span></td>
             <td class="trace"></td>
@@ -414,7 +515,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-015" style="background: #ffffff;">
             <td class="id">xact-015</td>
             <td class="text-full">CBC</td>
             <td class="trace"></td>
@@ -422,7 +523,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-016" style="background: #ffffff;">
             <td class="id">xact-016</td>
             <td class="text-full">Serum CA-125</td>
             <td class="trace"></td>
@@ -430,7 +531,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-017" style="background: #ffffff;">
             <td class="id">xact-017</td>
             <td class="text-full">Urinalysis</td>
             <td class="trace"></td>
@@ -438,7 +539,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-018" style="background: #ffffff;">
             <td class="id">xact-018</td>
             <td class="text-full">12-lead ECG</td>
             <td class="trace"></td>
@@ -446,7 +547,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-019" style="background: #ffffff;">
             <td class="id">xact-019</td>
             <td class="text-full">Triplicate ECGs (selected sites only)</td>
             <td class="trace"></td>
@@ -454,7 +555,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-020" style="background: #ffffff;">
             <td class="id">xact-020</td>
             <td class="text-full">Tumor sample</td>
             <td class="trace"></td>
@@ -462,7 +563,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-021" style="background: #ffffff;">
             <td class="id">xact-021</td>
             <td class="text-full">Blood sample for PK</td>
             <td class="trace"></td>
@@ -470,7 +571,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-022" style="background: #ffffff;">
             <td class="id">xact-022</td>
             <td class="text-full">Tumor Assessment (RECIST)</td>
             <td class="trace"></td>
@@ -478,7 +579,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-023" style="background: #ffffff;">
             <td class="id">xact-023</td>
             <td class="text-full">Chest CT/MRI</td>
             <td class="trace"></td>
@@ -486,7 +587,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-024" style="background: #ffffff;">
             <td class="id">xact-024</td>
             <td class="text-full">FOSI, EQ-5D-5L, neuropathy questionnaire</td>
             <td class="trace"></td>
@@ -494,7 +595,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-025" style="background: #ffffff;">
             <td class="id">xact-025</td>
             <td class="text-full">Study treatment dispensed/collected</td>
             <td class="trace"></td>
@@ -502,7 +603,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-026" style="background: #ffffff;">
             <td class="id">xact-026</td>
             <td class="text-full">Anti-cancer therapies assessment</td>
             <td class="trace"></td>
@@ -510,7 +611,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-027" style="background: #ffffff;">
             <td class="id">xact-027</td>
             <td class="text-full">Survival assessment</td>
             <td class="trace"></td>
@@ -518,7 +619,7 @@
             <td class="trace">2</td>
             <td class="trace">T1, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-028" style="background: #ffffff;">
             <td class="id">xact-028</td>
             <td class="text-full">Bone marrow aspirate and biopsy</td>
             <td class="trace"></td>
@@ -526,7 +627,7 @@
             <td class="trace">3</td>
             <td class="trace">T1, T2, T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-029" style="background: #ffffff;">
             <td class="id">xact-029</td>
             <td class="text-full">Consumption of high fat meal, as applicable</td>
             <td class="trace"></td>
@@ -534,7 +635,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-030" style="background: #ffffff;">
             <td class="id">xact-030</td>
             <td class="text-full">Hematology/serum chemistry</td>
             <td class="trace"></td>
@@ -542,7 +643,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-031" style="background: #ffffff;">
             <td class="id">xact-031</td>
             <td class="text-full">Anticancer therapies assessment</td>
             <td class="trace"></td>
@@ -904,7 +1005,7 @@
             document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
         }
         // Start with component sections collapsed, grids expanded
-        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        document.querySelectorAll('.comp:not(.start-open)').forEach(c => c.classList.add('collapsed'));
         // Note markers link to #xannot-NNN: open its section, then scroll to the row
         function showNote() {
             const row = location.hash && document.getElementById(location.hash.slice(1));

@@ -78,6 +78,15 @@
             vertical-align: top; word-wrap: break-word;
         }
         .comp-table tr:hover { background: #eef4fb; }
+        .comp-table tr.refined-by td { color: var(--muted); padding-left: 28px; }
+        .comp-table tr.group-row td { background: var(--head); }
+        .pill { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+        .pill.open { border-color: #c77700; color: #8a5300; background: #fff6e5; }
+        .pill.done { border-color: #2e7d32; color: #1b5e20; background: #edf7ee; }
+        #matches button, #matches select { font-size: 11px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; cursor: pointer; }
+        #matches button.on { background: var(--blue2); border-color: var(--blue2); color: #fff; }
+        #matches-by { display: block; width: 320px; margin: 8px 0 4px; font-size: 12px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; }
+        #matches-draft { display: block; width: 100%; height: 200px; font: 11px/1.35 ui-monospace, Menlo, Consolas, monospace; border: 1px solid var(--line); border-radius: 4px; padding: 6px; }
 
         .prop-comparison th.table-col { text-align: center; min-width: 320px; }
         .prop-comparison .track-small { font-size: 10px; font-weight: normal; color: var(--muted); }
@@ -242,13 +251,92 @@
         </div>
     </div>
     
+    <div class="comp" id="matches">
+        <div class="comp-header collapsible" style="background: #C65911;" onclick="toggleSection(this)">
+            <span class="comp-title"><span class="toggle-icon">▼</span> Matches across tables</span>
+            <span class="comp-desc">no matches to review</span>
+        </div>
+        <div class="comp-body" id="matches-body">
+            <div class="comp-note">Rows that consolidation merged on name similarity, or kept separate from a near match. Whether two rows are the same activity is the reviewer's call: choosing drafts an entry for <code>NCT03637764_consolidation_corrections.json</code> below; nothing is saved from here. Rows merged on an identical name are not listed.</div>
+            
+            <div class="comp-note">Refinements: a table or row that details a row of another table, without being the same activity. A cross-reference note can draft the entry once the table it means is picked; row-to-row entries are written by hand.</div>
+            <table class="comp-table">
+                <thead><tr><th>state</th><th>refining side</th><th></th><th>row</th><th>activity</th><th>draft</th></tr></thead>
+                <tbody><tr>
+            <td><span class='pill'>source note</span></td>
+            <td class="text-full"><a href="#xannot-012">12</a> “See Pharmacokinetics and immunogenicity Flow Chart”</td>
+            <td class="type">points from</td>
+            <td class="text-full"><span class='trace'>T1 act-025</span> PK<br/><span class='trace'>T1 act-026</span> ADA</td>
+            <td></td>
+            <td><select data-k="0"><option value="">which table refines? (no draft)</option><option value="2">Table 2 — PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART</option><option value="3">Table 3 — EXPLORATORY BIOMARKER FLOW CHART</option></select></td>
+        </tr><tr>
+            <td><span class='pill'>source note</span></td>
+            <td class="text-full"><a href="#xannot-013">13</a> “See Biomarker Flow Chart”</td>
+            <td class="type">points from</td>
+            <td class="text-full"><span class='trace'>T1 act-027</span> Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood Draw</td>
+            <td></td>
+            <td><select data-k="1"><option value="">which table refines? (no draft)</option><option value="2">Table 2 — PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART</option><option value="3">Table 3 — EXPLORATORY BIOMARKER FLOW CHART</option></select></td>
+        </tr></tbody>
+            </table>
+            <div class="comp-note">Draft — new file <code>consolidated/NCT03637764_consolidation_corrections.json</code>; replace each <code>&lt;why&gt;</code>, then re-run consolidation.
+                <input id="matches-by" placeholder="your name, as it should appear in the sidecar">
+                <textarea id="matches-draft" readonly placeholder="Choose a decision above to draft sidecar entries here."></textarea>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function () {
+        const M = {"protocol_id": "NCT03637764", "sidecar": "NCT03637764_consolidation_corrections.json", "sidecar_exists": false, "next_id": 1, "items": [], "relations": [], "candidates": [{"xannot_id": "xannot-012", "text": "See Pharmacokinetics and immunogenicity Flow Chart", "rows": [{"table_number": 1, "activity_id": "act-025", "activity_name": "PK"}, {"table_number": 1, "activity_id": "act-026", "activity_name": "ADA"}], "tables": [{"table_number": 2, "table_title": "PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART"}, {"table_number": 3, "table_title": "EXPLORATORY BIOMARKER FLOW CHART"}]}, {"xannot_id": "xannot-013", "text": "See Biomarker Flow Chart", "rows": [{"table_number": 1, "activity_id": "act-027", "activity_name": "Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood Draw"}], "tables": [{"table_number": 2, "table_title": "PHARMACOKINETICS AND IMMUNOGENICITY FLOW CHART"}, {"table_number": 3, "table_title": "EXPLORATORY BIOMARKER FLOW CHART"}]}], "open": 0};
+        const choice = {}, picked = {};
+        const body = document.getElementById('matches-body');
+        const fmt = r => 'T' + r.table_number + (r.activity_id ? ' ' + r.activity_id : '');
+        function entries() {
+            const by = document.getElementById('matches-by').value || '<reviewer>';
+            const at = new Date().toISOString().slice(0, 19) + 'Z';
+            const out = []; let n = M.next_id;
+            const id = () => 'ccorr-' + String(n++).padStart(3, '0');
+            M.items.forEach((it, i) => {
+                if (!choice[i]) return;
+                out.push({id: id(), op: choice[i], source: it.source, target: it.target,
+                          reason: '<why>', by: by, at: at});
+            });
+            M.candidates.forEach((c, k) => {
+                if (!picked[k]) return;
+                c.rows.forEach(r => out.push({id: id(), op: 'refines', source: {table_number: picked[k]},
+                                              target: r, reason: '<why>', by: by, at: at}));
+            });
+            return out;
+        }
+        function render() {
+            const e = entries(), el = document.getElementById('matches-draft');
+            if (!e.length) { el.value = ''; return; }
+            el.value = JSON.stringify(M.sidecar_exists ? e : {schema_name: 'soa-consolidation-corrections',
+                schema_version: '1.0', protocol_id: M.protocol_id, corrections: e}, null, 2);
+        }
+        function choose(i, op) {
+            choice[i] = choice[i] === op ? null : op;
+            body.querySelectorAll('button[data-i="' + i + '"]').forEach(
+                b => b.classList.toggle('on', b.dataset.op === choice[i]));
+        }
+        body.querySelectorAll('button[data-i]').forEach(b => b.onclick = () => { choose(+b.dataset.i, b.dataset.op); render(); });
+        body.querySelectorAll('button[data-group]').forEach(b => b.onclick = () => {
+            b.dataset.group.split(',').forEach(i => { if (choice[+i] !== b.dataset.op) choose(+i, b.dataset.op); });
+            render();
+        });
+        body.querySelectorAll('select[data-k]').forEach(sel => sel.onchange = () => {
+            picked[+sel.dataset.k] = sel.value ? +sel.value : null; render();
+        });
+        document.getElementById('matches-by').oninput = render;
+    })();
+    </script>
+    
     <div class="comp">
         <div class="comp-header collapsible" style="background: #1F4788;" onclick="toggleSection(this)">
             <span class="comp-title"><span class="toggle-icon">▼</span> Consolidation Metadata</span>
             <span class="comp-desc">Process information</span>
         </div>
         <div class="comp-body">
-            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-09-27T19:02:09.008539+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">54</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">54</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 54</td></tr></tbody></table>
+            <table class="comp-table"><tbody><tr><td class="field">consolidated_at</td><td><span class="data">2026-10-03T08:24:28.224650+00:00</span></td></tr><tr><td class="field">source_activity_count</td><td><span class="data">54</span></td></tr><tr><td class="field">unified_activity_count</td><td><span class="data">54</span></td></tr><tr><td class="field">compression_percent</td><td><span class="data">0</span></td></tr><tr><td class="field">match_stats</td><td>new: 54</td></tr></tbody></table>
         </div>
     </div>
     
@@ -363,7 +451,7 @@
                 <thead><tr>
                     <th>xact_id</th><th>activity_name (variations)</th><th>parent</th><th>match</th><th>#</th><th>tables</th><th>row kind</th>
                 </tr></thead>
-                <tbody><tr style="background: #ffffff;">
+                <tbody><tr id="xact-001" style="background: #ffffff;">
             <td class="id">xact-001</td>
             <td class="text-full">Informed consent/ Inclusion and exclusion criteria</td>
             <td class="trace"></td>
@@ -371,7 +459,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-002" style="background: #ffffff;">
             <td class="id">xact-002</td>
             <td class="text-full">Demography, Medical/Surgical and Disease History</td>
             <td class="trace"></td>
@@ -379,7 +467,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-003" style="background: #ffffff;">
             <td class="id">xact-003</td>
             <td class="text-full">Physical examination</td>
             <td class="trace"></td>
@@ -387,7 +475,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-004" style="background: #ffffff;">
             <td class="id">xact-004</td>
             <td class="text-full">Height (at baseline only) /Weight/ ECOG (HCC,SCCHN,EOC) or Karnofsky PS (GBM)</td>
             <td class="trace"></td>
@@ -395,7 +483,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-005" style="background: #ffffff;">
             <td class="id">xact-005</td>
             <td class="text-full">Vital Signs</td>
             <td class="trace"></td>
@@ -403,7 +491,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-006" style="background: #ffffff;">
             <td class="id">xact-006</td>
             <td class="text-full">Resting O2 saturation for SCCHN</td>
             <td class="trace"></td>
@@ -411,7 +499,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-007" style="background: #ffffff;">
             <td class="id">xact-007</td>
             <td class="text-full">12-Lead ECG</td>
             <td class="trace"></td>
@@ -419,7 +507,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-008" style="background: #ffffff;">
             <td class="id">xact-008</td>
             <td class="text-full">Laboratory Assessments</td>
             <td class="trace"></td>
@@ -427,7 +515,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-009" style="background: #ffffff;">
             <td class="id">xact-009</td>
             <td class="text-full">Pregnancy test (WOCBP only)</td>
             <td class="trace">Laboratory Assessments</td>
@@ -435,7 +523,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-010" style="background: #ffffff;">
             <td class="id">xact-010</td>
             <td class="text-full">Blood Chemistry</td>
             <td class="trace">Laboratory Assessments</td>
@@ -443,7 +531,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-011" style="background: #ffffff;">
             <td class="id">xact-011</td>
             <td class="text-full">Hematology</td>
             <td class="trace">Laboratory Assessments</td>
@@ -451,7 +539,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-012" style="background: #ffffff;">
             <td class="id">xact-012</td>
             <td class="text-full">Coagulation(GBM)</td>
             <td class="trace">Laboratory Assessments</td>
@@ -459,7 +547,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-013" style="background: #ffffff;">
             <td class="id">xact-013</td>
             <td class="text-full">Coagulation (for HCC, SCCHN, and EOC)</td>
             <td class="trace">Laboratory Assessments</td>
@@ -467,7 +555,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-014" style="background: #ffffff;">
             <td class="id">xact-014</td>
             <td class="text-full">Blood Typing Interference Test</td>
             <td class="trace">Laboratory Assessments</td>
@@ -475,7 +563,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-015" style="background: #ffffff;">
             <td class="id">xact-015</td>
             <td class="text-full">Serology HBV and HCV (for HCC only)</td>
             <td class="trace">Laboratory Assessments</td>
@@ -483,7 +571,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-016" style="background: #ffffff;">
             <td class="id">xact-016</td>
             <td class="text-full">Urinalysis (at baseline and if required) /urine dipstick</td>
             <td class="trace">Laboratory Assessments</td>
@@ -491,7 +579,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-017" style="background: #ffffff;">
             <td class="id">xact-017</td>
             <td class="text-full">Disease Assessment</td>
             <td class="trace"></td>
@@ -499,7 +587,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-018" style="background: #ffffff;">
             <td class="id">xact-018</td>
             <td class="text-full">CT/MRI (for HCC, SCCHN, and EOC)</td>
             <td class="trace">Disease Assessment</td>
@@ -507,7 +595,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-019" style="background: #ffffff;">
             <td class="id">xact-019</td>
             <td class="text-full">Brain MRI (for GBM only)</td>
             <td class="trace">Disease Assessment</td>
@@ -515,7 +603,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-020" style="background: #ffffff;">
             <td class="id">xact-020</td>
             <td class="text-full">AFP (for HCC) / CA125 (for EOC)</td>
             <td class="trace">Disease Assessment</td>
@@ -523,7 +611,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-021" style="background: #ffffff;">
             <td class="id">xact-021</td>
             <td class="text-full">Isatuximab Administration</td>
             <td class="trace"></td>
@@ -531,7 +619,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-022" style="background: #ffffff;">
             <td class="id">xact-022</td>
             <td class="text-full">Atezolizumab Administration</td>
             <td class="trace"></td>
@@ -539,7 +627,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-023" style="background: #ffffff;">
             <td class="id">xact-023</td>
             <td class="text-full">AE/SAE Assessment</td>
             <td class="trace"></td>
@@ -547,7 +635,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-024" style="background: #ffffff;">
             <td class="id">xact-024</td>
             <td class="text-full">Prior/Concomitant Medication</td>
             <td class="trace"></td>
@@ -555,7 +643,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-025" style="background: #ffffff;">
             <td class="id">xact-025</td>
             <td class="text-full">PK</td>
             <td class="trace"></td>
@@ -563,7 +651,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-026" style="background: #ffffff;">
             <td class="id">xact-026</td>
             <td class="text-full">ADA</td>
             <td class="trace"></td>
@@ -571,7 +659,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-027" style="background: #ffffff;">
             <td class="id">xact-027</td>
             <td class="text-full">Tumor Biopsy, Archival Tumor Tissue Collection, Biomarker Blood Draw</td>
             <td class="trace"></td>
@@ -579,7 +667,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-028" style="background: #ffffff;">
             <td class="id">xact-028</td>
             <td class="text-full">Subsequent Anticancer Therapy Status</td>
             <td class="trace"></td>
@@ -587,7 +675,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-029" style="background: #ffffff;">
             <td class="id">xact-029</td>
             <td class="text-full">Survival Status</td>
             <td class="trace"></td>
@@ -595,7 +683,7 @@
             <td class="trace">1</td>
             <td class="trace">T1</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-030" style="background: #ffffff;">
             <td class="id">xact-030</td>
             <td class="text-full">IMP administration (IV infusion)</td>
             <td class="trace"></td>
@@ -603,7 +691,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-031" style="background: #ffffff;">
             <td class="id">xact-031</td>
             <td class="text-full">Atezolizumab</td>
             <td class="trace">IMP administration (IV infusion)</td>
@@ -611,7 +699,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-032" style="background: #ffffff;">
             <td class="id">xact-032</td>
             <td class="text-full">Isatuximab</td>
             <td class="trace">IMP administration (IV infusion)</td>
@@ -619,7 +707,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-033" style="background: #ffffff;">
             <td class="id">xact-033</td>
             <td class="text-full">Pharmacokinetics</td>
             <td class="trace"></td>
@@ -627,7 +715,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-034" style="background: #ffffff;">
             <td class="id">xact-034</td>
             <td class="text-full">Atezolizumab Sample ID</td>
             <td class="trace">Pharmacokinetics</td>
@@ -635,7 +723,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-035" style="background: #ffffff;">
             <td class="id">xact-035</td>
             <td class="text-full">Isatuximab Sample ID</td>
             <td class="trace">Pharmacokinetics</td>
@@ -643,7 +731,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-036" style="background: #ffffff;">
             <td class="id">xact-036</td>
             <td class="text-full">Immunogenicity (ADA)</td>
             <td class="trace"></td>
@@ -651,7 +739,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-037" style="background: #ffffff;">
             <td class="id">xact-037</td>
             <td class="text-full">Atezolizumab</td>
             <td class="trace">Immunogenicity (ADA)</td>
@@ -659,7 +747,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-038" style="background: #ffffff;">
             <td class="id">xact-038</td>
             <td class="text-full">Isatuximab</td>
             <td class="trace">Immunogenicity (ADA)</td>
@@ -667,7 +755,7 @@
             <td class="trace">1</td>
             <td class="trace">T2</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-039" style="background: #ffffff;">
             <td class="id">xact-039</td>
             <td class="text-full">Peripheral Blood</td>
             <td class="trace"></td>
@@ -675,7 +763,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-040" style="background: #ffffff;">
             <td class="id">xact-040</td>
             <td class="text-full">Immune genetic markers</td>
             <td class="trace">Peripheral Blood</td>
@@ -683,7 +771,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-041" style="background: #ffffff;">
             <td class="id">xact-041</td>
             <td class="text-full">Tumor mutational profile (plasma cell free DNA)</td>
             <td class="trace">Peripheral Blood</td>
@@ -691,7 +779,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-042" style="background: #ffffff;">
             <td class="id">xact-042</td>
             <td class="text-full">Immunophenotyping</td>
             <td class="trace">Peripheral Blood</td>
@@ -699,7 +787,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-043" style="background: #ffffff;">
             <td class="id">xact-043</td>
             <td class="text-full">Plasma or serum cytokines</td>
             <td class="trace">Peripheral Blood</td>
@@ -707,7 +795,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-044" style="background: #ffffff;">
             <td class="id">xact-044</td>
             <td class="text-full">Adaptive immunity</td>
             <td class="trace">Peripheral Blood</td>
@@ -715,7 +803,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-045" style="background: #ffffff;">
             <td class="id">xact-045</td>
             <td class="text-full">Plasma or serum Metabolites</td>
             <td class="trace">Peripheral Blood</td>
@@ -723,7 +811,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-046" style="background: #ffffff;">
             <td class="id">xact-046</td>
             <td class="text-full">Archival Pre-Treatment Tumor Tissue Collection (for HCC, SCCHN, EOC and GBM)</td>
             <td class="trace"></td>
@@ -731,7 +819,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-047" style="background: #ffffff;">
             <td class="id">xact-047</td>
             <td class="text-full">If feasible, biomarker analyses listed below for “Baseline or on treatment tumor biopsy core”</td>
             <td class="trace">Archival Pre-Treatment Tumor Tissue Coll</td>
@@ -739,7 +827,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-048" style="background: #ffffff;">
             <td class="id">xact-048</td>
             <td class="text-full">Baseline or on treatment tumor biopsy core in order of priority (Biopsy to be performed for HCC, SCCHN, and EOC if adequate archival tissue is not available)</td>
             <td class="trace"></td>
@@ -747,7 +835,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type">section</td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-049" style="background: #ffffff;">
             <td class="id">xact-049</td>
             <td class="text-full">Core 1</td>
             <td class="trace">Baseline or on treatment tumor biopsy co</td>
@@ -755,7 +843,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-050" style="background: #ffffff;">
             <td class="id">xact-050</td>
             <td class="text-full">CD38 and PD-L1 expression, immune contexture (IHC analyses)</td>
             <td class="trace">Core 1</td>
@@ -763,7 +851,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-051" style="background: #ffffff;">
             <td class="id">xact-051</td>
             <td class="text-full">Core 2</td>
             <td class="trace">Baseline or on treatment tumor biopsy co</td>
@@ -771,7 +859,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-052" style="background: #ffffff;">
             <td class="id">xact-052</td>
             <td class="text-full">CD38 and PD-L1 expression, immune contexture (IHC analyses)</td>
             <td class="trace">Core 2</td>
@@ -779,7 +867,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-053" style="background: #ffffff;">
             <td class="id">xact-053</td>
             <td class="text-full">Core 3</td>
             <td class="trace">Baseline or on treatment tumor biopsy co</td>
@@ -787,7 +875,7 @@
             <td class="trace">1</td>
             <td class="trace">T3</td>
             <td class="type"></td>
-        </tr><tr style="background: #ffffff;">
+        </tr><tr id="xact-054" style="background: #ffffff;">
             <td class="id">xact-054</td>
             <td class="text-full">Transcriptomic analysis</td>
             <td class="trace">Core 3</td>
@@ -1015,7 +1103,7 @@
             document.querySelectorAll('.comp, .collapsible-section').forEach(c => c.classList.add('collapsed'));
         }
         // Start with component sections collapsed, grids expanded
-        document.querySelectorAll('.comp').forEach(c => c.classList.add('collapsed'));
+        document.querySelectorAll('.comp:not(.start-open)').forEach(c => c.classList.add('collapsed'));
         // Note markers link to #xannot-NNN: open its section, then scroll to the row
         function showNote() {
             const row = location.hash && document.getElementById(location.hash.slice(1));
