@@ -4,6 +4,8 @@ Protocol collections for [**soa2usdm**](https://github.com/kerfors/soa2usdm) —
 
 Rendered visualizations are published via **GitHub Pages**: [kerfors.github.io/soa2usdm-collections](https://kerfors.github.io/soa2usdm-collections) (GitHub does not render HTML files in the repository browser, so the Pages site is where the consolidated SoA views are meant to be read).
 
+An introduction to SoA2USDM, with two short videos and the schemas on one page, is at [kerfors.github.io/soa2usdm](https://kerfors.github.io/soa2usdm/).
+
 ## What's here — and what isn't
 
 This repo holds the **derived** artifacts of the pipeline: extraction JSON (raw + verified), corrections sidecars, uncertainty reports, review pages, resolved JSON, consolidated JSON, the generated HTML views, and the pre-rendered source page images (`{NCT}_soa_pages/` — each page stamped with its document page number, the evidence surface the review page draws on), one folder per protocol.
