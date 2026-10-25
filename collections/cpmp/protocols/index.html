@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cpmp · collection index · SoA2USDM</title>
+    <style>
+        :root { --blue:#1F4788; --blue2:#2E75B6; --ink:#1f2933; --muted:#5f6b7a; --line:#d9dee5;
+                --bg:#f5f7fa; --head:#fafbfc; --ok:#2e7d32; --warn:#c77700; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+               background: var(--bg); color: var(--ink); }
+
+        .header { background: var(--blue); color: #fff; padding: 14px 22px;
+                  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .header h1 { font-size: 20px; font-weight: 600; }
+        .header .sub { font-size: 13px; opacity: .85; margin-top: 3px; }
+        .header .activities-link { padding: 5px 11px; border: 1px solid rgba(255,255,255,0.55); border-radius: 4px;
+            color: #fff; text-decoration: none; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .header .activities-link:hover { background: rgba(255,255,255,0.12); }
+        .crumbs { background: #fff; border-bottom: 1px solid var(--line); padding: 8px 22px; font-size: 12px; color: var(--muted); }
+        .crumbs a { color: var(--blue2); text-decoration: none; }
+        .crumbs a:hover { text-decoration: underline; }
+        .crumbs .cur { font-weight: 600; color: var(--ink); }
+        .crumbs .sep { color: #9aa4af; margin: 0 4px; }
+        .content { padding: 14px 22px 20px; }
+
+        .section { background: #fff; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+        .section-header { padding: 9px 12px; font-size: 13px; font-weight: 600; color: var(--ink);
+                          background: var(--head); border-bottom: 1px solid var(--line); }
+
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: var(--head); padding: 6px 10px; text-align: left; font-size: 11px; font-weight: 600;
+             color: var(--muted); border-bottom: 1px solid var(--line); white-space: nowrap; }
+        /* group row: layers 1-2 are per table, layer 3 is per protocol */
+        tr.groups th { color: var(--ink); font-size: 11px; text-transform: none; border-bottom: 1px solid var(--line); }
+        tr.groups th.grp { border-left: 2px solid var(--line); }
+        th.grp-start, td.grp-start { border-left: 2px solid var(--line); }
+
+        td { padding: 6px 10px; border-bottom: 1px solid #eef1f4; vertical-align: top; }
+        tr.ready:hover td { background: #eef4fb; }
+        /* The row a protocol page's breadcrumb points back to (#NCT... anchor). */
+        tr:target td { background: #fff3d6; }
+
+        .nct { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 600; white-space: nowrap; }
+        .nct a { color: var(--blue); text-decoration: none; }
+        .nct a:hover { text-decoration: underline; }
+        .study-code, .prov-ref, .soa-pages, .stats { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+            font-size: 11px; color: var(--muted); white-space: nowrap; }
+        .prov-ref a { color: var(--muted); text-decoration: none; }
+        .prov-ref a:hover { color: var(--blue2); text-decoration: underline; }
+        .acronym { white-space: nowrap; }
+
+        /* one link style for every artifact: the column says what it is, the link says which */
+        .sources a, .viz a { color: var(--blue2); text-decoration: none; margin-right: 7px; white-space: nowrap; }
+        .sources a:hover, .viz a:hover { text-decoration: underline; }
+        .ttype { color: var(--muted); font-size: 11px; }
+        .tables a { display: block; }  /* one table per line, so Extraction and Resolution line up */
+        .link-json { color: var(--muted) !important; font-size: 11px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+        .link-review { font-weight: 600; }
+        .decisions { font-size: 11px; color: var(--ok); white-space: nowrap; }
+        .decisions.open { color: var(--warn); font-weight: 600; }
+        a.decisions { text-decoration: none; }
+        a.decisions:hover { text-decoration: underline; }
+
+        .pending { color: #9aa4af; font-style: italic; font-size: 11px; }
+        .pending-row { opacity: 0.55; }
+        .excluded-row td { color: #9aa4af; background: var(--head); }
+        .excluded-reason { font-style: italic; font-size: 11px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>cpmp</h1>
+            <div class="sub">SoA2USDM — Schedule of Activities Extraction Pipeline · 13 protocols · 13 processed · 0 pending · generated 2026-10-25 09:14 UTC</div>
+        </div>
+        <a href="activities.html" class="activities-link">Activities &mdash; search across protocols &rarr;</a>
+    </div>
+    <div class="crumbs"><a href="../../../index.html">Collections</a><span class="sep">›</span><span class="cur">cpmp</span></div>
+
+    <div class="content">
+    <div class="section">
+        <div class="section-header">Protocols</div>
+        <div class="table-wrap">
+        <table>
+            <thead><tr class="groups">
+                <th colspan="6"></th><th class="grp" colspan="4" title="Layers 1 and 2 work table by table; the review checks each table against its source pages">Per table, against the source pages</th><th class="grp" colspan="2" title="Layer 3 unifies the tables of a protocol; its matches are reviewed in the consolidated view">Per protocol, across tables</th>
+            </tr><tr>
+                <th>NCT ID</th><th>ClinicalTrials.gov</th><th>Study Code</th><th>Acronym</th><th>SoA pp</th><th>Source</th><th class="grp-start" title="Layer 1 — extraction JSON per table (viewer), with its table type">1. Extraction (JSON)</th><th title="Layer 2 — resolved JSON per table (viewer): IDs, hierarchy, relationships; table type after corrections">2. Resolution (JSON)</th><th title="Review the extraction against its source pages and take the open decisions">Extraction review</th><th title="The extractor's own account of the run (uncertainty report)">Log</th><th class="grp-start" title="Layer 3 — protocol-level unified SoA (HTML + JSON), and the review of its matches across tables">3. Consolidation (view + review, JSON)</th><th title="Unified activity rows whose name is redacted in the public protocol (CCI) — of total unified activities">Redacted</th>
+            </tr></thead>
+            <tbody>
+                <tr class="ready" id="NCT04456686">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT04456686" target="_blank">NCT04456686</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT04456686" target="_blank" rel="noopener">NCT04456686</a></td>
+            <td class="study-code">H0P-MC-OA01</td>
+            <td class="acronym">CPMP OA01</td>
+            <td class="soa-pages">11-14</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/86/NCT04456686/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT04456686/NCT04456686_soa.pdf" class="link-soa" title="NCT04456686_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT04456686/SoA2USDM/extracted/NCT04456686_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT04456686/SoA2USDM/resolved/NCT04456686_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT04456686/SoA2USDM/extracted/NCT04456686_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT04456686/SoA2USDM/extracted/NCT04456686_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT04456686/SoA2USDM/consolidated/NCT04456686_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT04456686/SoA2USDM/consolidated/NCT04456686_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT04476108">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT04476108" target="_blank">NCT04476108</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT04476108" target="_blank" rel="noopener">NCT04476108</a></td>
+            <td class="study-code">H0P-MC-NP01</td>
+            <td class="acronym">CPMP NP01</td>
+            <td class="soa-pages">10-13</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/08/NCT04476108/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT04476108/NCT04476108_soa.pdf" class="link-soa" title="NCT04476108_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT04476108/SoA2USDM/extracted/NCT04476108_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT04476108/SoA2USDM/resolved/NCT04476108_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT04476108/SoA2USDM/extracted/NCT04476108_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT04476108/SoA2USDM/extracted/NCT04476108_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT04476108/SoA2USDM/consolidated/NCT04476108_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT04476108/SoA2USDM/consolidated/NCT04476108_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT04529096">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT04529096" target="_blank">NCT04529096</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT04529096" target="_blank" rel="noopener">NCT04529096</a></td>
+            <td class="study-code">H0P-MC-BP01</td>
+            <td class="acronym">CPMP BP01</td>
+            <td class="soa-pages">9-12</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/96/NCT04529096/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT04529096/NCT04529096_soa.pdf" class="link-soa" title="NCT04529096_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT04529096/SoA2USDM/extracted/NCT04529096_Table_01_extraction_viewer.html" class="link-table" title="main_soa — H0P-MC-BP01 ISA">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT04529096/SoA2USDM/resolved/NCT04529096_Table_01_resolved_viewer.html" class="link-table" title="main_soa — H0P-MC-BP01 ISA">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT04529096/SoA2USDM/extracted/NCT04529096_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT04529096/SoA2USDM/extracted/NCT04529096_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT04529096/SoA2USDM/consolidated/NCT04529096_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT04529096/SoA2USDM/consolidated/NCT04529096_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT04627038">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT04627038" target="_blank">NCT04627038</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT04627038" target="_blank" rel="noopener">NCT04627038</a></td>
+            <td class="study-code">H0P-MC-OA03</td>
+            <td class="acronym">CPMP OA03</td>
+            <td class="soa-pages">10-13</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/38/NCT04627038/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT04627038/NCT04627038_soa.pdf" class="link-soa" title="NCT04627038_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT04627038/SoA2USDM/extracted/NCT04627038_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT04627038/SoA2USDM/resolved/NCT04627038_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT04627038/SoA2USDM/extracted/NCT04627038_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT04627038/SoA2USDM/extracted/NCT04627038_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT04627038/SoA2USDM/consolidated/NCT04627038_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT04627038/SoA2USDM/consolidated/NCT04627038_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT04707157">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT04707157" target="_blank">NCT04707157</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT04707157" target="_blank" rel="noopener">NCT04707157</a></td>
+            <td class="study-code">H0P-MC-NP03</td>
+            <td class="acronym">CPMP NP03</td>
+            <td class="soa-pages">9-13</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/57/NCT04707157/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT04707157/NCT04707157_soa.pdf" class="link-soa" title="NCT04707157_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT04707157/SoA2USDM/extracted/NCT04707157_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT04707157/SoA2USDM/resolved/NCT04707157_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT04707157/SoA2USDM/extracted/NCT04707157_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">1 open of 1</span></td>
+            <td class="viz"><a href="NCT04707157/SoA2USDM/extracted/NCT04707157_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT04707157/SoA2USDM/consolidated/NCT04707157_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT04707157/SoA2USDM/consolidated/NCT04707157_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT04874636">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT04874636" target="_blank">NCT04874636</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT04874636" target="_blank" rel="noopener">NCT04874636</a></td>
+            <td class="study-code">H0P-MC-BP03</td>
+            <td class="acronym">CPMP BP03</td>
+            <td class="soa-pages">8-11</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/36/NCT04874636/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT04874636/NCT04874636_soa.pdf" class="link-soa" title="NCT04874636_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT04874636/SoA2USDM/extracted/NCT04874636_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT04874636/SoA2USDM/resolved/NCT04874636_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT04874636/SoA2USDM/extracted/NCT04874636_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">1 open of 1</span></td>
+            <td class="viz"><a href="NCT04874636/SoA2USDM/extracted/NCT04874636_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT04874636/SoA2USDM/consolidated/NCT04874636_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT04874636/SoA2USDM/consolidated/NCT04874636_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05080660">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05080660" target="_blank">NCT05080660</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05080660" target="_blank" rel="noopener">NCT05080660</a></td>
+            <td class="study-code">H0P-MC-OA02</td>
+            <td class="acronym">CPMP OA02</td>
+            <td class="soa-pages">11-12</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/60/NCT05080660/Prot_004.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05080660/NCT05080660_soa.pdf" class="link-soa" title="NCT05080660_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05080660/SoA2USDM/extracted/NCT05080660_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05080660/SoA2USDM/resolved/NCT05080660_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05080660/SoA2USDM/extracted/NCT05080660_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT05080660/SoA2USDM/extracted/NCT05080660_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05080660/SoA2USDM/consolidated/NCT05080660_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05080660/SoA2USDM/consolidated/NCT05080660_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05086289">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05086289" target="_blank">NCT05086289</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05086289" target="_blank" rel="noopener">NCT05086289</a></td>
+            <td class="study-code">H0P-MC-BP02</td>
+            <td class="acronym">CPMP BP02</td>
+            <td class="soa-pages">11-12</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/89/NCT05086289/Prot_002.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05086289/NCT05086289_soa.pdf" class="link-soa" title="NCT05086289_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05086289/SoA2USDM/extracted/NCT05086289_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05086289/SoA2USDM/resolved/NCT05086289_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05086289/SoA2USDM/extracted/NCT05086289_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT05086289/SoA2USDM/extracted/NCT05086289_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05086289/SoA2USDM/consolidated/NCT05086289_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05086289/SoA2USDM/consolidated/NCT05086289_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05177094">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05177094" target="_blank">NCT05177094</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05177094" target="_blank" rel="noopener">NCT05177094</a></td>
+            <td class="study-code">H0P-MC-NP02</td>
+            <td class="acronym">CPMP NP02</td>
+            <td class="soa-pages">11-12</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/94/NCT05177094/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05177094/NCT05177094_soa.pdf" class="link-soa" title="NCT05177094_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05177094/SoA2USDM/extracted/NCT05177094_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05177094/SoA2USDM/resolved/NCT05177094_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05177094/SoA2USDM/extracted/NCT05177094_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT05177094/SoA2USDM/extracted/NCT05177094_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05177094/SoA2USDM/consolidated/NCT05177094_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05177094/SoA2USDM/consolidated/NCT05177094_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05620563">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05620563" target="_blank">NCT05620563</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05620563" target="_blank" rel="noopener">NCT05620563</a></td>
+            <td class="study-code">H0P-MC-OA05</td>
+            <td class="acronym">CPMP OA05</td>
+            <td class="soa-pages">12-15</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/63/NCT05620563/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05620563/NCT05620563_soa.pdf" class="link-soa" title="NCT05620563_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05620563/SoA2USDM/extracted/NCT05620563_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05620563/SoA2USDM/resolved/NCT05620563_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05620563/SoA2USDM/extracted/NCT05620563_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">3 open of 3</span></td>
+            <td class="viz"><a href="NCT05620563/SoA2USDM/extracted/NCT05620563_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05620563/SoA2USDM/consolidated/NCT05620563_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05620563/SoA2USDM/consolidated/NCT05620563_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05620576">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05620576" target="_blank">NCT05620576</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05620576" target="_blank" rel="noopener">NCT05620576</a></td>
+            <td class="study-code">H0P-MC-NP05</td>
+            <td class="acronym">CPMP NP05</td>
+            <td class="soa-pages">12-15</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/76/NCT05620576/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05620576/NCT05620576_soa.pdf" class="link-soa" title="NCT05620576_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05620576/SoA2USDM/extracted/NCT05620576_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05620576/SoA2USDM/resolved/NCT05620576_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05620576/SoA2USDM/extracted/NCT05620576_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">3 open of 3</span></td>
+            <td class="viz"><a href="NCT05620576/SoA2USDM/extracted/NCT05620576_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05620576/SoA2USDM/consolidated/NCT05620576_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05620576/SoA2USDM/consolidated/NCT05620576_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05630196">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05630196" target="_blank">NCT05630196</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05630196" target="_blank" rel="noopener">NCT05630196</a></td>
+            <td class="study-code">H0P-MC-BP05</td>
+            <td class="acronym">CPMP BP05</td>
+            <td class="soa-pages">11-14</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/96/NCT05630196/Prot_000.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05630196/NCT05630196_soa.pdf" class="link-soa" title="NCT05630196_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05630196/SoA2USDM/extracted/NCT05630196_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05630196/SoA2USDM/resolved/NCT05630196_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05630196/SoA2USDM/extracted/NCT05630196_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">3 open of 3</span></td>
+            <td class="viz"><a href="NCT05630196/SoA2USDM/extracted/NCT05630196_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05630196/SoA2USDM/consolidated/NCT05630196_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05630196/SoA2USDM/consolidated/NCT05630196_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr><tr class="ready" id="NCT05986292">
+            <td class="nct"><a href="https://clinicaltrials.gov/study/NCT05986292" target="_blank">NCT05986292</a></td>
+            <td class="prov-ref"><a href="https://clinicaltrials.gov/study/NCT05986292" target="_blank" rel="noopener">NCT05986292</a></td>
+            <td class="study-code">H0P-MC-CPMP</td>
+            <td class="acronym">CPMP</td>
+            <td class="soa-pages">17-23</td>
+            <td class="sources"><a href="https://ClinicalTrials.gov/ProvidedDocs/92/NCT05986292/Prot_005.pdf" class="link-pdf" title="Full protocol at source" target="_blank" rel="noopener">Protocol</a> <a href="NCT05986292/NCT05986292_soa.pdf" class="link-soa" title="NCT05986292_soa.pdf">SoA PDF</a></td>
+            <td class="viz tables grp-start"><a href="NCT05986292/SoA2USDM/extracted/NCT05986292_Table_01_extraction_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz tables"><a href="NCT05986292/SoA2USDM/resolved/NCT05986292_Table_01_resolved_viewer.html" class="link-table" title="main_soa — Schedule of Activities (SoA)">T01 <span class="ttype">main</span></a></td>
+            <td class="viz"><a href="NCT05986292/SoA2USDM/extracted/NCT05986292_review.html" class="link-review" title="Review page: the extraction against its source pages">review</a> <span class="decisions open" title="Judgement calls raised by the extraction, and how many still await a reviewer">2 open of 2</span></td>
+            <td class="viz"><a href="NCT05986292/SoA2USDM/extracted/NCT05986292_uncertainty_report.html" class="link-report" title="The extractor's own account of the run: what it decided and where it was unsure">extraction log</a></td>
+            <td class="viz grp-start"><a href="NCT05986292/SoA2USDM/consolidated/NCT05986292_consolidated.html" class="link-table" title="Protocol-level SoA — all tables unified">View</a> <a href="NCT05986292/SoA2USDM/consolidated/NCT05986292_consolidated_viewer.html" class="link-json" title="Consolidated JSON data">json</a></td>
+            <td class="stats"></td>
+        </tr>
+                
+                
+            </tbody>
+        </table>
+        </div>
+    </div>
+    </div>
+</body>
+</html>

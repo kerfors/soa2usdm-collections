@@ -31,6 +31,10 @@ Protocol folders are named by NCT ID (e.g. `NCT03637764`); the d4k folder name a
 
 Protocols outside the d4k mirror (NCT01797120, NCT05051579), same layout. Each collection's `collection.json` gives the title, description and provenance link shown on the Pages index.
 
+## Collection: `cpmp`
+
+The Lilly Chronic Pain Master Protocol (H0P-MC-CPMP, NCT05986292) and its 12 intervention-specific appendices (ISAs), each posted on ClinicalTrials.gov under its own NCT ID; the ISA SoAs are delta schedules on top of the master and the (non-public) disease-state addendum SoAs. The `studies` sheet adds `cpmp_layer`, `disease_state_addendum`, `compound` and `document_file`; open extraction decisions stay in each uncertainty report.
+
 ## Building the collection
 
 Derived outputs are produced protocol by protocol with the `soa2usdm` pipeline:
