@@ -35,6 +35,10 @@ Protocols outside the d4k mirror (NCT01797120, NCT05051579), same layout. Each c
 
 The Lilly Chronic Pain Master Protocol (H0P-MC-CPMP, NCT05986292) and its 12 intervention-specific appendices (ISAs), each posted on ClinicalTrials.gov under its own NCT ID; the ISA SoAs are delta schedules on top of the master and the (non-public) disease-state addendum SoAs. The `studies` sheet adds `cpmp_layer`, `disease_state_addendum`, `compound` and `document_file`; open extraction decisions stay in each uncertainty report.
 
+## Collection: `cell_gene_therapy`
+
+Five cell and gene therapy protocols posted on ClinicalTrials.gov: three AAV gene therapies for hemophilia (NCT03489291 CSL Behring CT-AMT-061-01, NCT04323098 BioMarin 270-303, NCT03861273 Pfizer C0371002) and two allogeneic cell therapies for B-cell lymphoma (NCT05714345 Allogene ALLO-647-201, CAR-T; NCT05020015 Takeda TAK-007-2001, CAR-NK). The `studies` sheet adds `document_file`. NCT04323098's posted PDF bundles the original protocol and Amendments 1 and 2; `soa_pages` points at Amendment 2. NCT05714345's SoA pages are images with no text layer, so the row audit cannot check that protocol. Open extraction decisions stay in each uncertainty report.
+
 ## Building the collection
 
 Derived outputs are produced protocol by protocol with the `soa2usdm` pipeline:
