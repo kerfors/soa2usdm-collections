@@ -10,6 +10,8 @@ An introduction to SoA2USDM, with two short videos and the schemas on one page, 
 
 This repo holds the **derived** artifacts of the pipeline: extraction JSON (raw + verified), corrections sidecars, uncertainty reports, review pages, resolved JSON, consolidated JSON, the generated HTML views, and the pre-rendered source page images (`{NCT}_soa_pages/` — each page stamped with its document page number, the evidence surface the review page draws on), one folder per protocol.
 
+Some collections also carry early work towards CDISC: per study, the activity grain (`grain/`) and the activity routing (`routing/`) sidecars with their pages, linked from the collection index (group "Towards CDISC"). How they are made: [`documents/activity-grain.md`](https://github.com/kerfors/soa2usdm/blob/main/documents/activity-grain.md) and [`documents/activity-routing.md`](https://github.com/kerfors/soa2usdm/blob/main/documents/activity-routing.md) in soa2usdm.
+
 It does **not** hold the source protocol PDFs. Those are fetched on demand from ClinicalTrials.gov using the manifest, and are `.gitignore`d so they are never committed. There is a single source of truth for the protocol documents — ClinicalTrials.gov — and this repo points at it rather than redistributing it.
 
 > **Provenance note.** The manifest points at the current `ProvidedDocs` PDF on ClinicalTrials.gov for each study. The d4k `usdm_data` set may have been built from an earlier posted version of the same protocol, so a rebuild here could pick up a newer document than the one d4k modelled. This is an accepted trade-off: ClinicalTrials.gov is the canonical, non-redistributed source. Each extraction records the SoA page range it used, so drift is detectable per protocol.
