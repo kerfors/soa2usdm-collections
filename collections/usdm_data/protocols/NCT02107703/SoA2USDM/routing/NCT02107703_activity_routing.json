@@ -1,14 +1,14 @@
 {
  "schema_name": "soa2usdm-activity-routing",
- "schema_version": "1.2",
+ "schema_version": "1.3",
  "collection": "usdm_data",
  "protocol_id": "NCT02107703",
- "generated_at": "2026-11-06 13:06 UTC",
- "rules_version": "1.3.0",
+ "generated_at": "2026-11-06 14:21 UTC",
+ "rules_version": "1.4.0",
  "inputs": {
   "activity_grain": {
-   "schema_version": "1.4",
-   "sha256": "cb9e785038543b770548ed70309c11773edf595a54fd1e33a0c5e8c264873939"
+   "schema_version": "1.5",
+   "sha256": "99586682bfb6cbbc452d6152289b28531d4a3654317e5f07b8e10b82abd8b618"
   },
   "consolidated": {
    "sha256": "78e213ef981457b29ddf081d1ef4d901a361f7f2cd08eb71a617e2ebce6310fa"
@@ -71,14 +71,15 @@
   }
  },
  "counts": {
-  "rows": 3,
+  "rows": 5,
   "not_reached": 3,
   "routed": 2,
   "open": 1,
   "weak": 0,
-  "not routed": 0,
+  "not routed": 2,
   "routed_by_test_identity": 1,
-  "routed_by_weak_test_identity": 1
+  "routed_by_weak_test_identity": 1,
+  "rows_from_panel_members": 2
  },
  "rows": [
   {
@@ -177,6 +178,153 @@
    }
   },
   {
+   "xact_id": "xact-011",
+   "member_id": "m02",
+   "activity_name": "Temp",
+   "panel_name": "Vital Signs (Temp, BP, HR, RR)",
+   "parent_xact_id": "xact-008",
+   "parent_name": "Physical Examination",
+   "parent_is_section_header": true,
+   "grain": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "kind_candidates": [
+     "measurement",
+     "specimen"
+    ],
+    "source": "panel member"
+   },
+   "panel_label_support": [],
+   "status": "not routed",
+   "domain": null,
+   "candidates": [
+    "BS",
+    "CP",
+    "CV",
+    "EG",
+    "LB",
+    "MB",
+    "MI",
+    "MK",
+    "MS",
+    "RE",
+    "VS"
+   ],
+   "hints": [
+    "BS",
+    "DO",
+    "VS"
+   ],
+   "basis": [],
+   "dropped": {},
+   "fallback": {
+    "from": "grain kind -> Domain_Coverage",
+    "kinds": [
+     "measurement",
+     "specimen"
+    ]
+   },
+   "question": null,
+   "route_source": null,
+   "test_identity": {
+    "phrase": "temp",
+    "hit_strength": "weak",
+    "weak_reasons": [
+     "several codes"
+    ],
+    "domains": [
+     "BS",
+     "DO",
+     "VS"
+    ],
+    "codes": [
+     {
+      "code": "C174446",
+      "testcd": "TEMP",
+      "domains": [
+       "VS"
+      ]
+     },
+     {
+      "code": "C25206",
+      "testcd": "TEMP",
+      "domains": [
+       "BS",
+       "DO"
+      ]
+     }
+    ],
+    "matched_on": [
+     "NCIt_Synonyms",
+     "TESTCD"
+    ]
+   }
+  },
+  {
+   "xact_id": "xact-011",
+   "member_id": "m04",
+   "activity_name": "HR",
+   "panel_name": "Vital Signs (Temp, BP, HR, RR)",
+   "parent_xact_id": "xact-008",
+   "parent_name": "Physical Examination",
+   "parent_is_section_header": true,
+   "grain": {
+    "grain": "named test",
+    "finding_kind": "measurement",
+    "kind_candidates": [],
+    "source": "panel member"
+   },
+   "panel_label_support": [],
+   "status": "not routed",
+   "domain": null,
+   "candidates": [
+    "CV",
+    "EG",
+    "MK",
+    "RE",
+    "VS"
+   ],
+   "hints": [
+    "CV",
+    "VS"
+   ],
+   "basis": [],
+   "dropped": {},
+   "fallback": {
+    "from": "grain kind -> Domain_Coverage",
+    "kinds": [
+     "measurement"
+    ]
+   },
+   "question": null,
+   "route_source": null,
+   "test_identity": {
+    "phrase": "hr",
+    "hit_strength": "weak",
+    "weak_reasons": [
+     "short code only"
+    ],
+    "domains": [
+     "CV",
+     "VS"
+    ],
+    "codes": [
+     {
+      "code": "C49677",
+      "testcd": "HR",
+      "domains": [
+       "CV",
+       "VS"
+      ]
+     }
+    ],
+    "matched_on": [
+     "NCIt_Synonyms",
+     "TESTCD"
+    ]
+   }
+  },
+  {
    "xact_id": "xact-025",
    "activity_name": "Local serum pregnancy test",
    "parent_xact_id": "xact-021",
@@ -226,7 +374,39 @@
   {
    "xact_id": "xact-011",
    "activity_name": "Vital Signs (Temp, BP, HR, RR)",
-   "reason": "panel, not split"
+   "reason": "panel, split from label",
+   "members": [
+    {
+     "member_id": "m01",
+     "text": "Vital Signs",
+     "member_grain": "panel",
+     "in_group": null
+    },
+    {
+     "member_id": "m02",
+     "text": "Temp",
+     "member_grain": "named test",
+     "in_group": "m01"
+    },
+    {
+     "member_id": "m03",
+     "text": "BP",
+     "member_grain": null,
+     "in_group": "m01"
+    },
+    {
+     "member_id": "m04",
+     "text": "HR",
+     "member_grain": "named test",
+     "in_group": "m01"
+    },
+    {
+     "member_id": "m05",
+     "text": "RR",
+     "member_grain": null,
+     "in_group": "m01"
+    }
+   ]
   },
   {
    "xact_id": "xact-022",

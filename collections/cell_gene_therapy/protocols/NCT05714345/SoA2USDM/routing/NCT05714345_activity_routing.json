@@ -1,14 +1,14 @@
 {
  "schema_name": "soa2usdm-activity-routing",
- "schema_version": "1.2",
+ "schema_version": "1.3",
  "collection": "cell_gene_therapy",
  "protocol_id": "NCT05714345",
- "generated_at": "2026-11-06 13:06 UTC",
- "rules_version": "1.3.0",
+ "generated_at": "2026-11-06 14:21 UTC",
+ "rules_version": "1.4.0",
  "inputs": {
   "activity_grain": {
-   "schema_version": "1.4",
-   "sha256": "4684d16748de8f9fe531d5c99fc8fc2b300df71b764576f794bd3a4b20e07242"
+   "schema_version": "1.5",
+   "sha256": "5620bc805d1a343a36f6610ab70135b728231a918c8780d8630356c1088b40a1"
   },
   "consolidated": {
    "sha256": "42c86033e89c38fa80dfb6316c1a5846b60d34bbfc4b76be4d50786b401c8c36"
@@ -143,16 +143,151 @@
   }
  },
  "counts": {
-  "rows": 18,
+  "rows": 22,
   "not_reached": 15,
-  "routed": 4,
-  "open": 5,
+  "routed": 6,
+  "open": 6,
   "weak": 0,
-  "not routed": 9,
+  "not routed": 10,
   "routed_by_test_identity": 0,
-  "routed_by_weak_test_identity": 1
+  "routed_by_weak_test_identity": 3,
+  "rows_from_panel_members": 4
  },
  "rows": [
+  {
+   "xact_id": "xact-008",
+   "member_id": "m03",
+   "activity_name": "pulse rate",
+   "panel_name": "Vital signs (BP/pulse rate/Temp/O₂ Sat)",
+   "parent_xact_id": "xact-006",
+   "parent_name": "Clinical Evaluation",
+   "parent_is_section_header": true,
+   "grain": {
+    "grain": "named test",
+    "finding_kind": "measurement",
+    "kind_candidates": [],
+    "source": "panel member"
+   },
+   "panel_label_support": [],
+   "status": "open",
+   "domain": null,
+   "candidates": [
+    "CV",
+    "VS"
+   ],
+   "hints": null,
+   "basis": [],
+   "dropped": {},
+   "fallback": null,
+   "question": "test code PULSE is in CV, VS (SDTM_Test_Identity); the protocol must say which",
+   "route_source": "test identity",
+   "test_identity": {
+    "phrase": "pulse rate",
+    "hit_strength": "strong",
+    "weak_reasons": [],
+    "domains": [
+     "CV",
+     "VS"
+    ],
+    "codes": [
+     {
+      "code": "C49676",
+      "testcd": "PULSE",
+      "domains": [
+       "CV",
+       "VS"
+      ]
+     }
+    ],
+    "matched_on": [
+     "NCIt_Preferred_Term",
+     "TEST"
+    ]
+   }
+  },
+  {
+   "xact_id": "xact-008",
+   "member_id": "m04",
+   "activity_name": "Temp",
+   "panel_name": "Vital signs (BP/pulse rate/Temp/O₂ Sat)",
+   "parent_xact_id": "xact-006",
+   "parent_name": "Clinical Evaluation",
+   "parent_is_section_header": true,
+   "grain": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "kind_candidates": [
+     "measurement",
+     "specimen"
+    ],
+    "source": "panel member"
+   },
+   "panel_label_support": [],
+   "status": "not routed",
+   "domain": null,
+   "candidates": [
+    "BS",
+    "CP",
+    "CV",
+    "EG",
+    "LB",
+    "MB",
+    "MI",
+    "MK",
+    "MS",
+    "RE",
+    "VS"
+   ],
+   "hints": [
+    "BS",
+    "DO",
+    "VS"
+   ],
+   "basis": [],
+   "dropped": {},
+   "fallback": {
+    "from": "grain kind -> Domain_Coverage",
+    "kinds": [
+     "measurement",
+     "specimen"
+    ]
+   },
+   "question": null,
+   "route_source": null,
+   "test_identity": {
+    "phrase": "temp",
+    "hit_strength": "weak",
+    "weak_reasons": [
+     "several codes"
+    ],
+    "domains": [
+     "BS",
+     "DO",
+     "VS"
+    ],
+    "codes": [
+     {
+      "code": "C174446",
+      "testcd": "TEMP",
+      "domains": [
+       "VS"
+      ]
+     },
+     {
+      "code": "C25206",
+      "testcd": "TEMP",
+      "domains": [
+       "BS",
+       "DO"
+      ]
+     }
+    ],
+    "matched_on": [
+     "NCIt_Synonyms",
+     "TESTCD"
+    ]
+   }
+  },
   {
    "xact_id": "xact-012",
    "activity_name": "ECHO or MUGA",
@@ -408,6 +543,102 @@
    "question": null,
    "route_source": null,
    "test_identity": null
+  },
+  {
+   "xact_id": "xact-025",
+   "member_id": "m01",
+   "activity_name": "EBV",
+   "panel_name": "EBV and adenovirus monitoring",
+   "parent_xact_id": "xact-013",
+   "parent_name": "Local Laboratory",
+   "parent_is_section_header": true,
+   "grain": {
+    "grain": "named test",
+    "finding_kind": "specimen",
+    "kind_candidates": [],
+    "source": "panel member"
+   },
+   "panel_label_support": [],
+   "status": "routed",
+   "domain": "MB",
+   "candidates": null,
+   "hints": null,
+   "basis": [],
+   "dropped": {},
+   "fallback": null,
+   "question": null,
+   "route_source": "test identity, weak hit",
+   "test_identity": {
+    "phrase": "ebv",
+    "hit_strength": "weak",
+    "weak_reasons": [
+     "short code only"
+    ],
+    "domains": [
+     "MB"
+    ],
+    "codes": [
+     {
+      "code": "C184675",
+      "testcd": "EBV",
+      "domains": [
+       "MB"
+      ]
+     }
+    ],
+    "matched_on": [
+     "NCIt_Synonyms",
+     "TESTCD"
+    ]
+   }
+  },
+  {
+   "xact_id": "xact-025",
+   "member_id": "m02",
+   "activity_name": "adenovirus monitoring",
+   "panel_name": "EBV and adenovirus monitoring",
+   "parent_xact_id": "xact-013",
+   "parent_name": "Local Laboratory",
+   "parent_is_section_header": true,
+   "grain": {
+    "grain": "named test",
+    "finding_kind": "specimen",
+    "kind_candidates": [],
+    "source": "panel member"
+   },
+   "panel_label_support": [],
+   "status": "routed",
+   "domain": "MB",
+   "candidates": null,
+   "hints": null,
+   "basis": [],
+   "dropped": {},
+   "fallback": null,
+   "question": null,
+   "route_source": "test identity, weak hit",
+   "test_identity": {
+    "phrase": "adenovirus monitoring",
+    "hit_strength": "weak",
+    "weak_reasons": [
+     "NCIt synonym only",
+     "peeled"
+    ],
+    "domains": [
+     "MB"
+    ],
+    "codes": [
+     {
+      "code": "C171498",
+      "testcd": "ADENOVIR",
+      "domains": [
+       "MB"
+      ]
+     }
+    ],
+    "matched_on": [
+     "NCIt_Synonyms"
+    ]
+   }
   },
   {
    "xact_id": "xact-039",
@@ -1157,7 +1388,39 @@
   {
    "xact_id": "xact-008",
    "activity_name": "Vital signs (BP/pulse rate/Temp/O₂ Sat)",
-   "reason": "panel, not split"
+   "reason": "panel, split from label",
+   "members": [
+    {
+     "member_id": "m01",
+     "text": "Vital signs",
+     "member_grain": "panel",
+     "in_group": null
+    },
+    {
+     "member_id": "m02",
+     "text": "BP",
+     "member_grain": null,
+     "in_group": "m01"
+    },
+    {
+     "member_id": "m03",
+     "text": "pulse rate",
+     "member_grain": "named test",
+     "in_group": "m01"
+    },
+    {
+     "member_id": "m04",
+     "text": "Temp",
+     "member_grain": "named test",
+     "in_group": "m01"
+    },
+    {
+     "member_id": "m05",
+     "text": "O₂ Sat",
+     "member_grain": null,
+     "in_group": "m01"
+    }
+   ]
   },
   {
    "xact_id": "xact-015",
@@ -1187,7 +1450,21 @@
   {
    "xact_id": "xact-025",
    "activity_name": "EBV and adenovirus monitoring",
-   "reason": "panel, not split"
+   "reason": "panel, split from label",
+   "members": [
+    {
+     "member_id": "m01",
+     "text": "EBV",
+     "member_grain": "named test",
+     "in_group": null
+    },
+    {
+     "member_id": "m02",
+     "text": "adenovirus monitoring",
+     "member_grain": "named test",
+     "in_group": null
+    }
+   ]
   },
   {
    "xact_id": "xact-026",
