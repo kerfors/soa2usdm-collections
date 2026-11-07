@@ -1,0 +1,103 @@
+{
+ "schema_name": "soa2usdm-consistency-review",
+ "schema_version": "1.0",
+ "description": "Review results for the cross-study consistency queue (soa2usdm.consistency), kept by hand. One entry per reviewed subject: a queue phrase, a within-study entry or a flag. outcomes_seen records the outcomes at review time; the queue page marks an entry whose outcomes have changed since, and lists reviewed subjects that have left the queue. The queue itself decides nothing; these entries record a reviewer's reading and where the work goes.",
+ "reviews": [
+  {
+   "subject": {"kind": "queue", "phrase": "weight"},
+   "outcomes_seen": ["open CV|VS", "routed VS"],
+   "result": "accept",
+   "note": "Rule as designed: VS-OV settles VS for a measurement only inside a vital-signs panel (documents/activity-routing.md). 'Height and weight' panels are not vital-signs panels, so those members stay open, like the standalone rows.",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "queue", "phrase": "temperature"},
+   "outcomes_seen": ["not routed", "routed VS"],
+   "result": "accept",
+   "note": "Same pattern as weight: members routed VS by the vital-signs panel rule RT-11; the standalone row (NCT04004988) has a weak hit, TEMP in VS and in BS/DO, and the input does not say whose temperature.",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "queue", "phrase": "hiv"},
+   "outcomes_seen": ["not routed", "routed MB"],
+   "result": "matching fix",
+   "note": "Mechanism, not AI: the grain label path drops the short-code hit ('short code only, not taken: HIV (MB)'), the member path keeps it as a weak hit and routes. Same phrase, same lookup, two treatments. With the CT / VAS short-code hits.",
+   "goes_to": "step 4",
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "queue", "phrase": "tsh"},
+   "outcomes_seen": ["not routed", "routed LB"],
+   "result": "matching fix",
+   "note": "As hiv: short-code hit TSH (LB) dropped on the grain label path, kept as a weak hit on the member path.",
+   "goes_to": "step 4",
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "queue", "phrase": "hbv dna"},
+   "outcomes_seen": ["routed MB", "weak BS|CP|LB|MB|MI|MS"],
+   "result": "routing mechanism",
+   "note": "NCT01797120: the footnote 'Patients on antiviral prophylaxis treatment or positive HBV antibodies should be tested for HBV-DNA ...' fires RT-1 (IS) on the annotation only; the row becomes weak and the HBDNA (MB) test-identity hit is set aside. The footnote says who is tested, not what is measured. Question for the rules: how an annotation-only rule match ranks against a label test-identity hit.",
+   "goes_to": "step 5",
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "queue", "phrase": "biomarkers"},
+   "outcomes_seen": ["no own row", "not routed"],
+   "result": "accept",
+   "note": "The protocols differ: NCT03548935 context lists four analytes (panel); NCT03693430 lists one, hsCRP (named test, no test code on the label).",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "queue", "phrase": "pk"},
+   "outcomes_seen": ["no own row", "routed PC"],
+   "result": "accept",
+   "note": "The protocols differ: NCT03637764 names two analytes, isatuximab and atezolizumab (panel); NCT04557384 one, ramucirumab (named test, PC by RT-9).",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "within_study", "phrase": "hbv dna", "collection": "misc_studies", "protocol_id": "NCT01797120"},
+   "outcomes_seen": ["routed MB", "weak BS|CP|LB|MB|MI|MS"],
+   "result": "routing mechanism",
+   "note": "The standalone row of the hbv dna queue entry: weak because of the annotation-only RT-1 match; the member HBV-DNA in the same study routes MB.",
+   "goes_to": "step 5",
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "within_study", "phrase": "urine drug screen including cotinine", "collection": "usdm_data", "protocol_id": "NCT05176314"},
+   "outcomes_seen": ["no own row", "routed LB"],
+   "result": "context member list",
+   "note": "The only member from protocol context is the panel label itself, 'Urine drug screen (including cotinine)', routed LB via DRUGSCR (peeled hit). A panel that is its own member.",
+   "goes_to": "4d",
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "flag", "phrase": "rosuvastatin pk samples"},
+   "outcomes_seen": ["routed PC"],
+   "result": "knowledge",
+   "note": "Stays open. Named test gives PC; panel (rosuvastatin and pirtobrutinib in the same samples) would give 'panel, not split' and lose the PC route. The label names only rosuvastatin.",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "flag", "phrase": "survival assessment"},
+   "outcomes_seen": ["no own row"],
+   "result": "accept",
+   "note": "Other vs panel does not change routing: a panel would have no named-test members.",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  },
+  {
+   "subject": {"kind": "flag", "phrase": "participant returns device"},
+   "outcomes_seen": ["no own row"],
+   "result": "accept",
+   "note": "Grain other in all six studies; a logistics step.",
+   "goes_to": null,
+   "reviewed_on": "2026-11-07"
+  }
+ ]
+}
