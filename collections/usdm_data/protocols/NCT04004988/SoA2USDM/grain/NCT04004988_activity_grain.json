@@ -3,7 +3,7 @@
  "schema_version": "1.5",
  "collection": "usdm_data",
  "protocol_id": "NCT04004988",
- "generated_at": "2026-11-07 14:54 UTC",
+ "generated_at": "2026-11-07 15:07 UTC",
  "rules_version": "1.2.0",
  "word_lists_date": "2026-11-06",
  "inputs": {
@@ -18,8 +18,12 @@
    "sha256": "7e7717c5db8b06b477c9122ac63dd820eadbc1bab904b74daf78b1a99dac4eec",
    "prompt_version": "1.1.0"
   },
-  "decisions": null,
-  "grain_inputs": null,
+  "decisions": {
+   "sha256": "fe8c30261ae26d66323a5049436cc81f04ae26bb962660f9f8cd9d0f130ed0ee"
+  },
+  "grain_inputs": {
+   "sha256": "6b36029e8a21963f1d3bb66b99e3e4e69ca48beb033b8bd8a4a557f3dfb82e1b"
+  },
   "cdisc_for_ai": {
    "commit": "bd7e5fd22d79dded2f570b6a1c73757b896ae5ac",
    "reference_versions": {
@@ -77,14 +81,14 @@
   "activities": 20,
   "by_role": {},
   "by_grain": {
-   "named test": 5,
-   "panel": 1,
+   "named test": 8,
+   "panel": 2,
    "instrument list": 0,
-   "procedure": 1,
+   "procedure": 2,
    "instrument": 0,
-   "sample collection": 2,
-   "other": 5,
-   "unsure": 6
+   "sample collection": 1,
+   "other": 7,
+   "unsure": 0
   },
   "by_grain_rules_only": {
    "named test": 5,
@@ -98,12 +102,12 @@
   },
   "by_finding_kind": {
    "specimen": 2,
-   "immunogenicity": 0,
+   "immunogenicity": 1,
    "measurement": 2,
    "instrument": 0,
-   "pc": 0,
+   "pc": 1,
    "genomics": 0,
-   "unsure": 1
+   "unsure": 2
   },
   "by_finding_kind_rules_only": {
    "specimen": 2,
@@ -125,7 +129,8 @@
    "none": 6
   },
   "by_source": {
-   "rule": 20
+   "rule": 9,
+   "ai_proposed": 11
   },
   "distinct_labels": 20
  },
@@ -211,7 +216,41 @@
    },
    "spellings": [
     "Blood glucose monitoring (hours)"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "specimen",
+    "source": "ai_proposed",
+    "rationale": "The rest after peeling 'blood' and 'monitoring' is glucose, one analyte; footnote xannot-014 and the lab_and_purpose entry say it is measured with a bedside glucose monitor, nothing shows a panel. The cited glucose test row has domain LB, which gives kind specimen.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-014"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/5"
+     },
+     {
+      "type": "cdisc",
+      "file": "SDTM_Test_Identity",
+      "code": "C105585",
+      "testcd": "GLUC"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "LB"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "clinical laboratory tests",
@@ -252,7 +291,34 @@
    "kind_candidates": [],
    "spellings": [
     "FSH test, if applicable"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "source": "ai_proposed",
+    "rationale": "FSH is follicle-stimulating hormone (abbreviation entry), and the lab_and_purpose entry says a blood sample for follicle stimulating hormone is drawn to confirm postmenopausal status: one test. Open: the input has no cdisc test row for it, so the domain and kind are not settled by a cited entry.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/37"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/2"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-011"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "height",
@@ -331,7 +397,35 @@
    "kind_candidates": [],
    "spellings": [
     "Immunogenicity"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "immunogenicity",
+    "source": "ai_proposed",
+    "rationale": "The lab_and_purpose entry says immunogenicity is assessed by a validated assay to detect antidrug antibodies (ADA) against tirzepatide, one assay readout; footnote xannot-013 speaks of TE ADA. The label matches the Domain_Coverage IS row (Immunogenicity Specimen Assessments), kind immunogenicity.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/4"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-013"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "IS"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "informed consent",
@@ -396,7 +490,21 @@
    "kind_candidates": [],
    "spellings": [
     "Outpatient Visit"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "A visit, not an assessment.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "pharmacogenetic sample",
@@ -419,7 +527,29 @@
    },
    "spellings": [
     "Pharmacogenetic Sample"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The lab_and_purpose entry describes a stored blood sample for pharmacogenetic analysis to investigate genetic variants, without naming a specific measure; footnote xannot-012 says a single sample in Period 1.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/3"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-012"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "physical examination medical assessment",
@@ -437,7 +567,29 @@
    "kind_candidates": [],
    "spellings": [
     "Physical Examination /Medical Assessment"
-   ]
+   ],
+   "decision": {
+    "grain": "procedure",
+    "source": "ai_proposed",
+    "rationale": "A physical examination at screening and targeted reviews and medical assessments thereafter (footnote xannot-006); the measurements entry lists no components, so no single named test.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-006"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/2"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "pk sampling hours",
@@ -462,7 +614,35 @@
    },
    "spellings": [
     "PK Sampling (hours)"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "pc",
+    "source": "ai_proposed",
+    "rationale": "PK is pharmacokinetic(s) (abbreviation entry), and the lab_and_purpose entry says the samples determine the plasma concentrations of tirzepatide by LC-MS/MS: one drug concentration. A drug concentration is PC in Domain_Coverage, kind pc.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/35"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/6"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "PC"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "pregnancy test",
@@ -518,7 +698,33 @@
    },
    "spellings": [
     "Safety 12-lead ECG"
-   ]
+   ],
+   "decision": {
+    "grain": "procedure",
+    "source": "ai_proposed",
+    "rationale": "ECG is electrocardiogram (abbreviation entry); footnote xannot-007 and the measurements entry describe a single safety 12-lead ECG interpreted at site, with no component measure named.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/33"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-007"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/1"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "subject admission to cru",
@@ -536,7 +742,25 @@
    "kind_candidates": [],
    "spellings": [
     "Subject Admission to CRU"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "CRU is clinical research unit (abbreviation entry); admission to the unit is logistics, not an assessment.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/31"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "subject discharge from cru",
@@ -579,7 +803,25 @@
    "kind_candidates": [],
    "spellings": [
     "Supine Vital Signs (hours)"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The measurements entry for Vital Signs, linked to this SoA activity, lists blood pressure and pulse rate measured after at least 5 minutes supine: several tests under one label.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/0"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "temperature",
@@ -659,7 +901,48 @@
    ],
    "spellings": [
     "Temperature"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "kind_candidates": [
+     "measurement",
+     "specimen"
+    ],
+    "source": "ai_proposed",
+    "rationale": "Temperature is one test, but the label hits a VS test row (measurement) and a BS; DO test row (BS gives specimen); no footnote or context entry says whose temperature. Open: VS body temperature or BS specimen temperature, the input does not say which.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "cdisc",
+      "file": "SDTM_Test_Identity",
+      "code": "C174446",
+      "testcd": "TEMP"
+     },
+     {
+      "type": "cdisc",
+      "file": "SDTM_Test_Identity",
+      "code": "C25206",
+      "testcd": "TEMP"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "VS"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "BS"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "475a38a71ea839a854b70d13836490439f17a28197ecee537c901148200d3b27"
+   }
   },
   {
    "phrase": "tirzepatide dosing",
@@ -773,13 +1056,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -824,13 +1107,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -858,13 +1141,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "procedure",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -918,7 +1201,7 @@
    "rule_id": "L1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -935,7 +1218,7 @@
    "rule_id": "W2",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -946,13 +1229,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -997,13 +1280,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "unsure",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1037,7 +1320,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1048,13 +1331,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "immunogenicity",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1071,7 +1354,7 @@
    "rule_id": "L1x",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1082,13 +1365,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "sample collection",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "pc",
    "kind_candidates": [],
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   }
  ]

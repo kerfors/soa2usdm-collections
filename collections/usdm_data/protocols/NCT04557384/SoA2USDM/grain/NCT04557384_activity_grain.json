@@ -3,7 +3,7 @@
  "schema_version": "1.5",
  "collection": "usdm_data",
  "protocol_id": "NCT04557384",
- "generated_at": "2026-11-07 14:54 UTC",
+ "generated_at": "2026-11-07 15:07 UTC",
  "rules_version": "1.2.0",
  "word_lists_date": "2026-11-06",
  "inputs": {
@@ -18,8 +18,12 @@
    "sha256": "1a49d010dbd16aa0bfd6fcd7817b06d92d87333b36bfd0fba4272cf84e9e5048",
    "prompt_version": "1.1.0"
   },
-  "decisions": null,
-  "grain_inputs": null,
+  "decisions": {
+   "sha256": "b83c1bbe1a5108e0ffbdb1c16d0b8e7897b6e18ebb528b77cda39bf4f33d1cbe"
+  },
+  "grain_inputs": {
+   "sha256": "71983875039f7601ba8d5565660965895392ffb0d66c6fb7fac0484d29c83a9f"
+  },
   "cdisc_for_ai": {
    "commit": "bd7e5fd22d79dded2f570b6a1c73757b896ae5ac",
    "reference_versions": {
@@ -79,14 +83,14 @@
    "section header": 1
   },
   "by_grain": {
-   "named test": 1,
-   "panel": 7,
+   "named test": 3,
+   "panel": 9,
    "instrument list": 0,
    "procedure": 3,
-   "instrument": 0,
+   "instrument": 1,
    "sample collection": 14,
-   "other": 9,
-   "unsure": 6
+   "other": 10,
+   "unsure": 0
   },
   "by_grain_rules_only": {
    "named test": 1,
@@ -100,10 +104,10 @@
   },
   "by_finding_kind": {
    "specimen": 1,
-   "immunogenicity": 0,
+   "immunogenicity": 1,
    "measurement": 0,
    "instrument": 0,
-   "pc": 0,
+   "pc": 1,
    "genomics": 0,
    "unsure": 0
   },
@@ -129,7 +133,8 @@
    "none": 6
   },
   "by_source": {
-   "rule": 41
+   "rule": 19,
+   "ai_proposed": 22
   },
   "distinct_labels": 40
  },
@@ -322,7 +327,33 @@
    },
    "spellings": [
     "ECG"
-   ]
+   ],
+   "decision": {
+    "grain": "procedure",
+    "source": "ai_proposed",
+    "rationale": "ECG is read as electrocardiogram by its abbreviation entry; the footnote and the ECG measurement entry give timing and 'Single, local' but name no measure taken from the tracing, so the row stays a procedure.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-011"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/40"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/1"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "ecog ps",
@@ -340,7 +371,29 @@
    "kind_candidates": [],
    "spellings": [
     "ECOG PS"
-   ]
+   ],
+   "decision": {
+    "grain": "instrument",
+    "source": "ai_proposed",
+    "rationale": "ECOG PS is read as Eastern Cooperative Oncology Group Performance Score by its abbreviation entry, and the protocol context lists it as an instrument with this SoA activity.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/41"
+     },
+     {
+      "type": "context",
+      "pointer": "/instruments/3"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "end of treatment",
@@ -358,7 +411,21 @@
    "kind_candidates": [],
    "spellings": [
     "End of treatment"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "The label names a point in the study (end of treatment), not an assessment; no footnote or context entry names anything measured.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "hematology",
@@ -399,7 +466,43 @@
    "kind_candidates": [],
    "spellings": [
     "IG"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "immunogenicity",
+    "source": "ai_proposed",
+    "rationale": "IG is read as immunogenicity by its abbreviation entry, and the lab and purpose entry says the venous blood samples are analysed 'to determine antibody production against ramucirumab': one assay readout, antibodies to the drug, which the IS domain covers.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-021"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/123"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/126"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/8"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "IS"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "inclusion exclusion criteria",
@@ -602,7 +705,39 @@
    "kind_candidates": [],
    "spellings": [
     "PK"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "pc",
+    "source": "ai_proposed",
+    "rationale": "PK is read as pharmacokinetic by its abbreviation entry, and the lab and purpose entry names one measure: 'serum concentrations of ramucirumab (LY3009806)', a drug concentration, which the PC domain covers.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-021"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/92"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/7"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "PC"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "pk ig and exploratory hypersensitivity",
@@ -620,7 +755,41 @@
    "kind_candidates": [],
    "spellings": [
     "PK, IG, and exploratory hypersensitivity"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The label and footnote name several analyses under one row: PK (pharmacokinetic), IG (immunogenicity) and exploratory hypersensitivity analyses; the lab and purpose entry gives anti-ramucirumab antibody, ramucirumab serum concentration and the Hypersensitivity tests on blood and urine.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-026"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/92"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/123"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/126"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/9"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "pregnancy test",
@@ -676,7 +845,33 @@
    },
    "spellings": [
     "Radiologic imaging and measurement of palpable or visible lesions"
-   ]
+   ],
+   "decision": {
+    "grain": "procedure",
+    "source": "ai_proposed",
+    "rationale": "The label names imaging and measurement of lesions without naming one test, and the footnote and context entries describe a tumour assessment by CT or MRI of thorax, abdomen and pelvis performed according to RECIST 1.1 to assess response, so the row stays a procedure.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-017"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/4"
+     },
+     {
+      "type": "context",
+      "pointer": "/instruments/5"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 1",
@@ -699,7 +894,21 @@
    },
    "spellings": [
     "Sample 1"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 1'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 10",
@@ -722,7 +931,21 @@
    },
    "spellings": [
     "Sample 10"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 10'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 11",
@@ -745,7 +968,21 @@
    },
    "spellings": [
     "Sample 11"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 11'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 12",
@@ -768,7 +1005,21 @@
    },
    "spellings": [
     "Sample 12"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 12'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 13",
@@ -791,7 +1042,21 @@
    },
    "spellings": [
     "Sample 13"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 13'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 14",
@@ -814,7 +1079,21 @@
    },
    "spellings": [
     "Sample 14"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 14'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 2",
@@ -837,7 +1116,21 @@
    },
    "spellings": [
     "Sample 2"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 2'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 3",
@@ -860,7 +1153,21 @@
    },
    "spellings": [
     "Sample 3"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 3'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 4",
@@ -883,7 +1190,21 @@
    },
    "spellings": [
     "Sample 4"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 4'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 5",
@@ -906,7 +1227,21 @@
    },
    "spellings": [
     "Sample 5"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 5'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 6",
@@ -929,7 +1264,21 @@
    },
    "spellings": [
     "Sample 6"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 6'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 7",
@@ -952,7 +1301,21 @@
    },
    "spellings": [
     "Sample 7"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 7'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 8",
@@ -975,7 +1338,21 @@
    },
    "spellings": [
     "Sample 8"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 8'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "sample 9",
@@ -998,7 +1375,21 @@
    },
    "spellings": [
     "Sample 9"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label names only a numbered sample ('Sample 9'); no footnote or context entry for this row names what is measured in it.",
+    "basis": [
+     {
+      "type": "label"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   },
   {
    "phrase": "thyroid panel",
@@ -1062,7 +1453,29 @@
    "kind_candidates": [],
    "spellings": [
     "Vital signs"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The footnote and the vital signs measurement entry list several measures under the label: height (at baseline), weight, temperature, blood pressure, pulse rate and respiration rate.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-008"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/0"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "0ed352e80960e8396b2e0d2321349cd9efccb50a68584509dc91534a0f155b85"
+   }
   }
  ],
  "activities": [
@@ -1176,13 +1589,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1210,13 +1623,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "instrument",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1233,7 +1646,7 @@
    "rule_id": "W2",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1352,7 +1765,7 @@
    "rule_id": "W2",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1431,15 +1844,15 @@
    "hierarchy_level": 1,
    "parent_name": "Sample collection",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "pc",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [
     "Sample collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1450,15 +1863,15 @@
    "hierarchy_level": 1,
    "parent_name": "Sample collection",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "immunogenicity",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [
     "Sample collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1503,13 +1916,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1526,7 +1939,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1543,7 +1956,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1560,7 +1973,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1577,7 +1990,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1594,7 +2007,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1611,7 +2024,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1628,7 +2041,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1645,7 +2058,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1662,7 +2075,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1679,7 +2092,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1696,7 +2109,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1713,7 +2126,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1730,7 +2143,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1747,7 +2160,7 @@
    "rule_id": "W1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1758,13 +2171,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   }
  ]
