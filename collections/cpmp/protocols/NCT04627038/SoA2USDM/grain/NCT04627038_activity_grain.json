@@ -3,7 +3,7 @@
  "schema_version": "1.5",
  "collection": "cpmp",
  "protocol_id": "NCT04627038",
- "generated_at": "2026-11-07 14:54 UTC",
+ "generated_at": "2026-11-07 15:07 UTC",
  "rules_version": "1.2.0",
  "word_lists_date": "2026-11-06",
  "inputs": {
@@ -18,8 +18,12 @@
    "sha256": "7eff48a44ef8ca66b97493025ee7525348b090a218b71d2083941f7d807cfa6c",
    "prompt_version": "1.1.0"
   },
-  "decisions": null,
-  "grain_inputs": null,
+  "decisions": {
+   "sha256": "1d2009e7e234bb9485f9cbfa7085ac6df15da2d79737880475e351f2bf0ffa60"
+  },
+  "grain_inputs": {
+   "sha256": "84e72f408bbebd02962c53bb3efcf4ca9f2002dfda36d2158949c32d6da62172"
+  },
   "cdisc_for_ai": {
    "commit": "bd7e5fd22d79dded2f570b6a1c73757b896ae5ac",
    "reference_versions": {
@@ -79,14 +83,14 @@
    "section header": 2
   },
   "by_grain": {
-   "named test": 3,
-   "panel": 4,
+   "named test": 6,
+   "panel": 6,
    "instrument list": 0,
-   "procedure": 2,
+   "procedure": 1,
    "instrument": 0,
-   "sample collection": 2,
-   "other": 2,
-   "unsure": 5
+   "sample collection": 1,
+   "other": 4,
+   "unsure": 0
   },
   "by_grain_rules_only": {
    "named test": 3,
@@ -103,9 +107,9 @@
    "immunogenicity": 0,
    "measurement": 0,
    "instrument": 0,
-   "pc": 0,
+   "pc": 1,
    "genomics": 0,
-   "unsure": 0
+   "unsure": 2
   },
   "by_finding_kind_rules_only": {
    "specimen": 3,
@@ -128,7 +132,8 @@
    "none": 5
   },
   "by_source": {
-   "rule": 20
+   "rule": 11,
+   "ai_proposed": 9
   },
   "distinct_labels": 18
  },
@@ -218,7 +223,37 @@
    },
    "spellings": [
     "ECG"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The footnote says the ECG includes collection of PR interval, QRS duration and interval, and heart rate, and the ECG measurements entries list these measures (with QT and QTcF): several measures read from the ECG under one label.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-008"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/1"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/2"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/19"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "evaluate all i e criteria",
@@ -369,7 +404,25 @@
    "kind_candidates": [],
    "spellings": [
     "Participant returns device"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "The row, under the Participant Device header, records the participant returning the device; it is not an assessment. Its Notes footnote is redacted in the source.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-021"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "physical examination",
@@ -431,7 +484,35 @@
    },
    "spellings": [
     "PK sample"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "pc",
+    "source": "ai_proposed",
+    "rationale": "PK is pharmacokinetic per its abbreviation entry, and the lab_and_purpose entry says the venous blood sample is to characterize the PK of LY3556050, reported as LY3556050 plasma concentration: one drug concentration, which Domain_Coverage PC gives as kind pc.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/8"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/0"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "PC"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "serum pregnancy",
@@ -449,7 +530,30 @@
    "kind_candidates": [],
    "spellings": [
     "Serum pregnancy"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "source": "ai_proposed",
+    "rationale": "The label and its lab_and_purpose entry name one test, a serum pregnancy test that women of childbearing potential must test negative on. No cdisc test row in the input settles the domain, so the kind is open.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-015"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/1"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "somatostatin related biomarker sample",
@@ -472,7 +576,25 @@
    },
    "spellings": [
     "Somatostatin-related biomarker sample"
-   ]
+   ],
+   "decision": {
+    "grain": "sample collection",
+    "source": "ai_proposed",
+    "rationale": "The label and its lab_and_purpose entry speak only of samples for exploratory fluid biomarker analyses; no analyte or assay is named, so the row stays a sample collection.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/4"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "study intervention",
@@ -490,7 +612,29 @@
    "kind_candidates": [],
    "spellings": [
     "Study intervention"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "The footnotes say the intervention is taken orally twice daily, with the morning dose in the clinic at V3, V5 and V7: dosing, not an assessment.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-012"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-013"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "thyroid panel",
@@ -566,7 +710,36 @@
    },
    "spellings": [
     "Urine drug screen"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "specimen",
+    "source": "ai_proposed",
+    "rationale": "Peeling the specimen word 'urine' leaves 'drug screen', the Drug Screen test row with domain LB; no footnote or context entry lists panel members, so the named test stands with kind specimen.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-014"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/5"
+     },
+     {
+      "type": "cdisc",
+      "file": "SDTM_Test_Identity",
+      "code": "C78139",
+      "testcd": "DRUGSCR"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "urine pregnancy",
@@ -584,7 +757,30 @@
    "kind_candidates": [],
    "spellings": [
     "Urine pregnancy"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "source": "ai_proposed",
+    "rationale": "The label and its lab_and_purpose entry name one test, a urine pregnancy test within 24 hours before first dose that women of childbearing potential must test negative on. No cdisc test row in the input settles the domain, so the kind is open.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-016"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/2"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   },
   {
    "phrase": "vital signs",
@@ -602,7 +798,29 @@
    "kind_candidates": [],
    "spellings": [
     "Vital signs"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The footnote and the vital signs measurements entry list several tests under the label: blood pressure, pulse, temperature and respiratory rate.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-009"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/0"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "b0669b7b32410484edf7b10c8949a701f2d997d2c38d7f341fe3a9b57b40ccd1"
+   }
   }
  ],
  "activities": [
@@ -648,13 +866,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "procedure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "W2",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -665,13 +883,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -682,13 +900,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -779,7 +997,7 @@
     "Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -790,15 +1008,15 @@
    "hierarchy_level": 1,
    "parent_name": "Laboratory Tests and Sample Collection",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "unsure",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [
     "Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -809,15 +1027,15 @@
    "hierarchy_level": 1,
    "parent_name": "Laboratory Tests and Sample Collection",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "unsure",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [
     "Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -904,15 +1122,15 @@
    "hierarchy_level": 1,
    "parent_name": "Laboratory Tests and Sample Collection",
    "role": null,
-   "grain": "sample collection",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "pc",
    "kind_candidates": [],
    "rule_id": "W1",
    "context": [
     "Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -931,7 +1149,7 @@
     "Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -959,7 +1177,7 @@
    "hierarchy_level": 1,
    "parent_name": "Participant Device",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
@@ -967,7 +1185,7 @@
     "Participant Device"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   }
  ]

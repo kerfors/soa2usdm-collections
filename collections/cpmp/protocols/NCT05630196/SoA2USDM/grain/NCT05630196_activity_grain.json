@@ -3,7 +3,7 @@
  "schema_version": "1.5",
  "collection": "cpmp",
  "protocol_id": "NCT05630196",
- "generated_at": "2026-11-07 14:54 UTC",
+ "generated_at": "2026-11-07 15:07 UTC",
  "rules_version": "1.2.0",
  "word_lists_date": "2026-11-06",
  "inputs": {
@@ -18,8 +18,12 @@
    "sha256": "ae80c16c9f69a6664bf1b9cb915efdbe0f60a0b910579813163415bbd5e878f5",
    "prompt_version": "1.1.0"
   },
-  "decisions": null,
-  "grain_inputs": null,
+  "decisions": {
+   "sha256": "afab13e40cb5c099ac3f713997abe7630d32d49d87853899811b1efb62dc3a05"
+  },
+  "grain_inputs": {
+   "sha256": "1d7451132181c16638239cb67f120627bc7c75cfbb85b4d6bde4b005795e7c21"
+  },
   "cdisc_for_ai": {
    "commit": "bd7e5fd22d79dded2f570b6a1c73757b896ae5ac",
    "reference_versions": {
@@ -79,14 +83,14 @@
    "section header": 2
   },
   "by_grain": {
-   "named test": 3,
-   "panel": 4,
+   "named test": 5,
+   "panel": 6,
    "instrument list": 0,
-   "procedure": 2,
-   "instrument": 2,
-   "sample collection": 1,
-   "other": 8,
-   "unsure": 8
+   "procedure": 1,
+   "instrument": 5,
+   "sample collection": 0,
+   "other": 11,
+   "unsure": 0
   },
   "by_grain_rules_only": {
    "named test": 3,
@@ -103,9 +107,9 @@
    "immunogenicity": 0,
    "measurement": 0,
    "instrument": 0,
-   "pc": 0,
+   "pc": 1,
    "genomics": 0,
-   "unsure": 1
+   "unsure": 2
   },
   "by_finding_kind_rules_only": {
    "specimen": 2,
@@ -130,7 +134,8 @@
    "none": 8
   },
   "by_source": {
-   "rule": 30
+   "rule": 18,
+   "ai_proposed": 12
   },
   "distinct_labels": 28
  },
@@ -317,7 +322,29 @@
    },
    "spellings": [
     "ECG (single)"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The context entry for 'ECG (single)' names several measures from the single 12-lead ECG (heart rate, PR, RR, QRS, QT and QTcF intervals), so the row is several tests under one label; ECG read as electrocardiogram per its abbreviation entry.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/3"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/9"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "hba1c",
@@ -450,7 +477,39 @@
    },
    "spellings": [
     "LY3857210 PK sample"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "pc",
+    "source": "ai_proposed",
+    "rationale": "The lab and purpose entry for 'LY3857210 PK sample' says the blood samples are for 'measurement of plasma concentrations of LY3857210', one drug concentration; a drug concentration is PC, which gives kind pc (PK read as pharmacokinetic per its abbreviation entry).",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/0"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/22"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-018"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "PC"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "neurological assessment",
@@ -485,7 +544,37 @@
    "kind_candidates": [],
    "spellings": [
     "Neurological assessment"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "source": "ai_proposed",
+    "rationale": "The cited test row is in NV only, and the NV Domain_Coverage row gives no kind, so the kind stays open. The measurements entry lists several elements (tremor, extraocular movements, deep tendon reflexes, finger-nose pointing, Romberg sign); whether the row is one exam result or several is left to test identity.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "cdisc",
+      "file": "SDTM_Test_Identity",
+      "code": "C81313",
+      "testcd": "NVEXAM"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "NV"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/1"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "nrs for pain",
@@ -503,7 +592,33 @@
    "kind_candidates": [],
    "spellings": [
     "NRS for pain"
-   ]
+   ],
+   "decision": {
+    "grain": "instrument",
+    "source": "ai_proposed",
+    "rationale": "NRS is a numeric rating scale per its abbreviation entry, and the instruments entry lists 'NRS for pain' as an instrument completed by eDiary; the row is a rating scale.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/abbreviations/19"
+     },
+     {
+      "type": "context",
+      "pointer": "/instruments/3"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-014"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "participant returns unused study intervention",
@@ -521,7 +636,25 @@
    "kind_candidates": [],
    "spellings": [
     "Participant returns unused study intervention"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "Return of unused study intervention is accountability of the product, not an assessment; the footnote asks the participant to bring study intervention to every visit.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-012"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "pgi",
@@ -624,7 +757,25 @@
    "kind_candidates": [],
    "spellings": [
     "Placebo response video training (participant)"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "A training video the participant views at the beginning of V2 is not an assessment.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-010"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "prespecified clbp medical history",
@@ -665,7 +816,25 @@
    "kind_candidates": [],
    "spellings": [
     "Reinforce pain assessment guidelines"
-   ]
+   ],
+   "decision": {
+    "grain": "other",
+    "source": "ai_proposed",
+    "rationale": "Reinforcing the pain assessment guidelines is instruction to the participant, not an assessment itself; the footnote says to review the assessment of pain with reference to the MoO.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-015"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "rescue medication usage reporting",
@@ -706,7 +875,29 @@
    "kind_candidates": [],
    "spellings": [
     "Self-Harm Follow-Up form"
-   ]
+   ],
+   "decision": {
+    "grain": "instrument",
+    "source": "ai_proposed",
+    "rationale": "The instruments entry lists the Self-Harm Follow-Up form as an instrument of type form, completed once for each event identified on the Self-Harm Supplement form.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/instruments/2"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-013"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "self harm supplement form",
@@ -724,7 +915,25 @@
    "kind_candidates": [],
    "spellings": [
     "Self-Harm Supplement form"
-   ]
+   ],
+   "decision": {
+    "grain": "instrument",
+    "source": "ai_proposed",
+    "rationale": "The instruments entry lists the Self-Harm Supplement form as an instrument of type form.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/instruments/1"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "study intervention administration",
@@ -823,7 +1032,37 @@
    },
    "spellings": [
     "Urine drug screen"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "specimen",
+    "source": "ai_proposed",
+    "rationale": "Peeling the specimen word 'urine' leaves 'drug screen', which hits the test row Drug Screen in LB; nothing in the label or the source note lists several tests, and LB gives kind specimen.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "cdisc",
+      "file": "SDTM_Test_Identity",
+      "code": "C78139",
+      "testcd": "DRUGSCR"
+     },
+     {
+      "type": "cdisc",
+      "file": "Domain_Coverage",
+      "domain": "LB"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-017"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "urine pregnancy",
@@ -841,7 +1080,30 @@
    "kind_candidates": [],
    "spellings": [
     "Urine pregnancy"
-   ]
+   ],
+   "decision": {
+    "grain": "named test",
+    "finding_kind": "unsure",
+    "source": "ai_proposed",
+    "rationale": "The label names one test result, pregnancy, in urine (the lab and purpose entry gives specimen urine and the evidence speaks of a negative urine result). No cdisc test row or domain is cited for it, so the domain and kind are open.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "context",
+      "pointer": "/lab_and_purpose/1"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-016"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   },
   {
    "phrase": "vital signs",
@@ -859,7 +1121,29 @@
    "kind_candidates": [],
    "spellings": [
     "Vital signs"
-   ]
+   ],
+   "decision": {
+    "grain": "panel",
+    "source": "ai_proposed",
+    "rationale": "The footnote says vitals include pulse rate, respiratory rate, blood pressure and temperature, several tests under one label, as the measurements entry also lists.",
+    "basis": [
+     {
+      "type": "label"
+     },
+     {
+      "type": "annotation",
+      "xannot_id": "xannot-009"
+     },
+     {
+      "type": "context",
+      "pointer": "/measurements/2"
+     }
+    ],
+    "proposed_by": "claude-opus-5-5",
+    "proposed_at": "2026-11-07",
+    "prompt_version": "1.6.0",
+    "inputs_content_sha256": "ab5d7c05364f2d9d90c94727d633efbb0fff27aa5e442b49431b67453b890322"
+   }
   }
  ],
  "activities": [
@@ -911,7 +1195,7 @@
    "rule_id": "L1",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -939,13 +1223,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -990,13 +1274,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "procedure",
+   "grain": "panel",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "W2",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1007,13 +1291,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1058,13 +1342,13 @@
    "hierarchy_level": 0,
    "parent_name": "",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
    "context": [],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1128,7 +1412,7 @@
    "hierarchy_level": 1,
    "parent_name": "Scales, Questionnaires, and Outcome Measures",
    "role": null,
-   "grain": "unsure",
+   "grain": "instrument",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
@@ -1136,7 +1420,7 @@
     "Scales, Questionnaires, and Outcome Measures"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1147,7 +1431,7 @@
    "hierarchy_level": 1,
    "parent_name": "Scales, Questionnaires, and Outcome Measures",
    "role": null,
-   "grain": "unsure",
+   "grain": "instrument",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
@@ -1155,7 +1439,7 @@
     "Scales, Questionnaires, and Outcome Measures"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1166,7 +1450,7 @@
    "hierarchy_level": 1,
    "parent_name": "Scales, Questionnaires, and Outcome Measures",
    "role": null,
-   "grain": "unsure",
+   "grain": "instrument",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
@@ -1174,7 +1458,7 @@
     "Scales, Questionnaires, and Outcome Measures"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1185,7 +1469,7 @@
    "hierarchy_level": 1,
    "parent_name": "Scales, Questionnaires, and Outcome Measures",
    "role": null,
-   "grain": "unsure",
+   "grain": "other",
    "finding_kind": null,
    "kind_candidates": [],
    "rule_id": "none",
@@ -1193,7 +1477,7 @@
     "Scales, Questionnaires, and Outcome Measures"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1335,15 +1619,15 @@
    "hierarchy_level": 1,
    "parent_name": "Clinical Laboratory Tests and Sample Collection",
    "role": null,
-   "grain": "unsure",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "unsure",
    "kind_candidates": [],
    "rule_id": "none",
    "context": [
     "Clinical Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1362,7 +1646,7 @@
     "Clinical Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   },
   {
@@ -1392,15 +1676,15 @@
    "hierarchy_level": 1,
    "parent_name": "Clinical Laboratory Tests and Sample Collection",
    "role": null,
-   "grain": "sample collection",
-   "finding_kind": null,
+   "grain": "named test",
+   "finding_kind": "pc",
    "kind_candidates": [],
    "rule_id": "W1",
    "context": [
     "Clinical Laboratory Tests and Sample Collection"
    ],
    "parent_xact_id": null,
-   "source": "rule",
+   "source": "ai_proposed",
    "flags": []
   }
  ]
